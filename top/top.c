@@ -5538,7 +5538,7 @@ static void keys_xtra (int ch) {
 // show_msg(fmtmk("%s sort compatibility key honored", xmsg));
 } // end: keys_xtra
 
-/*######  Secondary summary display support (summary_show helpers)  ######*/
+/*######  Tertiary summary display support (summary_show helpers)  #######*/
 
         /*
          * note how alphabetical order is maintained within carefully chosen |
@@ -5582,8 +5582,16 @@ static inline int sum_see (const char *str, int nobuf) {
 static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
   // a tailored 'results stack value' extractor macro
  #define rSv(E)  TIC_VAL(E, this)
+   static struct {
+      const char *user, *syst, *type;
+   } gtab[] = {
+      { "%-.*s~7", "%-.*s~8", Graph_bars },
+      { "%-.*s~4", "%-.*s~6", Graph_blks }
+   };
    SIC_t idl_frme, tot_frme;
-   float scale;
+   int ix, num_user, num_syst;
+   float pct_user, pct_syst, scale;
+   char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
 
    idl_frme = rSv(stat_IL);
    tot_frme = rSv(stat_SUM_TOT);
@@ -5592,20 +5600,19 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
 
    /* display some kinda' cpu state percentages
       (who or what is explained by the passed prefix) */
-   if (Curwin->rc.graph_cpus) {
-      static struct {
-         const char *user, *syst, *type;
-      } gtab[] = {
-         { "%-.*s~7", "%-.*s~8", Graph_bars },
-         { "%-.*s~4", "%-.*s~6", Graph_blks }
-      };
-      char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
-      int ix = Curwin->rc.graph_cpus - 1;
-      float pct_user = (float)rSv(stat_SUM_USR) * scale,
-            pct_syst = (float)rSv(stat_SUM_SYS) * scale;
+   if (!Curwin->rc.graph_cpus) {
+      return sum_see(fmtmk(Cpu_States_fmts, pfx
+         , (float)rSv(stat_US) * scale, (float)rSv(stat_SY) * scale
+         , (float)rSv(stat_NI) * scale, (float)idl_frme * scale
+         , (float)rSv(stat_IO) * scale, (float)rSv(stat_IR) * scale
+         , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale), nobuf);
+   } else {
+      ix = Curwin->rc.graph_cpus - 1;
 #ifndef QUICK_GRAPHS
-      int num_user = (int)((pct_user * Graph_adj) + .5),
-          num_syst = (int)((pct_syst * Graph_adj) + .5);
+      pct_user = (float)rSv(stat_SUM_USR) * scale,
+      pct_syst = (float)rSv(stat_SUM_SYS) * scale;
+      num_user = (int)((pct_user * Graph_adj) + .5),
+      num_syst = (int)((pct_syst * Graph_adj) + .5);
       if (num_user + num_syst > Graph_len) num_syst = Graph_len - num_user;
       snprintf(user, sizeof(user), gtab[ix].user, num_user, gtab[ix].type);
       snprintf(syst, sizeof(syst), gtab[ix].syst, num_syst, gtab[ix].type);
@@ -5616,12 +5623,6 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
       snprintf(dual, sizeof(dual), "%s%s", user, syst);
       return sum_see(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f[~1%-*s]~1"
          , pfx, pct_user, pct_syst, pct_user + pct_syst, Graph_len +4, dual), nobuf);
-   } else {
-      return sum_see(fmtmk(Cpu_States_fmts, pfx
-         , (float)rSv(stat_US) * scale, (float)rSv(stat_SY) * scale
-         , (float)rSv(stat_NI) * scale, (float)idl_frme * scale
-         , (float)rSv(stat_IO) * scale, (float)rSv(stat_IR) * scale
-         , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale), nobuf);
    }
  #undef rSv
 } // end: sum_tics
@@ -5665,6 +5666,214 @@ static int sum_unify (struct stat_stack *this, int nobuf) {
    return 0;
  #undef rSv
 } // end: sum_unify
+
+/*######  Secondary summary display support (summary_show helpers)  ######*/
+
+        /*
+         * A helper function that displays cpu and/or numa node stuff |
+         * ( so as to keep the 'summary_show' guy a reasonable size ) | */
+static void do_cpus (void) {
+ #define noMAS (Msg_row + 1 >= Screen_rows - 1)
+   char tmp[MEDBUFSIZ];
+   int i;
+
+   if (CHKw(Curwin, View_CPUNOD)) {
+      if (Numa_node_sel < 0) {
+numa_oops:
+         /*
+          * display the 1st /proc/stat line, then the nodes (if room) ... */
+         Msg_row += sum_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
+         // display each cpu node's states
+         for (i = 0; i < Numa_node_tot; i++) {
+            struct stat_stack *nod_ptr = Stat_reap->numa->stacks[i];
+            if (NOD_VAL(stat_NU, i) == STAT_NODE_INVALID) continue;
+            if (noMAS) break;
+            snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, i));
+            Msg_row += sum_tics(nod_ptr, tmp, 1);
+         }
+      } else {
+         /*
+          * display the node summary, then the associated cpus (if room) ... */
+         for (i = 0; i < Numa_node_tot; i++) {
+            if (Numa_node_sel == NOD_VAL(stat_ID, i)
+            && (NOD_VAL(stat_NU, i) != STAT_NODE_INVALID)) break;
+         }
+         if (i == Numa_node_tot) {
+            Numa_node_sel = -1;
+            goto numa_oops;
+         }
+         snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
+         Msg_row += sum_tics(Stat_reap->numa->stacks[Numa_node_sel], tmp, 1);
+#ifdef PRETEND48CPU
+ #define deLIMIT Stat_reap->cpus->total
+#else
+ #define deLIMIT Cpu_cnt
+#endif
+         for (i = 0; i < deLIMIT; i++) {
+            if (Numa_node_sel == CPU_VAL(stat_NU, i)) {
+               if (noMAS) break;
+               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
+               Msg_row += sum_tics(Stat_reap->cpus->stacks[i], tmp, 1);
+            }
+         }
+ #undef deLIMIT
+      }
+
+   } else if (!CHKw(Curwin, View_CPUSUM)) {
+      /*
+       * display each cpu's states separately, screen height permitting ... */
+#ifdef PRETEND48CPU
+      int j;
+      if (Curwin->rc.combine_cpus) {
+         for (i = 0, j = 0; i < Cpu_cnt; i++) {
+            Stat_reap->cpus->stacks[j]->head[stat_ID].result.s_int = i;
+            Msg_row += sum_unify(Stat_reap->cpus->stacks[j], (i+1 >= Cpu_cnt));
+            if (++j >= Stat_reap->cpus->total) j = 0;
+            if (noMAS) break;
+         }
+      } else {
+         for (i = 0, j = 0; i < Cpu_cnt; i++) {
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), i);
+            Msg_row += sum_tics(Stat_reap->cpus->stacks[j], tmp, (i+1 >= Cpu_cnt));
+            if (++j >= Stat_reap->cpus->total) j = 0;
+            if (noMAS) break;
+         }
+      }
+#else
+      if (Curwin->rc.combine_cpus) {
+         for (i = 0; i < Cpu_cnt; i++) {
+            Msg_row += sum_unify(Stat_reap->cpus->stacks[i], (i+1 >= Cpu_cnt));
+            if (noMAS) break;
+         }
+      } else {
+         for (i = 0; i < Cpu_cnt; i++) {
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
+            Msg_row += sum_tics(Stat_reap->cpus->stacks[i], tmp, (i+1 >= Cpu_cnt));
+            if (noMAS) break;
+         }
+      }
+#endif
+
+   } else {
+      /*
+       * display just the 1st /proc/stat line ... */
+      Msg_row += sum_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
+   }
+ #undef noMAS
+} // end: void do_cpus
+
+
+        /*
+         * A helper function which will display the memory/swap stuff |
+         * ( so as to keep the 'summary_show' guy a reasonable size ) | */
+static void do_memory (void) {
+ #define bfT(n)  buftab[n].buf
+ #define scT(e)  scaletab[Rc.summ_mscale]. e
+ #define mkM(x) (float) x / scT(div)
+ #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
+#ifdef TOG4_OFF_MEM
+ #define memPARM 1
+#else
+ #define memPARM 0
+#endif
+   static const struct {
+      const char *used, *misc, *swap, *type;
+   } gtab[] = {
+      { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
+      { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
+   };
+   static struct {
+      float div;
+      const char *fmts;
+      const char *label;
+   } scaletab[] = {
+      { 1, "%.0f ", NULL },                             // kibibytes
+#ifdef BOOST_MEMORY
+      { 1024.0, "%#.3f ", NULL },                       // mebibytes
+      { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
+      { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
+      { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
+      { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
+#else
+      { 1024.0, "%#.1f ", NULL },                       // mebibytes
+      { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
+      { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
+      { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
+      { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
+#endif
+   };
+   struct { //                                            0123456789
+      // snprintf contents of each buf (after SK_Kb):    'nnnn.nnn 0'
+      // & prT macro might replace space at buf[8] with: -------> +
+      char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
+   } buftab[8];
+   char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ], row[ROWMINSIZ];
+   float pct_used, pct_misc, pct_swap;
+   int ix, num_used, num_misc;
+   unsigned long my_misc;
+
+   if (!scaletab[0].label) {
+      scaletab[0].label = N_txt(AMT_kilobyte_txt);
+      scaletab[1].label = N_txt(AMT_megabyte_txt);
+      scaletab[2].label = N_txt(AMT_gigabyte_txt);
+      scaletab[3].label = N_txt(AMT_terabyte_txt);
+      scaletab[4].label = N_txt(AMT_petabyte_txt);
+      scaletab[5].label = N_txt(AMT_exxabyte_txt);
+   }
+
+   if (Curwin->rc.graph_mems) {
+      pct_used = (float)MEM_VAL(mem_USE) * (100.0 / (float)MEM_VAL(mem_TOT));
+#ifdef MEMGRAPH_OLD
+      pct_misc = (float)(MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE)) * (100.0 / (float)MEM_VAL(mem_TOT));
+#else
+      pct_misc = (float)(MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - MEM_VAL(mem_USE)) * (100.0 / (float)MEM_VAL(mem_TOT));
+#endif
+      if (pct_used + pct_misc > 100.0 || pct_misc < 0) pct_misc = 0;
+      pct_swap = MEM_VAL(swp_TOT) ? (float)MEM_VAL(swp_USE) * (100.0 / (float)MEM_VAL(swp_TOT)) : 0;
+      ix = Curwin->rc.graph_mems - 1;
+#ifndef QUICK_GRAPHS
+      num_used = (int)((pct_used * Graph_adj) + .5),
+      num_misc = (int)((pct_misc * Graph_adj) + .5);
+      if (num_used + num_misc > Graph_len) num_misc = Graph_len - num_used;
+      snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
+      snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
+#else
+      (void)num_used; (void)num_misc;
+      snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
+      snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .4), gtab[ix].type);
+#endif
+      snprintf(dual, sizeof(dual), "%s%s", used, util);
+      snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
+      prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
+
+      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
+         , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual);
+      Msg_row += sum_see(row, memPARM);
+      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
+         , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util);
+      Msg_row += sum_see(row, memPARM);
+
+   } else {
+      my_misc = MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE);
+      prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(mem_FRE)));
+      prT(bfT(2), mkM(MEM_VAL(mem_USE))); prT(bfT(3), mkM(my_misc));
+      prT(bfT(4), mkM(MEM_VAL(swp_TOT))); prT(bfT(5), mkM(MEM_VAL(swp_FRE)));
+      prT(bfT(6), mkM(MEM_VAL(swp_USE))); prT(bfT(7), mkM(MEM_VAL(mem_AVL)));
+
+      snprintf(row, sizeof(row), N_unq(MEMORY_line1_fmt)
+         , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3));
+      Msg_row += sum_see(row, memPARM);
+      snprintf(row, sizeof(row), N_unq(MEMORY_line2_fmt)
+         , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
+         , N_txt(WORD_abv_mem_txt));
+      Msg_row += sum_see(row, memPARM);
+   }
+ #undef bfT
+ #undef scT
+ #undef mkM
+ #undef prT
+ #undef memPARM
+} // end: do_memory
 
 /*######  Main Screen routines  ##########################################*/
 
@@ -5747,11 +5956,7 @@ all_done:
          *    2) Display task/cpu states (maybe)
          *    3) Display memory & swap usage (maybe) */
 static void summary_show (void) {
- #define isROOM(f,n) (CHKw(w, f) && Msg_row + (n) < Screen_rows - 1)
- #define anyFLG 0xffffff
-   WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   char tmp[MEDBUFSIZ];
-   int i;
+ #define isROOM(f,n) (CHKw(Curwin, f) && Msg_row + (n) < Screen_rows - 1)
 
    if (Restrict_some) {
 #ifdef THREADED_TSK
@@ -5774,16 +5979,16 @@ static void summary_show (void) {
       if (!Rc.mode_altscr)
          show_special(0, fmtmk(LOADAV_line, Myname, procps_uptime_sprint()));
       else
-         show_special(0, fmtmk(CHKw(w, Show_TASKON)? LOADAV_line_alt : LOADAV_line
-            , w->grpname, procps_uptime_sprint()));
+         show_special(0, fmtmk(CHKw(Curwin, Show_TASKON)? LOADAV_line_alt : LOADAV_line
+            , Curwin->grpname, procps_uptime_sprint()));
       Msg_row += 1;
    } // end: View_LOADAV
 
 #ifdef THREADED_CPU
-   sem_wait(&Semaphore_cpus_end);
+      sem_wait(&Semaphore_cpus_end);
 #endif
 #ifdef THREADED_TSK
-   sem_wait(&Semaphore_tasks_end);
+      sem_wait(&Semaphore_tasks_end);
 #endif
    // Display Task and Cpu(s) States
    if (isROOM(View_STATES, 2)) {
@@ -5794,200 +5999,18 @@ static void summary_show (void) {
          , Pids_reap->counts->stopped, Pids_reap->counts->zombied));
       Msg_row += 1;
 
-      if (CHKw(w, View_CPUNOD)) {
-         if (Numa_node_sel < 0) {
-numa_oops:
-            // display the 1st /proc/stat line, then the nodes (if room)
-            Msg_row += sum_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
-            // display each cpu node's states
-            for (i = 0; i < Numa_node_tot; i++) {
-               struct stat_stack *nod_ptr = Stat_reap->numa->stacks[i];
-               if (NOD_VAL(stat_NU, i) == STAT_NODE_INVALID) continue;
-               if (!isROOM(anyFLG, 1)) break;
-               snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), NOD_VAL(stat_ID, i));
-               Msg_row += sum_tics(nod_ptr, tmp, 1);
-            }
-         } else {
-            // display the node summary, then the associated cpus (if room)
-            for (i = 0; i < Numa_node_tot; i++) {
-               if (Numa_node_sel == NOD_VAL(stat_ID, i)
-               && (NOD_VAL(stat_NU, i) != STAT_NODE_INVALID)) break;
-            }
-            if (i == Numa_node_tot) {
-               Numa_node_sel = -1;
-               goto numa_oops;
-            }
-            snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            Msg_row += sum_tics(Stat_reap->numa->stacks[Numa_node_sel], tmp, 1);
-#ifdef PRETEND48CPU
-            for (i = 0; i < Stat_reap->cpus->total; i++) {
-#else
-            for (i = 0; i < Cpu_cnt; i++) {
-#endif
-               if (Numa_node_sel == CPU_VAL(stat_NU, i)) {
-                  if (!isROOM(anyFLG, 1)) break;
-                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
-                  Msg_row += sum_tics(Stat_reap->cpus->stacks[i], tmp, 1);
-               }
-            }
-         }
-
-      } else if (CHKw(w, View_CPUSUM)) {
-         // display just the 1st /proc/stat line
-         Msg_row += sum_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
-
-      } else {
-         // display each cpu's states separately, screen height permitting...
-#ifdef PRETEND48CPU
-         if (w->rc.combine_cpus) {
-            int j;
-            for (i = 0, j = 0; i < Cpu_cnt; i++) {
-               Stat_reap->cpus->stacks[j]->head[stat_ID].result.s_int = i;
-               Msg_row += sum_unify(Stat_reap->cpus->stacks[j], (i+1 >= Cpu_cnt));
-               if (++j >= Stat_reap->cpus->total) j = 0;
-               if (!isROOM(anyFLG, 1)) break;
-            }
-         } else {
-            int j;
-            for (i = 0, j = 0; i < Cpu_cnt; i++) {
-               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), i);
-               Msg_row += sum_tics(Stat_reap->cpus->stacks[j], tmp, (i+1 >= Cpu_cnt));
-               if (++j >= Stat_reap->cpus->total) j = 0;
-               if (!isROOM(anyFLG, 1)) break;
-            }
-         }
-#else
-         if (w->rc.combine_cpus) {
-            for (i = 0; i < Cpu_cnt; i++) {
-               Msg_row += sum_unify(Stat_reap->cpus->stacks[i], (i+1 >= Cpu_cnt));
-               if (!isROOM(anyFLG, 1)) break;
-            }
-         } else {
-            for (i = 0; i < Cpu_cnt; i++) {
-               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
-               Msg_row += sum_tics(Stat_reap->cpus->stacks[i], tmp, (i+1 >= Cpu_cnt));
-               if (!isROOM(anyFLG, 1)) break;
-            }
-         }
-#endif
-      }
-   } // end: View_STATES
+      do_cpus();
+   }
 
 #ifdef THREADED_MEM
    sem_wait(&Semaphore_memory_end);
 #endif
    // Display Memory and Swap stats
    if (isROOM(View_MEMORY, 2)) {
-    #define bfT(n)  buftab[n].buf
-    #define scT(e)  scaletab[Rc.summ_mscale]. e
-    #define mkM(x) (float) x / scT(div)
-    #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
-#ifdef TOG4_OFF_MEM
-    #define memPARM 1
-#else
-    #define memPARM 0
-#endif
-      static struct {
-         float div;
-         const char *fmts;
-         const char *label;
-      } scaletab[] = {
-         { 1, "%.0f ", NULL },                             // kibibytes
-#ifdef BOOST_MEMORY
-         { 1024.0, "%#.3f ", NULL },                       // mebibytes
-         { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
-         { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
-         { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
-         { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
-#else
-         { 1024.0, "%#.1f ", NULL },                       // mebibytes
-         { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
-         { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
-         { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
-         { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
-#endif
-      };
-      struct { //                                            0123456789
-      // snprintf contents of each buf (after SK_Kb):       'nnnn.nnn 0'
-      // and prT macro might replace space at buf[8] with:   ------> +
-         char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
-      } buftab[8];
-
-      if (!scaletab[0].label) {
-         scaletab[0].label = N_txt(AMT_kilobyte_txt);
-         scaletab[1].label = N_txt(AMT_megabyte_txt);
-         scaletab[2].label = N_txt(AMT_gigabyte_txt);
-         scaletab[3].label = N_txt(AMT_terabyte_txt);
-         scaletab[4].label = N_txt(AMT_petabyte_txt);
-         scaletab[5].label = N_txt(AMT_exxabyte_txt);
-      }
-
-      if (w->rc.graph_mems) {
-         static const struct {
-            const char *used, *misc, *swap, *type;
-         } gtab[] = {
-            { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
-            { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
-         };
-         char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ], row[ROWMINSIZ];
-         float pct_used, pct_misc, pct_swap;
-         int ix, num_used, num_misc;
-
-         pct_used = (float)MEM_VAL(mem_USE) * (100.0 / (float)MEM_VAL(mem_TOT));
-#ifdef MEMGRAPH_OLD
-         pct_misc = (float)(MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE)) * (100.0 / (float)MEM_VAL(mem_TOT));
-#else
-         pct_misc = (float)(MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - MEM_VAL(mem_USE)) * (100.0 / (float)MEM_VAL(mem_TOT));
-#endif
-         if (pct_used + pct_misc > 100.0 || pct_misc < 0) pct_misc = 0;
-         pct_swap = MEM_VAL(swp_TOT) ? (float)MEM_VAL(swp_USE) * (100.0 / (float)MEM_VAL(swp_TOT)) : 0;
-         ix = w->rc.graph_mems - 1;
-#ifndef QUICK_GRAPHS
-         num_used = (int)((pct_used * Graph_adj) + .5),
-         num_misc = (int)((pct_misc * Graph_adj) + .5);
-         if (num_used + num_misc > Graph_len) num_misc = Graph_len - num_used;
-         snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
-         snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
-#else
-         (void)num_used; (void)num_misc;
-         snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
-         snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .4), gtab[ix].type);
-#endif
-         snprintf(dual, sizeof(dual), "%s%s", used, util);
-         snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
-         prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
-
-         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
-            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual);
-         Msg_row += sum_see(row, memPARM);
-         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
-            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util);
-         Msg_row += sum_see(row, memPARM);
-      } else {
-         char row[MEDBUFSIZ];
-         unsigned long my_misc = MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE);
-         prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(mem_FRE)));
-         prT(bfT(2), mkM(MEM_VAL(mem_USE))); prT(bfT(3), mkM(my_misc));
-         prT(bfT(4), mkM(MEM_VAL(swp_TOT))); prT(bfT(5), mkM(MEM_VAL(swp_FRE)));
-         prT(bfT(6), mkM(MEM_VAL(swp_USE))); prT(bfT(7), mkM(MEM_VAL(mem_AVL)));
-
-         snprintf(row, sizeof(row), N_unq(MEMORY_line1_fmt)
-            , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3));
-         Msg_row += sum_see(row, memPARM);
-         snprintf(row, sizeof(row), N_unq(MEMORY_line2_fmt)
-            , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
-            , N_txt(WORD_abv_mem_txt));
-         Msg_row += sum_see(row, memPARM);
-      }
-    #undef bfT
-    #undef scT
-    #undef mkM
-    #undef prT
-    #undef memPARM
-   } // end: View_MEMORY
+      do_memory();
+   }
 
  #undef isROOM
- #undef anyFLG
 } // end: summary_show
 
 

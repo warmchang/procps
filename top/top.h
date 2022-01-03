@@ -691,10 +691,13 @@ typedef struct WIN_t {
 //atic void          keys_task (int ch);
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
-/*------  Secondary summary display support (summary_show helpers)  ------*/
+/*------  Tertiary summary display support (summary_show helpers)  -------*/
 //atic inline int    sum_see (const char *str, int nobuf);
 //atic int           sum_tics (struct stat_stack *this, const char *pfx, int nobuf);
 //atic int           sum_unify (struct stat_stack *this, int nobuf);
+/*------  Secondary summary display support (summary_show helpers)  ------*/
+//atic void          do_cpus (void);
+//atic void          do_memory (void);
 /*------  Main Screen routines  ------------------------------------------*/
 //atic void          do_key (int ch);
 //atic void          summary_show (void);
