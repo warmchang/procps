@@ -29,6 +29,8 @@
 //#define CASEUP_HEXES            /* show all those hex values in upper case */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define EQUCOLHDRYES            /* yes, equalize the column header lengths */
+//#define FOCUS_HARD_Y            /* 'F' will avoid topmost task distortions */
+//#define FOCUS_TREE_X            /* 'F' resets forest view indentation to 0 */
 //#define GETOPTFIX_NO            /* do not address getopt_long deficiencies */
 //#define INSP_JUSTNOT            /* do not smooth unprintable right margins */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
@@ -57,7 +59,6 @@
 //#define TOG4_NOTRUNC            /* ensure no truncation for 2 abreast mode */
 //#define TOG4_OFF_MEM            /* don't show two abreast memory statistic */
 //#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
-//#define TREE_FOCUS_X            /* 'F' resets forest view indentation to 0 */
 //#define TREE_NORESET            /* sort keys should not force 'V' view off */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
@@ -373,7 +374,7 @@ typedef struct WIN_t {
    int    focus_pid;                   // target pid when 'F' toggle is active
    int    focus_beg;                   // ppt index where 'F' toggle has begun
    int    focus_end;                   // ppt index where 'F' toggle has ended
-#ifdef TREE_FOCUS_X
+#ifdef FOCUS_TREE_X
    int    focus_lvl;                   // the indentation level of parent task
 #endif
    struct pids_stack **ppt;            // this window's stacks ptr array

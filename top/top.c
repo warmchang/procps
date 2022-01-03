@@ -4625,7 +4625,7 @@ static void forest_config (WIN_t *q) {
    if (i == PIDSmaxt)
       q->focus_pid = q->begtask = 0;
    else {
-#ifdef TREE_FOCUS_X
+#ifdef FOCUS_TREE_X
       q->focus_lvl = rSv(i);
 #endif
       while (i+1 < PIDSmaxt && rSv(i+1) > level)
@@ -4636,6 +4636,15 @@ static void forest_config (WIN_t *q) {
          q->begtask = q->focus_beg;
          q->begnext = 0;     // as 'mkVIZoff' but in any window
       }
+#ifdef FOCUS_HARD_Y
+      // if some task 'above' us ended, try to maintain focus
+      // ( but allow scrolling when there are many children )
+      if (q->begtask > q->focus_beg
+      && (Screen_rows > (q->focus_end - q->focus_beg))) {
+         q->begtask = q->focus_beg;
+         q->begnext = 0;     // as 'mkVIZoff' but in any window
+      }
+#endif
    }
  #undef rSv
 } // end: forest_config
@@ -4658,7 +4667,7 @@ static inline const char *forest_display (const WIN_t *q, int idx) {
    const char *which = (CHKw(q, Show_CMDLIN)) ? rSv(eu_CMDLINE) : rSv(EU_CMD);
    int level = rSv_Lvl;
 
-#ifdef TREE_FOCUS_X
+#ifdef FOCUS_TREE_X
    if (q->focus_pid) {
       if (idx >= q->focus_beg && idx < q->focus_end)
          level -= q->focus_lvl;
