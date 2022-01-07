@@ -1365,7 +1365,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
     char *restrict const path = PT->path;
     for (;;) {
         ent = readdir(PT->procfs);
-        if (!ent || !ent->d_name[0]) return 0;
+        if (!ent || !ent->d_name[0]) break;
         if (*ent->d_name > '0' && *ent->d_name <= '9') {
             errno = 0;
             p->tgid = strtoul(ent->d_name, NULL, 10);
