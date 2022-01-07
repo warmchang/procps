@@ -4,7 +4,7 @@
  * Copyright (C) 2003 Chris Rivera
  * Copyright (C) 2004 Albert Cahalan
  * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
- * Copyright (C) 2016-2022 Jim Warnerl <james.warner@comcast.net>
+ * Copyright (C) 2016-2022 Jim Warner <james.warner@comcast.net>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
