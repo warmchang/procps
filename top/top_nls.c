@@ -11,7 +11,7 @@
  * GNU Library General Public License for more details.
  */
 /* For contributions to this program, the author wishes to thank:
- *    Craig Small, <csmall@small.dropbear.id.au>
+ *    Craig Small, <csmall@dropbear.xyz>
  *    Sami Kerola, <kerolasa@iki.fi>
  */
 
