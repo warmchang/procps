@@ -1361,17 +1361,22 @@ next_task:
 // This finds processes in /proc in the traditional way.
 // Return non-zero on success.
 static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) {
-  static __thread struct dirent *ent;   /* dirent handle */
-  char *restrict const path = PT->path;
-  for (;;) {
-    ent = readdir(PT->procfs);
-    if(!ent || !ent->d_name[0]) return 0;
-    if(*ent->d_name > '0' && *ent->d_name <= '9') break;
-  }
-  p->tgid = strtoul(ent->d_name, NULL, 10);
-  p->tid = p->tgid;
-  snprintf(path, PROCPATHLEN, "/proc/%s", ent->d_name);
-  return 1;
+    static __thread struct dirent *ent;   /* dirent handle */
+    char *restrict const path = PT->path;
+    for (;;) {
+        ent = readdir(PT->procfs);
+        if (!ent || !ent->d_name[0]) return 0;
+        if (*ent->d_name > '0' && *ent->d_name <= '9') {
+            errno = 0;
+            p->tgid = strtoul(ent->d_name, NULL, 10);
+            if (errno == 0) {
+                p->tid = p->tgid;
+                snprintf(path, PROCPATHLEN, "/proc/%d", p->tgid);
+                return 1;
+            }
+        }
+    }
+    return 0;
 }
 
 
