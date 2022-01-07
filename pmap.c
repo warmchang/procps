@@ -758,7 +758,7 @@ static void range_arguments(const char *optarg)
 
 	if ((buf = xstrdup(optarg)) == NULL) {
         xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
-              optarg);
+              (optarg?optarg:"(null)"));
     }
 	arg1 = buf;
 	arg2 = strchr(arg1, ',');
