@@ -137,7 +137,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define BIGBUFSIZ  2048
    /* in addition to the actual display data, our row might have to accommodate
       many termcap/color transitions - these definitions ensure we have room */
-#define ROWMINSIZ  ( SCREENMAX +  4 * (CAPBUFSIZ + CLRBUFSIZ) )
+#define ROWMINSIZ  ( SCREENMAX +  8 * (CAPBUFSIZ + CLRBUFSIZ) )
 #define ROWMAXSIZ  ( SCREENMAX + 16 * (CAPBUFSIZ + CLRBUFSIZ) )
    // minimum size guarantee for dynamically acquired 'readfile' buffer
 #define READMINSZ  2048

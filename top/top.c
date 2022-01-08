@@ -129,7 +129,7 @@ static char  Cap_clr_eol    [CAPBUFSIZ] = "",    // global and/or static vars
              Cap_norm       [CAPBUFSIZ] = "",
              Cap_reverse    [CAPBUFSIZ] = "",
              Caps_off       [CAPBUFSIZ] = "",
-             Caps_endline   [CAPBUFSIZ] = "";
+             Caps_endline   [SMLBUFSIZ] = "";
 #ifndef RMAN_IGNORED
 static char  Cap_rmam       [CAPBUFSIZ] = "",
              Cap_smam       [CAPBUFSIZ] = "";
@@ -913,7 +913,7 @@ static void show_special (int interact, const char *glob) {
      ( However, such an approach was abandoned. As a result )
      ( this function is called only with a glob under top's )
      ( control and never containing any 'raw/binary' chars! ) */
-   char tmp[LRGBUFSIZ], lin[LRGBUFSIZ], row[ROWMAXSIZ];
+   char tmp[LRGBUFSIZ], lin[LRGBUFSIZ], row[ROWMINSIZ];
    char *rp, *lin_end, *sub_beg, *sub_end;
    int room;
 
