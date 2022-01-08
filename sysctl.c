@@ -530,36 +530,36 @@ static int WriteSetting(
     const char *key,
     const char *path,
     const char *value,
-    const bool ignore_failure) {
-
+    const bool ignore_failure)
+{
     int rc = EXIT_SUCCESS;
     FILE *fp;
-	struct stat ts;
+    struct stat ts;
 
     if (!key || !path)
         return rc;
 
-	if (stat(path, &ts) < 0) {
-		if (!IgnoreError) {
-			xwarn(_("cannot stat %s"), path);
-			rc = EXIT_FAILURE;
-		}
+    if (stat(path, &ts) < 0) {
+        if (!IgnoreError) {
+            xwarn(_("cannot stat %s"), path);
+            rc = EXIT_FAILURE;
+        }
         return rc;
-	}
+    }
 
-	if (!is_proc_path(path)) {
-	    return EXIT_FAILURE;
-	}
+    if (!is_proc_path(path)) {
+        return EXIT_FAILURE;
+    }
 
-	if ((ts.st_mode & S_IWUSR) == 0) {
-		xwarn(_("setting key \"%s\""), key);
+    if ((ts.st_mode & S_IWUSR) == 0) {
+        xwarn(_("setting key \"%s\""), key);
         return rc;
-	}
+    }
 
-	if (S_ISDIR(ts.st_mode)) {
-		xwarn(_("setting key \"%s\""), key);
+    if (S_ISDIR(ts.st_mode)) {
+        xwarn(_("setting key \"%s\""), key);
         return rc;
-	}
+    }
 
     if (!DryRun) {
         if ((fp = fprocopen(path, "w")) == NULL) {
@@ -568,10 +568,10 @@ static int WriteSetting(
                 if (!IgnoreError) {
                     xwarnx(_("\"%s\" is an unknown key%s"),
                            key, (ignore_failure?_(", ignoring"):""));
-				if (!ignore_failure)
-				    rc = EXIT_FAILURE;
-			}
-			break;
+                    if (!ignore_failure)
+                        rc = EXIT_FAILURE;
+                }
+                break;
             case EPERM:
             case EROFS:
             case EACCES:
@@ -584,10 +584,10 @@ static int WriteSetting(
                 break;
             }
             if (!ignore_failure && errno != ENOENT)
-		    rc = EXIT_FAILURE;
+                rc = EXIT_FAILURE;
         } else {
-	    if (0 < fprintf(fp, "%s\n", value))
-		rc = EXIT_SUCCESS;
+            if (0 < fprintf(fp, "%s\n", value))
+                rc = EXIT_SUCCESS;
             if (close_stream(fp) != 0) {
                 xwarn(_("setting key \"%s\""), path);
                 return EXIT_FAILURE;
