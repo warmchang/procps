@@ -481,8 +481,8 @@ static void build_norm_nlstab (void) {
       "new command can offer.  The possibilities are endless, especially considering\n"
       "that 'pipe' type entries can include shell scripts too!\n"
       "\n"
-      "For additional important information, please consult the top documentation.\n"
-      "Then enhance top with your very own customized 'file' and 'pipe' entries.\n"
+      "For additional important information, please consult the top(1) man document.\n"
+      "Then, enhance top with your very own customized 'file' and/or 'pipe' entries.\n"
       "\n"
       "Enjoy!\n");
    Norm_nlstab[YINSP_noents_txt] = _("to enable 'Y' press <Enter> then type 'W' and restart top");
