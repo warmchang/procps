@@ -54,6 +54,7 @@
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scroll  */
+//#define SCROLLV_BY_1            /* when scrolling left/right don't move 8  */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIOS_ONLY            /* just limp along with native input only  */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
@@ -482,7 +483,11 @@ typedef struct WIN_t {
                      (3 == w->maxpflgs && EU_XON == w->procflgs[0] && VARcol(w->procflgs[1])))
 #endif
 #define VARleft(w)   (w->varcolbeg && VARright(w))
+#ifdef SCROLLV_BY_1
+#define SCROLLAMT    1
+#else
 #define SCROLLAMT    8
+#endif
 #endif
 
         // Support for a proper (visible) row #1 whenever Curwin changes
