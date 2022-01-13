@@ -5760,7 +5760,7 @@ numa_oops:
       Msg_row += sum_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
    }
  #undef noMAS
-} // end: void do_cpus
+} // end: do_cpus
 
 
         /*
