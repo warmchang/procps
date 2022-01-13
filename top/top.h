@@ -357,7 +357,7 @@ typedef struct WIN_t {
           capclr_msg [CLRBUFSIZ],      //   RCW_t colors (& rebuilt too),
           capclr_pmt [CLRBUFSIZ],      //   but NO recurring costs !
           capclr_hdr [CLRBUFSIZ],      //   note: sum, msg and pmt strs
-          capclr_rowhigh [CLRBUFSIZ],  //         are only used when this
+          capclr_rowhigh [SMLBUFSIZ],  //         are only used when this
           capclr_rownorm [CLRBUFSIZ],  //         window is the 'Curwin'!
           cap_bold [CAPBUFSIZ],        // support for View_NOBOLD toggle
           grpname [GRPNAMSIZ],         // window number:name, printable
