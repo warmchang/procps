@@ -4887,7 +4887,7 @@ static inline const char *forest_display (const WIN_t *q, int idx) {
    const char *which = (CHKw(q, Show_CMDLIN)) ? *p->cmdline : p->cmd;
    int level = p->pad_3;
 
-#ifdef TREE_FOCUS_X
+#ifdef FOCUS_TREE_X
    if (q->focus_pid) {
       if (idx >= q->focus_beg && idx < q->focus_end)
          level -= q->focus_lvl;
@@ -4928,7 +4928,7 @@ static void forest_excluded (WIN_t *q) {
    if (i == Frame_maxtask)
       q->focus_pid = q->begtask = 0;
    else {
-#ifdef TREE_FOCUS_X
+#ifdef FOCUS_TREE_X
       q->focus_lvl = level;
 #endif
       while (i+1 < Frame_maxtask && q->ppt[i+1]->pad_3 > level)
@@ -4939,6 +4939,15 @@ static void forest_excluded (WIN_t *q) {
          q->begtask = q->focus_beg;
          q->begnext = 0;     // as 'mkVIZoff' but in any window
       }
+#ifdef FOCUS_HARD_Y
+      // if some task 'above' us ended, try to maintain focus
+      // ( but allow scrolling when there are many children )
+      if (q->begtask > q->focus_beg
+      && (Screen_rows > (q->focus_end - q->focus_beg))) {
+         q->begtask = q->focus_beg;
+         q->begnext = 0;     // as 'mkVIZoff' but in any window
+      }
+#endif
    }
 } // end: forest_excluded
 
