@@ -1,6 +1,6 @@
 /* top.c - Source file:         show Linux processes */
 /*
- * Copyright (c) 2002-2022, by: James C. Warner
+ * Copyright (c) 2002-2022, by: Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -11,7 +11,7 @@
  * GNU Library General Public License for more details.
  */
 /* For contributions to this program, the author wishes to thank:
- *    Craig Small, <csmall@small.dropbear.id.au>
+ *    Craig Small, <csmall@dropbear.xyz>
  *    Albert D. Cahalan, <albert@users.sf.net>
  *    Sami Kerola, <kerolasa@iki.fi>
  */
