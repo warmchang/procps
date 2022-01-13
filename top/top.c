@@ -5792,7 +5792,7 @@ static void keys_xtra (int ch) {
 // show_msg(fmtmk("%s sort compatibility key honored", xmsg));
 } // end: keys_xtra
 
-/*######  Secondary summary display support (summary_show helpers)  ######*/
+/*######  Tertiary summary display support (summary_show helpers)  #######*/
 
         /*
          * note how alphabetical order is maintained within carefully chosen |
@@ -5926,6 +5926,190 @@ static int sum_unify (CPU_t *cpu, int nobuf) {
    return 0;
 } // end: sum_unify
 
+/*######  Secondary summary display support (summary_show helpers)  ######*/
+
+        /*
+         * A helper function that displays cpu and/or numa node stuff |
+         * ( so as to keep the 'summary_show' guy a reasonable size ) | */
+static void do_cpus (void) {
+ #define noMAS (Msg_row + 1 >= Screen_rows - 1)
+   char tmp[MEDBUFSIZ];
+   int i;
+
+   if (CHKw(Curwin, View_CPUNOD)) {
+      if (Numa_node_sel < 0) {
+         /*
+          * display the 1st /proc/stat line, then the nodes (if room) */
+         Msg_row += sum_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
+         // display each cpu node's states
+         for (i = 0; i < Numa_node_tot; i++) {
+            CPU_t *nod_ptr = &Cpu_tics[1 + smp_num_cpus + i];
+            if (noMAS) break;
+#ifndef OFF_NUMASKIP
+            if (!nod_ptr->id) continue;
+#endif
+            snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), i);
+            Msg_row += sum_tics(nod_ptr, tmp, 1);
+         }
+      } else {
+         /*
+          * display the node summary, then the associated cpus (if room) */
+         snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
+         Msg_row += sum_tics(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp, 1);
+#ifdef PRETEND48CPU
+ #define deLIMIT Cpu_true_tot
+#else
+ #define deLIMIT Cpu_faux_tot
+#endif
+         for (i = 0; i < deLIMIT; i++) {
+            if (Numa_node_sel == Cpu_tics[i].node) {
+               if (noMAS) break;
+               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
+               Msg_row += sum_tics(&Cpu_tics[i], tmp, 1);
+            }
+         }
+ #undef deLIMIT
+      }
+
+   } else if (!CHKw(Curwin, View_CPUSUM)) {
+      /*
+       * display each cpu's states separately, screen height permitting... */
+      if (Curwin->rc.combine_cpus) {
+         for (i = 0; i < Cpu_faux_tot; i++) {
+            Msg_row += sum_unify(&Cpu_tics[i], (i+1 >= Cpu_faux_tot));
+            if (noMAS) break;
+         }
+      } else {
+         for (i = 0; i < Cpu_faux_tot; i++) {
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
+            Msg_row += sum_tics(&Cpu_tics[i], tmp, (i+1 >= Cpu_faux_tot));
+            if (noMAS) break;
+         }
+      }
+
+   } else {
+      /*
+       * display just the 1st /proc/stat line */
+      Msg_row += sum_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
+   }
+ #undef noMAS
+} // end: do_cpus
+
+
+        /*
+         * A helper function which will display the memory/swap stuff |
+         * ( so as to keep the 'summary_show' guy a reasonable size ) | */
+static void do_memory (void) {
+ #define bfT(n)  buftab[n].buf
+ #define scT(e)  scaletab[Rc.summ_mscale]. e
+ #define mkM(x) (float)kb_main_ ## x / scT(div)
+ #define mkS(x) (float)kb_swap_ ## x / scT(div)
+ #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
+#ifdef TOG4_OFF_MEM
+ #define memPARM 1
+#else
+ #define memPARM 0
+#endif
+   static const struct {
+      const char *used, *misc, *swap, *type;
+   } gtab[] = {
+      { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
+      { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
+   };
+   static struct {
+      float div;
+      const char *fmts;
+      const char *label;
+   } scaletab[] = {
+      { 1, "%.0f ", NULL },                             // kibibytes
+#ifdef BOOST_MEMORY
+      { 1024.0, "%#.3f ", NULL },                       // mebibytes
+      { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
+      { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
+      { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
+      { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
+#else
+      { 1024.0, "%#.1f ", NULL },                       // mebibytes
+      { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
+      { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
+      { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
+      { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
+#endif
+   };
+   struct { //                                            0123456789
+      // snprintf contents of each buf (after SK_Kb):    'nnnn.nnn 0'
+      // & prT macro might replace space at buf[8] with: -------> +
+      char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
+   } buftab[8];
+   char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ], row[ROWMINSIZ];
+   float pct_used, pct_misc, pct_swap;
+   int ix, num_used, num_misc;
+   unsigned long kb_main_my_misc;
+
+   if (!scaletab[0].label) {
+      scaletab[0].label = N_txt(AMT_kilobyte_txt);
+      scaletab[1].label = N_txt(AMT_megabyte_txt);
+      scaletab[2].label = N_txt(AMT_gigabyte_txt);
+      scaletab[3].label = N_txt(AMT_terabyte_txt);
+      scaletab[4].label = N_txt(AMT_petabyte_txt);
+      scaletab[5].label = N_txt(AMT_exxabyte_txt);
+   }
+
+   if (Curwin->rc.graph_mems) {
+      pct_used = (float)kb_main_used * (100.0 / (float)kb_main_total);
+#ifdef MEMGRAPH_OLD
+      pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total);
+#else
+      pct_misc = (float)(kb_main_total - kb_main_available - kb_main_used) * (100.0 / (float)kb_main_total);
+#endif
+      if (pct_used + pct_misc > 100.0 || pct_misc < 0) pct_misc = 0;
+      pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
+      ix = Curwin->rc.graph_mems - 1;
+#ifndef QUICK_GRAPHS
+      num_used = (int)((pct_used * Graph_adj) + .5),
+      num_misc = (int)((pct_misc * Graph_adj) + .5);
+      if (num_used + num_misc > Graph_len) num_misc = Graph_len - num_used;
+      snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
+      snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
+#else
+      (void)num_used; (void)num_misc;
+      snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
+      snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .4), gtab[ix].type);
+#endif
+      snprintf(dual, sizeof(dual), "%s%s", used, util);
+      snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
+      prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
+
+      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
+         , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual);
+      Msg_row += sum_see(row, memPARM);
+      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
+         , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util);
+      Msg_row += sum_see(row, memPARM);
+
+   } else {
+      kb_main_my_misc = kb_main_buffers + kb_main_cached;
+      prT(bfT(0), mkM(total)); prT(bfT(1), mkM(free));
+      prT(bfT(2), mkM(used));  prT(bfT(3), mkM(my_misc));
+      prT(bfT(4), mkS(total)); prT(bfT(5), mkS(free));
+      prT(bfT(6), mkS(used));  prT(bfT(7), mkM(available));
+
+      snprintf(row, sizeof(row), N_unq(MEMORY_line1_fmt)
+         , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3));
+      Msg_row += sum_see(row, memPARM);
+      snprintf(row, sizeof(row), N_unq(MEMORY_line2_fmt)
+         , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
+         , N_txt(WORD_abv_mem_txt));
+      Msg_row += sum_see(row, memPARM);
+   }
+ #undef bfT
+ #undef scT
+ #undef mkM
+ #undef mkS
+ #undef prT
+ #undef memPARM
+} // end: do_memory
+
 /*######  Main Screen routines  ##########################################*/
 
         /*
@@ -6008,19 +6192,15 @@ all_done:
          *    2) Display task/cpu states (maybe)
          *    3) Display memory & swap usage (maybe) */
 static void summary_show (void) {
- #define isROOM(f,n) (CHKw(w, f) && Msg_row + (n) < Screen_rows - 1)
- #define anyFLG 0xffffff
-   WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   char tmp[MEDBUFSIZ];
-   int i;
+ #define isROOM(f,n) (CHKw(Curwin, f) && Msg_row + (n) < Screen_rows - 1)
 
    // Display Uptime and Loadavg
    if (isROOM(View_LOADAV, 1)) {
       if (!Rc.mode_altscr)
          show_special(0, fmtmk(LOADAV_line, Myname, sprint_uptime(0)));
       else
-         show_special(0, fmtmk(CHKw(w, Show_TASKON)? LOADAV_line_alt : LOADAV_line
-            , w->grpname, sprint_uptime(0)));
+         show_special(0, fmtmk(CHKw(Curwin, Show_TASKON)? LOADAV_line_alt : LOADAV_line
+            , Curwin->grpname, sprint_uptime(0)));
       Msg_row += 1;
    } // end: View_LOADAV
 
@@ -6032,175 +6212,15 @@ static void summary_show (void) {
          , Frame_stopped, Frame_zombied));
       Msg_row += 1;
 
-      if (CHKw(w, View_CPUNOD)) {
-         if (Numa_node_sel < 0) {
-            // display the 1st /proc/stat line, then the nodes (if room)
-            Msg_row += sum_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
-            // display each cpu node's states
-            for (i = 0; i < Numa_node_tot; i++) {
-               CPU_t *nod_ptr = &Cpu_tics[1 + smp_num_cpus + i];
-               if (!isROOM(anyFLG, 1)) break;
-#ifndef OFF_NUMASKIP
-               if (nod_ptr->id) {
-#endif
-               snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), i);
-               Msg_row += sum_tics(nod_ptr, tmp, 1);
-#ifndef OFF_NUMASKIP
-               }
-#endif
-            }
-         } else {
-            // display the node summary, then the associated cpus (if room)
-            snprintf(tmp, sizeof(tmp), N_fmt(NUMA_nodenam_fmt), Numa_node_sel);
-            Msg_row += sum_tics(&Cpu_tics[1 + smp_num_cpus + Numa_node_sel], tmp, 1);
-#ifdef PRETEND48CPU
-            for (i = 0; i < Cpu_true_tot; i++) {
-#else
-            for (i = 0; i < Cpu_faux_tot; i++) {
-#endif
-               if (Numa_node_sel == Cpu_tics[i].node) {
-                  if (!isROOM(anyFLG, 1)) break;
-                  snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
-                  Msg_row += sum_tics(&Cpu_tics[i], tmp, 1);
-               }
-            }
-         }
-
-      } else if (CHKw(w, View_CPUSUM)) {
-         // display just the 1st /proc/stat line
-         Msg_row += sum_tics(&Cpu_tics[smp_num_cpus], N_txt(WORD_allcpus_txt), 1);
-
-      } else {
-         // display each cpu's states separately, screen height permitting...
-         if (w->rc.combine_cpus) {
-            for (i = 0; i < Cpu_faux_tot; i++) {
-               Msg_row += sum_unify(&Cpu_tics[i], (i+1 >= Cpu_faux_tot));
-               if (!isROOM(anyFLG, 1)) break;
-            }
-         } else {
-            for (i = 0; i < Cpu_faux_tot; i++) {
-               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), Cpu_tics[i].id);
-               Msg_row += sum_tics(&Cpu_tics[i], tmp, (i+1 >= Cpu_faux_tot));
-               if (!isROOM(anyFLG, 1)) break;
-            }
-         }
-      }
-   } // end: View_STATES
+      do_cpus();
+   }
 
    // Display Memory and Swap stats
    if (isROOM(View_MEMORY, 2)) {
-    #define bfT(n)  buftab[n].buf
-    #define scT(e)  scaletab[Rc.summ_mscale]. e
-    #define mkM(x) (float)kb_main_ ## x / scT(div)
-    #define mkS(x) (float)kb_swap_ ## x / scT(div)
-    #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
-#ifdef TOG4_OFF_MEM
-    #define memPARM 1
-#else
-    #define memPARM 0
-#endif
-      static struct {
-         float div;
-         const char *fmts;
-         const char *label;
-      } scaletab[] = {
-         { 1, "%.0f ", NULL },                             // kibibytes
-#ifdef BOOST_MEMORY
-         { 1024.0, "%#.3f ", NULL },                       // mebibytes
-         { 1024.0*1024, "%#.3f ", NULL },                  // gibibytes
-         { 1024.0*1024*1024, "%#.3f ", NULL },             // tebibytes
-         { 1024.0*1024*1024*1024, "%#.3f ", NULL },        // pebibytes
-         { 1024.0*1024*1024*1024*1024, "%#.3f ", NULL }    // exbibytes
-#else
-         { 1024.0, "%#.1f ", NULL },                       // mebibytes
-         { 1024.0*1024, "%#.1f ", NULL },                  // gibibytes
-         { 1024.0*1024*1024, "%#.1f ", NULL },             // tebibytes
-         { 1024.0*1024*1024*1024, "%#.1f ", NULL },        // pebibytes
-         { 1024.0*1024*1024*1024*1024, "%#.1f ", NULL }    // exbibytes
-#endif
-      };
-      struct { //                                            0123456789
-      // snprintf contents of each buf (after SK_Kb):       'nnnn.nnn 0'
-      // and prT macro might replace space at buf[8] with:   ------> +
-         char buf[10]; // MEMORY_lines_fmt provides for 8+1 bytes
-      } buftab[8];
-
-      if (!scaletab[0].label) {
-         scaletab[0].label = N_txt(AMT_kilobyte_txt);
-         scaletab[1].label = N_txt(AMT_megabyte_txt);
-         scaletab[2].label = N_txt(AMT_gigabyte_txt);
-         scaletab[3].label = N_txt(AMT_terabyte_txt);
-         scaletab[4].label = N_txt(AMT_petabyte_txt);
-         scaletab[5].label = N_txt(AMT_exxabyte_txt);
-      }
-
-      if (w->rc.graph_mems) {
-         static const struct {
-            const char *used, *misc, *swap, *type;
-         } gtab[] = {
-            { "%-.*s~7", "%-.*s~8", "%-.*s~8", Graph_bars },
-            { "%-.*s~4", "%-.*s~6", "%-.*s~6", Graph_blks }
-         };
-         char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ], row[ROWMINSIZ];
-         float pct_used, pct_misc, pct_swap;
-         int ix, num_used, num_misc;
-
-         pct_used = (float)kb_main_used * (100.0 / (float)kb_main_total);
-#ifdef MEMGRAPH_OLD
-         pct_misc = (float)(kb_main_buffers + kb_main_cached) * (100.0 / (float)kb_main_total);
-#else
-         pct_misc = (float)(kb_main_total - kb_main_available - kb_main_used) * (100.0 / (float)kb_main_total);
-#endif
-         if (pct_used + pct_misc > 100.0 || pct_misc < 0) pct_misc = 0;
-         pct_swap = kb_swap_total ? (float)kb_swap_used * (100.0 / (float)kb_swap_total) : 0;
-         ix = w->rc.graph_mems - 1;
-#ifndef QUICK_GRAPHS
-         num_used = (int)((pct_used * Graph_adj) + .5),
-         num_misc = (int)((pct_misc * Graph_adj) + .5);
-         if (num_used + num_misc > Graph_len) num_misc = Graph_len - num_used;
-         snprintf(used, sizeof(used), gtab[ix].used, num_used, gtab[ix].type);
-         snprintf(util, sizeof(util), gtab[ix].misc, num_misc, gtab[ix].type);
-#else
-         (void)num_used; (void)num_misc;
-         snprintf(used, sizeof(used), gtab[ix].used, (int)((pct_used * Graph_adj) + .5), gtab[ix].type);
-         snprintf(util, sizeof(util), gtab[ix].misc, (int)((pct_misc * Graph_adj) + .4), gtab[ix].type);
-#endif
-         snprintf(dual, sizeof(dual), "%s%s", used, util);
-         snprintf(util, sizeof(util), gtab[ix].swap, (int)((pct_swap * Graph_adj) + .5), gtab[ix].type);
-         prT(bfT(0), mkM(total)); prT(bfT(1), mkS(total));
-
-         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
-            , scT(label), N_txt(WORD_abv_mem_txt), pct_used + pct_misc, bfT(0), Graph_len +4, dual);
-         Msg_row += sum_see(row, memPARM);
-         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3[~1%-*s]~1"
-            , scT(label), N_txt(WORD_abv_swp_txt), pct_swap, bfT(1), Graph_len +2, util);
-         Msg_row += sum_see(row, memPARM);
-      } else {
-         char row[MEDBUFSIZ];
-         unsigned long kb_main_my_misc = kb_main_buffers + kb_main_cached;
-         prT(bfT(0), mkM(total)); prT(bfT(1), mkM(free));
-         prT(bfT(2), mkM(used));  prT(bfT(3), mkM(my_misc));
-         prT(bfT(4), mkS(total)); prT(bfT(5), mkS(free));
-         prT(bfT(6), mkS(used));  prT(bfT(7), mkM(available));
-
-         snprintf(row, sizeof(row), N_unq(MEMORY_line1_fmt)
-            , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3));
-         Msg_row += sum_see(row, memPARM);
-         snprintf(row, sizeof(row), N_unq(MEMORY_line2_fmt)
-            , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
-            , N_txt(WORD_abv_mem_txt));
-         Msg_row += sum_see(row, memPARM);
-      }
-    #undef bfT
-    #undef scT
-    #undef mkM
-    #undef mkS
-    #undef prT
-    #undef memPARM
-   } // end: View_MEMORY
+      do_memory();
+   }
 
  #undef isROOM
- #undef anyFLG
 } // end: summary_show
 
 
