@@ -4905,8 +4905,16 @@ static inline const char *forest_display (const WIN_t *q, int idx) {
 #endif
       return buf;
    }
-   if (level > 100) snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+   if (level > 100) {
+      snprintf(buf, sizeof(buf), "%400s%s", " +  ", which);
+      return buf;
+   }
+#ifndef FOCUS_VIZOFF
+   if (q->focus_pid) snprintf(buf, sizeof(buf), "|%*s%s", ((4 * level) - 1), "`- ", which);
    else snprintf(buf, sizeof(buf), "%*s%s", (4 * level), " `- ", which);
+#else
+   snprintf(buf, sizeof(buf), "%*s%s", (4 * level), " `- ", which);
+#endif
    return buf;
 } // end: forest_display
 
