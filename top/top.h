@@ -31,6 +31,7 @@
 //#define EQUCOLHDRYES            /* yes, equalize the column header lengths */
 //#define FOCUS_HARD_Y            /* 'F' will avoid topmost task distortions */
 //#define FOCUS_TREE_X            /* 'F' resets forest view indentation to 0 */
+//#define FOCUS_VIZOFF            /* 'F' doesn't provide the visual clue '|' */
 //#define GETOPTFIX_NO            /* do not address getopt_long deficiencies */
 //#define INSP_JUSTNOT            /* do not smooth unprintable right margins */
 //#define INSP_OFFDEMO            /* disable demo screens, issue msg instead */
