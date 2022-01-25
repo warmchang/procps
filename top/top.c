@@ -92,8 +92,8 @@ static float       Cpu_pmax;
 static const char *Cpu_States_fmts;
 
         /* Specific process id monitoring support */
-static unsigned Monpids [MONPIDMAX+1] = { 0 };
-static int      Monpidsidx = 0;
+static int Monpids [MONPIDMAX+1] = { 0 };
+static int Monpidsidx = 0;
 
         /* Current screen dimensions.
            note: the number of processes displayed is tracked on a per window
@@ -2516,7 +2516,7 @@ static void *tasks_refresh (void *unused) {
       what = Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
       if (Monpidsidx) {
          what |= PIDS_SELECT_PID;
-         Pids_reap = procps_pids_select(Pids_ctx, Monpids, Monpidsidx, what);
+         Pids_reap = procps_pids_select(Pids_ctx, (unsigned *)Monpids, Monpidsidx, what);
       } else
          Pids_reap = procps_pids_reap(Pids_ctx, what);
       if (!Pids_reap)
@@ -4463,12 +4463,12 @@ static inline int wins_usrselect (const WIN_t *q, int idx) {
       case 0:                                    // uid selection inactive
          return 1;
       case 'U':                                  // match any uid
-         if (rSv(EU_URD)     == q->usrseluid) return q->usrselflg;
-         if (rSv(EU_USD)     == q->usrseluid) return q->usrselflg;
-         if (rSv(eu_ID_FUID) == q->usrseluid) return q->usrselflg;
+         if (rSv(EU_URD)     == (unsigned)q->usrseluid) return q->usrselflg;
+         if (rSv(EU_USD)     == (unsigned)q->usrseluid) return q->usrselflg;
+         if (rSv(eu_ID_FUID) == (unsigned)q->usrseluid) return q->usrselflg;
       // fall through...
       case 'u':                                  // match effective uid
-         if (rSv(EU_UED)     == q->usrseluid) return q->usrselflg;
+         if (rSv(EU_UED)     == (unsigned)q->usrseluid) return q->usrselflg;
       // fall through...
       default:                                   // no match...
          ;
