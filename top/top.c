@@ -4925,7 +4925,7 @@ static inline const char *forest_display (const WIN_t *q, int idx) {
          * determines that window's 'focus_beg' plus 'focus_end' values. |
          * But, if the pid can no longer be found, he'll turn off focus! | */
 static void forest_excluded (WIN_t *q) {
-   int i, level;
+   int i, level = 0;
 
    for (i = 0; i < Frame_maxtask; i++) {
       if (q->focus_pid == q->ppt[i]->tid) {
