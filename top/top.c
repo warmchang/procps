@@ -939,6 +939,7 @@ static void show_special (int interact, const char *glob) {
                // ( '~1' thru '~8' is valid range, '~0' is never actually used )
                *(sub_end + 1) = '\0';  // extend str end, then fall through
                *(sub_end + 2) = '\0';  // ( +1 optimization for usual path )
+            // fall through
             case 1: case 2: case 3: case 4:
             case 5: case 6: case 7: case 8:
                *sub_end = '\0';
