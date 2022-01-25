@@ -4614,7 +4614,7 @@ static void forest_begin (WIN_t *q) {
 static void forest_config (WIN_t *q) {
   // tailored 'results stack value' extractor macro
  #define rSv(x) PID_VAL(eu_TREE_LVL, s_int, q->ppt[(x)])
-   int i, level;
+   int i, level = 0;
 
    for (i = 0; i < PIDSmaxt; i++) {
       if (q->focus_pid == PID_VAL(EU_PID, s_int, q->ppt[i])) {
