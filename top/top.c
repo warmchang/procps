@@ -4737,12 +4737,12 @@ static inline int wins_usrselect (const WIN_t *q, const int idx) {
       case 0:                                    // uid selection inactive
          return 1;
       case 'U':                                  // match any uid
-         if (p->ruid == q->usrseluid) return q->usrselflg;
-         if (p->suid == q->usrseluid) return q->usrselflg;
-         if (p->fuid == q->usrseluid) return q->usrselflg;
+         if (p->ruid == (unsigned)q->usrseluid) return q->usrselflg;
+         if (p->suid == (unsigned)q->usrseluid) return q->usrselflg;
+         if (p->fuid == (unsigned)q->usrseluid) return q->usrselflg;
       // fall through...
       case 'u':                                  // match effective uid
-         if (p->euid == q->usrseluid) return q->usrselflg;
+         if (p->euid == (unsigned)q->usrseluid) return q->usrselflg;
       // fall through...
       default:                                   // no match...
          ;
