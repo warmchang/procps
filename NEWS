@@ -6,6 +6,7 @@ procps-ng-NEXT
   * library: renamed to libproc-2 and reset to 0:0:0
   * library: add support for accessing smaps_rollup        issue #112, #201
   * library: add support for accessing autogroups
+  * library: add support for LIBPROC_HIDE_KERNEL env var   merge #147
   * pkill: Check for lt- variants of program name          issue #192
   * pgrep: Add newline after regex error message           merge #91
   * pgrep: Fix selection where uid/gid > 2^31              merge !146
