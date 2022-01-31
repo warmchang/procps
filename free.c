@@ -173,6 +173,30 @@ static void check_unit_set(int *unit_set)
     *unit_set = 1;
 }
 
+/*
+ * Print the header columns.
+ * We cannot simply use the second printf because the length of the
+ * translated strings doesn't work with it. Instead we need to find
+ * the wide length of the string and use that.
+ * This method also removes the messy wprintf/printf buffering issues
+ */
+#define HC_WIDTH 9
+static void print_head_col(const char *str)
+{
+    int len;
+    int spaces = 9;
+
+    len = mbstowcs(NULL, str, 0);
+    if (len < 0)
+        spaces = 9;
+    else if (len < HC_WIDTH)
+        spaces = HC_WIDTH - len;
+    else
+        spaces = 0;
+
+    printf("%s%.*s", str, spaces, "         ");
+}
+
 int main(int argc, char **argv)
 {
 	int c, flags = 0, unit_set = 0;
@@ -343,7 +367,7 @@ int main(int argc, char **argv)
 			printf(_("               total        used        free      shared  buff/cache   available"));
 		}
 		printf("\n");
-		printf("%-9s", _("Mem:"));
+		print_head_col(_("Mem:"));
 		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int), flags, args));
@@ -366,27 +390,27 @@ int main(int argc, char **argv)
 		 * to print the high info, even if it is zero.
 		 */
 		if (flags & FREE_LOHI) {
-			printf("%-9s", _("Low:"));
+			print_head_col(_("Low:"));
 			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_TOTAL, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_USED, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_FREE, ul_int), flags, args));
 			printf("\n");
 
-			printf("%-9s", _("High:"));
+			print_head_col( _("High:"));
 			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_TOTAL, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_USED, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_FREE, ul_int), flags, args));
 			printf("\n");
 		}
 
-		printf("%-9s", _("Swap:"));
+		print_head_col(_("Swap:"));
 		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), flags, args));
 		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_FREE, ul_int), flags, args));
 		printf("\n");
 
 		if (flags & FREE_TOTAL) {
-			printf("%-9s", _("Total:"));
+			print_head_col(_("Total:"));
 			printf("%11s", scale_size(
 				    MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int) +
 				    MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), flags, args));
@@ -399,7 +423,7 @@ int main(int argc, char **argv)
 			printf("\n");
 		}
 		if (flags & FREE_COMMITTED) {
-			printf("%-9s", _("Comm:"));
+			print_head_col(_("Comm:"));
 			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMIT_LIMIT, ul_int), flags, args));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMITTED_AS, ul_int), flags, args));
 			printf(" %11s", scale_size(
