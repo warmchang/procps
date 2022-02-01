@@ -4,6 +4,7 @@ procps-ng-NEXT
   * free: Add committed line option                        merge #25
   * free: Fix -h --si combined options                     issue #133, #223
   * free: Fix first column justification                   issue #229, #204, #206, Debian #1001689
+  * free: Better spacing for Chinese language              issue #213
   * library: renamed to libproc-2 and reset to 0:0:0
   * library: add support for accessing smaps_rollup        issue #112, #201
   * library: add support for accessing autogroups

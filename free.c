@@ -34,6 +34,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <wchar.h>
 
 #include "config.h"
 #include "c.h"
@@ -185,13 +186,18 @@ static void print_head_col(const char *str)
 {
     int len;
     int spaces = 9;
+    wchar_t wstr[BUFSIZ];
 
-    len = mbstowcs(NULL, str, 0);
+    len = mbstowcs(wstr, str, BUFSIZ);
     if (len < 0)
         spaces = 9;
-    else if (len < HC_WIDTH)
-        spaces = HC_WIDTH - len;
-    else
+    else if (len < HC_WIDTH) {
+        int width;
+        if ( (width = wcswidth(wstr, 99)) > 0)
+            spaces = HC_WIDTH - width;
+        else
+            spaces = HC_WIDTH - len;
+    } else
         spaces = 0;
 
     printf("%s%.*s", str, spaces, "         ");
