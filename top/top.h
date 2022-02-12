@@ -677,7 +677,7 @@ typedef struct WIN_t {
 //atic void          wins_stage_2 (void);
 //atic inline int    wins_usrselect (const WIN_t *q, int idx);
 /*------  Forest View support  -------------------------------------------*/
-//atic void          forest_adds (const int self, unsigned level);
+//atic void          forest_adds (const int self, int level);
 //atic void          forest_begin (WIN_t *q);
 //atic void          forest_config (WIN_t *q);
 //atic inline const char *forest_display (const WIN_t *q, int idx);

@@ -215,9 +215,9 @@ static char Double_sp[] =  " ~1 ~6 ";
 #define DOUBLE_space  (sizeof(Double_sp) - 5)    // 1 for null, 4 unprintable
 #endif
 #ifdef TOG4_NOTRUNC
- #define DOUBLE_limit  (160 + DOUBLE_space)
+ #define DOUBLE_limit  (int)( 160 + DOUBLE_space )
 #else
- #define DOUBLE_limit  ( 80 )
+ #define DOUBLE_limit  (int)( 80 )
 #endif
 
         /* Support for the new library API -- acquired (if necessary)
@@ -2307,9 +2307,8 @@ static void zap_fieldstab (void) {
    } wtab[EU_MAXPFLGS];
 #endif
    static int once;
-   unsigned digits;
+   int i, digits;
    char buf[8];
-   int i;
 
    if (!once) {
       Fieldstab[EU_CPN].width = 1;
@@ -2317,7 +2316,7 @@ static void zap_fieldstab (void) {
       Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
          = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
          = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = 5;
-      if (5 < (digits = procps_pid_length())) {
+      if (5 < (digits = (int)procps_pid_length())) {
          if (10 < digits) error_exit(N_txt(FAIL_widepid_txt));
          Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
             = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
@@ -2355,13 +2354,13 @@ static void zap_fieldstab (void) {
    }
 
 #ifdef WIDEN_COLUMN
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt);
+   digits = snprintf(buf, sizeof(buf), "%d", Cpu_cnt);
    if (wtab[EU_CPN].wmin < digits) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       wtab[EU_CPN].wmin = digits;
       Fieldstab[EU_CPN].width = maX(EU_CPN);
    }
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot);
+   digits = snprintf(buf, sizeof(buf), "%d", Numa_node_tot);
    if (wtab[EU_NMA].wmin < digits) {
       wtab[EU_NMA].wmin = digits;
       Fieldstab[EU_NMA].width = maX(EU_NMA);
@@ -2375,12 +2374,12 @@ static void zap_fieldstab (void) {
       }
    }
 #else
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Cpu_cnt);
+   digits = snprintf(buf, sizeof(buf), "%d", Cpu_cnt);
    if (1 < digits) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       Fieldstab[EU_CPN].width = digits;
    }
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot);
+   digits = snprintf(buf, sizeof(buf), "%d", Numa_node_tot);
    if (2 < digits)
       Fieldstab[EU_NMA].width = digits;
 
@@ -5602,9 +5601,13 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
       { "%-.*s~4", "%-.*s~6", Graph_blks }
    };
    SIC_t idl_frme, tot_frme;
-   int ix, num_user, num_syst;
    float pct_user, pct_syst, scale;
    char user[SMLBUFSIZ], syst[SMLBUFSIZ], dual[MEDBUFSIZ];
+#ifndef QUICK_GRAPHS
+   int ix, num_user, num_syst;
+#else
+   int ix;
+#endif
 
    idl_frme = rSv(stat_IL);
    tot_frme = rSv(stat_SUM_TOT);
@@ -5621,9 +5624,9 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
          , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale), nobuf);
    } else {
       ix = Curwin->rc.graph_cpus - 1;
-#ifndef QUICK_GRAPHS
       pct_user = (float)rSv(stat_SUM_USR) * scale,
       pct_syst = (float)rSv(stat_SUM_SYS) * scale;
+#ifndef QUICK_GRAPHS
       num_user = (int)((pct_user * Graph_adj) + .5),
       num_syst = (int)((pct_syst * Graph_adj) + .5);
       if (num_user + num_syst > Graph_len) num_syst = Graph_len - num_user;
