@@ -1166,6 +1166,10 @@ static int ioch (int ech, char *buf, unsigned cnt) {
 } // end: ioch
 
 
+#define IOKEY_INIT 0
+#define IOKEY_ONCE 1
+#define IOKEY_NEXT 2
+
         /*
          * Support for single or multiple keystroke input AND
          * escaped cursor motion keys.
@@ -1199,7 +1203,7 @@ static int iokey (int action) {
 #endif
    int i;
 
-   if (action == 0) {
+   if (action == IOKEY_INIT) {
     #define tOk(s)  s ? s : ""
       tinfo_tab[0].str  = tOk(key_backspace);
       tinfo_tab[1].str  = tOk(key_ic);
@@ -1219,13 +1223,13 @@ static int iokey (int action) {
     #undef tOk
    }
 
-   if (action == 1) {
+   if (action == IOKEY_ONCE) {
       memset(buf, '\0', sizeof(buf));
       if (1 > ioch(0, buf, sizeof(buf)-1)) return 0;
    }
 
 #ifndef TERMIOS_ONLY
-   if (action == 2) {
+   if (action == IOKEY_NEXT) {
       if (pos < len)
          return buf[pos++];            // exhaust prior keystrokes
       pos = len = 0;
@@ -1313,7 +1317,7 @@ static char *ioline (const char *prompt) {
    do {
       fflush(stdout);
       len = strlen(buf);
-      key = iokey(2);
+      key = iokey(IOKEY_NEXT);
       switch (key) {
          case 0:
             buf[0] = '\0';
@@ -2292,7 +2296,7 @@ signify_that:
       fflush(stdout);
 
       if (Frames_signal) goto signify_that;
-      key = iokey(1);
+      key = iokey(IOKEY_ONCE);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -3346,7 +3350,7 @@ signify_that:
       tcflush(STDIN_FILENO, TCIFLUSH);
 
       if (Frames_signal) goto signify_that;
-      key = iokey(1);
+      key = iokey(IOKEY_ONCE);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -3402,7 +3406,7 @@ signify_that:
          case '=':
             snprintf(buf, sizeof(buf), "%s: %s", Insp_sel->type, Insp_sel->fmts);
             INSP_MKSL(1, buf);    // show an extended SL
-            if (iokey(1) < 1)
+            if (iokey(IOKEY_ONCE) < 1)
                goto signify_that;
             break;
          default:                 // keep gcc happy
@@ -3458,7 +3462,7 @@ signify_that:
       INSP_MKSL(0, " ");
 
       if (Frames_signal) goto signify_that;
-      if (key == INT_MAX) key = iokey(1);
+      if (key == INT_MAX) key = iokey(IOKEY_ONCE);
       if (key < 1) goto signify_that;
 
       switch (key) {
@@ -4412,7 +4416,7 @@ static void whack_terminal (void) {
    if (enter_ca_mode) putp(enter_ca_mode);
 #endif
    // and don't forget to ask iokey to initialize his tinfo_tab
-   iokey(0);
+   iokey(IOKEY_INIT);
 } // end: whack_terminal
 
 /*######  Windows/Field Groups support  #################################*/
@@ -4458,7 +4462,7 @@ static WIN_t *win_select (int ch) {
       so we must try to get our own darn ch by begging the user... */
    if (!ch) {
       show_pmt(N_txt(CHOOSE_group_txt));
-      if (1 > (ch = iokey(1))) return w;
+      if (1 > (ch = iokey(IOKEY_ONCE))) return w;
    }
    switch (ch) {
       case 'a':                   // we don't carry 'a' / 'w' in our
@@ -4548,7 +4552,7 @@ signify_that:
       fflush(stdout);
 
       if (Frames_signal) goto signify_that;
-      key = iokey(1);
+      key = iokey(IOKEY_ONCE);
       if (key < 1) goto signify_that;
       if (key == kbd_ESC) break;
 
@@ -5045,7 +5049,7 @@ signify_that:
    fflush(stdout);
 
    if (Frames_signal) goto signify_that;
-   key = iokey(1);
+   key = iokey(IOKEY_ONCE);
    if (key < 1) goto signify_that;
 
    switch (key) {
@@ -5060,7 +5064,7 @@ signify_that:
                , Winstk[2].rc.winname, Winstk[3].rc.winname));
             putp(Cap_clr_eos);
             fflush(stdout);
-            if (Frames_signal || (key = iokey(1)) < 1) {
+            if (Frames_signal || (key = iokey(IOKEY_ONCE)) < 1) {
                adj_geometry();
                putp(Cap_clr_scr);
             } else w = win_select(key);
@@ -5127,13 +5131,13 @@ static void write_rcfile (void) {
 
    if (Rc_questions) {
       show_pmt(N_txt(XTRA_warncfg_txt));
-      if ('y' != tolower(iokey(1)))
+      if ('y' != tolower(iokey(IOKEY_ONCE)))
          return;
       Rc_questions = 0;
    }
    if (Rc_compatibilty) {
       show_pmt(N_txt(XTRA_warnold_txt));
-      if ('y' != tolower(iokey(1)))
+      if ('y' != tolower(iokey(IOKEY_ONCE)))
          return;
       Rc_compatibilty = 0;
    }
@@ -6777,7 +6781,7 @@ int main (int argc, char *argv[]) {
          pselect(0, NULL, NULL, NULL, &ts, NULL);
       else {
          if (ioa(&ts))
-            do_key(iokey(1));
+            do_key(iokey(IOKEY_ONCE));
       }
            /* note: that above ioa routine exists to consolidate all logic
                     which is susceptible to signal interrupt and must then
