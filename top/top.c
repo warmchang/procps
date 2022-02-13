@@ -6045,8 +6045,8 @@ static const char *task_show (const WIN_t *q, int idx) {
     else cp = make_str_utf8((q->varcolbeg < ((int)strlen(pv) - utf8_delta(pv))) \
     ? pv + utf8_embody(pv, q->varcolbeg) : "", q->varcolsz, Js, AUTOX_NO); }
 #else
- #define makeVAR(S) cp = make_str(S, q->varcolsz, Js, AUTOX_NO)
- #define varUTF8(S) cp = make_str_utf8(S, q->varcolsz, Js, AUTOX_NO)
+ #define makeVAR(S)  { cp = make_str(S, q->varcolsz, Js, AUTOX_NO); }
+ #define varUTF8(S)  { cp = make_str_utf8(S, q->varcolsz, Js, AUTOX_NO); }
 #endif
    struct pids_stack *p = q->ppt[idx];
    static char rbuf[ROWMINSIZ];
@@ -6246,15 +6246,15 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_ENV:        // PIDS_ENVIRON
          case EU_EXE:        // PIDS_EXE
          case EU_SGN:        // PIDS_SUPGROUPS
-            varUTF8(rSv(i, str));
+            varUTF8(rSv(i, str))
             break;
    /* str, make_str with varialbe width */
          case EU_SGD:        // PIDS_SUPGIDS
-            makeVAR(rSv(EU_SGD, str));
+            makeVAR(rSv(EU_SGD, str))
             break;
    /* str, make_str with varialbe width + additional decoration */
          case EU_CMD:        // PIDS_CMD or PIDS_CMDLINE
-            varUTF8(forest_display(q, idx));
+            varUTF8(forest_display(q, idx))
             break;
          default:            // keep gcc happy
             continue;
