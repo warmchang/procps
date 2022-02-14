@@ -248,9 +248,9 @@ static char Double_sp[] =  " ~1 ~6 ";
 #define DOUBLE_space  (sizeof(Double_sp) - 5)    // 1 for null, 4 unprintable
 #endif
 #ifdef TOG4_NOTRUNC
- #define DOUBLE_limit  (160 + DOUBLE_space)
+ #define DOUBLE_limit  (int)( 160 + DOUBLE_space )
 #else
- #define DOUBLE_limit  ( 80 )
+ #define DOUBLE_limit  (int)( 80 )
 #endif
 
 /*######  Sort callbacks  ################################################*/
@@ -2383,9 +2383,8 @@ static void zap_fieldstab (void) {
    } wtab[EU_MAXPFLGS];
 #endif
    static int once;
-   unsigned digits;
+   int i, digits;
    char buf[8];
-   int i;
 
    if (!once) {
       Fieldstab[EU_CPN].width = 1;
@@ -2393,7 +2392,7 @@ static void zap_fieldstab (void) {
       Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
          = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
          = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = 5;
-      if (5 < (digits = get_pid_digits())) {
+      if (5 < (digits = (int)get_pid_digits())) {
          if (10 < digits) error_exit(N_txt(FAIL_widepid_txt));
          Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
             = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
@@ -2432,13 +2431,13 @@ static void zap_fieldstab (void) {
    }
 
 #ifdef WIDEN_COLUMN
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)smp_num_cpus);
+   digits = snprintf(buf, sizeof(buf), "%d", (int)smp_num_cpus);
    if (wtab[EU_CPN].wmin < digits) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       wtab[EU_CPN].wmin = digits;
       Fieldstab[EU_CPN].width = maX(EU_CPN);
    }
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot);
+   digits = snprintf(buf, sizeof(buf), "%d", Numa_node_tot);
    if (wtab[EU_NMA].wmin < digits) {
       wtab[EU_NMA].wmin = digits;
       Fieldstab[EU_NMA].width = maX(EU_NMA);
@@ -2452,12 +2451,12 @@ static void zap_fieldstab (void) {
       }
    }
 #else
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)smp_num_cpus);
+   digits = snprintf(buf, sizeof(buf), "%d", (int)smp_num_cpus);
    if (1 < digits) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       Fieldstab[EU_CPN].width = digits;
    }
-   digits = (unsigned)snprintf(buf, sizeof(buf), "%u", (unsigned)Numa_node_tot);
+   digits = snprintf(buf, sizeof(buf), "%d", Numa_node_tot);
    if (2 < digits)
       Fieldstab[EU_NMA].width = digits;
 
@@ -6250,8 +6249,8 @@ static const char *task_show (const WIN_t *q, const int idx) {
     else cp = make_str_utf8((q->varcolbeg < ((int)strlen(pv) - utf8_delta(pv))) \
     ? pv + utf8_embody(pv, q->varcolbeg) : "", q->varcolsz, Js, AUTOX_NO); }
 #else
- #define makeVAR(v) cp = make_str(v, q->varcolsz, Js, AUTOX_NO)
- #define varUTF8(v) cp = make_str_utf8(v, q->varcolsz, Js, AUTOX_NO)
+ #define makeVAR(v)  { cp = make_str(v, q->varcolsz, Js, AUTOX_NO); }
+ #define varUTF8(v)  { cp = make_str_utf8(v, q->varcolsz, Js, AUTOX_NO); }
 #endif
  #define pages2K(n)  (unsigned long)( (n) << Pg2K_shft )
    static char rbuf[ROWMINSIZ];
@@ -6295,16 +6294,16 @@ static const char *task_show (const WIN_t *q, const int idx) {
             break;
 #endif
          case EU_CGN:
-            varUTF8(p->cgname);
+            varUTF8(p->cgname)
             break;
          case EU_CGR:
-            varUTF8(p->cgroup[0]);
+            varUTF8(p->cgroup[0])
             break;
          case EU_CMD:
             if (CHKw(q, Show_CMDLIN))
                varUTF8(forest_display(q, idx))
             else
-               makeVAR(forest_display(q, idx));
+               makeVAR(forest_display(q, idx))
             break;
          case EU_COD:
             cp = scale_mem(S, pages2K(p->trs), W, Jn);
@@ -6338,7 +6337,7 @@ static const char *task_show (const WIN_t *q, const int idx) {
             cp = scale_num(p->dt, W, Jn);
             break;
          case EU_ENV:
-            varUTF8(p->environ[0]);
+            varUTF8(p->environ[0])
             break;
          case EU_FL1:
             cp = scale_num(p->maj_flt, W, Jn);
@@ -6420,10 +6419,10 @@ static const char *task_show (const WIN_t *q, const int idx) {
             cp = scale_mem(S, p->vm_rss_shared, W, Jn);
             break;
          case EU_SGD:
-            makeVAR(p->supgid);
+            makeVAR(p->supgid)
             break;
          case EU_SGN:
-            varUTF8(p->supgrp);
+            varUTF8(p->supgrp)
             break;
          case EU_SHR:
             cp = scale_mem(S, pages2K(p->share), W, Jn);
