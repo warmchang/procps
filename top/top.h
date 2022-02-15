@@ -509,7 +509,7 @@ typedef struct WIN_t {
 
         /* A null-terminating strncpy, assuming strlcpy is not available.
            ( and assuming callers don't need the string length returned ) */
-#define STRLCPY(dst,src) { strncpy(dst, src, sizeof(dst)); dst[sizeof(dst) - 1] = '\0'; }
+#define STRLCPY(dst,src) { memccpy(dst, src, '\0', sizeof(dst)); dst[sizeof(dst) - 1] = '\0'; }
 
         /* Used to clear all or part of our Pseudo_screen */
 #define PSU_CLREOS(y) memset(&Pseudo_screen[ROWMAXSIZ*y], '\0', Pseudo_size-(ROWMAXSIZ*y))
