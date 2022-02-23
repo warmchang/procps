@@ -3339,10 +3339,10 @@ static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
+ #define doALL STAT_REAP_NUMA_NODES_TOO
    struct sigaction sa;
    int i, rc;
    int linux_version_code = procps_linux_version();
-   enum stat_reap_type which = STAT_REAP_NUMA_NODES_TOO;
 
    atexit(close_stdout);
 
@@ -3378,7 +3378,7 @@ static void before (char *me) {
    if ((rc = procps_stat_new(&Stat_ctx)))
       Restrict_some = Cpu_cnt = 1;
    else {
-      if (!(Stat_reap = procps_stat_reap(Stat_ctx, which, Stat_items, MAXTBL(Stat_items))))
+      if (!(Stat_reap = procps_stat_reap(Stat_ctx, doALL, Stat_items, MAXTBL(Stat_items))))
          error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt), __LINE__, strerror(errno)));
 #ifndef PRETEND0NUMA
       Numa_node_tot = Stat_reap->numa->total;
@@ -3467,6 +3467,7 @@ static void before (char *me) {
       }
       sigaction(i, &sa, NULL);
    }
+ #undef doALL
 } // end: before
 
 
