@@ -9,6 +9,7 @@ procps-ng-NEXT
   * library: add support for accessing smaps_rollup        issue #112, #201
   * library: add support for accessing autogroups
   * library: add support for LIBPROC_HIDE_KERNEL env var   merge #147
+  * library: add support for cpu utilization to pids i/f
   * pkill: Check for lt- variants of program name          issue #192
   * pgrep: Add newline after regex error message           merge #91
   * pgrep: Fix selection where uid/gid > 2^31              merge !146
@@ -31,6 +32,7 @@ procps-ng-NEXT
   * top: summary area memory lines can print two abreast
   * top: added two new autogroup fields
   * top: added long versions of command line options
+  * top: added 'start time' and 'cpu utilization' fields
   * uptime: print short/pretty format correctly            issue #217
   * vmstat: add -y option to remove first line             merge !72
 
