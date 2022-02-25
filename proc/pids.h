@@ -51,7 +51,7 @@ enum pids_item {
     PIDS_EXIT_SIGNAL,       //    s_int        stat: exit_signal
     PIDS_FLAGS,             //   ul_int        stat: flags
     PIDS_FLT_MAJ,           //   ul_int        stat: maj_flt
-    PIDS_FLT_MAJ_C,         //   ul_int        stat: maj_flt + cmaj_flt
+    PIDS_FLT_MAJ_C,         //   ul_int        derived from stat: maj_flt + cmaj_flt
     PIDS_FLT_MAJ_DELTA,     //    s_int        derived from FLT_MAJ
     PIDS_FLT_MIN,           //   ul_int        stat: min_flt
     PIDS_FLT_MIN_C,         //   ul_int        stat: min_flt + cmin_flt
@@ -154,19 +154,22 @@ enum pids_item {
     PIDS_TICS_ALL,          //  ull_int        stat: stime + utime
     PIDS_TICS_ALL_C,        //  ull_int        stat: stime + utime + cstime + cutime
     PIDS_TICS_ALL_DELTA,    //    u_int        derived from TICS_ALL
+    PIDS_TICS_BEGAN,        //  ull_int        stat: start_time
     PIDS_TICS_BLKIO,        //  ull_int        stat: blkio_ticks
     PIDS_TICS_GUEST,        //  ull_int        stat: gtime
-    PIDS_TICS_GUEST_C,      //  ull_int        stat: gtime + cgtime
+    PIDS_TICS_GUEST_C,      //  ull_int        derived from stat: gtime + cgtime
     PIDS_TICS_SYSTEM,       //  ull_int        stat: stime
-    PIDS_TICS_SYSTEM_C,     //  ull_int        stat: stime + cstime
+    PIDS_TICS_SYSTEM_C,     //  ull_int        derived from stat: stime + cstime
     PIDS_TICS_USER,         //  ull_int        stat: utime
-    PIDS_TICS_USER_C,       //  ull_int        stat: utime + cutime
-    PIDS_TIME_ALL,          //  ull_int        derived from (utime + stime) / hertz
-    PIDS_TIME_ELAPSED,      //  ull_int        derived from /proc/uptime - (starttime / hertz)
-    PIDS_TIME_START,        //  ull_int        stat: start_time
+    PIDS_TICS_USER_C,       //  ull_int        derived from stat: utime + cutime
+    PIDS_TIME_ALL,          //     real        derived from (utime + stime) / hertz
+    PIDS_TIME_ALL_C,        //     real        derived from (utime + stime + cutime + cstime) / hertz
+    PIDS_TIME_ELAPSED,      //     real        derived from /proc/uptime - (starttime / hertz)
+    PIDS_TIME_START,        //     real        derived from stat: start_time / hertz
     PIDS_TTY,               //    s_int        stat: tty_nr
     PIDS_TTY_NAME,          //      str        derived from TTY
     PIDS_TTY_NUMBER,        //      str        derived from TTY as str
+    PIDS_UTILIZATION,       //     real        derived from TIME_ALL / TIME_ELAPSED, as percentage
     PIDS_VM_DATA,           //   ul_int        status: VmData
     PIDS_VM_EXE,            //   ul_int        status: VmExe
     PIDS_VM_LIB,            //   ul_int        status: VmLib
@@ -178,7 +181,7 @@ enum pids_item {
     PIDS_VM_SIZE,           //   ul_int        status: VmSize
     PIDS_VM_STACK,          //   ul_int        status: VmStk
     PIDS_VM_SWAP,           //   ul_int        status: VmSwap
-    PIDS_VM_USED,           //   ul_int        status: VmRSS + VmSwap
+    PIDS_VM_USED,           //   ul_int        derived from status: VmRSS + VmSwap
     PIDS_VSIZE_PGS,         //   ul_int        stat: vsize
     PIDS_WCHAN_NAME         //      str        wchan
 };
@@ -211,6 +214,7 @@ struct pids_result {
         unsigned long long  ull_int;
         char               *str;
         char              **strv;
+        float               real;
     } result;
 };
 

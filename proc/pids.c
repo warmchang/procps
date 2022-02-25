@@ -90,8 +90,8 @@ struct pids_info {
     unsigned pgs2k_shift;              // to convert some proc vaules
     unsigned oldflags;                 // the old library PROC_FILL flagss
     PROCTAB *fetch_PT;                 // oldlib interface for 'select' & 'reap'
-    unsigned long hertz;               // for TIME_ALL & TIME_ELAPSED calculations
-    unsigned long long boot_seconds;   // for TIME_ELAPSED calculation
+    unsigned long hertz;               // for the 'TIME' & 'UTILIZATION' calculations
+    float boot_seconds;                // for TIME_ELAPSED & 'UTILIZATION' calculations
     PROCTAB *get_PT;                   // oldlib interface for active 'get'
     struct stacks_extent *get_ext;     // for active 'get' (also within 'extents')
     enum pids_fetch_type get_type;     // last known type of 'get' request
@@ -271,6 +271,7 @@ STR_set(SUPGROUPS,                 supgrp)
 setDECL(TICS_ALL)       { (void)I; R->result.ull_int = P->utime + P->stime; }
 setDECL(TICS_ALL_C)     { (void)I; R->result.ull_int = P->utime + P->stime + P->cutime + P->cstime; }
 REG_set(TICS_ALL_DELTA,   u_int,   pcpu)
+REG_set(TICS_BEGAN,       ull_int, start_time)
 REG_set(TICS_BLKIO,       ull_int, blkio_tics)
 REG_set(TICS_GUEST,       ull_int, gtime)
 setDECL(TICS_GUEST_C)   { (void)I; R->result.ull_int = P->gtime + P->cgtime; }
@@ -278,12 +279,14 @@ REG_set(TICS_SYSTEM,      ull_int, stime)
 setDECL(TICS_SYSTEM_C)  { (void)I; R->result.ull_int = P->stime + P->cstime; }
 REG_set(TICS_USER,        ull_int, utime)
 setDECL(TICS_USER_C)    { (void)I; R->result.ull_int = P->utime + P->cutime; }
-setDECL(TIME_ALL)       { R->result.ull_int = (P->utime + P->stime) / I->hertz; }
-setDECL(TIME_ELAPSED)   { unsigned long long t = P->start_time / I->hertz; R->result.ull_int = I->boot_seconds >= t ? (I->boot_seconds - t) : 0; }
-REG_set(TIME_START,       ull_int, start_time)
+setDECL(TIME_ALL)       { R->result.real = ((float)P->utime + P->stime) / I->hertz; }
+setDECL(TIME_ALL_C)     { R->result.real = ((float)P->utime + P->stime + P->cutime + P->cstime) / I->hertz; }
+setDECL(TIME_ELAPSED)   { float t = (float)P->start_time / I->hertz; R->result.real = I->boot_seconds > t ? I->boot_seconds - t : 0; }
+setDECL(TIME_START)     { R->result.real = (float)P->start_time / I->hertz; }
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)       { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 setDECL(TTY_NUMBER)     { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
+setDECL(UTILIZATION)    { float t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((float)P->start_time / I->hertz); R->result.real = (float)P->utime + P->stime; R->result.real *= (100.0f / ((float)I->hertz * t)); }}
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -336,6 +339,8 @@ NUM_srt(s_int)
 REG_srt(u_int)
 REG_srt(ul_int)
 REG_srt(ull_int)
+
+REG_srt(real)
 
 srtDECL(str) {
     const struct pids_result *a = (*A)->head + P->offset;
@@ -554,6 +559,7 @@ static struct {
     { RS(TICS_ALL),          f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_ALL_C),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_ALL_DELTA),    f_stat,     NULL,      QS(u_int),     +1,       TS(u_int)   },
+    { RS(TICS_BEGAN),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_BLKIO),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_GUEST),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_GUEST_C),      f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
@@ -561,12 +567,14 @@ static struct {
     { RS(TICS_SYSTEM_C),     f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_USER),         f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
     { RS(TICS_USER_C),       f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
-    { RS(TIME_ALL),          f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
-    { RS(TIME_ELAPSED),      f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
-    { RS(TIME_START),        f_stat,     NULL,      QS(ull_int),   0,        TS(ull_int) },
+    { RS(TIME_ALL),          f_stat,     NULL,      QS(real),      0,        TS(real)    },
+    { RS(TIME_ALL_C),        f_stat,     NULL,      QS(real),      0,        TS(real)    },
+    { RS(TIME_ELAPSED),      f_stat,     NULL,      QS(real),      0,        TS(real)    },
+    { RS(TIME_START),        f_stat,     NULL,      QS(real),      0,        TS(real)    },
     { RS(TTY),               f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),   0,        TS(str)     },
     { RS(TTY_NUMBER),        f_stat,     FF(str),   QS(strvers),   0,        TS(str)     },
+    { RS(UTILIZATION),       f_stat,     NULL,      QS(real),      0,        TS(real)    },
     { RS(VM_DATA),           f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(VM_EXE),            f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(VM_LIB),            f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
@@ -1198,7 +1206,6 @@ PROCPS_EXPORT int procps_pids_new (
         int numitems)
 {
     struct pids_info *p;
-    double uptime_secs;
     int pgsz;
 
 #ifdef ITEMTABLE_DEBUG
@@ -1281,10 +1288,6 @@ PROCPS_EXPORT int procps_pids_new (
     pgsz = getpagesize();
     while (pgsz > 1024) { pgsz >>= 1; p->pgs2k_shift++; }
     p->hertz = procps_hertz_get();
-
-    // in case 'fatal_proc_unmounted' wasn't called and /proc isn't mounted
-    if (0 >= procps_uptime(&uptime_secs, NULL))
-        p->boot_seconds = uptime_secs;
 
     numa_init();
 
@@ -1405,6 +1408,7 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
         struct pids_info *info,
         enum pids_fetch_type which)
 {
+    double up_secs;
 
     errno = EINVAL;
     if (info == NULL)
@@ -1432,6 +1436,12 @@ fresh_start:
     }
     errno = 0;
 
+    /* when in a namespace with proc mounted subset=pid,
+       we will be restricted to process information only */
+    info->boot_seconds = 0;
+    if (0 >= procps_uptime(&up_secs, NULL))
+        info->boot_seconds = up_secs;
+
     if (NULL == info->read_something(info->get_PT, &info->get_proc))
         return NULL;
     if (!pids_assign_results(info, info->get_ext->stacks[0], &info->get_proc))
@@ -1451,6 +1461,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
         struct pids_info *info,
         enum pids_fetch_type which)
 {
+    double up_secs;
     int rc;
 
     errno = EINVAL;
@@ -1467,6 +1478,12 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
     if (!pids_oldproc_open(&info->fetch_PT, info->oldflags))
         return NULL;
     info->read_something = which ? readeither : readproc;
+
+    /* when in a namespace with proc mounted subset=pid,
+       we will be restricted to process information only */
+    info->boot_seconds = 0;
+    if (0 >= procps_uptime(&up_secs, NULL))
+        info->boot_seconds = up_secs;
 
     rc = pids_stacks_fetch(info);
 
@@ -1541,6 +1558,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         int numthese,
         enum pids_select_type which)
 {
+    double up_secs;
     unsigned ids[FILL_ID_MAX + 1];
     int rc;
 
@@ -1565,6 +1583,12 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
     if (!pids_oldproc_open(&info->fetch_PT, (info->oldflags | which), ids, numthese))
         return NULL;
     info->read_something = (which & PIDS_FETCH_THREADS_TOO) ? readeither : readproc;
+
+    /* when in a namespace with proc mounted subset=pid,
+       we will be restricted to process information only */
+    info->boot_seconds = 0;
+    if (0 >= procps_uptime(&up_secs, NULL))
+        info->boot_seconds = up_secs;
 
     rc = pids_stacks_fetch(info);
 
