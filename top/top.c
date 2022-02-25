@@ -1597,18 +1597,27 @@ end_justifies:
 
         /*
          * Make and then justify a percentage, with decreasing precision. */
-static const char *scale_pcnt (float num, int width, int justr) {
+static const char *scale_pcnt (float num, int width, int justr, int xtra) {
    static char buf[SMLBUFSIZ];
 
    buf[0] = '\0';
    if (Rc.zero_suppress && 0 >= num)
       goto end_justifies;
+   if (xtra) {
+      if (width >= snprintf(buf, sizeof(buf), "%#.3f", num))
+         goto end_justifies;
+      if (width >= snprintf(buf, sizeof(buf), "%#.2f", num))
+         goto end_justifies;
+      goto carry_on;
+   }
 #ifdef BOOST_PERCNT
    if (width >= snprintf(buf, sizeof(buf), "%#.3f", num))
       goto end_justifies;
    if (width >= snprintf(buf, sizeof(buf), "%#.2f", num))
       goto end_justifies;
+   (void)xtra;
 #endif
+carry_on:
    if (width >= snprintf(buf, sizeof(buf), "%#.1f", num))
       goto end_justifies;
    if (width >= snprintf(buf, sizeof(buf), "%*.0f", width, num))
@@ -1766,23 +1775,23 @@ static struct {
    {     6,     -1,  A_right,  PIDS_IO_WRITE_BYTES },  // ul_int   EU_IWB
    {     5,     -1,  A_right,  PIDS_IO_WRITE_OPS   },  // ul_int   EU_IWO
    {     5,     -1,  A_right,  PIDS_AUTOGRP_ID     },  // s_int    EU_AGI
-   {     4,     -1,  A_right,  PIDS_AUTOGRP_NICE   }   // s_int    EU_AGN
-#define eu_LAST        EU_AGN
+   {     4,     -1,  A_right,  PIDS_AUTOGRP_NICE   },  // s_int    EU_AGN
+   {     9,     -1,  A_right,  PIDS_TICS_BEGAN     },  // ull_int  EU_TM3
+   {     6,     -1,  A_right,  PIDS_UTILIZATION    }   // real     EU_CUU
+#define eu_LAST  EU_CUU
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
-#define eu_TIME_START  eu_LAST +3
-#define eu_ID_FUID     eu_LAST +4
-#define eu_TREE_HID    eu_LAST +5
-#define eu_TREE_LVL    eu_LAST +6
-#define eu_TREE_ADD    eu_LAST +7
+#define eu_ID_FUID     eu_LAST +3
+#define eu_TREE_HID    eu_LAST +4
+#define eu_TREE_LVL    eu_LAST +5
+#define eu_TREE_ADD    eu_LAST +6
    , {  -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
    , {  -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
-   , {  -1, -1, -1,  PIDS_TIME_START  }  // ull_int  ( if Show_FOREST, eu_TIME_START )
    , {  -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
    , {  -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
    , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_LVL   )
-   , {  -1, -1, -1,  PIDS_extra       }  // u_int    ( if Show_FOREST, eu_TREE_ADD   )
+   , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_ADD   )
  #undef A_left
  #undef A_right
 };
@@ -1956,9 +1965,9 @@ static void build_headers (void) {
          if (!CHKw(w, Show_IDLEPS)) ckITEM(EU_CPU);
          // with forest view mode, we'll need pid, tgid, ppid & start_time...
 #ifndef TREE_VCPUOFF
-         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_TREE_HID); ckITEM(eu_TREE_LVL); ckITEM(eu_TREE_ADD); }
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(EU_TM3); ckITEM(eu_TREE_HID); ckITEM(eu_TREE_LVL); ckITEM(eu_TREE_ADD); }
 #else
-         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(eu_TIME_START); ckITEM(eu_TREE_HID); ckITEM(eu_TREE_LVL); }
+         if (CHKw(w, Show_FOREST)) { ckITEM(EU_PPD); ckITEM(EU_TGD); ckITEM(EU_TM3); ckITEM(eu_TREE_HID); ckITEM(eu_TREE_LVL); }
 #endif
          // for 'u/U' filtering we need these too (old top forgot that, oops)
          if (w->usrseltyp) { ckITEM(EU_UED); ckITEM(EU_URD); ckITEM(EU_USD); ckITEM(eu_ID_FUID); }
@@ -4549,7 +4558,7 @@ static void forest_begin (WIN_t *q) {
 
 #ifndef TREE_SCANALL
       if (!(procps_pids_sort(Pids_ctx, Seed_ppt, PIDSmaxt
-         , PIDS_TIME_START, PIDS_SORT_ASCEND)))
+         , PIDS_TICS_BEGAN, PIDS_SORT_ASCEND)))
             error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(errno)));
 #endif
       for (i = 0; i < PIDSmaxt; i++) {         // avoid hidepid distorts |
@@ -6158,8 +6167,16 @@ static const char *task_show (const WIN_t *q, int idx) {
             if (u > 100.0 * n) u = 100.0 * n;
 #endif
             if (u > Cpu_pmax) u = Cpu_pmax;
-            cp = scale_pcnt(u, W, Jn);
+            cp = scale_pcnt(u, W, Jn, 0);
          }
+            break;
+   /* ull_int, scale_pcnt for 'utilization' */
+         case EU_CUU:        // PIDS_UTILIZATION
+            if (Restrict_some) {
+               cp = justify_pad("?", W, Jn);
+               break;
+            }
+            cp = scale_pcnt(rSv(EU_CUU, real), W, Jn, 1);
             break;
    /* u_int, make_num with auto width */
          case EU_GID:        // PIDS_ID_EGID
@@ -6213,7 +6230,7 @@ static const char *task_show (const WIN_t *q, int idx) {
                cp = justify_pad("?", W, Jn);
                break;
             }
-            cp = scale_pcnt((float)rSv(EU_MEM, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn);
+            cp = scale_pcnt((float)rSv(EU_MEM, ul_int) * 100 / MEM_VAL(mem_TOT), W, Jn, 0);
             break;
    /* ul_int, make_str with special handling */
          case EU_FLG:        // PIDS_FLAGS
@@ -6227,6 +6244,10 @@ static const char *task_show (const WIN_t *q, int idx) {
             else t = rSv(i, ull_int);
             cp = scale_tics(t, W, Jn);
          }
+            break;
+   /* ull_int, scale_time */
+         case EU_TM3:        // PIDS_TICS_BEGAN
+            cp = scale_tics(rSv(EU_TM3, ull_int), W, Jn);
             break;
    /* str, make_str (all AUTOX yes) */
          case EU_LXC:        // PIDS_LXCNAME
