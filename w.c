@@ -373,7 +373,7 @@ static int find_best_proc(
     struct pids_fetch *reap;
     enum pids_item items[] = {
         PIDS_ID_TGID,
-        PIDS_TIME_START,
+        PIDS_TICS_BEGAN,
         PIDS_ID_EUID,
         PIDS_ID_RUID,
         PIDS_ID_TPGID,
