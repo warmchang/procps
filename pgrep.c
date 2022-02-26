@@ -67,7 +67,7 @@ enum pids_item Items[] = {
     PIDS_ID_RGID,
     PIDS_ID_SESSION,
     PIDS_ID_TGID,
-    PIDS_TIME_START,
+    PIDS_TICS_BEGAN,
     PIDS_TTY_NAME,
     PIDS_CMD,
     PIDS_CMDLINE,
@@ -569,6 +569,7 @@ static struct el * select_procs (int *num)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, info)
 #define PIDS_GETSCH(e) PIDS_VAL(EU_ ## e, s_ch, stack, info)
 #define PIDS_GETSTV(e) PIDS_VAL(EU_ ## e, strv, stack, info)
+#define PIDS_GETFLT(e) PIDS_VAL(EU_ ## e, real, stack, info)
     struct pids_info *info=NULL;
     struct procps_ns nsp;
     struct pids_stack *stack;
@@ -631,7 +632,7 @@ static struct el * select_procs (int *num)
             match = 0;
         else if (opt_ns_pid && ! match_ns (PIDS_GETINT(PID), &nsp))
             match = 0;
-	else if (opt_older && PIDS_GETULL(ELAPSED) < opt_older)
+	else if (opt_older && (int)PIDS_GETFLT(ELAPSED) < opt_older)
 	    match = 0;
         else if (opt_term)
             match = match_strlist(PIDS_GETSTR(TTYNAME), opt_term);
