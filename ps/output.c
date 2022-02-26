@@ -491,7 +491,7 @@ static int pr_etime(char *restrict const outbuf, const proc_t *restrict const pp
   char *cp;
 setREL1(TIME_ELAPSED)
   cp = outbuf;
-  t = rSv(TIME_ELAPSED, ull_int, pp);
+  t = rSv(TIME_ELAPSED, real, pp);
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -509,7 +509,7 @@ setREL1(TIME_ELAPSED)
 static int pr_etimes(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned t;
 setREL1(TIME_ELAPSED)
-  t = rSv(TIME_ELAPSED, ull_int, pp);
+  t = rSv(TIME_ELAPSED, real, pp);
   return snprintf(outbuf, COLWID, "%u", t);
 }
 
@@ -522,7 +522,7 @@ setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
-  seconds = rSv(TIME_ELAPSED, ull_int, pp);
+  seconds = rSv(TIME_ELAPSED, real, pp);
   if(seconds) pcpu = (total_time * 100ULL / Hertz) / seconds;
   if (pcpu > 99U) pcpu = 99U;
   return snprintf(outbuf, COLWID, "%2u", pcpu);
@@ -537,7 +537,7 @@ setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
-  seconds = rSv(TIME_ELAPSED, ull_int, pp);
+  seconds = rSv(TIME_ELAPSED, real, pp);
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
   if (pcpu > 999U)
     return snprintf(outbuf, COLWID, "%u", pcpu/10U);
@@ -553,7 +553,7 @@ setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
-  seconds = rSv(TIME_ELAPSED, ull_int, pp);
+  seconds = rSv(TIME_ELAPSED, real, pp);
   if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
   if (pcpu > 999U) pcpu = 999U;
   return snprintf(outbuf, COLWID, "%3u", pcpu);
@@ -574,7 +574,7 @@ static int pr_time(char *restrict const outbuf, const proc_t *restrict const pp)
   unsigned dd,hh,mm,ss;
   int c;
 setREL1(TIME_ALL)
-  t = rSv(TIME_ALL, ull_int, pp);
+  t = rSv(TIME_ALL, real, pp);
   ss = t%60;
   t /= 60;
   mm = t%60;
@@ -591,7 +591,7 @@ setREL1(TIME_ALL)
 static int pr_times(char *restrict const outbuf, const proc_t *restrict const pp){
     unsigned long t;
 setREL1(TIME_ALL)
-    t = rSv(TIME_ALL, ull_int, pp);
+    t = rSv(TIME_ALL, real, pp);
   return snprintf(outbuf, COLWID, "%lu", t);
 }
 
@@ -907,8 +907,8 @@ setREL2(TICS_ALL,TICS_ALL_C)
 static int pr_bsdstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t start;
   time_t seconds_ago;
-setREL1(TIME_START)
-  start = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
+setREL1(TICS_BEGAN)
+  start = boot_time() + rSv(TICS_BEGAN, ull_int, pp) / Hertz;
   seconds_ago = seconds_since_1970 - start;
   if(seconds_ago < 0) seconds_ago=0;
   if(seconds_ago > 3600*24)  snprintf(outbuf, COLWID, "%s", ctime(&start)+4);
@@ -1043,8 +1043,8 @@ setREL1(VM_RSS)
 
 static int pr_lstart(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
-setREL1(TIME_START)
-  t = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
+setREL1(TICS_BEGAN)
+  t = boot_time() + rSv(TICS_BEGAN, ull_int, pp) / Hertz;
   return snprintf(outbuf, COLWID, "%24.24s", ctime(&t));
 }
 
@@ -1065,11 +1065,11 @@ static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp
   int tm_year;
   int tm_yday;
   size_t len;
-setREL1(TIME_START)
+setREL1(TICS_BEGAN)
   our_time = localtime(&seconds_since_1970);   /* not reentrant */
   tm_year = our_time->tm_year;
   tm_yday = our_time->tm_yday;
-  t = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
+  t = boot_time() + rSv(TICS_BEGAN, ull_int, pp) / Hertz;
   proc_time = localtime(&t); /* not reentrant, this corrupts our_time */
   fmt = "%H:%M";                                   /* 03:02 23:59 */
   if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
@@ -1082,8 +1082,8 @@ setREL1(TIME_START)
 static int pr_start(char *restrict const outbuf, const proc_t *restrict const pp){
   time_t t;
   char *str;
-setREL1(TIME_START)
-  t = boot_time() + rSv(TIME_START, ull_int, pp) / Hertz;
+setREL1(TICS_BEGAN)
+  t = boot_time() + rSv(TICS_BEGAN, ull_int, pp) / Hertz;
   str = ctime(&t);
   if(str[8]==' ')  str[8]='0';
   if(str[11]==' ') str[11]='0';
@@ -1603,7 +1603,7 @@ static const format_struct format_array[] = { /*
 {"atime",     "TIME",    pr_time,          PIDS_TIME_ALL,            8,    SOE,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
 {"blocked",   "BLOCKED", pr_sigmask,       PIDS_SIGBLOCKED,          9,    BSD,  TO|SIGNAL},/*sigmask*/
 {"bnd",       "BND",     pr_nop,           PIDS_noop,                1,    AIX,  TO|RIGHT},
-{"bsdstart",  "START",   pr_bsdstart,      PIDS_TIME_START,          6,    LNX,  ET|RIGHT},
+{"bsdstart",  "START",   pr_bsdstart,      PIDS_TICS_BEGAN,          6,    LNX,  ET|RIGHT},
 {"bsdtime",   "TIME",    pr_bsdtime,       PIDS_TICS_ALL,            6,    LNX,  ET|RIGHT},
 {"c",         "C",       pr_c,             PIDS_extra,               2,    SUN,  ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch,      PIDS_SIGCATCH,            9,    BSD,  TO|SIGNAL}, /*sigcatch*/
@@ -1671,7 +1671,7 @@ static const format_struct format_array[] = { /*
 {"logname",   "LOGNAME", pr_nop,           PIDS_noop,                8,    XXX,  AN|LEFT},  /*login*/
 {"longtname", "TTY",     pr_tty8,          PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
 {"lsession",  "SESSION", pr_sd_session,    PIDS_SD_SESS,            11,    LNX,  ET|LEFT},
-{"lstart",    "STARTED", pr_lstart,        PIDS_TIME_START,         24,    XXX,  ET|RIGHT},
+{"lstart",    "STARTED", pr_lstart,        PIDS_TICS_BEGAN,         24,    XXX,  ET|RIGHT},
 {"luid",      "LUID",    pr_luid,          PIDS_ID_LOGIN,            5,    LNX,  ET|RIGHT}, /* login ID */
 {"luser",     "LUSER",   pr_nop,           PIDS_noop,                8,    LNX,  ET|USER},  /* login USER */
 {"lwp",       "LWP",     pr_tasks,         PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
@@ -1778,14 +1778,14 @@ static const format_struct format_array[] = { /*
 {"slice",      "SLICE",  pr_sd_slice,      PIDS_SD_SLICE,           31,    LNX,  ET|LEFT},
 {"spid",      "SPID",    pr_tasks,         PIDS_ID_PID,              5,    SGI,  TO|PIDMAX|RIGHT},
 {"stackp",    "STACKP",  pr_stackp,        PIDS_ADDR_STACK_START, (int)(2*sizeof(long)), LNX, PO|RIGHT}, /*start_stack*/
-{"start",     "STARTED", pr_start,         PIDS_TIME_START,          8,    XXX,  ET|RIGHT},
+{"start",     "STARTED", pr_start,         PIDS_TICS_BEGAN,          8,    XXX,  ET|RIGHT},
 {"start_code", "S_CODE", pr_nop,           PIDS_ADDR_CODE_START,  (int)(2*sizeof(long)), LNx, PO|RIGHT}, // sortable, but unprintable ??
 {"start_stack", "STACKP",pr_stackp,        PIDS_ADDR_STACK_START, (int)(2*sizeof(long)), LNX, PO|RIGHT}, /*stackp*/
-{"start_time", "START",  pr_stime,         PIDS_TIME_START,          5,    LNx,  ET|RIGHT},
+{"start_time", "START",  pr_stime,         PIDS_TICS_BEGAN,          5,    LNx,  ET|RIGHT},
 {"stat",      "STAT",    pr_stat,          PIDS_STATE,               4,    BSD,  TO|LEFT},  /*state,s*/
 {"state",     "S",       pr_s,             PIDS_STATE,               1,    XXX,  TO|LEFT},  /*stat,s*/ /* was STAT */
 {"status",    "STATUS",  pr_nop,           PIDS_noop,                6,    DEC,  AN|RIGHT},
-{"stime",     "STIME",   pr_stime,         PIDS_TIME_START,          5,    XXX,  ET|RIGHT}, /* was 6 wide */
+{"stime",     "STIME",   pr_stime,         PIDS_TICS_BEGAN,          5,    XXX,  ET|RIGHT}, /* was 6 wide */
 {"suid",      "SUID",    pr_suid,          PIDS_ID_SUID,             5,    LNx,  ET|RIGHT},
 {"supgid",    "SUPGID",  pr_supgid,        PIDS_SUPGIDS,            20,    LNX,  PO|UNLIMITED},
 {"supgrp",    "SUPGRP",  pr_supgrp,        PIDS_SUPGROUPS,          40,    LNX,  PO|UNLIMITED},

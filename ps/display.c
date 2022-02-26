@@ -272,7 +272,7 @@ static void value_this_proc_pcpu(proc_t *buf){
     if(include_dead_children) used_jiffies = rSv(TICS_ALL_C, ull_int, buf);
     else used_jiffies = rSv(TICS_ALL, ull_int, buf);
 
-    seconds = rSv(TIME_ELAPSED, ull_int, buf);
+    seconds = rSv(TIME_ELAPSED, real, buf);
     if(seconds) pcpu = (used_jiffies * 1000ULL / Hertz) / seconds;
 
     // if xtra-procps-debug.h active, can't use PIDS_VAL as base due to assignment
@@ -322,7 +322,7 @@ static void simple_spew(void){
       break;
     case TF_show_proc|TF_show_task:      // m and -m options
       procps_pids_sort(Pids_info, pidread->stacks
-        , pidread->counts->total, PIDS_TIME_START, PIDS_SORT_ASCEND);
+        , pidread->counts->total, PIDS_TICS_BEGAN, PIDS_SORT_ASCEND);
       procps_pids_sort(Pids_info, pidread->stacks
         , pidread->counts->total, PIDS_ID_TGID, PIDS_SORT_ASCEND);
       for (i = 0; i < pidread->counts->total; i++) {
@@ -584,7 +584,7 @@ static void finalize_stacks (void)
   chkREL(TICS_ALL_C)
   chkREL(TIME_ALL)
   chkREL(TIME_ELAPSED)
-  chkREL(TIME_START)
+  chkREL(TICS_BEGAN)
   // special items with 'extra' used as former pcpu
   chkREL(extra)
   chkREL(noop)
