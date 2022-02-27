@@ -214,7 +214,7 @@ struct pids_result {
         unsigned long long  ull_int;
         char               *str;
         char              **strv;
-        float               real;
+        double              real;
     } result;
 };
 

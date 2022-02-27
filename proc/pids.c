@@ -91,7 +91,7 @@ struct pids_info {
     unsigned oldflags;                 // the old library PROC_FILL flagss
     PROCTAB *fetch_PT;                 // oldlib interface for 'select' & 'reap'
     unsigned long hertz;               // for the 'TIME' & 'UTILIZATION' calculations
-    float boot_seconds;                // for TIME_ELAPSED & 'UTILIZATION' calculations
+    double boot_seconds;               // for TIME_ELAPSED & 'UTILIZATION' calculations
     PROCTAB *get_PT;                   // oldlib interface for active 'get'
     struct stacks_extent *get_ext;     // for active 'get' (also within 'extents')
     enum pids_fetch_type get_type;     // last known type of 'get' request
@@ -279,14 +279,14 @@ REG_set(TICS_SYSTEM,      ull_int, stime)
 setDECL(TICS_SYSTEM_C)  { (void)I; R->result.ull_int = P->stime + P->cstime; }
 REG_set(TICS_USER,        ull_int, utime)
 setDECL(TICS_USER_C)    { (void)I; R->result.ull_int = P->utime + P->cutime; }
-setDECL(TIME_ALL)       { R->result.real = ((float)P->utime + P->stime) / I->hertz; }
-setDECL(TIME_ALL_C)     { R->result.real = ((float)P->utime + P->stime + P->cutime + P->cstime) / I->hertz; }
-setDECL(TIME_ELAPSED)   { float t = (float)P->start_time / I->hertz; R->result.real = I->boot_seconds > t ? I->boot_seconds - t : 0; }
-setDECL(TIME_START)     { R->result.real = (float)P->start_time / I->hertz; }
+setDECL(TIME_ALL)       { R->result.real = ((double)P->utime + P->stime) / I->hertz; }
+setDECL(TIME_ALL_C)     { R->result.real = ((double)P->utime + P->stime + P->cutime + P->cstime) / I->hertz; }
+setDECL(TIME_ELAPSED)   { double t = (double)P->start_time / I->hertz; R->result.real = I->boot_seconds > t ? I->boot_seconds - t : 0; }
+setDECL(TIME_START)     { R->result.real = (double)P->start_time / I->hertz; }
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)       { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 setDECL(TTY_NUMBER)     { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
-setDECL(UTILIZATION)    { float t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((float)P->start_time / I->hertz); R->result.real = (float)P->utime + P->stime; R->result.real *= (100.0f / ((float)I->hertz * t)); }}
+setDECL(UTILIZATION)    { double t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((double)P->start_time / I->hertz); R->result.real = ((double)P->utime + P->stime) * (100.0f / ((double)I->hertz * t)); }}
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -1558,8 +1558,8 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         int numthese,
         enum pids_select_type which)
 {
-    double up_secs;
     unsigned ids[FILL_ID_MAX + 1];
+    double up_secs;
     int rc;
 
     errno = EINVAL;
