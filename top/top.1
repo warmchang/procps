@@ -747,6 +747,14 @@ included in the \*(MV (VIRT) amount.
 \*(XX.
 
 .TP 4
+\fBELAPSED \*(Em Elapsed Running Time\fR
+The length of time since a process was started.
+Thus, the most recently started task will display the smallest time interval.
+
+The value will be expressed as 'HH,MM' (hours,minutes) but is subject to
+additional scaling if the interval becomes too great to fit column width.
+
+.TP 4
 \fBENVIRON \*(Em Environment variables \fR
 Display all of the environment variables, if any, as seen by the
 respective processes.

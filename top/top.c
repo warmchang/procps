@@ -1630,6 +1630,10 @@ end_justifies:
 } // end: scale_pcnt
 
 
+#define TICS_AS_FULL 0
+#define TICS_AS_SECS 1
+#define TICS_AS_MINS 2
+
         /*
          * Do some scaling stuff.
          * Format 'tics' to fit 'width', then justify it. */
@@ -1656,9 +1660,11 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int abrv) {
    nt /= 100;                                   // total seconds
    nn  = nt % 60;                               // seconds past the minute
    nt /= 60;                                    // total minutes
-   if (!abrv && width >= snprintf(buf, sizeof(buf), "%lu:%02u.%02u", nt, nn, cc))
+   if (abrv < TICS_AS_SECS
+   && (width >= snprintf(buf, sizeof(buf), "%lu:%02u.%02u", nt, nn, cc)))
       goto end_justifies;
-   if (width >= snprintf(buf, sizeof(buf), "%lu:%02u", nt, nn))
+   if (abrv < TICS_AS_MINS
+   && (width >= snprintf(buf, sizeof(buf), "%lu:%02u", nt, nn)))
       goto end_justifies;
    nn  = nt % 60;                               // minutes past the hour
    nt /= 60;                                    // total hours
@@ -1777,8 +1783,9 @@ static struct {
    {     5,     -1,  A_right,  PIDS_AUTOGRP_ID     },  // s_int    EU_AGI
    {     4,     -1,  A_right,  PIDS_AUTOGRP_NICE   },  // s_int    EU_AGN
    {     7,     -1,  A_right,  PIDS_TICS_BEGAN     },  // ull_int  EU_TM3
-   {     6,     -1,  A_right,  PIDS_UTILIZATION    }   // real     EU_CUU
-#define eu_LAST  EU_CUU
+   {     6,     -1,  A_right,  PIDS_UTILIZATION    },  // real     EU_CUU
+   {     7,     -1,  A_right,  PIDS_TIME_ELAPSED   }   // real     EU_TM4
+#define eu_LAST  EU_TM4
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -6242,12 +6249,16 @@ static const char *task_show (const WIN_t *q, int idx) {
          {  TIC_t t;
             if (CHKw(q, Show_CTIMES)) t = rSv(eu_TICS_ALL_C, ull_int);
             else t = rSv(i, ull_int);
-            cp = scale_tics(t, W, Jn, 0);
+            cp = scale_tics(t, W, Jn, TICS_AS_FULL);
          }
             break;
    /* ull_int, scale_tics (try seconds) */
          case EU_TM3:        // PIDS_TICS_BEGAN
-            cp = scale_tics(rSv(EU_TM3, ull_int), W, Jn, 1);
+            cp = scale_tics(rSv(EU_TM3, ull_int), W, Jn, TICS_AS_SECS);
+            break;
+   /* real, scale_tics (try minutes) */
+         case EU_TM4:        // PIDS_TIME_ELAPSED
+            cp = scale_tics(rSv(EU_TM4, real) * Hertz, W, Jn, TICS_AS_MINS);
             break;
    /* str, make_str (all AUTOX yes) */
          case EU_LXC:        // PIDS_LXCNAME
