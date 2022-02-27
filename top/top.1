@@ -980,9 +980,14 @@ member of the session, called the session leader, which is usually the
 login shell.
 
 .TP 4
-\fBSTARTED \*(Em Start Time \fR
+\fBSTARTED \*(Em Start Time Interval\fR
 The length of time since system boot when a process started.
 Thus, the most recently started task will display the largest time interval.
+
+The value will be expressed as 'MM:SS' (minutes:sceonds) until the
+interval becomes too great to fit column width.
+At that point it will be scaled to 'HH,MM' (hours,minutes) and possibly
+beyond.
 
 .TP 4
 \fBSUID \*(Em Saved User Id \fR

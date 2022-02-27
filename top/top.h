@@ -624,7 +624,7 @@ typedef struct WIN_t {
 //atic const char   *scale_mem (int target, float num, int width, int justr);
 //atic const char   *scale_num (float num, int width, int justr);
 //atic const char   *scale_pcnt (float num, int width, int justr, int xtra);
-//atic const char   *scale_tics (TIC_t tics, int width, int justr);
+//atic const char   *scale_tics (TIC_t tics, int width, int justr, int abrv);
 /*------  Fields Management support  -------------------------------------*/
 /*atic struct        Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);

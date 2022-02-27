@@ -350,7 +350,7 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'AGNI' = 4 */
    Head_nlstab[EU_AGN] = _("AGNI");
    Desc_nlstab[EU_AGN] = _("Autogroup Nice Value");
-/* Translation Hint: maximum 'STARTED' = 9 */
+/* Translation Hint: maximum 'STARTED' = 7 */
    Head_nlstab[EU_TM3] = _("STARTED");
    Desc_nlstab[EU_TM3] = _("Start Time from boot");
 /* Translation Hint: maximum '%CUU' = 6 */
