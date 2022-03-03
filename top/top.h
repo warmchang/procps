@@ -170,6 +170,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_INS    138
 #define kbd_DEL    139
 #define kbd_CtrlO  '\017'
+#define kbd_CtrlE  '\005'
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */
@@ -331,6 +332,7 @@ typedef struct RCF_t {
    int    summ_mscale;          // 'E' - scaling of summary memory values
    int    task_mscale;          // 'e' - scaling of process memory values
    int    zero_suppress;        // '0' - suppress scaled zeros toggle
+   int    tics_scaled;          // ^E  - scale TIME and/or TIME+ columns
 } RCF_t;
 
         /* This structure stores configurable information for each window.
@@ -548,7 +550,7 @@ typedef struct WIN_t {
    { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
-   }, 0, DEF_SCALES2, 0 }
+   }, 0, DEF_SCALES2, 0, 0 }
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */

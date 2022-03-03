@@ -644,7 +644,7 @@ static void build_uniq_nlstab (void) {
       "  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' keep focused\n"
       "\n"
       "%s"
-      "  W,Y,!     Write config file '~1W~2'; Inspect other output '~1Y~2'; Combine Cpus '~1!~2'\n"
+      "  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1Ctrl~2+'~1E~2'\n"
       "  q         Quit\n"
       "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"

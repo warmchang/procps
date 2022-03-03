@@ -1633,6 +1633,8 @@ end_justifies:
 #define TICS_AS_SECS  0
 #define TICS_AS_MINS  1
 #define TICS_AS_HOUR  2
+#define TICS_AS_DAYS  3
+#define TICS_AS_WEEK  4
 
         /*
          * Do some scaling stuff.
@@ -1698,6 +1700,9 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
    days = (nt /=  24);                          // totat days
    week = (nt / 7);                             // total week
 
+   if (Rc.tics_scaled > target)
+      target += Rc.tics_scaled - target;
+
    switch (target) {
       case TICS_AS_SECS:
          if (mins < mmLIMIT + 1) {
@@ -1714,7 +1719,7 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
             if (width >= snprintf(buf, sizeof(buf), "%lu,%02lu", hour, mins % 60))
                goto end_justifies;
          }
-      default:                                  // fall through
+      case TICS_AS_DAYS:                        // fall through
          if (days < ddLIMIT + 1) {
             if (width >= snprintf(buf, sizeof(buf), DD "+" HH, days, hour % 24))
                goto end_justifies;
@@ -1725,6 +1730,7 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
             if (width >= snprintf(buf, sizeof(buf), DD, days))
                goto end_justifies;
          }
+      case TICS_AS_WEEK:                        // fall through
          if (width >= snprintf(buf, sizeof(buf), WW "+" DD, week, days % 7))
             goto end_justifies;
 #ifdef SCALE_POSTFX
@@ -1733,6 +1739,7 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
 #endif
          if (width >= snprintf(buf, sizeof(buf), WW, week))
             goto end_justifies;
+      default:                                  // fall through
          break;
    }
  #undef mmLIMIT
@@ -3846,6 +3853,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
             w->rc.double_up = w->rc.combine_cpus = 0;
          // fall through
          case 'j':                          // this is release 3.3.17
+            Rc.tics_scaled = 0;
          case 'k':                          // current RCF_VERSION_ID
          default:
             if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
@@ -3866,8 +3874,8 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
    } // end: for (GROUPSMAX)
 
    // any new addition(s) last, for older rcfiles compatibility...
-   (void)fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-      , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress);
+   (void)fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d, Tics_scaled=%d\n"
+      , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress,  &Rc.tics_scaled);
    if (Rc.fixed_widest < -1 || Rc.fixed_widest > SCREENMAX)
       Rc.fixed_widest = 0;
    if (Rc.summ_mscale < 0   || Rc.summ_mscale > SK_Eb)
@@ -3876,6 +3884,8 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       Rc.task_mscale = 0;
    if (Rc.zero_suppress < 0 || Rc.zero_suppress > 1)
       Rc.zero_suppress = 0;
+   if (Rc.tics_scaled < 0 || Rc.tics_scaled > TICS_AS_WEEK)
+      Rc.tics_scaled = 0;
 
    // prepare to warn that older top can no longer read rcfile ...
    if (Rc.id != RCF_VERSION_ID)
@@ -4253,7 +4263,10 @@ static void win_reset (WIN_t *q) {
 #else
          q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->focus_pid = 0;
 #endif
+         // these next two are global, not really windows based
          Monpidsidx = 0;
+         Rc.tics_scaled = 0;
+
          osel_clear(q);
          q->findstr[0] = '\0';
 #ifndef USE_X_COLHDR
@@ -4986,8 +4999,8 @@ static void write_rcfile (void) {
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
-   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d\n"
-      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress);
+   fprintf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d, Tics_scaled=%d\n"
+      , Rc.fixed_widest, Rc.summ_mscale, Rc.task_mscale, Rc.zero_suppress, Rc.tics_scaled);
 
    if (Winstk[0].osel_tot + Winstk[1].osel_tot
      + Winstk[2].osel_tot + Winstk[3].osel_tot) {
@@ -5139,6 +5152,13 @@ static void keys_global (int ch) {
          break;
       case '0':
          Rc.zero_suppress = !Rc.zero_suppress;
+         break;
+      case kbd_CtrlE:
+#ifndef SCALE_FORMER
+         Rc.tics_scaled++;
+         if (Rc.tics_scaled > TICS_AS_WEEK)
+            Rc.tics_scaled = 0;
+#endif
          break;
       case kbd_ENTER:             // these two have the effect of waking us
       case kbd_SPACE:             // from 'pselect', refreshing the display
@@ -5981,7 +6001,7 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_ENTER, kbd_SPACE, '\0' } },
+         , kbd_CtrlE, kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
