@@ -1630,45 +1630,52 @@ end_justifies:
 } // end: scale_pcnt
 
 
-#define TICS_AS_FULL 0
-#define TICS_AS_SECS 1
-#define TICS_AS_MINS 2
+#define TICS_AS_SECS  0
+#define TICS_AS_MINS  1
+#define TICS_AS_HOUR  2
 
         /*
          * Do some scaling stuff.
-         * Format 'tics' to fit 'width', then justify it. */
-static const char *scale_tics (TIC_t tics, int width, int justr, int abrv) {
+         * Try to format 'tics' to reach 'target' while also
+         * fitting in 'width', then justify it. */
+static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
 #ifdef CASEUP_SUFIX
- #define HH "%uH"                                                  // nls_maybe
- #define DD "%uD"
- #define WW "%uW"
+ #define HH "%luH"                              // nls_maybe
+ #define DD "%luD"
+ #define WW "%luW"
 #else
- #define HH "%uh"                                                  // nls_maybe
- #define DD "%ud"
- #define WW "%uw"
+ #define HH "%luh"                              // nls_maybe
+ #define DD "%lud"
+ #define WW "%luw"
 #endif
    static char buf[SMLBUFSIZ];
-   unsigned long nt;    // narrow time, for speed on 32-bit
-   unsigned cc;         // centiseconds
-   unsigned nn;         // multi-purpose whatever
+   TIC_t nt;            // for speed on 64-bit
+#ifdef SCALE_FORMER
+   unsigned long cc;    // centiseconds
+   unsigned long nn;    // multi-purpose whatever
+#else
+   unsigned long cent, secs, mins, hour, days, week;
+#endif
 
    buf[0] = '\0';
-   nt  = (tics * 100ull) / Hertz;               // up to 68 weeks of cpu time
+   nt  = (tics * 100ull) / Hertz;               // lots of room for any time
    if (Rc.zero_suppress && 0 >= nt)
       goto end_justifies;
+
+#ifdef SCALE_FORMER
    cc  = nt % 100;                              // centiseconds past second
    nt /= 100;                                   // total seconds
    nn  = nt % 60;                               // seconds past the minute
    nt /= 60;                                    // total minutes
-   if (abrv < TICS_AS_SECS
-   && (width >= snprintf(buf, sizeof(buf), "%lu:%02u.%02u", nt, nn, cc)))
+   if (target < TICS_AS_MINS
+   && (width >= snprintf(buf, sizeof(buf), "%llu:%02lu.%02lu", nt, nn, cc)))
       goto end_justifies;
-   if (abrv < TICS_AS_MINS
-   && (width >= snprintf(buf, sizeof(buf), "%lu:%02u", nt, nn)))
+   if (target < TICS_AS_HOUR
+   && (width >= snprintf(buf, sizeof(buf), "%llu:%02lu", nt, nn)))
       goto end_justifies;
    nn  = nt % 60;                               // minutes past the hour
    nt /= 60;                                    // total hours
-   if (width >= snprintf(buf, sizeof(buf), "%lu,%02u", nt, nn))
+   if (width >= snprintf(buf, sizeof(buf), "%llu,%02lu", nt, nn))
       goto end_justifies;
    nn = nt;                                     // now also hours
    if (width >= snprintf(buf, sizeof(buf), HH, nn))
@@ -1679,9 +1686,63 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int abrv) {
    nn /= 7;                                     // now weeks
    if (width >= snprintf(buf, sizeof(buf), WW, nn))
       goto end_justifies;
+#else
+ #define mmLIMIT 360                            // arbitrary 6 hours
+ #define hhLIMIT 96                             // arbitrary 4 days
+ #define ddLIMIT 14                             // arbitrary 2 weeks
+
+   cent = (nt % 100);                           // cent past secs
+   secs = (nt /= 100);                          // total secs
+   mins = (nt /= 60);                           // total mins
+   hour = (nt /= 60);                           // total hour
+   days = (nt /=  24);                          // totat days
+   week = (nt / 7);                             // total week
+
+   switch (target) {
+      case TICS_AS_SECS:
+         if (mins < mmLIMIT + 1) {
+            if (width >= snprintf(buf, sizeof(buf), "%lu:%02lu.%02lu", mins, secs % 60, cent))
+               goto end_justifies;
+         }
+      case TICS_AS_MINS:                        // fall through
+         if (mins < mmLIMIT + 1) {
+            if (width >= snprintf(buf, sizeof(buf), "%lu:%02lu", mins, secs % 60))
+               goto end_justifies;
+         }
+      case TICS_AS_HOUR:                        // fall through
+         if (hour < hhLIMIT + 1) {
+            if (width >= snprintf(buf, sizeof(buf), "%lu,%02lu", hour, mins % 60))
+               goto end_justifies;
+         }
+      default:                                  // fall through
+         if (days < ddLIMIT + 1) {
+            if (width >= snprintf(buf, sizeof(buf), DD "+" HH, days, hour % 24))
+               goto end_justifies;
+#ifdef SCALE_POSTFX
+            if (width >= snprintf(buf, sizeof(buf), DD "+%lu", days, hour % 24))
+               goto end_justifies;
+#endif
+            if (width >= snprintf(buf, sizeof(buf), DD, days))
+               goto end_justifies;
+         }
+         if (width >= snprintf(buf, sizeof(buf), WW "+" DD, week, days % 7))
+            goto end_justifies;
+#ifdef SCALE_POSTFX
+         if (width >= snprintf(buf, sizeof(buf), WW "+%lu", week, days % 7))
+            goto end_justifies;
+#endif
+         if (width >= snprintf(buf, sizeof(buf), WW, week))
+            goto end_justifies;
+         break;
+   }
+ #undef mmLIMIT
+ #undef hhLIMIT
+ #undef ddLIMIT
+#endif
 
    // well shoot, this outta' fit...
    snprintf(buf, sizeof(buf), "?");
+
 end_justifies:
    return justify_pad(buf, width, justr);
  #undef HH
@@ -6243,22 +6304,22 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_FLG:        // PIDS_FLAGS
             cp = make_str(hex_make(rSv(EU_FLG, ul_int), 1), W, Js, AUTOX_NO);
             break;
-   /* ull_int, scale_tics (try centiseconds) */
+   /* ull_int, scale_tics (try 'minutes:seconds.hundredths') */
          case EU_TM2:        // PIDS_TICS_ALL
          case EU_TME:        // PIDS_TICS_ALL
          {  TIC_t t;
             if (CHKw(q, Show_CTIMES)) t = rSv(eu_TICS_ALL_C, ull_int);
             else t = rSv(i, ull_int);
-            cp = scale_tics(t, W, Jn, TICS_AS_FULL);
+            cp = scale_tics(t, W, Jn, TICS_AS_SECS);
          }
             break;
-   /* ull_int, scale_tics (try seconds) */
+   /* ull_int, scale_tics (try 'minutes:seconds') */
          case EU_TM3:        // PIDS_TICS_BEGAN
-            cp = scale_tics(rSv(EU_TM3, ull_int), W, Jn, TICS_AS_SECS);
+            cp = scale_tics(rSv(EU_TM3, ull_int), W, Jn, TICS_AS_MINS);
             break;
-   /* real, scale_tics (try minutes) */
+   /* real, scale_tics (try 'hour,minutes') */
          case EU_TM4:        // PIDS_TIME_ELAPSED
-            cp = scale_tics(rSv(EU_TM4, real) * Hertz, W, Jn, TICS_AS_MINS);
+            cp = scale_tics(rSv(EU_TM4, real) * Hertz, W, Jn, TICS_AS_HOUR);
             break;
    /* str, make_str (all AUTOX yes) */
          case EU_LXC:        // PIDS_LXCNAME

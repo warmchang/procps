@@ -49,6 +49,8 @@
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
+//#define SCALE_FORMER            /* scale_tics() guy shouldn't mimic uptime */
+//#define SCALE_POSTFX            /* scale_tics() try without a 'h,d' suffix */
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
@@ -569,7 +571,9 @@ typedef struct WIN_t {
 #if defined(MEMGRAPH_OLD)
 # warning 'MEMGRAPH_OLD' will make the man document Section 2c. misleading
 #endif
-
+#if defined(SCALE_FORMER) && defined(SCALE_POSTFX)
+# warning 'SCALE_POSTFX' is ignored when 'SCALE_FORMER' is active
+#endif
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
@@ -624,7 +628,7 @@ typedef struct WIN_t {
 //atic const char   *scale_mem (int target, float num, int width, int justr);
 //atic const char   *scale_num (float num, int width, int justr);
 //atic const char   *scale_pcnt (float num, int width, int justr, int xtra);
-//atic const char   *scale_tics (TIC_t tics, int width, int justr, int abrv);
+//atic const char   *scale_tics (TIC_t tics, int width, int justr, int target);
 /*------  Fields Management support  -------------------------------------*/
 /*atic struct        Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);
