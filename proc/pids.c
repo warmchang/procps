@@ -286,7 +286,7 @@ setDECL(TIME_START)     { R->result.real = (double)P->start_time / I->hertz; }
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)       { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 setDECL(TTY_NUMBER)     { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
-setDECL(UTILIZATION)    { double t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((double)P->start_time / I->hertz); R->result.real = ((double)P->utime + P->stime) * (100.0f / ((double)I->hertz * t)); }}
+setDECL(UTILIZATION)    { double t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((double)P->start_time / I->hertz); if (t > 0) R->result.real = ((P->utime + P->stime) * 100.0f / I->hertz) / t; }}
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
