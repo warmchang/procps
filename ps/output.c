@@ -1339,6 +1339,17 @@ setREL1(EXE)
   return max_rightward-rightward;
 }
 
+/* %cpu utilization over task lifetime */
+static int pr_utilization(char *restrict const outbuf, const proc_t *restrict const pp){
+double cu;
+setREL1(UTILIZATION)
+  cu = rSv(UTILIZATION, real, pp);
+  /* this check is really just for us (the ps program) since we will be very
+     short lived and the library might reflect 100% or even more utilization */
+  if (cu > 99.0) cu = 99.999;
+  return snprintf(outbuf, COLWID, "%#.3f", cu);
+}
+
 /************************* Systemd stuff ********************************/
 static int pr_sd_unit(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SD_UNIT)
@@ -1626,6 +1637,7 @@ static const format_struct format_array[] = { /*
 {"ctid",      "CTID",    pr_nop,           PIDS_noop,                5,    SUN,  ET|RIGHT}, // resource contracts?
 {"cursig",    "CURSIG",  pr_nop,           PIDS_noop,                6,    DEC,  AN|RIGHT},
 {"cutime",    "-",       pr_nop,           PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
+{"cuu",       "%CUU",    pr_utilization,   PIDS_UTILIZATION,         6,    XXX,  AN|RIGHT},
 {"cwd",       "CWD",     pr_nop,           PIDS_noop,                3,    LNX,  AN|LEFT},
 {"drs",       "DRS",     pr_drs,           PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
 {"dsiz",      "DSIZ",    pr_dsiz,          PIDS_VSIZE_PGS,           4,    LNX,  PO|RIGHT},
