@@ -1339,11 +1339,22 @@ setREL1(EXE)
   return max_rightward-rightward;
 }
 
-/* %cpu utilization over task lifetime */
+/* %cpu utilization over task lifetime, as ##.### format */
 static int pr_utilization(char *restrict const outbuf, const proc_t *restrict const pp){
 double cu;
 setREL1(UTILIZATION)
   cu = rSv(UTILIZATION, real, pp);
+  /* this check is really just for us (the ps program) since we will be very
+     short lived and the library might reflect 100% or even more utilization */
+  if (cu > 99.0) cu = 99.999;
+  return snprintf(outbuf, COLWID, "%#.3f", cu);
+}
+
+/* %cpu utilization (plus dead children) over task lifetime, as ##.### format */
+static int pr_utilization_c(char *restrict const outbuf, const proc_t *restrict const pp){
+double cu;
+setREL1(UTILIZATION_C)
+  cu = rSv(UTILIZATION_C, real, pp);
   /* this check is really just for us (the ps program) since we will be very
      short lived and the library might reflect 100% or even more utilization */
   if (cu > 99.0) cu = 99.999;
@@ -1635,6 +1646,7 @@ static const format_struct format_array[] = { /*
 {"cputime",   "TIME",    pr_time,          PIDS_TIME_ALL,            8,    DEC,  ET|RIGHT}, /*time*/
 {"cputimes",  "TIME",    pr_times,         PIDS_TIME_ALL,            8,    LNX,  ET|RIGHT}, /*time*/
 {"ctid",      "CTID",    pr_nop,           PIDS_noop,                5,    SUN,  ET|RIGHT}, // resource contracts?
+{"cuc",       "%CUC",    pr_utilization_c, PIDS_UTILIZATION_C,       6,    XXX,  AN|RIGHT},
 {"cursig",    "CURSIG",  pr_nop,           PIDS_noop,                6,    DEC,  AN|RIGHT},
 {"cutime",    "-",       pr_nop,           PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
 {"cuu",       "%CUU",    pr_utilization,   PIDS_UTILIZATION,         6,    XXX,  AN|RIGHT},
