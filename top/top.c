@@ -1855,9 +1855,10 @@ static struct {
    {     5,     -1,  A_right,  PIDS_AUTOGRP_ID     },  // s_int    EU_AGI
    {     4,     -1,  A_right,  PIDS_AUTOGRP_NICE   },  // s_int    EU_AGN
    {     7,     -1,  A_right,  PIDS_TICS_BEGAN     },  // ull_int  EU_TM3
+   {     7,     -1,  A_right,  PIDS_TIME_ELAPSED   },  // real     EU_TM4
    {     6,     -1,  A_right,  PIDS_UTILIZATION    },  // real     EU_CUU
-   {     7,     -1,  A_right,  PIDS_TIME_ELAPSED   }   // real     EU_TM4
-#define eu_LAST  EU_TM4
+   {     6,     -1,  A_right,  PIDS_UTILIZATION_C  }   // real     EU_CUC
+#define eu_LAST  EU_CUC
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -6264,11 +6265,12 @@ static const char *task_show (const WIN_t *q, int idx) {
             break;
    /* ull_int, scale_pcnt for 'utilization' */
          case EU_CUU:        // PIDS_UTILIZATION
+         case EU_CUC:        // PIDS_UTILIZATION_C
             if (Restrict_some) {
                cp = justify_pad("?", W, Jn);
                break;
             }
-            cp = scale_pcnt(rSv(EU_CUU, real), W, Jn, 1);
+            cp = scale_pcnt(rSv(i, real), W, Jn, 1);
             break;
    /* u_int, make_num with auto width */
          case EU_GID:        // PIDS_ID_EGID

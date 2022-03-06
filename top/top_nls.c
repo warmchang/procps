@@ -353,12 +353,15 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'STARTED' = 7 */
    Head_nlstab[EU_TM3] = _("STARTED");
    Desc_nlstab[EU_TM3] = _("Start Time from boot");
-/* Translation Hint: maximum '%CUU' = 6 */
-   Head_nlstab[EU_CUU] = _("%CUU");
-   Desc_nlstab[EU_CUU] = _("CPU Utilization");
 /* Translation Hint: maximum 'ELAPSED' = 7 */
    Head_nlstab[EU_TM4] = _("ELAPSED");
    Desc_nlstab[EU_TM4] = _("Elapsed Running Time");
+/* Translation Hint: maximum '%CUU' = 6 */
+   Head_nlstab[EU_CUU] = _("%CUU");
+   Desc_nlstab[EU_CUU] = _("CPU Utilization");
+/* Translation Hint: maximum '%CUC' = 6 */
+   Head_nlstab[EU_CUC] = _("%CUC");
+   Desc_nlstab[EU_CUC] = _("Utilization + child");
 }
 
 
