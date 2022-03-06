@@ -518,7 +518,7 @@ static int pr_c(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu;                   /* scaled %cpu, 99 means 99% */
   unsigned long long seconds;      /* seconds of process life */
-setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
@@ -533,7 +533,7 @@ static int pr_pcpu(char *restrict const outbuf, const proc_t *restrict const pp)
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu;                   /* scaled %cpu, 999 means 99.9% */
   unsigned long long seconds;      /* seconds of process life */
-setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
@@ -549,7 +549,7 @@ static int pr_cp(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu;                   /* scaled %cpu, 999 means 99.9% */
   unsigned long long seconds;      /* seconds of process life */
-setREL3(TICS_ALL,TICS_ALL_C,TIME_ELAPSED)
+setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
@@ -1594,7 +1594,7 @@ static int pr_t_left2(char *restrict const outbuf, const proc_t *restrict const 
 /* Many of these are placeholders for unsupported options. */
 static const format_struct format_array[] = { /*
  .spec        .head      .pr               .sr                   .width .vendor .flags  */
-{"%cpu",      "%CPU",    pr_pcpu,          PIDS_extra,               4,    BSD,  ET|RIGHT}, /*pcpu*/
+{"%cpu",      "%CPU",    pr_pcpu,          PIDS_UTILIZATION,         4,    BSD,  ET|RIGHT}, /*pcpu*/
 {"%mem",      "%MEM",    pr_pmem,          PIDS_VM_RSS,              4,    BSD,  PO|RIGHT}, /*pmem*/
 {"_left",     "LLLLLLLL", pr_t_left,       PIDS_noop,                8,    TST,  ET|LEFT},
 {"_left2",    "L2L2L2L2", pr_t_left2,      PIDS_noop,                8,    TST,  ET|LEFT},
@@ -1616,7 +1616,7 @@ static const format_struct format_array[] = { /*
 {"bnd",       "BND",     pr_nop,           PIDS_noop,                1,    AIX,  TO|RIGHT},
 {"bsdstart",  "START",   pr_bsdstart,      PIDS_TICS_BEGAN,          6,    LNX,  ET|RIGHT},
 {"bsdtime",   "TIME",    pr_bsdtime,       PIDS_TICS_ALL,            6,    LNX,  ET|RIGHT},
-{"c",         "C",       pr_c,             PIDS_extra,               2,    SUN,  ET|RIGHT},
+{"c",         "C",       pr_c,             PIDS_UTILIZATION,         2,    SUN,  ET|RIGHT},
 {"caught",    "CAUGHT",  pr_sigcatch,      PIDS_SIGCATCH,            9,    BSD,  TO|SIGNAL}, /*sigcatch*/
 {"cgname",    "CGNAME",  pr_cgname,        PIDS_CGNAME,             27,    LNX,  PO|UNLIMITED},
 {"cgroup",    "CGROUP",  pr_cgroup,        PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
@@ -1629,7 +1629,7 @@ static const format_struct format_array[] = { /*
 {"comm",      "COMMAND", pr_comm,          PIDS_CMD,                15,    U98,  PO|UNLIMITED}, /*ucomm*/
 {"command",   "COMMAND", pr_args,          PIDS_CMDLINE,            27,    XXX,  PO|UNLIMITED}, /*args*/
 {"context",   "CONTEXT", pr_context,       PIDS_ID_TGID,            31,    LNX,  ET|LEFT},
-{"cp",        "CP",      pr_cp,            PIDS_extra,               3,    DEC,  ET|RIGHT}, /*cpu*/
+{"cp",        "CP",      pr_cp,            PIDS_UTILIZATION,         3,    DEC,  ET|RIGHT}, /*cpu*/
 {"cpu",       "CPU",     pr_nop,           PIDS_noop,                3,    BSD,  AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
 {"cpuid",     "CPUID",   pr_psr,           PIDS_PROCESSOR,           5,    BSD,  TO|RIGHT}, // OpenBSD: 8 wide!
 {"cputime",   "TIME",    pr_time,          PIDS_TIME_ALL,            8,    DEC,  ET|RIGHT}, /*time*/
@@ -1726,7 +1726,7 @@ static const format_struct format_array[] = { /*
 {"p_ru",      "P_RU",    pr_nop,           PIDS_noop,                6,    BSD,  AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,           PIDS_noop,                6,    BSD,  AN|RIGHT},
 {"pagein",    "PAGEIN",  pr_majflt,        PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
-{"pcpu",      "%CPU",    pr_pcpu,          PIDS_extra,               4,    U98,  ET|RIGHT}, /*%cpu*/
+{"pcpu",      "%CPU",    pr_pcpu,          PIDS_UTILIZATION,         4,    U98,  ET|RIGHT}, /*%cpu*/
 {"pending",   "PENDING", pr_sig,           PIDS_SIGNALS,             9,    BSD,  ET|SIGNAL}, /*sig*/
 {"pgid",      "PGID",    pr_pgid,          PIDS_ID_PGRP,             5,    U98,  PO|PIDMAX|RIGHT},
 {"pgrp",      "PGRP",    pr_pgid,          PIDS_ID_PGRP,             5,    LNX,  PO|PIDMAX|RIGHT},
@@ -1845,7 +1845,7 @@ static const format_struct format_array[] = { /*
 {"usertime",  "USER",    pr_nop,           PIDS_noop,                4,    DEC,  ET|RIGHT},
 {"usrpri",    "UPR",     pr_nop,           PIDS_noop,                3,    DEC,  TO|RIGHT}, /*upr*/
 {"uss",       "USS",     pr_uss,           PIDS_SMAP_PRV_TOTAL,      5,    XXX,  PO|RIGHT},
-{"util",      "C",       pr_c,             PIDS_extra,               2,    SGI,  ET|RIGHT}, // not sure about "C"
+{"util",      "C",       pr_c,             PIDS_UTILIZATION,         2,    SGI,  ET|RIGHT}, // not sure about "C"
 {"utime",     "UTIME",   pr_nop,           PIDS_TICS_USER,           6,    LNx,  ET|RIGHT},
 {"utsns",     "UTSNS",   pr_utsns,         PIDS_NS_UTS,             10,    LNX,  ET|RIGHT},
 {"uunit",     "UUNIT",   pr_sd_uunit,      PIDS_SD_UUNIT,           31,    LNX,  ET|LEFT},

@@ -61,6 +61,11 @@
     chkREL(e1) chkREL(e2) chkREL(e3) \
     return 0; \
   } }
+#define setREL4(e1,e2,e3,e4) { \
+  if (!outbuf) { \
+    chkREL(e1) chkREL(e2) chkREL(e3) chkREL(e4) \
+    return 0; \
+  } }
 
 extern struct pids_info *Pids_info;
 extern enum pids_item   *Pids_items;
