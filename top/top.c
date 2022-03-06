@@ -1633,8 +1633,10 @@ end_justifies:
 #define TICS_AS_SECS  0
 #define TICS_AS_MINS  1
 #define TICS_AS_HOUR  2
-#define TICS_AS_DAYS  3
-#define TICS_AS_WEEK  4
+#define TICS_AS_DAY1  3
+#define TICS_AS_DAY2  4
+#define TICS_AS_WEEK  5
+#define TICS_AS_LAST  6
 
         /*
          * Do some scaling stuff.
@@ -1719,7 +1721,7 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
             if (width >= snprintf(buf, sizeof(buf), "%lu,%02lu", hour, mins % 60))
                goto end_justifies;
          }
-      case TICS_AS_DAYS:                        // fall through
+      case TICS_AS_DAY1:                        // fall through
          if (days < ddLIMIT + 1) {
             if (width >= snprintf(buf, sizeof(buf), DD "+" HH, days, hour % 24))
                goto end_justifies;
@@ -1727,6 +1729,7 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
             if (width >= snprintf(buf, sizeof(buf), DD "+%lu", days, hour % 24))
                goto end_justifies;
 #endif
+      case TICS_AS_DAY2:                        // fall through
             if (width >= snprintf(buf, sizeof(buf), DD, days))
                goto end_justifies;
          }
@@ -1737,6 +1740,7 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
          if (width >= snprintf(buf, sizeof(buf), WW "+%lu", week, days % 7))
             goto end_justifies;
 #endif
+      case TICS_AS_LAST:                        // fall through
          if (width >= snprintf(buf, sizeof(buf), WW, week))
             goto end_justifies;
       default:                                  // fall through
@@ -3884,7 +3888,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       Rc.task_mscale = 0;
    if (Rc.zero_suppress < 0 || Rc.zero_suppress > 1)
       Rc.zero_suppress = 0;
-   if (Rc.tics_scaled < 0 || Rc.tics_scaled > TICS_AS_WEEK)
+   if (Rc.tics_scaled < 0 || Rc.tics_scaled > TICS_AS_LAST)
       Rc.tics_scaled = 0;
 
    // prepare to warn that older top can no longer read rcfile ...
@@ -5156,7 +5160,7 @@ static void keys_global (int ch) {
       case kbd_CtrlE:
 #ifndef SCALE_FORMER
          Rc.tics_scaled++;
-         if (Rc.tics_scaled > TICS_AS_WEEK)
+         if (Rc.tics_scaled > TICS_AS_LAST)
             Rc.tics_scaled = 0;
 #endif
          break;
