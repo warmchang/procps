@@ -170,6 +170,7 @@ enum pids_item {
     PIDS_TTY_NAME,          //      str        derived from TTY
     PIDS_TTY_NUMBER,        //      str        derived from TTY as str
     PIDS_UTILIZATION,       //     real        derived from TIME_ALL / TIME_ELAPSED, as percentage
+    PIDS_UTILIZATION_C,     //     real        derived from TIME_ALL_C / TIME_ELAPSED, as percentage
     PIDS_VM_DATA,           //   ul_int        status: VmData
     PIDS_VM_EXE,            //   ul_int        status: VmExe
     PIDS_VM_LIB,            //   ul_int        status: VmLib

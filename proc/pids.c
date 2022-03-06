@@ -287,6 +287,7 @@ REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)       { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 setDECL(TTY_NUMBER)     { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 setDECL(UTILIZATION)    { double t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((double)P->start_time / I->hertz); if (t > 0) R->result.real = ((P->utime + P->stime) * 100.0f / I->hertz) / t; }}
+setDECL(UTILIZATION_C)  { double t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((double)P->start_time / I->hertz); if (t > 0) R->result.real = ((P->utime + P->stime + P->cutime + P->cstime) * 100.0f / I->hertz) / t; }}
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -575,6 +576,7 @@ static struct {
     { RS(TTY_NAME),          f_stat,     FF(str),   QS(strvers),   0,        TS(str)     },
     { RS(TTY_NUMBER),        f_stat,     FF(str),   QS(strvers),   0,        TS(str)     },
     { RS(UTILIZATION),       f_stat,     NULL,      QS(real),      0,        TS(real)    },
+    { RS(UTILIZATION_C),     f_stat,     NULL,      QS(real),      0,        TS(real)    },
     { RS(VM_DATA),           f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(VM_EXE),            f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(VM_LIB),            f_status,   NULL,      QS(ul_int),    0,        TS(ul_int)  },
