@@ -56,6 +56,8 @@
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
+//#define SCALE_FORMER            /* scale_tics() guy shouldn't mimic uptime */
+//#define SCALE_POSTFX            /* scale_tics() try without a 'h,d' suffix */
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
@@ -181,6 +183,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_INS    138
 #define kbd_DEL    139
 #define kbd_CtrlO  '\017'
+#define kbd_CtrlE  '\005'
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */
@@ -402,6 +405,7 @@ typedef struct RCF_t {
    int    summ_mscale;          // 'E' - scaling of summary memory values
    int    task_mscale;          // 'e' - scaling of process memory values
    int    zero_suppress;        // '0' - suppress scaled zeros toggle
+   int    tics_scaled;          // ^E  - scale TIME and/or TIME+ columns
 } RCF_t;
 
         /* This structure stores configurable information for each window.
@@ -616,7 +620,7 @@ typedef struct WIN_t {
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
 #define RCF_PLUS_H      "\\]^_`abcdefghij"
 #define RCF_PLUS_J      "klmnopqrstuvwxyz"
-#define RCF_VERSION_ID  'j'
+#define RCF_VERSION_ID  'k'
 
         /* The default fields displayed and their order, if nothing is
            specified by the loser, oops user.
@@ -657,7 +661,7 @@ typedef struct WIN_t {
    { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
-   }, 0, DEF_SCALES2, 0 }
+   }, 0, DEF_SCALES2, 0, 0 }
 
         /* Summary Lines specially formatted string(s) --
            see 'show_special' for syntax details + other cautions. */
@@ -683,7 +687,9 @@ typedef struct WIN_t {
 #if defined(MEMGRAPH_OLD)
 # warning 'MEMGRAPH_OLD' will make the man document Section 2c. misleading
 #endif
-
+#if defined(SCALE_FORMER) && defined(SCALE_POSTFX)
+# warning 'SCALE_POSTFX' is ignored when 'SCALE_FORMER' is active
+#endif
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
@@ -742,7 +748,7 @@ typedef struct WIN_t {
 //atic const char   *scale_mem (int target, float num, int width, int justr);
 //atic const char   *scale_num (float num, int width, int justr);
 //atic const char   *scale_pcnt (float num, int width, int justr);
-//atic const char   *scale_tics (TIC_t tics, int width, int justr);
+//atic const char   *scale_tics (TIC_t tics, int width, int justr, int target);
 /*------  Fields Management support  -------------------------------------*/
 /*atic FLD_t         Fieldstab[] = { ... }                                */
 //atic void          adj_geometry (void);
