@@ -1134,7 +1134,7 @@ depending on the context in which they are issued.
         C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
-        Content:     c, F, f, O, o, S, U, u, V, v
+        Content:     c, F, f, O, o, S, U, u, V, v, ^E
         Size:        #, i, n
         Sorting:     <, >, f, R
   4d.\fI Color-Mapping \fR
@@ -1672,6 +1672,19 @@ vertical scrolling.
 
 If the target process has not forked any children, this key has no effect.
 It also has no effect when not in forest view mode.
+
+.TP 7
+\ \ \fB^E\fR\ \ :\fIScale-CPU-Time-fields\fR (Ctrl key + `e')
+The `time' fields are normally displayed with the greatest
+precision their widths permit.
+This toggle reduces that precision until it wraps.
+It also illustrates the scaling those fields \fImight\fR experience
+automatically, which usually depends on how long the system runs.
+
+For example, if 'MMM:SS.hh' is shown, each ^E keystroke would change
+it to: 'MM:SS', 'Hours,MM', 'Days+Hours' and finally 'Weeks+Days'.
+
+Not all time fields are subject to the full range of such scaling.
 
 .\" ..................................................
 .PP
