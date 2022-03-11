@@ -328,6 +328,7 @@ static int SCB_NAME(TME) (const proc_t **P, const proc_t **Q) {
    }
    return SORT_eq;
 }
+SCB_NUM1(TM3, start_time)
 SCB_NUM1(TPG, tpgid)
 SCB_NUMx(TTY, tty)
 SCB_NUMx(UED, euid)
@@ -1704,18 +1705,27 @@ end_justifies:
 
         /*
          * Make and then justify a percentage, with decreasing precision. */
-static const char *scale_pcnt (float num, int width, int justr) {
+static const char *scale_pcnt (float num, int width, int justr, int xtra) {
    static char buf[SMLBUFSIZ];
 
    buf[0] = '\0';
    if (Rc.zero_suppress && 0 >= num)
       goto end_justifies;
+   if (xtra) {
+      if (width >= snprintf(buf, sizeof(buf), "%#.3f", num))
+         goto end_justifies;
+      if (width >= snprintf(buf, sizeof(buf), "%#.2f", num))
+         goto end_justifies;
+      goto carry_on;
+   }
 #ifdef BOOST_PERCNT
    if (width >= snprintf(buf, sizeof(buf), "%#.3f", num))
       goto end_justifies;
    if (width >= snprintf(buf, sizeof(buf), "%#.2f", num))
       goto end_justifies;
+   (void)xtra;
 #endif
+carry_on:
    if (width >= snprintf(buf, sizeof(buf), "%#.1f", num))
       goto end_justifies;
    if (width >= snprintf(buf, sizeof(buf), "%*.0f", width, num))
@@ -1961,6 +1971,7 @@ static FLD_t Fieldstab[] = {
    {     6,  SK_Kb,  A_right,  SF(RZS),  L_status  },
    {    -1,     -1,  A_left,   SF(CGN),  L_CGROUP  },
    {     0,     -1,  A_right,  SF(NMA),  L_stat    },
+   {     7,     -1,  A_right,  SF(TM3),  L_stat    },
  #undef SF
  #undef A_left
  #undef A_right
@@ -6418,7 +6429,7 @@ static const char *task_show (const WIN_t *q, const int idx) {
             if (u > 100.0 * p->nlwp) u = 100.0 * p->nlwp;
 #endif
             if (u > Cpu_pmax) u = Cpu_pmax;
-            cp = scale_pcnt(u, W, Jn);
+            cp = scale_pcnt(u, W, Jn, 0);
          }
             break;
          case EU_DAT:
@@ -6455,7 +6466,7 @@ static const char *task_show (const WIN_t *q, const int idx) {
             cp = make_str(p->lxcname, W, Js, EU_LXC);
             break;
          case EU_MEM:
-            cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn);
+            cp = scale_pcnt((float)pages2K(p->resident) * 100 / kb_main_total, W, Jn, 0);
             break;
          case EU_NCE:
             cp = make_num(p->nice, W, Jn, AUTOX_NO, 1);
@@ -6539,6 +6550,9 @@ static const char *task_show (const WIN_t *q, const int idx) {
             if (CHKw(q, Show_CTIMES)) t += (p->cutime + p->cstime);
             cp = scale_tics(t, W, Jn, TICS_AS_SECS);
          }
+            break;
+         case EU_TM3:
+            cp = scale_tics(p->start_time, W, Jn, TICS_AS_MINS);
             break;
          case EU_TPG:
             cp = make_num(p->tpgid, W, Jn, AUTOX_NO, 0);

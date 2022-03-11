@@ -305,6 +305,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'NU' = 2 */
    Head_nlstab[EU_NMA] = _("NU");
    Desc_nlstab[EU_NMA] = _("Last Used NUMA node");
+/* Translation Hint: maximum 'STARTED' = 7 */
+   Head_nlstab[EU_TM3] = _("STARTED");
+   Desc_nlstab[EU_TM3] = _("Start Time from boot");
 }
 
 

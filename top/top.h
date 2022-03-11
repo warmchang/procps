@@ -220,6 +220,7 @@ enum pflag {
    EU_RZA, EU_RZF, EU_RZL, EU_RZS,
    EU_CGN,
    EU_NMA,
+   EU_TM3,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS
@@ -747,7 +748,7 @@ typedef struct WIN_t {
 //atic inline const char *make_str_utf8 (const char *str, int width, int justr, int col);
 //atic const char   *scale_mem (int target, float num, int width, int justr);
 //atic const char   *scale_num (float num, int width, int justr);
-//atic const char   *scale_pcnt (float num, int width, int justr);
+//atic const char   *scale_pcnt (float num, int width, int justr, int xtra);
 //atic const char   *scale_tics (TIC_t tics, int width, int justr, int target);
 /*------  Fields Management support  -------------------------------------*/
 /*atic FLD_t         Fieldstab[] = { ... }                                */
