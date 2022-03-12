@@ -576,6 +576,9 @@ typedef struct WIN_t {
 #if defined(SCALE_FORMER) && defined(SCALE_POSTFX)
 # warning 'SCALE_POSTFX' is ignored when 'SCALE_FORMER' is active
 #endif
+#if defined(USE_X_COLHDR)
+# warning 'USE_X_COLHDR' makes parts of man page misleading (4e, 5d & 5e)
+#endif
 
 /*######  Some Prototypes (ha!)  #########################################*/
 
