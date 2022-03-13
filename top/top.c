@@ -312,6 +312,28 @@ static const char *fmtmk (const char *fmts, ...) {
 
 
         /*
+         * Interger based fieldscur version of 'strlen' */
+static inline int mlen (const int *mem) {
+   int i;
+
+   for (i = 0; mem[i]; i++)
+      ;
+   return i;
+} // end: mlen
+
+
+        /*
+         * Interger based fieldscur version of 'strchr' */
+static inline int *msch (const int *mem, int obj, int max) {
+   int i;
+
+   for (i = 0; i < max; i++)
+      if (*(mem + i) == obj) return (int *)mem + i;
+   return NULL;
+} // end: msch
+
+
+        /*
          * This guy is just our way of avoiding the overhead of the standard
          * strcat function (should the caller choose to participate) */
 static inline char *scat (char *dst, const char *src) {
@@ -439,7 +461,7 @@ static void bye_bye (const char *str) {
       , Curwin->rc.sortindx, Curwin->rc.maxtasks
       , Curwin->varcolsz, Curwin->winlines
       , (int)strlen(Curwin->columnhdr)
-      , EU_MAXPFLGS, (int)strlen(Curwin->rc.fieldscur)
+      , EU_MAXPFLGS, mlen(Curwin->rc.fieldscur)
       );
    }
 }
@@ -2244,7 +2266,6 @@ static void display_fields (int focus, int extend) {
       /* prep sacrificial suffix (allowing for beginning '= ')
          note: width passed to 'utf8_embody' may go negative, but he'll be just fine */
       snprintf(sbuf, sizeof(sbuf), "= %.*s", utf8_embody(N_fld(f), smax - xEQUS), N_fld(f));
-
       // obtain translated deltas (if any) ...
       xcol = utf8_delta(fmtmk("%.*s", utf8_embody(N_col(f), 7), N_col(f)));
       xfld = utf8_delta(sbuf + xEQUS);           // ignore beginning '= '
@@ -2284,14 +2305,14 @@ static void fields_utility (void) {
 #else
  #define unSCRL  { w->begpflg = 0; OFFw(w, Show_HICOLS); }
 #endif
- #define swapEM  { char c; unSCRL; c = w->rc.fieldscur[i]; \
+ #define swapEM  { int c; unSCRL; c = w->rc.fieldscur[i]; \
        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
- #define spewFI  { char *t; f = w->rc.sortindx; t = strchr(w->rc.fieldscur, f + FLD_OFFSET); \
-       if (!t) t = strchr(w->rc.fieldscur, (f + FLD_OFFSET) | 0x80); \
+ #define spewFI  { int *t; f = w->rc.sortindx; t = msch(w->rc.fieldscur, f + FLD_OFFSET, EU_MAXPFLGS); \
+       if (!t) t = msch(w->rc.fieldscur, (f + FLD_OFFSET) | 0x01, EU_MAXPFLGS); \
        i = (t) ? (int)(t - w->rc.fieldscur) : 0; }
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    const char *h = NULL;
-   char *p = NULL;
+   int *p = NULL;
    int i, key;
    FLG_t f;
 
@@ -2349,7 +2370,8 @@ signify_that:
          case 'w':
             Curwin = w = ('a' == key) ? w->next : w->prev;
             spewFI
-            h = p = NULL;
+            h = NULL;
+            p = NULL;
             break;
          default:                 // keep gcc happy
             break;
@@ -3561,79 +3583,6 @@ static void before (char *me) {
 
 
         /*
-         * A configs_file *Helper* function responsible for converting
-         * a single window's old rc stuff into a new style rcfile entry */
-static int config_cvt (WIN_t *q) {
-   static struct {
-      int old, new;
-   } flags_tab[] = {
-    #define old_View_NOBOLD  0x000001
-    #define old_VISIBLE_tsk  0x000008
-    #define old_Qsrt_NORMAL  0x000010
-    #define old_Show_HICOLS  0x000200
-    #define old_Show_THREAD  0x010000
-      { old_View_NOBOLD, View_NOBOLD },
-      { old_VISIBLE_tsk, Show_TASKON },
-      { old_Qsrt_NORMAL, Qsrt_NORMAL },
-      { old_Show_HICOLS, Show_HICOLS },
-      { old_Show_THREAD, 0           }
-    #undef old_View_NOBOLD
-    #undef old_VISIBLE_tsk
-    #undef old_Qsrt_NORMAL
-    #undef old_Show_HICOLS
-    #undef old_Show_THREAD
-   };
-   static const char fields_src[] = CVT_FIELDS;
-   char fields_dst[PFLAGSSIZ], *p1, *p2;
-   int i, j, x;
-
-   // first we'll touch up this window's winflags...
-   x = q->rc.winflags;
-   q->rc.winflags = 0;
-   for (i = 0; i < MAXTBL(flags_tab); i++) {
-      if (x & flags_tab[i].old) {
-         x &= ~flags_tab[i].old;
-         q->rc.winflags |= flags_tab[i].new;
-      }
-   }
-   q->rc.winflags |= x;
-
-   // now let's convert old top's more limited fields...
-   j = strlen(q->rc.fieldscur);
-   if (j > CVT_FLDMAX)
-      return 1;
-   strcpy(fields_dst, fields_src);
-   /* all other fields represent the 'on' state with a capitalized version
-      of a particular qwerty key.  for the 2 additional suse out-of-memory
-      fields it makes perfect sense to do the exact opposite, doesn't it?
-      in any case, we must turn them 'off' temporarily... */
-   if ((p1 = strchr(q->rc.fieldscur, '[')))  *p1 = '{';
-   if ((p2 = strchr(q->rc.fieldscur, '\\'))) *p2 = '|';
-   for (i = 0; i < j; i++) {
-      int c = q->rc.fieldscur[i];
-      x = tolower(c) - 'a';
-      if (x < 0 || x >= CVT_FLDMAX)
-         return 1;
-      fields_dst[i] = fields_src[x];
-      if (isupper(c))
-         FLDon(fields_dst[i]);
-   }
-   // if we turned any suse only fields off, turn 'em back on OUR way...
-   if (p1) FLDon(fields_dst[p1 - q->rc.fieldscur]);
-   if (p2) FLDon(fields_dst[p2 - q->rc.fieldscur]);
-   strcpy(q->rc.fieldscur, fields_dst);
-
-   // lastly, we must adjust the old sort field enum...
-   x = q->rc.sortindx;
-   q->rc.sortindx = fields_src[x] - FLD_OFFSET;
-   if (q->rc.sortindx < 0 || q->rc.sortindx >= EU_MAXPFLGS)
-      return 1;
-
-   return 0;
-} // end: config_cvt
-
-
-        /*
          * A configs_file *Helper* function responsible for reading
          * and validating a configuration file's 'Inspection' entries */
 static int config_insp (FILE *fp, char *buf, size_t size) {
@@ -3780,7 +3729,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_whole, &tmp_fract, &i)) {
          return p;
    }
-   if (Rc.id < 'a' || Rc.id > RCF_VERSION_ID)
+   if (Rc.id != RCF_VERSION_ID)
       return p;
    if (Rc.mode_altscr < 0 || Rc.mode_altscr > 1)
       return p;
@@ -3796,18 +3745,17 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
    *delay = (float)tmp_whole + (float)tmp_fract / 1000;
 
    for (i = 0 ; i < GROUPSMAX; i++) {
-      int n, x;
+      int j, n, x;
       WIN_t *w = &Winstk[i];
       p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, name);
 
-      // note: "fieldscur=%__s" on next line should equal (PFLAGSSIZ -1) !
-      if (2 != fscanf(fp, "%3s\tfieldscur=%99s\n"
-         , w->rc.winname, w->rc.fieldscur))
+      if (1 != fscanf(fp, "%3s\tfieldscur=", w->rc.winname))
+         return p;
+      for (j = 0; j < mlen(w->rc.fieldscur); j++) {
+         if (1 != fscanf(fp, "%d ", &w->rc.fieldscur[j]))
             return p;
-#if PFLAGSSIZ != 100
- // too bad fscanf is not as flexible with his format string as snprintf
- #error Hey, fix the above fscanf 'PFLAGSSIZ' dependency !
-#endif
+      }
+
       // be tolerant of missing release 3.3.10 graph modes additions
       if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
                          ", double_up=%d, combine_cpus=%d\n"
@@ -3839,38 +3787,26 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
 
       switch (Rc.id) {
          case 'a':                          // 3.2.8 (former procps)
-            if (config_cvt(w))
-               return p;
-         // fall through
          case 'f':                          // 3.3.0 thru 3.3.3 (ng)
-            SETw(w, Show_JRNUMS);
-         // fall through
          case 'g':                          // from 3.3.4 thru 3.3.8
-            scat(w->rc.fieldscur, RCF_PLUS_H);
-         // fall through
          case 'h':                          // this is release 3.3.9
-            w->rc.graph_cpus = w->rc.graph_mems = 0;
-            // these next 2 are really global, but best documented here
-            Rc.summ_mscale = Rc.task_mscale = SK_Kb;
-         // fall through
          case 'i':                          // from 3.3.10 thru 3.3.16
-            scat(w->rc.fieldscur, RCF_PLUS_J);
-            w->rc.double_up = w->rc.combine_cpus = 0;
-         // fall through
          case 'j':                          // this is release 3.3.17
-            Rc.tics_scaled = 0;
+            return p;
          case 'k':                          // current RCF_VERSION_ID
          default:
-            if (strlen(w->rc.fieldscur) != sizeof(DEF_FIELDS) - 1)
+            if (mlen(w->rc.fieldscur) < EU_MAXPFLGS)
                return p;
-            for (x = 0; x < EU_MAXPFLGS; ++x)
-               if (EU_MAXPFLGS <= FLDget(w, x))
+            for (x = 0; x < EU_MAXPFLGS; x++) {
+               FLG_t f = FLDget(w, x);
+               if (f >= EU_MAXPFLGS || f < 0)
                   return p;
+            }
             break;
       }
       // ensure there's been no manual alteration of fieldscur
       for (n = 0 ; n < EU_MAXPFLGS; n++) {
-         if (&w->rc.fieldscur[n] != strrchr(w->rc.fieldscur, w->rc.fieldscur[n]))
+         if (&w->rc.fieldscur[n] != msch(w->rc.fieldscur, w->rc.fieldscur[n], EU_MAXPFLGS))
             return p;
       }
 #ifndef USE_X_COLHDR
@@ -4964,7 +4900,7 @@ static void other_filters (int ch) {
 
 static void write_rcfile (void) {
    FILE *fp;
-   int i;
+   int i, j, n;
 
    if (Rc_questions) {
       show_pmt(N_txt(XTRA_warncfg_txt));
@@ -4991,8 +4927,14 @@ static void write_rcfile (void) {
       , (int)(Curwin - Winstk));
 
    for (i = 0 ; i < GROUPSMAX; i++) {
-      fprintf(fp, "%s\tfieldscur=%s\n"
-         , Winstk[i].rc.winname, Winstk[i].rc.fieldscur);
+      n = mlen(Winstk[i].rc.fieldscur);
+      fprintf(fp, "%s\tfieldscur=", Winstk[i].rc.winname);
+      for (j = 0; j < n; j++) {
+         if (j && !(j % FLD_ROWMAX) && j < n)
+            fprintf(fp, "\n\t\t  ");
+         fprintf(fp, "%4d ", (int)Winstk[i].rc.fieldscur[j]);
+      }
+      fprintf(fp, "\n");
       fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
                   ", double_up=%d, combine_cpus=%d\n"
          , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks

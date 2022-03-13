@@ -226,7 +226,7 @@ enum resize_states {
 };
 
         /* This typedef just ensures consistent 'process flags' handling */
-typedef unsigned char FLG_t;
+typedef int FLG_t;
 
         /* These typedefs attempt to ensure consistent 'ticks' handling */
 typedef unsigned long long TIC_t;
@@ -316,8 +316,8 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
           msgsclr,                //             "           in msgs/pmts
           headclr,                //             "           in cols head
           taskclr;                //             "           in task rows
-   char   winname [WINNAMSIZ],    // name for the window, user changeable
-          fieldscur [PFLAGSSIZ];  // the fields for display & their order
+   char   winname [WINNAMSIZ];    // name for the window, user changeable
+   FLG_t  fieldscur [PFLAGSSIZ];  // the fields for display & their order
 } RCW_t;
 
         /* This represents the complete rcfile */
@@ -399,12 +399,11 @@ typedef struct WIN_t {
 #define VIZTOGw(q,f) (VIZISw(q)) ? TOGw(q,(f)) : win_warn(Warn_VIZ)
 
         // Used to test/manipulte fieldscur values
-#define FLDon(c)     ((c) |= 0x80)
-#define FLDget(q,i)  ((FLG_t)((q)->rc.fieldscur[i] & 0x7f) - FLD_OFFSET)
-#define FLDtog(q,i)  ((q)->rc.fieldscur[i] ^= 0x80)
-#define FLDviz(q,i)  ((q)->rc.fieldscur[i] &  0x80)
-#define ENUviz(w,E)  (NULL != memchr((w)->procflgs, E, (w)->maxpflgs))
-#define ENUpos(w,E)  ((int)((FLG_t*)memchr((w)->pflgsall, E, (w)->totpflgs) - (w)->pflgsall))
+#define FLDget(q,i)  ( (((q)->rc.fieldscur[i]) >> 1) - FLD_OFFSET  )
+#define FLDtog(q,i)  ( (q)->rc.fieldscur[i] ^= 0x01 )
+#define FLDviz(q,i)  ( (q)->rc.fieldscur[i] &  0x01 )
+#define ENUviz(w,E)  ( NULL != msch((w)->procflgs, E, w->maxpflgs) )
+#define ENUpos(w,E)  ( (int)(msch((w)->pflgsall, E, (w)->totpflgs) - (w)->pflgsall) )
 
         // Support for variable width columns (and potentially scrolling too)
 #define VARcol(E)    (-1 == Fieldstab[E].width)
@@ -507,33 +506,47 @@ typedef struct WIN_t {
 #define SYS_RCRESTRICT  "/etc/toprc"
 #define SYS_RCDEFAULTS  "/etc/topdefaultrc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
-#define RCF_PLUS_H      "\\]^_`abcdefghij"
-#define RCF_PLUS_J      "klmnopqrstuvwxyz"
 #define RCF_VERSION_ID  'k'
 
-        /* The default fields displayed and their order, if nothing is
-           specified by the loser, oops user.
-           note: any *contiguous* ascii sequence can serve as fieldscur
-                 characters as long as the initial value is coordinated
-                 with that specified for FLD_OFFSET
-           ( we're providing for up to 86 fields currently, )
-           ( with just one escaped value, the '\' character ) */
-#define FLD_OFFSET  '%'
-   //   seq_fields  "%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz"
-#ifdef ORIG_TOPDEFS
-#define DEF_FIELDS  "¥¨³´»½ÀÄ·º¹Å&')*+,-./012568<>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
-#else
-#define DEF_FIELDS  "¥&K¨³´»½@·º¹56ÄFÅ')*+,-./0128<>?ABCGHIJLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
-#endif
-        /* Pre-configured windows/field groups */
-#define JOB_FIELDS  "¥¦¹·º(³´Ä»½@<§Å)*+,-./012568>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
-#define MEM_FIELDS  "¥º»<½¾¿ÀÁMBNÃD34·Å&'()*+,-./0125689FGHIJKLOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
-#define USR_FIELDS  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
-        // old top fields ( 'a'-'z' ) in positions 0-25
-        // other suse old top fields ( '{|' ) in positions 26-27
-#define CVT_FIELDS  "%&*'(-0346789:;<=>?@ACDEFGML)+,./125BHIJKNOPQRSTUVWXYZ["
-#define CVT_FLDMAX  28
+#define FLD_OFFSET  ( (int)'%' )
+#define FLD_ROWMAX  20
 
+        /* The default fields displayed and their order,
+           if nothing is specified by the loser, oops user. */
+#define OLD_FIELDS { \
+     75,  81, 103, 105, 119, 123, 129, 137, 111, 117, 115, 139,  76,  78,  82,  84,  86,  88,  90,  92, \
+     94,  96,  98, 100, 106, 108, 112, 120, 124, 126, 130, 132, 134, 140, 142, 144, 146, 148, 150, 152, \
+    154, 156, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, \
+    194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 228, 230, 232, \
+    234, 236, 238, 240, 242, 244,   }
+#ifdef ORIG_TOPDEFS
+#define DEF_FIELDS  OLD_FIELDS
+#else
+#define DEF_FIELDS { \
+     75,  76, 150,  81, 103, 105, 119, 123, 128, 111, 117, 115, 106, 108, 137, 140, 139,  78,  82,  84, \
+     86,  88,  90,  92,  94,  96,  98, 100, 112, 120, 124, 126, 130, 132, 134, 142, 144, 146, 148, 152, \
+    154, 156, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, \
+    194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 228, 230, 232, \
+    234, 236, 238, 240, 242, 244 }
+#endif
+#define JOB_FIELDS { \
+     75,  77, 115, 111, 117,  80, 103, 105, 137, 119, 123, 128, 120,  79, 139,  82,  84,  86,  88,  90, \
+     92,  94,  96,  98, 100, 106, 108, 112, 124, 126, 130, 132, 134, 140, 142, 144, 146, 148, 150, 152, \
+    154, 156, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, \
+    194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 228, 230, 232, \
+    234, 236, 238, 240, 242, 244 }
+#define MEM_FIELDS { \
+     75, 117, 119, 120, 123, 125, 127, 129, 131, 154, 132, 156, 135, 136, 102, 104, 111, 139,  76,  78, \
+     80,  82,  84,  86,  88,  90,  92,  94,  96,  98, 100, 106, 108, 112, 114, 140, 142, 144, 146, 148, \
+    150, 152, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, \
+    194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 228, 230, 232, \
+    234, 236, 238, 240, 242, 244 }
+#define USR_FIELDS { \
+     75,  77,  79,  81,  85,  97, 115, 111, 117, 137, 139,  82,  86,  88,  90,  92,  94,  98, 100, 102, \
+    104, 106, 108, 112, 118, 120, 122, 124, 126, 128, 130, 132, 134, 140, 142, 144, 146, 148, 150, 152, \
+    154, 156, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, \
+    194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 228, 230, 232, \
+    234, 236, 238, 240, 242, 244 }
 
         /* The default values for the local config file */
 #define DEF_RCFILE { \
@@ -556,7 +569,6 @@ typedef struct WIN_t {
            see 'show_special' for syntax details + other cautions. */
 #define LOADAV_line  "%s -%s\n"
 #define LOADAV_line_alt  "%s~6 -%s\n"
-
 
 /*######  For Piece of mind  #############################################*/
 
@@ -586,6 +598,8 @@ typedef struct WIN_t {
    /* ( see the find_string function for the one true required protoype ) */
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic const char   *fmtmk (const char *fmts, ...);
+//atic inline int    mlen (const int *mem);
+//atic inline int   *msch (const int *mem, int obj, int max);
 //atic inline char  *scat (char *dst, const char *src);
 //atic const char   *tg2 (int x, int y);
 /*------  Exit/Interrput routines  ---------------------------------------*/
@@ -667,7 +681,6 @@ typedef struct WIN_t {
 //atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
-//atic int           config_cvt (WIN_t *q);
 //atic int           config_insp (FILE *fp, char *buf, size_t size);
 //atic int           config_osel (FILE *fp, char *buf, size_t size);
 //atic const char   *configs_file (FILE *fp, const char *name, float *delay);
