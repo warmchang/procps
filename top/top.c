@@ -3583,6 +3583,99 @@ static void before (char *me) {
 
 
         /*
+         * A configs_file *Helper* function responsible for transorming
+         * a 3.2.8 - 3.3.17 format 'fieldscur' into our integer based format */
+static int cfg_xform (WIN_t *q, char *flds, const char *defs) {
+ #define CVTon(c) ((c) |= 0x80)
+   static struct {
+      int old, new;
+   } flags_tab[] = {
+    #define old_View_NOBOLD  0x000001
+    #define old_VISIBLE_tsk  0x000008
+    #define old_Qsrt_NORMAL  0x000010
+    #define old_Show_HICOLS  0x000200
+    #define old_Show_THREAD  0x010000
+      { old_View_NOBOLD, View_NOBOLD },
+      { old_VISIBLE_tsk, Show_TASKON },
+      { old_Qsrt_NORMAL, Qsrt_NORMAL },
+      { old_Show_HICOLS, Show_HICOLS },
+      { old_Show_THREAD, 0           }
+    #undef old_View_NOBOLD
+    #undef old_VISIBLE_tsk
+    #undef old_Qsrt_NORMAL
+    #undef old_Show_HICOLS
+    #undef old_Show_THREAD
+   };
+   static char null_flds[] = "abcdefghijklmnopqrstuvwxyz";
+   static const char fields_src[] = CVT_FORMER;
+   char fields_dst[PFLAGSSIZ], *p1, *p2;
+   int c, f, i, x, *pn;
+
+   if (Rc.id == 'a') {
+      // first we'll touch up this window's winflags ...
+      x = q->rc.winflags;
+      q->rc.winflags = 0;
+      for (i = 0; i < MAXTBL(flags_tab); i++) {
+         if (x & flags_tab[i].old) {
+            x &= ~flags_tab[i].old;
+            q->rc.winflags |= flags_tab[i].new;
+         }
+      }
+      q->rc.winflags |= x;
+
+      // now let's convert old top's more limited fields ...
+      if (CVT_FLDMAX > strlen(flds))
+         return 1;
+      // here we convert old 3.2.8 top's more limited fields ...
+      strcpy(fields_dst, fields_src);
+      /* all other fields represent the 'on' state with a capitalized version
+         of a particular qwerty key.  for the 2 additional suse out-of-memory
+         fields it makes perfect sense to do the exact opposite, doesn't it?
+         in any case, we must turn them 'off' temporarily ... */
+      if ((p1 = strchr(flds, '[')))  *p1 = '{';
+      if ((p2 = strchr(flds, '\\'))) *p2 = '|';
+      for (i = 0; i < CVT_FLDMAX; i++) {
+         c = flds[i];
+         x = tolower(c) - 'a';
+         if (x < 0 || x >= CVT_FLDMAX)
+            return 1;
+         fields_dst[i] = fields_src[x];
+         if (isupper(c))
+            CVTon(fields_dst[i]);
+      }
+      // if we turned any suse only fields off, turn 'em back on OUR way ...
+      if (p1) CVTon(fields_dst[p1 - flds]);
+      if (p2) CVTon(fields_dst[p2 - flds]);
+
+      // next, we must adjust the old sort field enum ...
+      x = q->rc.sortindx;
+      c = null_flds[x];
+      q->rc.sortindx = 0;
+      if ((p1 = memchr(flds, c, CVT_FLDMAX))
+      || ((p1 = memchr(flds, toupper(c), CVT_FLDMAX)))) {
+         x = p1 - flds;
+         q->rc.sortindx = (fields_dst[x] & 0x7f) - FLD_OFFSET;
+      }
+      // now we're in a 3.3.0 format (soon to be transformed) ...
+      strcpy(flds, fields_dst);
+   }
+
+   // lastly, let's attend to the 3.3.0 - 3.3.17 fieldcurs format ...
+   pn = &q->rc.fieldscur[0];
+   x = strlen(defs);
+   for (i = 0; i < x; i++) {
+      f  = ((unsigned char)flds[i] & 0x7f);
+      f  = f << 1;
+      if ((unsigned char)flds[i] & 0x80) f |= 0x01;
+      *(pn + i) = f;
+   }
+
+   return 0;
+ #undef CVTon
+} // end: cfg_xform
+
+
+        /*
          * A configs_file *Helper* function responsible for reading
          * and validating a configuration file's 'Inspection' entries */
 static int config_insp (FILE *fp, char *buf, size_t size) {
@@ -3719,7 +3812,7 @@ end_oops:
          * a configuration file (personal or system-wide default) */
 static const char *configs_file (FILE *fp, const char *name, float *delay) {
    char fbuf[LRGBUFSIZ];
-   int i, tmp_whole, tmp_fract;
+   int i, n, tmp_whole, tmp_fract;
    const char *p = NULL;
 
    p = fmtmk(N_fmt(RC_bad_files_fmt), name);
@@ -3729,7 +3822,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       , &Rc.id, &Rc.mode_altscr, &Rc.mode_irixps, &tmp_whole, &tmp_fract, &i)) {
          return p;
    }
-   if (Rc.id != RCF_VERSION_ID)
+   if (Rc.id < 'a' || Rc.id > RCF_VERSION_ID)
       return p;
    if (Rc.mode_altscr < 0 || Rc.mode_altscr > 1)
       return p;
@@ -3745,15 +3838,19 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
    *delay = (float)tmp_whole + (float)tmp_fract / 1000;
 
    for (i = 0 ; i < GROUPSMAX; i++) {
-      int j, n, x;
+      static const char *def_flds[] = { DEF_FORMER, JOB_FORMER, MEM_FORMER, USR_FORMER };
+      int j, x;
       WIN_t *w = &Winstk[i];
       p = fmtmk(N_fmt(RC_bad_entry_fmt), i+1, name);
 
       if (1 != fscanf(fp, "%3s\tfieldscur=", w->rc.winname))
          return p;
-      for (j = 0; j < mlen(w->rc.fieldscur); j++) {
-         if (1 != fscanf(fp, "%d ", &w->rc.fieldscur[j]))
-            return p;
+      if (Rc.id < RCF_XFORMED_ID)
+         fscanf(fp, "%s\n", fbuf);
+      else {
+         for (j = 0; ; j++)
+            if (1 != fscanf(fp, "%d", &w->rc.fieldscur[j]))
+               break;
       }
 
       // be tolerant of missing release 3.3.10 graph modes additions
@@ -3787,13 +3884,29 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
 
       switch (Rc.id) {
          case 'a':                          // 3.2.8 (former procps)
+         // fall through
          case 'f':                          // 3.3.0 thru 3.3.3 (ng)
+            SETw(w, Show_JRNUMS);
+         // fall through
          case 'g':                          // from 3.3.4 thru 3.3.8
+            scat(fbuf, RCF_PLUS_H);
+         // fall through
          case 'h':                          // this is release 3.3.9
+            w->rc.graph_cpus = w->rc.graph_mems = 0;
+            // these next 2 are really global, but best documented here
+            Rc.summ_mscale = Rc.task_mscale = SK_Kb;
+         // fall through
          case 'i':                          // from 3.3.10 thru 3.3.16
+            scat(fbuf, RCF_PLUS_J);
+            w->rc.double_up = w->rc.combine_cpus = 0;
+         // fall through
          case 'j':                          // this is release 3.3.17
-            return p;
+            if (cfg_xform(w, fbuf, def_flds[i]))
+               return p;
+            Rc.tics_scaled = 0;
+         // fall through
          case 'k':                          // current RCF_VERSION_ID
+         // fall through
          default:
             if (mlen(w->rc.fieldscur) < EU_MAXPFLGS)
                return p;

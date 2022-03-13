@@ -506,6 +506,13 @@ typedef struct WIN_t {
 #define SYS_RCRESTRICT  "/etc/toprc"
 #define SYS_RCDEFAULTS  "/etc/topdefaultrc"
 #define RCF_EYECATCHER  "Config File (Linux processes with windows)\n"
+#define RCF_PLUS_H      "\\]^_`abcdefghij"
+#define RCF_PLUS_J      "klmnopqrstuvwxyz"
+        // this next guy must never, ever change
+        // ( we transition from'char' to 'int' )
+#define RCF_XFORMED_ID  'k'
+        // this next guy is incremented when columns change
+        // ( to prevent older top versions from accessing )
 #define RCF_VERSION_ID  'k'
 
 #define FLD_OFFSET  ( (int)'%' )
@@ -513,14 +520,27 @@ typedef struct WIN_t {
 
         /* The default fields displayed and their order,
            if nothing is specified by the loser, oops user. */
-#define OLD_FIELDS { \
+#ifdef ORIG_TOPDEFS
+#define DEF_FORMER  "¥¨³´»½ÀÄ·º¹Å&')*+,-./012568<>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+#else
+#define DEF_FORMER  "¥&K¨³´»½@·º¹56ÄFÅ')*+,-./0128<>?ABCGHIJLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+#endif
+        /* Pre-configured windows/field groups */
+#define JOB_FORMER  "¥¦¹·º(³´Ä»½@<§Å)*+,-./012568>?ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+#define MEM_FORMER  "¥º»<½¾¿ÀÁMBNÃD34·Å&'()*+,-./0125689FGHIJKLOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+#define USR_FORMER  "¥¦§¨ª°¹·ºÄÅ)+,-./1234568;<=>?@ABCFGHIJKLMNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+        // old top fields ( 'a'-'z' ) in positions 0-25
+        // other suse old top fields ( '{|' ) in positions 26-27
+#define CVT_FORMER  "%&*'(-0346789:;<=>?@ACDEFGML)+,./125BHIJKNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
+#define CVT_FLDMAX  26
+
+#ifdef ORIG_TOPDEFS
+#define DEF_FIELDS { \
      75,  81, 103, 105, 119, 123, 129, 137, 111, 117, 115, 139,  76,  78,  82,  84,  86,  88,  90,  92, \
      94,  96,  98, 100, 106, 108, 112, 120, 124, 126, 130, 132, 134, 140, 142, 144, 146, 148, 150, 152, \
     154, 156, 158, 160, 162, 164, 166, 168, 170, 172, 174, 176, 178, 180, 182, 184, 186, 188, 190, 192, \
     194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 228, 230, 232, \
     234, 236, 238, 240, 242, 244, 246, 248, 250, 252, 254, 256, 258, 260, 262, 264, 266, 268, 270, 272  }
-#ifdef ORIG_TOPDEFS
-#define DEF_FIELDS  OLD_FIELDS
 #else
 #define DEF_FIELDS { \
      75,  76, 150,  81, 103, 105, 119, 123, 128, 111, 117, 115, 106, 108, 137, 140, 139,  78,  82,  84, \
@@ -681,6 +701,7 @@ typedef struct WIN_t {
 //atic inline int    osel_matched (const WIN_t *q, FLG_t enu, const char *str);
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
+//atic int           cfg_xform (WIN_t *q, char *flds, const char *defs);
 //atic int           config_insp (FILE *fp, char *buf, size_t size);
 //atic int           config_osel (FILE *fp, char *buf, size_t size);
 //atic const char   *configs_file (FILE *fp, const char *name, float *delay);
