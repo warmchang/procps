@@ -2413,7 +2413,8 @@ Inspect entries can be added with a redirected echo or by editing the \*(CF.
 Redirecting an echo risks overwriting the rcfile should it replace (>)
 rather than append (>>) to that file.
 Conversely, when using an editor care must be taken not to corrupt existing
-lines, some of which will contain unprintable data or unusual characters.
+lines, some of which could contain unprintable data or unusual characters
+depending on the \*(We version under which that \*(CF was saved.
 
 Those Inspect entries beginning with a `#' character are ignored, regardless
 of content.
