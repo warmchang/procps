@@ -532,7 +532,7 @@ typedef struct WIN_t {
         // old top fields ( 'a'-'z' ) in positions 0-25
         // other suse old top fields ( '{|' ) in positions 26-27
 #define CVT_FORMER  "%&*'(-0346789:;<=>?@ACDEFGML)+,./125BHIJKNOPQRSTUVWXYZ[" RCF_PLUS_H RCF_PLUS_J
-#define CVT_FLDMAX  26
+#define CVT_FLDMAX  28
 
 #ifdef ORIG_TOPDEFS
 #define DEF_FIELDS { \

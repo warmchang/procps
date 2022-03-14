@@ -3624,9 +3624,9 @@ static int cfg_xform (WIN_t *q, char *flds, const char *defs) {
       q->rc.winflags |= x;
 
       // now let's convert old top's more limited fields ...
-      if (CVT_FLDMAX > strlen(flds))
+      f = strlen(flds);
+      if (f >= CVT_FLDMAX)
          return 1;
-      // here we convert old 3.2.8 top's more limited fields ...
       strcpy(fields_dst, fields_src);
       /* all other fields represent the 'on' state with a capitalized version
          of a particular qwerty key.  for the 2 additional suse out-of-memory
@@ -3634,7 +3634,7 @@ static int cfg_xform (WIN_t *q, char *flds, const char *defs) {
          in any case, we must turn them 'off' temporarily ... */
       if ((p1 = strchr(flds, '[')))  *p1 = '{';
       if ((p2 = strchr(flds, '\\'))) *p2 = '|';
-      for (i = 0; i < CVT_FLDMAX; i++) {
+      for (i = 0; i < f; i++) {
          c = flds[i];
          x = tolower(c) - 'a';
          if (x < 0 || x >= CVT_FLDMAX)
@@ -3889,7 +3889,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
             SETw(w, Show_JRNUMS);
          // fall through
          case 'g':                          // from 3.3.4 thru 3.3.8
-            scat(fbuf, RCF_PLUS_H);
+            if (Rc.id > 'a') scat(fbuf, RCF_PLUS_H);
          // fall through
          case 'h':                          // this is release 3.3.9
             w->rc.graph_cpus = w->rc.graph_mems = 0;
@@ -3897,7 +3897,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
             Rc.summ_mscale = Rc.task_mscale = SK_Kb;
          // fall through
          case 'i':                          // from 3.3.10 thru 3.3.16
-            scat(fbuf, RCF_PLUS_J);
+            if (Rc.id > 'a') scat(fbuf, RCF_PLUS_J);
             w->rc.double_up = w->rc.combine_cpus = 0;
          // fall through
          case 'j':                          // this is release 3.3.17
