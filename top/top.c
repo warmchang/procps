@@ -5281,7 +5281,7 @@ static void write_rcfile (void) {
       fprintf(fp, Osel_delim_2_txt);
    }
 
-   if (Inspect.raw)
+   if (Inspect.raw && strcmp(Inspect.raw, "\n"))
       fputs(Inspect.raw, fp);
 
    fclose(fp);
