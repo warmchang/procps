@@ -509,7 +509,7 @@ typedef struct WIN_t {
 #define RCF_PLUS_H      "\\]^_`abcdefghij"
 #define RCF_PLUS_J      "klmnopqrstuvwxyz"
         // this next guy must never, ever change
-        // ( we transition from'char' to 'int' )
+        // ( transitioned from 'char' to 'int' )
 #define RCF_XFORMED_ID  'k'
         // this next guy is incremented when columns change
         // ( to prevent older top versions from accessing )
