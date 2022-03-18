@@ -3824,6 +3824,8 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
    }
    if (Rc.id < 'a' || Rc.id > RCF_VERSION_ID)
       return p;
+   if (strchr("bcde", Rc.id))
+      return p;
    if (Rc.mode_altscr < 0 || Rc.mode_altscr > 1)
       return p;
    if (Rc.mode_irixps < 0 || Rc.mode_irixps > 1)
