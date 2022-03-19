@@ -2307,8 +2307,8 @@ static void fields_utility (void) {
 #endif
  #define swapEM  { int c; unSCRL; c = w->rc.fieldscur[i]; \
        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
- #define spewFI  { int *t; f = w->rc.sortindx; t = msch(w->rc.fieldscur, f + FLD_OFFSET, EU_MAXPFLGS); \
-       if (!t) t = msch(w->rc.fieldscur, (f + FLD_OFFSET) | 0x01, EU_MAXPFLGS); \
+ #define spewFI  { int *t; f = w->rc.sortindx; t = msch(w->rc.fieldscur, ENUcvt(f, ENUon), EU_MAXPFLGS); \
+       if (!t) t = msch(w->rc.fieldscur, ENUcvt(f, ENUoff), EU_MAXPFLGS); \
        i = (t) ? (int)(t - w->rc.fieldscur) : 0; }
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    const char *h = NULL;
