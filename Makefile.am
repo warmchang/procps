@@ -393,7 +393,7 @@ TESTS = \
 	lib/test_strtod_nol
 
 # Automake should do this, but it doesn't
-check: $(check_PROGRAMS)
+check: $(check_PROGRAMS) $(PROGRAMS)
 
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version
