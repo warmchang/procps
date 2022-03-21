@@ -7,6 +7,17 @@
 #   make -C man-po man.stamp
 # To update man page translations
 
+# Not sure why this needs to be repeated from the top-level Makefile but it does
+dist_man_MANS = \
+	../free.1 \
+	../pgrep.1 \
+	../pkill.1 \
+	../pmap.1 \
+	../uptime.1 \
+	../vmstat.8 \
+	../doc/procps.3 \
+	../doc/procps_pids.3 \
+	../doc/procps_misc.3
 
 translated_MANS = $(wildcard translated/*/*.[1-9])
 translated_MAN_sections=$(subst .,,$(sort $(suffix $(translated_MANS))))
