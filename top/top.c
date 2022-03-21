@@ -2307,8 +2307,8 @@ static void fields_utility (void) {
 #endif
  #define swapEM  { int c; unSCRL; c = w->rc.fieldscur[i]; \
        w->rc.fieldscur[i] = *p; *p = c; p = &w->rc.fieldscur[i]; }
- #define spewFI  { int *t; f = w->rc.sortindx; t = msch(w->rc.fieldscur, ENUcvt(f, ENUon), EU_MAXPFLGS); \
-       if (!t) t = msch(w->rc.fieldscur, ENUcvt(f, ENUoff), EU_MAXPFLGS); \
+ #define spewFI  { int *t; f = w->rc.sortindx; t = msch(w->rc.fieldscur, ENUcvt(f, FLDon), EU_MAXPFLGS); \
+       if (!t) t = msch(w->rc.fieldscur, ENUcvt(f, FLDoff), EU_MAXPFLGS); \
        i = (t) ? (int)(t - w->rc.fieldscur) : 0; }
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    const char *h = NULL;
@@ -3666,7 +3666,7 @@ static int cfg_xform (WIN_t *q, char *flds, const char *defs) {
    for (i = 0; i < x; i++) {
       f  = ((unsigned char)flds[i] & 0x7f);
       f  = f << 1;
-      if ((unsigned char)flds[i] & 0x80) f |= 0x01;
+      if ((unsigned char)flds[i] & 0x80) f |= FLDon;
       *(pn + i) = f;
    }
 

@@ -399,14 +399,14 @@ typedef struct WIN_t {
 #define VIZTOGw(q,f) (VIZISw(q)) ? TOGw(q,(f)) : win_warn(Warn_VIZ)
 
         // Used to test/manipulte fieldscur values
+#define FLDon        0x01
+#define FLDoff       0x00
 #define FLDget(q,i)  ( (((q)->rc.fieldscur[i]) >> 1) - FLD_OFFSET  )
-#define FLDtog(q,i)  ( (q)->rc.fieldscur[i] ^= 0x01 )
-#define FLDviz(q,i)  ( (q)->rc.fieldscur[i] &  0x01 )
+#define FLDtog(q,i)  ( (q)->rc.fieldscur[i] ^= FLDon )
+#define FLDviz(q,i)  ( (q)->rc.fieldscur[i] &  FLDon )
 #define ENUviz(w,E)  ( NULL != msch((w)->procflgs, E, w->maxpflgs) )
 #define ENUpos(w,E)  ( (int)(msch((w)->pflgsall, E, (w)->totpflgs) - (w)->pflgsall) )
-#define ENUcvt(E,x)  ( (int)(((E + FLD_OFFSET) << 1) | x) )
-#define ENUon        0x01
-#define ENUoff       0x00
+#define ENUcvt(E,x)  ( (int)((E + FLD_OFFSET) << 1) | x )
 
         // Support for variable width columns (and potentially scrolling too)
 #define VARcol(E)    (-1 == Fieldstab[E].width)
