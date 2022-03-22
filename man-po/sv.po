@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-03-21 21:32+1100\n"
+"POT-Creation-Date: 2022-03-22 21:38+1100\n"
 "PO-Revision-Date: 2021-01-28 22:55+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -3388,9 +3388,9 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "-o I<skippapid>"
 
 #~ msgid ""
-#~ "Tells I<pidof> to omit processes with that process id. The special pid B<"
-#~ "%PPID> can be used to name the parent process of the I<pidof> program, in "
-#~ "other words the calling shell or shell script."
+#~ "Tells I<pidof> to omit processes with that process id. The special pid "
+#~ "B<%PPID> can be used to name the parent process of the I<pidof> program, "
+#~ "in other words the calling shell or shell script."
 #~ msgstr ""
 #~ "Säger till I<pidof> att utesluta processer med det process-id:t.  Den "
 #~ "speciella processen B<%PPID> kan användas för att namnge "
@@ -3659,6 +3659,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, no-wrap
 #~ msgid "SLABTOP"
 #~ msgstr "SLABTOP"
+
+#, fuzzy, no-wrap
+#~| msgid "2020-04-24"
+#~ msgid "2021-03-11"
+#~ msgstr "2020-04-24"
 
 #~ msgid "slabtop - display kernel slab cache information in real time"
 #~ msgstr "slabtop — visa information om kärnans skivcache i realtid"
@@ -3946,6 +3951,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, no-wrap
 #~ msgid "SYSCTL"
 #~ msgstr "SYSCTL"
+
+#, fuzzy, no-wrap
+#~| msgid "2020-04-24"
+#~ msgid "2021-03-29"
+#~ msgstr "2020-04-24"
 
 #~ msgid "sysctl - configure kernel parameters at runtime"
 #~ msgstr "sysctl — konfigurera kärnparametrar under gång"
@@ -4461,8 +4471,8 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "närvarande körande bakgrundsjobben."
 
 #~ msgid ""
-#~ "The PCPU time is the time used by the current process, named in the \"what"
-#~ "\" field."
+#~ "The PCPU time is the time used by the current process, named in the "
+#~ "\"what\" field."
 #~ msgstr ""
 #~ "PCPU-tiden är tiden som används av den aktuella processen, med namnet i "
 #~ "”vad”-fältet."
@@ -4822,8 +4832,8 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy
 #~| msgid ""
-#~| "Non-printing characters are stripped from program output.  Use \"cat -v"
-#~| "\" as part of the command pipeline if you want to see them."
+#~| "Non-printing characters are stripped from program output.  Use \"cat -"
+#~| "v\" as part of the command pipeline if you want to see them."
 #~ msgid ""
 #~ "Non-printing characters are stripped from program output.  Use B<cat -v> "
 #~ "as part of the command pipeline if you want to see them."
@@ -4945,11 +4955,6 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, no-wrap
 #~ msgid "PS"
 #~ msgstr "PS"
-
-#, fuzzy, no-wrap
-#~| msgid "2020-04-24"
-#~ msgid "2021-06-16"
-#~ msgstr "2020-04-24"
 
 #, fuzzy
 #~| msgid "pmap - report memory map of a process"
@@ -5329,6 +5334,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "B<--Group>I<\\ grplist>"
 #~ msgstr "B<-l>,B<\\ --list>"
 
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid "Select by real group ID (RGID) or name.  Identical to B<-G>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
+
 #, fuzzy, no-wrap
 #~| msgid "B<-g>, B<--pgroup> I<pgrp>,..."
 #~ msgid "B<--group>I<\\ grplist>"
@@ -5338,6 +5348,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "B<-l>,B<\\ --list>"
 #~ msgid "B<p>I<\\ pidlist>"
 #~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid "Select by process ID.  Identical to B<-p> and B<--pid>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
 
 #, fuzzy, no-wrap
 #~| msgid "B<-l>,B<\\ --list>"
@@ -5349,6 +5364,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "B<--pid>I<\\ pidlist>"
 #~ msgstr "B<-p>, B<--pid> I<pid>"
 
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid "Select by process\\ ID.  Identical to B<-p> and B<p>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
+
 #, fuzzy, no-wrap
 #~| msgid "B<-p>, B<--pid> I<pid>"
 #~ msgid "B<--ppid>I<\\ pidlist>"
@@ -5358,6 +5378,12 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "B<-l>,B<\\ --list>"
 #~ msgid "B<q>I<\\ pidlist>"
 #~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid ""
+#~ "Select by process ID (quick mode).  Identical to B<-q> and B<--quick-pid>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
 
 #, fuzzy, no-wrap
 #~| msgid "B<-l>,B<\\ --list>"
@@ -5369,6 +5395,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "B<--quick-pid>I<\\ pidlist>"
 #~ msgstr "B<-p>, B<--pid> I<pid>"
 
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid "Select by process\\ ID (quick mode).  Identical to B<-q> and B<q>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
+
 #, fuzzy, no-wrap
 #~| msgid "B<-l>,B<\\ --list>"
 #~ msgid "B<-s>I<\\ sesslist>"
@@ -5378,6 +5409,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "B<-l>,B<\\ --list>"
 #~ msgid "B<--sid>I<\\ sesslist>"
 #~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid "Select by session\\ ID.  Identical to B<-s>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
 
 #, fuzzy, no-wrap
 #~| msgid "B<-l>,B<\\ --list>"
@@ -5393,6 +5429,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "B<-t>, B<--tty> I<tty>"
 #~ msgid "B<--tty>I<\\ ttylist>"
 #~ msgstr "B<-t>, B<--tty> I<tty>"
+
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid "Select by terminal.  Identical to B<-t> and B<t>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
 
 #, fuzzy, no-wrap
 #~| msgid "B<-l>,B<\\ --list>"
@@ -5414,6 +5455,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "B<--User>I<\\ userlist>"
 #~ msgstr "B<-u>, B<--user> I<användare>"
 
+#, fuzzy
+#~| msgid "Select all processes.  Identical to B<-e>."
+#~ msgid "Select by real user ID (RUID) or name.  Identical to B<-U>."
+#~ msgstr "Välj alla processer. Identiskt med B<-e>."
+
 #, fuzzy, no-wrap
 #~| msgid "B<-u>, B<--user> I<user>"
 #~ msgid "B<--user>I<\\ userlist>"
@@ -5429,10 +5475,35 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "Display security context format (for SELinux)."
 #~ msgstr "Visa versionsinformation."
 
+#, fuzzy, no-wrap
+#~| msgid "B<--ns >I<pid>"
+#~ msgid "B<--format>I<\\ format>"
+#~ msgstr "B<--ns >I<pid>"
+
 #, fuzzy
 #~| msgid "Display version information."
 #~ msgid "Display BSD long format."
 #~ msgstr "Visa versionsinformation."
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<O>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<-O>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<o>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<-o>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
 
 #, fuzzy
 #~| msgid "Display version information."
@@ -5474,10 +5545,20 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "B<--forest>"
 #~ msgstr "B<--peta>"
 
+#, fuzzy
+#~| msgid "To print a process tree:"
+#~ msgid "ASCII art process tree."
+#~ msgstr "För att skriva ut ett processträd:"
+
 #, fuzzy, no-wrap
 #~| msgid "B<header>"
 #~ msgid "B<--headers>"
 #~ msgstr "B<huvud>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<--ns >I<pid>"
+#~ msgid "B<k>I<\\ spec>"
+#~ msgstr "B<--ns >I<pid>"
 
 #, fuzzy, no-wrap
 #~| msgid "B<--ns >I<pid>"
@@ -5490,6 +5571,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "B<-h>, B<--no-header>"
 
 #, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<O>I<\\ order>"
+#~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy, no-wrap
 #~| msgid "B<--ns >I<pid>"
 #~ msgid "B<--rows>I<\\ n>"
 #~ msgstr "B<--ns >I<pid>"
@@ -5498,6 +5584,16 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "B<--ns >I<pid>"
 #~ msgid "B<--sort>I<\\ spec>"
 #~ msgstr "B<--ns >I<pid>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<--ns >I<pid>"
+#~ msgid "B<--width>I<\\ n>"
+#~ msgstr "B<--ns >I<pid>"
+
+#, fuzzy
+#~| msgid "pmap - report memory map of a process"
+#~ msgid "Show threads as if they were processes."
+#~ msgstr "pmap — rapportera minneskartan över en process"
 
 #, fuzzy, no-wrap
 #~| msgid "B<-d>, B<--delay> I<seconds>"
@@ -5520,14 +5616,34 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "IO"
 
 #, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "S"
+#~ msgstr "PS"
+
+#, fuzzy, no-wrap
 #~| msgid "DESCRIPTION"
 #~ msgid "B<DESCRIPTION>"
 #~ msgstr "BESKRIVNING"
 
 #, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "cmd"
+#~ msgstr "Användarkommandon"
+
+#, fuzzy, no-wrap
+#~| msgid "CPU"
+#~ msgid "C"
+#~ msgstr "CPU"
+
+#, fuzzy, no-wrap
 #~| msgid "cache utilization"
 #~ msgid "cpu utilization"
 #~ msgstr "cacheanvändning"
+
+#, fuzzy, no-wrap
+#~| msgid "name"
+#~ msgid "user time"
+#~ msgstr "namn"
 
 #, fuzzy, no-wrap
 #~| msgid "number of objects"
@@ -5540,9 +5656,34 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "antal objekt"
 
 #, fuzzy, no-wrap
+#~| msgid "number of objects"
+#~ msgid "cumulative minor page faults"
+#~ msgstr "antal objekt"
+
+#, fuzzy, no-wrap
+#~| msgid "number of objects"
+#~ msgid "cumulative major page faults"
+#~ msgstr "antal objekt"
+
+#, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "P"
+#~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~| msgid "To print a process tree:"
+#~ msgid "parent process ID"
+#~ msgstr "För att skriva ut ett processträd:"
+
+#, fuzzy, no-wrap
 #~| msgid "B<shared>"
 #~ msgid "share"
 #~ msgstr "B<delat>"
+
+#, fuzzy, no-wrap
+#~| msgid "name"
+#~ msgid "user ID number"
+#~ msgstr "namn"
 
 #, fuzzy, no-wrap
 #~| msgid "B<user >"
@@ -5570,9 +5711,19 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "c"
 
 #, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "comm"
+#~ msgstr "Användarkommandon"
+
+#, fuzzy, no-wrap
 #~| msgid "n"
 #~ msgid "%n"
 #~ msgstr "n"
+
+#, fuzzy, no-wrap
+#~| msgid "IO"
+#~ msgid "NI"
+#~ msgstr "IO"
 
 #, fuzzy, no-wrap
 #~| msgid "p"
@@ -5600,6 +5751,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "UPTIME"
 
 #, fuzzy, no-wrap
+#~| msgid "s"
+#~ msgid "vsz"
+#~ msgstr "s"
+
+#, fuzzy, no-wrap
 #~| msgid "name"
 #~ msgid "cgname"
 #~ msgstr "namn"
@@ -5615,6 +5771,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "symbol = värde\n"
 
 #, fuzzy, no-wrap
+#~| msgid "COMMANDS"
+#~ msgid "CMD"
+#~ msgstr "KOMMANDON"
+
+#, fuzzy, no-wrap
 #~| msgid "User Commands"
 #~ msgid "command"
 #~ msgstr "Användarkommandon"
@@ -5628,6 +5789,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "CPU"
 #~ msgid "CP"
 #~ msgstr "CPU"
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
+#~ msgid "DRS"
+#~ msgstr "UPPHOVSMÄN"
 
 #, fuzzy, no-wrap
 #~| msgid "B<user >"
@@ -5650,14 +5816,59 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "B<användare >"
 
 #, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "GID"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
 #~| msgid "n"
 #~ msgid "ni"
 #~ msgstr "n"
 
 #, fuzzy, no-wrap
+#~| msgid "To print a process tree:"
+#~ msgid "parent process ID."
+#~ msgstr "För att skriva ut ett processträd:"
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "PRI"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "PSR"
+#~ msgstr "PS"
+
+#, fuzzy, no-wrap
 #~| msgid "PS"
 #~ msgid "PSS"
 #~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "RSS"
+#~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~| msgid "s"
+#~ msgid "rsz"
+#~ msgstr "s"
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
+#~ msgid "RSZ"
+#~ msgstr "UPPHOVSMÄN"
+
+#, fuzzy, no-wrap
+#~| msgid "The next expression is a username."
+#~ msgid "real user ID."
+#~ msgstr "Nästa uttryck är ett användarnamn."
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "SID"
+#~ msgstr "PIDOF"
 
 #, fuzzy, no-wrap
 #~| msgid "OBJ SIZE"
@@ -5685,9 +5896,19 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "s"
 
 #, fuzzy, no-wrap
+#~| msgid "OBJ SIZE"
+#~ msgid "SZ"
+#~ msgstr "OBJ-STRL"
+
+#, fuzzy, no-wrap
 #~| msgid "I<count>"
 #~ msgid "thcount"
 #~ msgstr "I<antal>"
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "TID"
+#~ msgstr "PIDOF"
 
 #, fuzzy, no-wrap
 #~| msgid "name"
@@ -5700,9 +5921,29 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "UPPHOVSMÄN"
 
 #, fuzzy, no-wrap
+#~| msgid "VMSTAT"
+#~ msgid "TT"
+#~ msgstr "VMSTAT"
+
+#, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "ucomm"
+#~ msgstr "Användarkommandon"
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "UID"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
 #~| msgid "name"
 #~ msgid "uname"
 #~ msgstr "namn"
+
+#, fuzzy, no-wrap
+#~| msgid "B<user >"
+#~ msgid "userns"
+#~ msgstr "B<användare >"
 
 #, fuzzy, no-wrap
 #~| msgid "USE"
@@ -5713,6 +5954,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "number of active objects"
 #~ msgid "Number of cancelled write bytes."
 #~ msgstr "antal aktiva objekt"
+
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT"
+#~ msgid "ENVIRONMENT VARIABLES"
+#~ msgstr "MILJÖ"
 
 #, fuzzy, no-wrap
 #~| msgid "p"
@@ -5739,6 +5985,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy, no-wrap
 #~| msgid "B<total>"
+#~ msgid "top"
+#~ msgstr "B<totalt>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<total>"
 #~ msgid "B<top>"
 #~ msgstr "B<totalt>"
 
@@ -5748,14 +5999,24 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "Läs konfigurationen från I<fil>"
 
 #, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "command toggle"
+#~ msgstr "Användarkommandon"
+
+#, fuzzy, no-wrap
+#~| msgid "Display version information."
+#~ msgid "virtual memory"
+#~ msgstr "Visa versionsinformation."
+
+#, fuzzy, no-wrap
+#~| msgid "c"
+#~ msgid "cpu"
+#~ msgstr "c"
+
+#, fuzzy, no-wrap
 #~| msgid "SLABTOP"
 #~ msgid "TOP"
 #~ msgstr "SLABTOP"
-
-#, fuzzy, no-wrap
-#~| msgid "September 2012"
-#~ msgid "September 2021"
-#~ msgstr "September 2012"
 
 #, fuzzy
 #~| msgid "B<uptime> [I<options>]"
@@ -5858,6 +6119,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "B<-a>, B<--list-full>"
 
 #, fuzzy, no-wrap
+#~| msgid "B<-n>, B<--interval> I<seconds>"
+#~ msgid "-B<o>, B<--sort-override> = I<FIELDNAME>"
+#~ msgstr "B<-n>, B<--interval> I<sekunder>"
+
+#, fuzzy, no-wrap
 #~| msgid "B<-t>, B<--no-title>"
 #~ msgid "-B<S>, B<--accum-time-toggle>"
 #~ msgstr "B<-t>, B<--no-title>"
@@ -5911,7 +6177,27 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy
 #~| msgid "The next expression is a username."
+#~ msgid "TheI< effective> group name."
+#~ msgstr "Nästa uttryck är ett användarnamn."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< real> user ID."
+#~ msgstr "Nästa uttryck är ett användarnamn."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
 #~ msgid "TheI< real> user name."
+#~ msgstr "Nästa uttryck är ett användarnamn."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< saved> user ID."
+#~ msgstr "Nästa uttryck är ett användarnamn."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< saved> user name."
 #~ msgstr "Nästa uttryck är ett användarnamn."
 
 #, fuzzy, no-wrap
@@ -5920,8 +6206,23 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "FILER"
 
 #, fuzzy, no-wrap
+#~| msgid "Read the configuration from I<file>"
+#~ msgid "6a. PERSONAL Configuration File"
+#~ msgstr "Läs konfigurationen från I<fil>"
+
+#, fuzzy, no-wrap
+#~| msgid "Read the configuration from I<file>"
+#~ msgid "6c. SYSTEM Configuration File"
+#~ msgstr "Läs konfigurationen från I<fil>"
+
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT"
+#~ msgid "7. ENVIRONMENT VARIABLE(S)"
+#~ msgstr "MILJÖ"
+
+#, fuzzy, no-wrap
 #~| msgid "BUGS"
-#~ msgid "8. BUGS"
+#~ msgid "9. BUGS"
 #~ msgstr "FEL"
 
 #~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
@@ -5938,6 +6239,16 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "B<vmstat>(8), B<w>(1)"
 #~ msgstr ""
 #~ "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
+
+#, fuzzy, no-wrap
+#~| msgid "2020-04-24"
+#~ msgid "2021-06-16"
+#~ msgstr "2020-04-24"
+
+#, fuzzy, no-wrap
+#~| msgid "September 2012"
+#~ msgid "September 2021"
+#~ msgstr "September 2012"
 
 #, no-wrap
 #~ msgid "2018-05-31"

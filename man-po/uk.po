@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-03-21 21:32+1100\n"
+"POT-Creation-Date: 2022-03-22 21:38+1100\n"
 "PO-Revision-Date: 2021-01-22 19:14+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -16,8 +16,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 20.11.70\n"
 
 #. type: TH
@@ -3419,9 +3419,9 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgstr "-o I<omitpid>"
 
 #~ msgid ""
-#~ "Tells I<pidof> to omit processes with that process id. The special pid B<"
-#~ "%PPID> can be used to name the parent process of the I<pidof> program, in "
-#~ "other words the calling shell or shell script."
+#~ "Tells I<pidof> to omit processes with that process id. The special pid "
+#~ "B<%PPID> can be used to name the parent process of the I<pidof> program, "
+#~ "in other words the calling shell or shell script."
 #~ msgstr ""
 #~ "Наказує I<pidof> пропускати процеси із вказаним ідентифікатором. "
 #~ "Спеціальним ідентифікатором процесу B<%PPID> можна скористатися для "
@@ -4494,8 +4494,8 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "включено час виконання поточних фонових завдань."
 
 #~ msgid ""
-#~ "The PCPU time is the time used by the current process, named in the \"what"
-#~ "\" field."
+#~ "The PCPU time is the time used by the current process, named in the "
+#~ "\"what\" field."
 #~ msgstr ""
 #~ "Час PCPU є часом, використаним поточним процесом, назву якого наведено у "
 #~ "полі «what»."
@@ -4959,11 +4959,6 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "PS"
 #~ msgstr "PS"
 
-#, fuzzy, no-wrap
-#~| msgid "2019-03-05"
-#~ msgid "2021-06-16"
-#~ msgstr "5 березня 2019 року"
-
 #~ msgid "ps - report a snapshot of the current processes."
 #~ msgstr "ps — надає звіт щодо поточних процесів."
 
@@ -4992,6 +4987,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 
 #~ msgid "B<ps\\ axu>"
 #~ msgstr "B<ps\\ axu>"
+
+#, fuzzy, no-wrap
+#~| msgid "parent process ID"
+#~ msgid "To print a process tree:"
+#~ msgstr "ідентифікатор батьківського процесу"
 
 #~ msgid "B<ps\\ -ejH>"
 #~ msgstr "B<ps\\ -ejH>"
@@ -5042,9 +5042,19 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<a>"
 #~ msgstr "B<a>"
 
+#, fuzzy
+#~| msgid "Select processes older than secs."
+#~ msgid "Select all processes.  Identical to B<-e>."
+#~ msgstr "Вибрати процеси, які є старішими за вказану кількість секунд."
+
 #, no-wrap
 #~ msgid "B<-a>"
 #~ msgstr "B<-a>"
+
+#, fuzzy
+#~| msgid "Select processes older than secs."
+#~ msgid "Select all processes except session leaders."
+#~ msgstr "Вибрати процеси, які є старішими за вказану кількість секунд."
 
 #, no-wrap
 #~ msgid "B<--deselect>"
@@ -5053,6 +5063,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "B<-e>"
 #~ msgstr "B<-e>"
+
+#, fuzzy
+#~| msgid "Select processes older than secs."
+#~ msgid "Select all processes.  Identical to B<-A>."
+#~ msgstr "Вибрати процеси, які є старішими за вказану кількість секунд."
 
 #, no-wrap
 #~ msgid "B<g>"
@@ -5110,6 +5125,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<p>I<\\ pidlist>"
 #~ msgstr "B<p>I<\\ список_pid>"
 
+#, fuzzy
+#~| msgid "user-defined format.  Identical to B<-o> and B<o>."
+#~ msgid "Select by process ID.  Identical to B<-p> and B<--pid>."
+#~ msgstr "Визначений користувачем формат. Тотожній до B<-o> і B<o>."
+
 #, no-wrap
 #~ msgid "B<-p>I<\\ pidlist>"
 #~ msgstr "B<-p>I<\\ список_pid>"
@@ -5117,6 +5137,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "B<--pid>I<\\ pidlist>"
 #~ msgstr "B<--pid>I<\\ список_pid>"
+
+#, fuzzy
+#~| msgid "user-defined format.  Identical to B<-o> and B<o>."
+#~ msgid "Select by process\\ ID.  Identical to B<-p> and B<p>."
+#~ msgstr "Визначений користувачем формат. Тотожній до B<-o> і B<o>."
 
 #, no-wrap
 #~ msgid "B<--ppid>I<\\ pidlist>"
@@ -5133,6 +5158,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "B<--quick-pid>I<\\ pidlist>"
 #~ msgstr "B<--quick-pid>I<\\ список_pid>"
+
+#, fuzzy
+#~| msgid "user-defined format.  Identical to B<-o> and B<o>."
+#~ msgid "Select by process\\ ID (quick mode).  Identical to B<-q> and B<q>."
+#~ msgstr "Визначений користувачем формат. Тотожній до B<-o> і B<o>."
 
 #, no-wrap
 #~ msgid "B<-s>I<\\ sesslist>"
@@ -5154,6 +5184,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<--tty>I<\\ ttylist>"
 #~ msgstr "B<--tty>I<\\ ttylist>"
 
+#, fuzzy
+#~| msgid "user-defined format.  Identical to B<-o> and B<o>."
+#~ msgid "Select by terminal.  Identical to B<-t> and B<t>."
+#~ msgstr "Визначений користувачем формат. Тотожній до B<-o> і B<o>."
+
 #, no-wrap
 #~ msgid "B<U>I<\\ userlist>"
 #~ msgstr "B<U>I<\\ userlist>"
@@ -5173,6 +5208,12 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "B<--user>I<\\ userlist>"
 #~ msgstr "B<--user>I<\\ userlist>"
+
+#, fuzzy
+#~| msgid "user-defined format.  Identical to B<-o> and B<o>."
+#~ msgid ""
+#~ "Select by effective user ID (EUID) or name.  Identical to B<-u> and B<U>."
+#~ msgstr "Визначений користувачем формат. Тотожній до B<-o> і B<o>."
 
 #, no-wrap
 #~ msgid "OUTPUT FORMAT CONTROL"
@@ -5249,6 +5290,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<o>I<\\ format>"
 #~ msgstr "B<o>I<\\ формат>"
 
+#, fuzzy
+#~| msgid "user-defined format.  Identical to B<-o> and B<o>."
+#~ msgid "Specify user-defined format.  Identical to B<-o> and B<--format>."
+#~ msgstr "Визначений користувачем формат. Тотожній до B<-o> і B<o>."
+
 #, no-wrap
 #~ msgid "B<-o>I<\\ format>"
 #~ msgstr "B<-o>I<\\ формат>"
@@ -5277,6 +5323,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "B<X>"
 #~ msgstr "B<X>"
+
+#, fuzzy
+#~| msgid "Date format."
+#~ msgid "Register format."
+#~ msgstr "Формат дати."
 
 #, no-wrap
 #~ msgid "B<-y>"
@@ -5320,6 +5371,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "B<--forest>"
 #~ msgstr "B<--forest>"
+
+#, fuzzy
+#~| msgid "parent process ID"
+#~ msgid "ASCII art process tree."
+#~ msgstr "ідентифікатор батьківського процесу"
 
 #, no-wrap
 #~ msgid "B<h>"
@@ -5393,6 +5449,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<H>"
 #~ msgstr "B<H>"
 
+#, fuzzy
+#~| msgid "ps - report a snapshot of the current processes."
+#~ msgid "Show threads as if they were processes."
+#~ msgstr "ps — надає звіт щодо поточних процесів."
+
 #, no-wrap
 #~ msgid "B<-L>"
 #~ msgstr "B<-L>"
@@ -5450,6 +5511,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "4"
 #~ msgstr "4"
+
+#, fuzzy, no-wrap
+#~| msgid "PROCESS FLAGS"
+#~ msgid "PROCESS STATE CODES"
+#~ msgstr "ПРАПОРЦІ ПРОЦЕСУ"
 
 #, no-wrap
 #~ msgid "D"
@@ -5567,6 +5633,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "tpgid"
 #~ msgstr "tpgid"
 
+#, fuzzy, no-wrap
+#~| msgid "process group ID"
+#~ msgid "controlling tty process group ID"
+#~ msgstr "ідентифікатор групи процесів"
+
 #, no-wrap
 #~ msgid "j"
 #~ msgstr "j"
@@ -5611,6 +5682,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "min_flt"
 #~ msgstr "min_flt"
 
+#, fuzzy, no-wrap
+#~| msgid "number of objects"
+#~ msgid "number of minor page faults"
+#~ msgstr "кількість об’єктів"
+
 #, no-wrap
 #~ msgid "M"
 #~ msgstr "M"
@@ -5618,6 +5694,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "maj_flt"
 #~ msgstr "maj_flt"
+
+#, fuzzy, no-wrap
+#~| msgid "number of objects"
+#~ msgid "number of major page faults"
+#~ msgstr "кількість об’єктів"
 
 #, no-wrap
 #~ msgid "cmin_flt"
@@ -6091,6 +6172,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "cputimes"
 #~ msgstr "cputimes"
 
+#, fuzzy, no-wrap
+#~| msgid "cpu"
+#~ msgid "cuc"
+#~ msgstr "процесор"
+
+#, fuzzy, no-wrap
+#~| msgid "cpu"
+#~ msgid "cuu"
+#~ msgstr "процесор"
+
 #, no-wrap
 #~ msgid "drs"
 #~ msgstr "drs"
@@ -6142,6 +6233,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "etimes"
 #~ msgstr "etimes"
+
+#, fuzzy, no-wrap
+#~| msgid "time process was started"
+#~ msgid "elapsed time since the process was started, in seconds."
+#~ msgstr "момент часу, коли процес було запущено"
 
 #, no-wrap
 #~ msgid "euid"
@@ -6244,6 +6340,40 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "GID"
 #~ msgstr "GID"
+
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "see\n"
+#~ "B<egid>.\n"
+#~ "(alias\n"
+#~ "B<egid>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
+
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "see\n"
+#~ "B<egroup>.\n"
+#~ "(alias\n"
+#~ "B<egroup>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
 
 #, no-wrap
 #~ msgid "ignored"
@@ -6387,6 +6517,23 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "OWNER"
 #~ msgstr "OWNER"
 
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "see\n"
+#~ "B<%cpu>.\n"
+#~ "(alias\n"
+#~ "B<%cpu>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
+
 #, no-wrap
 #~ msgid "pending"
 #~ msgstr "pending"
@@ -6399,6 +6546,40 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "PGRP"
 #~ msgstr "PGRP"
 
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "see\n"
+#~ "B<pgid>.\n"
+#~ "(alias\n"
+#~ "B<pgid>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
+
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<vsz>.\n"
+#~| "(alias\n"
+#~| "B<vsz>)."
+#~ msgid ""
+#~ "see\n"
+#~ "B<%mem>.\n"
+#~ "(alias\n"
+#~ "B<%mem>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<vsz>.\n"
+#~ "(альтернатива\n"
+#~ "B<vsz>)."
+
 #, no-wrap
 #~ msgid "policy"
 #~ msgstr "policy"
@@ -6406,6 +6587,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "POL"
 #~ msgstr "POL"
+
+#, fuzzy, no-wrap
+#~| msgid "parent process ID"
+#~ msgid "parent process ID."
+#~ msgstr "ідентифікатор батьківського процесу"
 
 #, no-wrap
 #~ msgid "pri"
@@ -6433,6 +6619,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "PSS"
 #~ msgstr "PS"
 
+#, fuzzy, no-wrap
+#~| msgid "wchan"
+#~ msgid "rchars"
+#~ msgstr "wchan"
+
+#, fuzzy, no-wrap
+#~| msgid "WCHAN"
+#~ msgid "RCHARS"
+#~ msgstr "WCHAN"
+
 #, no-wrap
 #~ msgid "rgid"
 #~ msgstr "rgid"
@@ -6448,6 +6644,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "RSS"
 #~ msgstr "RSS"
+
+#, fuzzy, no-wrap
+#~| msgid "size"
+#~ msgid "rssize"
+#~ msgstr "size"
 
 #, fuzzy, no-wrap
 #~| msgid ""
@@ -6467,6 +6668,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "B<vsz>)."
 
 #, fuzzy, no-wrap
+#~| msgid "sz"
+#~ msgid "rsz"
+#~ msgstr "sz"
+
+#, fuzzy, no-wrap
+#~| msgid "SZ"
+#~ msgid "RSZ"
+#~ msgstr "SZ"
+
+#, fuzzy, no-wrap
 #~| msgid ""
 #~| "see\n"
 #~| "B<vsz>.\n"
@@ -6482,6 +6693,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "B<vsz>.\n"
 #~ "(альтернатива\n"
 #~ "B<vsz>)."
+
+#, fuzzy, no-wrap
+#~| msgid "priority"
+#~ msgid "realtime priority."
+#~ msgstr "priority"
 
 #, no-wrap
 #~ msgid "ruid"
@@ -6503,6 +6719,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "SEAT"
 #~ msgstr "SEAT"
 
+#, fuzzy, no-wrap
+#~| msgid "session"
+#~ msgid "sess"
+#~ msgstr "session"
+
+#, fuzzy, no-wrap
+#~| msgid "SESSION"
+#~ msgid "SESS"
+#~ msgstr "SESSION"
+
 #, no-wrap
 #~ msgid "sgid"
 #~ msgstr "sgid"
@@ -6510,6 +6736,31 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "SGID"
 #~ msgstr "SGID"
+
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "saved group ID.  (alias\n"
+#~ "B<svgid>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
+
+#, fuzzy, no-wrap
+#~| msgid "group"
+#~ msgid "sgroup"
+#~ msgstr "group"
+
+#, fuzzy, no-wrap
+#~| msgid "GROUP"
+#~ msgid "SGROUP"
+#~ msgstr "GROUP"
 
 #, no-wrap
 #~ msgid "sid"
@@ -6700,6 +6951,21 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "SUID"
 #~ msgstr "SUID"
 
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "saved user ID.  (alias\n"
+#~ "B<svuid>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
+
 #, no-wrap
 #~ msgid "supgid"
 #~ msgstr "supgid"
@@ -6731,6 +6997,23 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "SVGID"
 #~ msgstr "SVGID"
+
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "see\n"
+#~ "B<sgid>.\n"
+#~ "(alias\n"
+#~ "B<sgid>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
 
 #, no-wrap
 #~ msgid "svuid"
@@ -6858,6 +7141,23 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "UID"
 #~ msgstr "UID"
 
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "see\n"
+#~| "B<suid>.\n"
+#~| "(alias\n"
+#~| "B<suid>)."
+#~ msgid ""
+#~ "see\n"
+#~ "B<euid>.\n"
+#~ "(alias\n"
+#~ "B<euid>)."
+#~ msgstr ""
+#~ "див.\n"
+#~ "B<suid>.\n"
+#~ "(альтернатива\n"
+#~ "B<suid>)."
+
 #, no-wrap
 #~ msgid "uname"
 #~ msgstr "uname"
@@ -6965,6 +7265,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "WCHARS"
 #~ msgstr "WCHAN"
 
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT VARIABLES"
+#~ msgid "ENVIRONMENT VARIABLES"
+#~ msgstr "ЗМІННІ СЕРЕДОВИЩА"
+
 #, no-wrap
 #~ msgid "B<COLUMNS>"
 #~ msgstr "B<COLUMNS>"
@@ -7025,6 +7330,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<_XPG>"
 #~ msgstr "B<_XPG>"
 
+#, fuzzy, no-wrap
+#~| msgid "B<PS_PERSONALITY>"
+#~ msgid "PERSONALITY"
+#~ msgstr "B<PS_PERSONALITY>"
+
 #, no-wrap
 #~ msgid "390"
 #~ msgstr "390"
@@ -7045,9 +7355,19 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "compaq"
 #~ msgstr "compaq"
 
+#, fuzzy, no-wrap
+#~| msgid "like Irix B<ps>"
+#~ msgid "like Digital Unix B<ps>"
+#~ msgstr "подібно до B<ps> в Irix"
+
 #, no-wrap
 #~ msgid "debian"
 #~ msgstr "debian"
+
+#, fuzzy, no-wrap
+#~| msgid "like Irix B<ps>"
+#~ msgid "like the old Debian B<ps>"
+#~ msgstr "подібно до B<ps> в Irix"
 
 #, no-wrap
 #~ msgid "digital"
@@ -7108,6 +7428,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "sco"
 #~ msgstr "sco"
+
+#, fuzzy, no-wrap
+#~| msgid "like AIX B<ps>"
+#~ msgid "like SCO B<ps>"
+#~ msgstr "подібно до B<ps> в AIX"
 
 #, no-wrap
 #~ msgid "sgi"
@@ -7205,6 +7530,21 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "interactive command"
 #~ msgstr "інтерактивна команда"
 
+#, fuzzy, no-wrap
+#~| msgid "command"
+#~ msgid "command toggle"
+#~ msgstr "command"
+
+#, fuzzy, no-wrap
+#~| msgid "B<Current Window>:"
+#~ msgid "`current' window"
+#~ msgstr "B<Поточне вікно>:"
+
+#, fuzzy, no-wrap
+#~| msgid "egroup"
+#~ msgid "field group"
+#~ msgstr "egroup"
+
 #, no-wrap
 #~ msgid "full-screen mode"
 #~ msgstr "повноекранний режим"
@@ -7286,9 +7626,9 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgstr "TOP"
 
 #, fuzzy, no-wrap
-#~| msgid "September 2020"
-#~ msgid "September 2021"
-#~ msgstr "вересень 2020 року"
+#~| msgid "May 2012"
+#~ msgid "March 2022"
+#~ msgstr "травень 2012 року"
 
 #, fuzzy
 #~| msgid "B<ps> [\\,I<options\\/>]"
@@ -7387,6 +7727,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgstr "B<-a>, B<--list-full>"
 
 #, fuzzy, no-wrap
+#~| msgid "B<-n>, B<--interval> I<seconds>"
+#~ msgid "-B<o>, B<--sort-override> = I<FIELDNAME>"
+#~ msgstr "B<-n>, B<--interval> I<число>"
+
+#, fuzzy, no-wrap
 #~| msgid "B<-t>, B<--no-title>"
 #~ msgid "-B<S>, B<--accum-time-toggle>"
 #~ msgstr "B<-t>, B<--no-title>"
@@ -7416,10 +7761,53 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "-B<1>, B<--single-cpu-toggle>"
 #~ msgstr "B<-s>, B<--since>"
 
+#, fuzzy
+#~| msgid ""
+#~| "Estimation of how much memory is available for starting new "
+#~| "applications, without swapping. Unlike the data provided by the B<cache> "
+#~| "or B<free> fields, this field takes into account page cache and also "
+#~| "that not all reclaimable memory slabs will be reclaimed due to items "
+#~| "being in use (MemAvailable in /proc/meminfo, available on kernels 3.14, "
+#~| "emulated on kernels 2.6.27+, otherwise the same as B<free>)"
+#~ msgid ""
+#~ "The B<avail> number on line 2 is an estimation of \\*(MP available for "
+#~ "starting new applications, without swapping.  Unlike the B<free> field, "
+#~ "it attempts to account for readily reclaimable page cache and memory "
+#~ "slabs.  It is available on kernels 3.14, emulated on kernels 2.6.27+, "
+#~ "otherwise the same as B<free>."
+#~ msgstr ""
+#~ "Оцінка об’єму пам’яті, доступного для запуску нових програм, без "
+#~ "використання резервної пам’яті на диску. На відміну від даних, які буде "
+#~ "показано у полях B<cache> та B<free>, у цьому полі враховується кеш "
+#~ "сторінок і те, що не усі придатні до повернення частини пам’яті буде "
+#~ "повернуто через об’єкти, що перебувають у використанні (MemAvailable у /"
+#~ "proc/meminfo, доступне у ядрах, починаючи з 3.14, емульоване, починаючи з "
+#~ "ядра 2.6.27, інакше, те саме, що і B<free>)"
+
 #~ msgid "\\*(XX."
 #~ msgstr "\\*(XX."
 
+#, fuzzy
+#~| msgid "TheI< real> user name."
+#~ msgid "TheI< effective> group name."
+#~ msgstr "I<Справжнє> ім'я користувача."
+
+#, fuzzy
+#~| msgid "TheI< real> user name."
+#~ msgid "TheI< real> user ID."
+#~ msgstr "I<Справжнє> ім'я користувача."
+
 #~ msgid "TheI< real> user name."
+#~ msgstr "I<Справжнє> ім'я користувача."
+
+#, fuzzy
+#~| msgid "TheI< real> user name."
+#~ msgid "TheI< saved> user ID."
+#~ msgstr "I<Справжнє> ім'я користувача."
+
+#, fuzzy
+#~| msgid "TheI< real> user name."
+#~ msgid "TheI< saved> user name."
 #~ msgstr "I<Справжнє> ім'я користувача."
 
 #, no-wrap
@@ -7429,6 +7817,46 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
 #~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
+#~ msgid "\\ \\ \\ B<=>\\ \\ :I<Exit-Display-Limits >"
+#~ msgstr "*\\ \\ B<k>\\ \\ :I<Вбити завдання >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<0>\\ \\ :I<Zero-Suppress> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
+#~ msgid "\\ \\ \\ B<A>\\ \\ :I<Alternate-Display-Mode> toggle "
+#~ msgstr "*\\ \\ B<k>\\ \\ :I<Вбити завдання >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<B>\\ \\ :I<Bold-Disable/Enable> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
+#~ msgid "*\\ \\ B<d> | B<s>\\ \\ :I<Change-Delay-Time-interval >"
+#~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<g>\\ \\ :I<Choose-Another-Window/Field-Group >"
+#~ msgid "\\ \\ \\ B<g>\\ \\ :I<Choose-Another-Window/Field-Group >"
+#~ msgstr "*\\ \\ B<g>\\ \\ :I<Вибрати інше вікно/групу полів >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<H>\\ \\ :I<Threads-mode> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<I>\\ \\ :I<Irix/Solaris-Mode> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
 
 #, no-wrap
 #~ msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
@@ -7440,8 +7868,63 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 
 #, fuzzy, no-wrap
 #~| msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
+#~ msgid "*\\ \\ B<r>\\ \\ :I<Renice-a-Task >"
+#~ msgstr "*\\ \\ B<k>\\ \\ :I<Вбити завдання >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
+#~ msgid "\\ \\ \\ B<W>\\ \\ :I<Write-the-Configuration-File >"
+#~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<X>\\ \\ :I<Extra-Fixed-Width >"
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<Y>\\ \\ :I<Inspect-Other-Output >"
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<G>\\ \\ :I<Change-Window/Field-Group-Name >"
+#~ msgid "\\ \\ \\ B<Z>\\ \\ :I<Change-Color-Mapping >"
+#~ msgstr "\\ \\ \\ B<G>\\ \\ :I<Змінити назву вікна/групи полів >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<l>\\ \\ :I<Load-Average/Uptime> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
+#~ msgid "\\ \\ \\ B<3>\\ \\ :I<Expand-NUMA-Node >"
+#~ msgstr "*\\ \\ B<k>\\ \\ :I<Вбити завдання >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
 #~ msgid "\\ \\ \\ B<4>\\ \\ :I<Display-Two-Abreast >"
 #~ msgstr "*\\ \\ B<k>\\ \\ :I<Вбити завдання >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<!>\\ \\ :I<Combine-Cpus-Mode >"
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<x>\\ \\ :I<Column-Highlight> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<y>\\ \\ :I<Row-Highlight> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<G>\\ \\ :I<Change-Window/Field-Group-Name >"
+#~ msgid "\\ \\ \\ B<c>\\ \\ :I<Command-Line/Program-Name> toggle "
+#~ msgstr "\\ \\ \\ B<G>\\ \\ :I<Змінити назву вікна/групи полів >"
 
 #, fuzzy, no-wrap
 #~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
@@ -7458,8 +7941,38 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "\\ \\ \\ B<U> | B<u>\\ \\ :I<Show-Specific-User-Only >"
 #~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
 
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<V>\\ \\ :I<Forest-View-Mode> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<q>\\ \\ :I<Quit >"
+#~ msgid "\\ \\ \\ B<v>\\ \\ :I<Hide/Show-Children> toggle "
+#~ msgstr "\\ \\ \\ B<q>\\ \\ :I<Вийти >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
+#~ msgid "\\ \\ \\ B<i>\\ \\ :I<Idle-Process> toggle "
+#~ msgstr "*\\ \\ B<k>\\ \\ :I<Вбити завдання >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
+#~ msgid "\\ \\ \\ B<n> | B<#>\\ \\ :I<Set-Maximum-Tasks >"
+#~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<E<gt>>\\ \\ :I<Move-Sort-Field-Right >"
+#~ msgid "\\ \\ \\ B<E<lt>>\\ \\ :I<Move-Sort-Field-Left >"
+#~ msgstr "\\ \\ \\ B<E<gt>>\\ \\ :I<Пересунути поле упорядкування праворуч >"
+
 #, no-wrap
 #~ msgid "\\ \\ \\ B<E<gt>>\\ \\ :I<Move-Sort-Field-Right >"
+#~ msgstr "\\ \\ \\ B<E<gt>>\\ \\ :I<Пересунути поле упорядкування праворуч >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<E<gt>>\\ \\ :I<Move-Sort-Field-Right >"
+#~ msgid "\\ \\ \\ B<R>\\ \\ :I<Reverse/Normal-Sort-Field> toggle "
 #~ msgstr "\\ \\ \\ B<E<gt>>\\ \\ :I<Пересунути поле упорядкування праворуч >"
 
 #, no-wrap
@@ -7469,6 +7982,26 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "B<Current Window>:"
 #~ msgstr "B<Поточне вікно>:"
+
+#, fuzzy, no-wrap
+#~| msgid "5c. SCROLLING a Window"
+#~ msgid "5b. COMMANDS for Windows"
+#~ msgstr "5c. ГОРТАННЯ вікна"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
+#~ msgid "\\ \\ \\ B<-> | B<_>\\ \\ :I<Show/Hide-Window(s)> toggles "
+#~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<a> | B<w>\\ \\ :I<Next-Window-Forward/Backward >"
+#~ msgid "*\\ \\ B<=> | B<+>\\ \\ :I<Equalize/Reset-Window(s) >"
+#~ msgstr "*\\ \\ B<a> | B<w>\\ \\ :I<Наступне-вікно-вперед/назад >"
+
+#, fuzzy, no-wrap
+#~| msgid "*\\ \\ B<k>\\ \\ :I<Kill-a-task >"
+#~ msgid "*\\ \\ B<A>\\ \\ :I<Alternate-Display-Mode> toggle "
+#~ msgstr "*\\ \\ B<k>\\ \\ :I<Вбити завдання >"
 
 #, no-wrap
 #~ msgid "*\\ \\ B<a> | B<w>\\ \\ :I<Next-Window-Forward/Backward >"
@@ -7514,6 +8047,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<x = n/n (fields) >"
 #~ msgstr "B<x = n/n (полів) >"
 
+#, fuzzy, no-wrap
+#~| msgid "5c. SCROLLING a Window"
+#~ msgid "5d. SEARCHING in a Window"
+#~ msgstr "5c. ГОРТАННЯ вікна"
+
 #, no-wrap
 #~ msgid "B<L>\\ \\ :I<Locate-a-string>"
 #~ msgstr "B<L>\\ \\ :I<Locate-a-string>"
@@ -7522,11 +8060,31 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "B<&>\\ \\ :I<Locate-next>"
 #~ msgstr "B<&>\\ \\ :I<Locate-next>"
 
+#, fuzzy
+#~| msgid "5c. SCROLLING a Window"
+#~ msgid "\\*(Xt 5c. SCROLLING a Window."
+#~ msgstr "5c. ГОРТАННЯ вікна"
+
+#, fuzzy, no-wrap
+#~| msgid "5c. SCROLLING a Window"
+#~ msgid "5e. FILTERING in a Window"
+#~ msgstr "5c. ГОРТАННЯ вікна"
+
 #~ msgid "B<Filter Basics>"
 #~ msgstr "B<Основи фільтрування>"
 
 #~ msgid "B<Keyboard Summary>"
 #~ msgstr "B<Резюме щодо клавіатури>"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
+#~ msgid "\\ \\ B<O>\\ \\ :I<Other-Filter> (upper case)"
+#~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
+
+#, fuzzy, no-wrap
+#~| msgid "\\ \\ \\ B<?> | B<h>\\ \\ :I<Help >"
+#~ msgid "\\ \\ B<o>\\ \\ :I<Other-Filter> (lower case)"
+#~ msgstr "\\ \\ \\ B<?> | B<h>\\ \\ :I<Довідка >"
 
 #~ msgid "B<Input Requirements>"
 #~ msgstr "B<Вимоги до вхідних даних>"
@@ -7545,8 +8103,24 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "6. FILES"
 #~ msgstr "6. ФАЙЛИ"
 
-#, no-wrap
-#~ msgid "8. BUGS"
+#, fuzzy, no-wrap
+#~| msgid "configuration file"
+#~ msgid "6a. PERSONAL Configuration File"
+#~ msgstr "файл налаштувань"
+
+#, fuzzy, no-wrap
+#~| msgid "configuration file"
+#~ msgid "6c. SYSTEM Configuration File"
+#~ msgstr "файл налаштувань"
+
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT VARIABLES"
+#~ msgid "7. ENVIRONMENT VARIABLE(S)"
+#~ msgstr "ЗМІННІ СЕРЕДОВИЩА"
+
+#, fuzzy, no-wrap
+#~| msgid "8. BUGS"
+#~ msgid "9. BUGS"
 #~ msgstr "8. ВАДИ"
 
 #~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
@@ -7554,8 +8128,9 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "Про вади, будь ласка, повідомляйте на адресу E<.UR procps@freelists.org> "
 #~ "E<.UE .>"
 
-#, no-wrap
-#~ msgid "9. SEE Also"
+#, fuzzy, no-wrap
+#~| msgid "9. SEE Also"
+#~ msgid "10. SEE Also"
 #~ msgstr "9. Див. також"
 
 #~ msgid ""
@@ -7564,6 +8139,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgstr ""
 #~ "B<free>(1), B<ps>(1), B<uptime>(1), B<atop>(1), B<slabtop>(1), "
 #~ "B<vmstat>(8), B<w>(1)"
+
+#, fuzzy, no-wrap
+#~| msgid "2019-03-05"
+#~ msgid "2021-06-16"
+#~ msgstr "5 березня 2019 року"
+
+#, fuzzy, no-wrap
+#~| msgid "September 2020"
+#~ msgid "September 2021"
+#~ msgstr "вересень 2020 року"
 
 #, no-wrap
 #~ msgid "2018-05-31"

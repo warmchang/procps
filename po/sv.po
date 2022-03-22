@@ -1169,8 +1169,8 @@ msgstr "  e                   visa miljön efter kommandot\n"
 msgid ""
 "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr ""
-"  k,    --sort        ange sorteringsordning som: [+|-]nyckel[,[+|-]nyckel[,"
-"…]]\n"
+"  k,    --sort        ange sorteringsordning som: [+|-]nyckel[,"
+"[+|-]nyckel[,…]]\n"
 
 #: ps/help.c:168
 msgid "  L                   show format specifiers\n"

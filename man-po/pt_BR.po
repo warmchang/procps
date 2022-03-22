@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-03-21 21:32+1100\n"
+"POT-Creation-Date: 2022-03-22 21:38+1100\n"
 "PO-Revision-Date: 2021-02-03 07:20-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge."
@@ -3377,9 +3377,9 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "-o I<pid>"
 
 #~ msgid ""
-#~ "Tells I<pidof> to omit processes with that process id. The special pid B<"
-#~ "%PPID> can be used to name the parent process of the I<pidof> program, in "
-#~ "other words the calling shell or shell script."
+#~ "Tells I<pidof> to omit processes with that process id. The special pid "
+#~ "B<%PPID> can be used to name the parent process of the I<pidof> program, "
+#~ "in other words the calling shell or shell script."
 #~ msgstr ""
 #~ "Fala para o I<pidof> para omitir processos com aquele ID de processo. O "
 #~ "pid especial B<%PPID> pode ser usado para nomear o processo pai do "
@@ -4436,11 +4436,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "segundo plano atualmente em execução."
 
 #~ msgid ""
-#~ "The PCPU time is the time used by the current process, named in the \"what"
-#~ "\" field."
+#~ "The PCPU time is the time used by the current process, named in the "
+#~ "\"what\" field."
 #~ msgstr ""
-#~ "O tempo de PCPU é o tempo usado pelo processo atual, dado no campo \"o que"
-#~ "\"."
+#~ "O tempo de PCPU é o tempo usado pelo processo atual, dado no campo \"o "
+#~ "que\"."
 
 #, no-wrap
 #~ msgid "COMMAND-LINE OPTIONS"
@@ -4888,11 +4888,6 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, no-wrap
 #~ msgid "PS"
 #~ msgstr "PS"
-
-#, fuzzy, no-wrap
-#~| msgid "2019-03-05"
-#~ msgid "2021-06-16"
-#~ msgstr "2019-03-05"
 
 #~ msgid "ps - report a snapshot of the current processes."
 #~ msgstr "ps - relatar uma imagem dos processos atuais."
@@ -5676,8 +5671,8 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "pid,\\:>I<format>B<,\\:state,\\:tname,\\:time,\\:command> or B<-o\\ pid,"
 #~ "\\:>I<format>B<,\\:tname,\\:time,\\:cmd>, see B<-o> below."
 #~ msgstr ""
-#~ "Como B<-o>, mas pré-carregado com algumas colunas padrão. Idêntico a B<-o"
-#~ "\\ pid,\\:>I<formato>B<,\\:state,\\:tname,\\:time,\\:command> ou B<-o\\ "
+#~ "Como B<-o>, mas pré-carregado com algumas colunas padrão. Idêntico a B<-"
+#~ "o\\ pid,\\:>I<formato>B<,\\:state,\\:tname,\\:time,\\:command> ou B<-o\\ "
 #~ "pid,\\:>I<formato>B<,\\:tname,\\:time,\\:cmd>, veja B<-o> abaixo."
 
 #, no-wrap
@@ -5899,11 +5894,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "SPECIFIERS> section.  The \"+\" is optional since default direction is "
 #~ "increasing numerical or lexicographic order.  Identical to B<--sort>."
 #~ msgstr ""
-#~ "Especifica a ordem de classificação. A sintaxe da ordem [B<+>|B<->]I<chave"
-#~ "\\/.RB [,[ + | - ].IR chave [,...]].> Escolha uma chave com várias letras "
-#~ "na seção B<ESPECIFICADORES DE FORMATO PADRÃO>. O \"+\" é opcional, pois a "
-#~ "direção padrão é aumentar a ordem numérica ou lexicográfica. Idêntico a "
-#~ "B<--sort>."
+#~ "Especifica a ordem de classificação. A sintaxe da ordem [B<+>|B<-"
+#~ ">]I<chave\\/.RB [,[ + | - ].IR chave [,...]].> Escolha uma chave com "
+#~ "várias letras na seção B<ESPECIFICADORES DE FORMATO PADRÃO>. O \"+\" é "
+#~ "opcional, pois a direção padrão é aumentar a ordem numérica ou "
+#~ "lexicográfica. Idêntico a B<--sort>."
 
 #~ msgid "Examples:"
 #~ msgstr "Exemplos:"
@@ -5965,21 +5960,22 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy
 #~| msgid ""
-#~| "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,[B<"
-#~| "+>|B<->]I<k2>[,...]].  It orders the processes listing according to the "
-#~| "multilevel sort specified by the sequence of one-letter short keys I<k1>,"
-#~| "I<k2>, ...\" described in the B<OBSOLETE SORT KEYS> section below.  The"
-#~| "\\ \"+\" is currently optional, merely re-iterating the default "
-#~| "direction on a key, but may help to distinguish an B<O> sort from an "
-#~| "B<O> format.  The \"-\" reverses direction only on the key it precedes."
+#~| "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,"
+#~| "[B<+>|B<->]I<k2>[,...]].  It orders the processes listing according to "
+#~| "the multilevel sort specified by the sequence of one-letter short keys "
+#~| "I<k1>,I<k2>, ...\" described in the B<OBSOLETE SORT KEYS> section "
+#~| "below.  The\\ \"+\" is currently optional, merely re-iterating the "
+#~| "default direction on a key, but may help to distinguish an B<O> sort "
+#~| "from an B<O> format.  The \"-\" reverses direction only on the key it "
+#~| "precedes."
 #~ msgid ""
-#~ "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,[B<"
-#~ "+>|B<->]I<k2>[,...]].  It orders the processes listing according to the "
-#~ "multilevel sort specified by the sequence of one-letter short keys I<k1>,"
-#~ "I<k2>, ...  described in the B<OBSOLETE SORT KEYS> section below.  The\\ "
-#~ "\"+\" is currently optional, merely re-iterating the default direction on "
-#~ "a key, but may help to distinguish an B<O> sort from an B<O> format.  The "
-#~ "\"-\" reverses direction only on the key it precedes."
+#~ "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,"
+#~ "[B<+>|B<->]I<k2>[,...]].  It orders the processes listing according to "
+#~ "the multilevel sort specified by the sequence of one-letter short keys "
+#~ "I<k1>,I<k2>, ...  described in the B<OBSOLETE SORT KEYS> section below.  "
+#~ "The\\ \"+\" is currently optional, merely re-iterating the default "
+#~ "direction on a key, but may help to distinguish an B<O> sort from an B<O> "
+#~ "format.  The \"-\" reverses direction only on the key it precedes."
 #~ msgstr ""
 #~ "Para classificação, a sintaxe da opção obsoletada BSD B<O> é B<O>[B<+>|B<-"
 #~ ">]I<k1>[,[B<+>|B<->]I<k2>[,...]]. Isso ordena a listagem de processos de "
@@ -6170,10 +6166,10 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "pilha)."
 
 #~ msgid ""
-#~ "Processes marked E<lt>defunctE<gt> are dead processes (so-called \"zombies"
-#~ "\") that remain because their parent has not destroyed them properly.  "
-#~ "These processes will be destroyed by I<init>(8)  if the parent process "
-#~ "exits."
+#~ "Processes marked E<lt>defunctE<gt> are dead processes (so-called "
+#~ "\"zombies\") that remain because their parent has not destroyed them "
+#~ "properly.  These processes will be destroyed by I<init>(8)  if the parent "
+#~ "process exits."
 #~ msgstr ""
 #~ "Os processos marcados com E<lt>defunctE<gt> são processos mortos (os "
 #~ "chamados \"zumbis\") que permanecem porque seus pais não os destruíram "
@@ -6229,6 +6225,21 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "PROCESS STATE CODES"
 #~ msgstr "CÓDIGOS DE ESTADO DE PROCESSO"
 
+#, fuzzy, no-wrap
+#~| msgid "IO"
+#~ msgid "I"
+#~ msgstr "E/S"
+
+#, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "S"
+#~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~| msgid "%t"
+#~ msgid "t"
+#~ msgstr "%t"
+
 #, no-wrap
 #~ msgid "E<lt>"
 #~ msgstr "E<lt>"
@@ -6242,8 +6253,45 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "DESCRIÇÃO"
 
 #, fuzzy, no-wrap
+#~ msgid "cmd"
+#~ msgstr "Comandos de usuário"
+
+#, fuzzy, no-wrap
+#~ msgid "C"
+#~ msgstr "CPU"
+
+#, fuzzy, no-wrap
 #~ msgid "cpu utilization"
 #~ msgstr "utilização de cache"
+
+#, fuzzy, no-wrap
+#~| msgid "%g"
+#~ msgid "g"
+#~ msgstr "%g"
+
+#, fuzzy, no-wrap
+#~| msgid "%G"
+#~ msgid "G"
+#~ msgstr "%G"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "cutime"
+#~ msgstr "time"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "cstime"
+#~ msgstr "time"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "utime"
+#~ msgstr "time"
+
+#, fuzzy, no-wrap
+#~ msgid "user time"
+#~ msgstr "nome"
 
 #, fuzzy, no-wrap
 #~ msgid "number of minor page faults"
@@ -6254,12 +6302,49 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "número de objetos"
 
 #, fuzzy, no-wrap
+#~ msgid "cumulative minor page faults"
+#~ msgstr "número de objetos"
+
+#, fuzzy, no-wrap
+#~ msgid "cumulative major page faults"
+#~ msgstr "número de objetos"
+
+#, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "P"
+#~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~| msgid "To print a process tree:"
+#~ msgid "parent process ID"
+#~ msgstr "Para imprimir uma árvore de processos:"
+
+#, fuzzy, no-wrap
+#~| msgid "%r"
+#~ msgid "r"
+#~ msgstr "%r"
+
+#, fuzzy, no-wrap
 #~ msgid "share"
 #~ msgstr "B<compart.>"
 
 #, fuzzy, no-wrap
+#~| msgid "B<ps kstart_time -ef>"
+#~ msgid "start_time"
+#~ msgstr "B<ps kstart_time -ef>"
+
+#, fuzzy, no-wrap
 #~ msgid "time process was started"
 #~ msgstr "Nenhum processo correspondeu."
+
+#, fuzzy, no-wrap
+#~| msgid "%U"
+#~ msgid "U"
+#~ msgstr "%U"
+
+#, fuzzy, no-wrap
+#~ msgid "user ID number"
+#~ msgstr "nome"
 
 #, fuzzy, no-wrap
 #~ msgid "user"
@@ -6268,6 +6353,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, fuzzy, no-wrap
 #~ msgid "user name"
 #~ msgstr "nome"
+
+#, fuzzy, no-wrap
+#~| msgid "%y"
+#~ msgid "y"
+#~ msgstr "%y"
 
 #, no-wrap
 #~ msgid "%G"
@@ -6297,6 +6387,10 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "%c"
 #~ msgstr "%c"
 
+#, fuzzy, no-wrap
+#~ msgid "comm"
+#~ msgstr "Comandos de usuário"
+
 #, no-wrap
 #~ msgid "%g"
 #~ msgstr "%g"
@@ -6320,6 +6414,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, no-wrap
 #~ msgid "%t"
 #~ msgstr "%t"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "etime"
+#~ msgstr "time"
 
 #, no-wrap
 #~ msgid "%u"
@@ -6366,6 +6465,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "ESPECIFICADORES DE FORMATO PADRÃO"
 
 #, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "bsdtime"
+#~ msgstr "time"
+
+#, fuzzy, no-wrap
 #~ msgid "cgname"
 #~ msgstr "nome"
 
@@ -6378,6 +6482,10 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "token = valor\n"
 
 #, fuzzy, no-wrap
+#~ msgid "CMD"
+#~ msgstr "COMANDOS"
+
+#, fuzzy, no-wrap
 #~ msgid "command"
 #~ msgstr "Comandos de usuário"
 
@@ -6388,6 +6496,29 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, fuzzy, no-wrap
 #~ msgid "CP"
 #~ msgstr "CPU"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "cputime"
+#~ msgstr "time"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "cputimes"
+#~ msgstr "time"
+
+#, fuzzy, no-wrap
+#~ msgid "DRS"
+#~ msgstr "AUTORES"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "etimes"
+#~ msgstr "time"
+
+#, fuzzy, no-wrap
+#~ msgid "elapsed time since the process was started, in seconds."
+#~ msgstr "Nenhum processo correspondeu."
 
 #, fuzzy, no-wrap
 #~ msgid "euser"
@@ -6406,13 +6537,53 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "B<usuário >"
 
 #, fuzzy, no-wrap
+#~ msgid "GID"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
 #~ msgid "ni"
 #~ msgstr "n"
+
+#, fuzzy, no-wrap
+#~| msgid "ASCII art process tree."
+#~ msgid "parent process ID."
+#~ msgstr "Árvore de processos em arte ASCII."
+
+#, fuzzy, no-wrap
+#~ msgid "PRI"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "PSR"
+#~ msgstr "PS"
 
 #, fuzzy, no-wrap
 #~| msgid "PS"
 #~ msgid "PSS"
 #~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~| msgid "PS"
+#~ msgid "RSS"
+#~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~ msgid "rsz"
+#~ msgstr "s"
+
+#, fuzzy, no-wrap
+#~| msgid "VSZ"
+#~ msgid "RSZ"
+#~ msgstr "VSZ"
+
+#, fuzzy, no-wrap
+#~ msgid "real user ID."
+#~ msgstr "A próxima expressão é um nome de usuário."
+
+#, fuzzy, no-wrap
+#~ msgid "SID"
+#~ msgstr "PIDOF"
 
 #, fuzzy, no-wrap
 #~ msgid "SIZE"
@@ -6421,6 +6592,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, fuzzy, no-wrap
 #~ msgid "STAT"
 #~ msgstr "VMSTAT"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "stime"
+#~ msgstr "time"
 
 #, fuzzy, no-wrap
 #~ msgid "STIME"
@@ -6435,8 +6611,22 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "s"
 
 #, fuzzy, no-wrap
+#~| msgid "VSZ"
+#~ msgid "SZ"
+#~ msgstr "VSZ"
+
+#, fuzzy, no-wrap
 #~ msgid "thcount"
 #~ msgstr "I<contagem>"
+
+#, fuzzy, no-wrap
+#~ msgid "TID"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
+#~| msgid "time"
+#~ msgid "times"
+#~ msgstr "time"
 
 #, fuzzy, no-wrap
 #~ msgid "tname"
@@ -6447,8 +6637,25 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "AUTORES"
 
 #, fuzzy, no-wrap
+#~| msgid "TTY"
+#~ msgid "TT"
+#~ msgstr "TTY"
+
+#, fuzzy, no-wrap
+#~ msgid "ucomm"
+#~ msgstr "Comandos de usuário"
+
+#, fuzzy, no-wrap
+#~ msgid "UID"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
 #~ msgid "uname"
 #~ msgstr "nome"
+
+#, fuzzy, no-wrap
+#~ msgid "userns"
+#~ msgstr "B<usuário >"
 
 #, fuzzy, no-wrap
 #~| msgid "USE"
@@ -6459,6 +6666,15 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "number of active objects"
 #~ msgid "Number of cancelled write bytes."
 #~ msgstr "número de objetos ativos"
+
+#, fuzzy, no-wrap
+#~ msgid "ENVIRONMENT VARIABLES"
+#~ msgstr "AMBIENTE"
+
+#, fuzzy
+#~| msgid "Register format."
+#~ msgid "Date format."
+#~ msgstr "Formato do registrador"
 
 #, fuzzy, no-wrap
 #~ msgid "hp"
@@ -6477,6 +6693,10 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "ME>"
 
 #, fuzzy, no-wrap
+#~ msgid "top"
+#~ msgstr "B<total>"
+
+#, fuzzy, no-wrap
 #~ msgid "B<top>"
 #~ msgstr "B<total>"
 
@@ -6485,12 +6705,26 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "Lê a configuração a partir do I<arquivo>"
 
 #, fuzzy, no-wrap
+#~ msgid "command toggle"
+#~ msgstr "Comandos de usuário"
+
+#, fuzzy, no-wrap
+#~| msgid "Display virtual memory format."
+#~ msgid "virtual memory"
+#~ msgstr "Exibe o formato de memória virtual"
+
+#, fuzzy, no-wrap
+#~ msgid "cpu"
+#~ msgstr "c"
+
+#, fuzzy, no-wrap
 #~ msgid "TOP"
 #~ msgstr "SLABTOP"
 
 #, fuzzy, no-wrap
-#~ msgid "September 2021"
-#~ msgstr "Setembro de 2012"
+#~| msgid "January 2012"
+#~ msgid "March 2022"
+#~ msgstr "Janeiro de 2012"
 
 #, fuzzy
 #~| msgid "B<ps> [\\,I<options\\/>]"
@@ -6578,6 +6812,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "B<-a>, B<--list-full>"
 
 #, fuzzy, no-wrap
+#~| msgid "B<-n>, B<--interval> I<seconds>"
+#~ msgid "-B<o>, B<--sort-override> = I<FIELDNAME>"
+#~ msgstr "B<-n>, B<--interval> I<segundos>"
+
+#, fuzzy, no-wrap
 #~| msgid "B<-t>, B<--no-title>"
 #~ msgid "-B<S>, B<--accum-time-toggle>"
 #~ msgstr "B<-t>, B<--no-title>"
@@ -6640,15 +6879,48 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "    EiB = exbibyte = 1024 PiB = 1,152,921,504,606,846,976 bytes\n"
 
 #, fuzzy
+#~ msgid "TheI< effective> group name."
+#~ msgstr "A próxima expressão é um nome de usuário."
+
+#, fuzzy
+#~ msgid "TheI< real> user ID."
+#~ msgstr "A próxima expressão é um nome de usuário."
+
+#, fuzzy
 #~ msgid "TheI< real> user name."
 #~ msgstr "A próxima expressão é um nome de usuário."
+
+#, fuzzy
+#~ msgid "TheI< saved> user ID."
+#~ msgstr "A próxima expressão é um nome de usuário."
+
+#, fuzzy
+#~ msgid "TheI< saved> user name."
+#~ msgstr "A próxima expressão é um nome de usuário."
+
+#, fuzzy
+#~| msgid "Show threads as if they were processes."
+#~ msgid "The number of threads associated with a process."
+#~ msgstr "Mostra threads como se fossem processos."
 
 #, fuzzy, no-wrap
 #~ msgid "6. FILES"
 #~ msgstr "ARQUIVOS"
 
 #, fuzzy, no-wrap
-#~ msgid "8. BUGS"
+#~ msgid "6a. PERSONAL Configuration File"
+#~ msgstr "Lê a configuração a partir do I<arquivo>"
+
+#, fuzzy, no-wrap
+#~ msgid "6c. SYSTEM Configuration File"
+#~ msgstr "Lê a configuração a partir do I<arquivo>"
+
+#, fuzzy, no-wrap
+#~ msgid "7. ENVIRONMENT VARIABLE(S)"
+#~ msgstr "AMBIENTE"
+
+#, fuzzy, no-wrap
+#~ msgid "9. BUGS"
 #~ msgstr "ERROS"
 
 #, fuzzy
@@ -6657,8 +6929,9 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "Por favor, envie relatórios de erros para E<.UR procps@freelists.org> E<."
 #~ "UE>"
 
-#, no-wrap
-#~ msgid "9. SEE Also"
+#, fuzzy, no-wrap
+#~| msgid "9. SEE Also"
+#~ msgid "10. SEE Also"
 #~ msgstr "9. VEJA TAMBÉM"
 
 #~ msgid ""
@@ -6667,6 +6940,15 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr ""
 #~ "B<free>(1), B<ps>(1), B<uptime>(1), B<atop>(1), B<slabtop>(1), "
 #~ "B<vmstat>(8), B<w>(1)"
+
+#, fuzzy, no-wrap
+#~| msgid "2019-03-05"
+#~ msgid "2021-06-16"
+#~ msgstr "2019-03-05"
+
+#, fuzzy, no-wrap
+#~ msgid "September 2021"
+#~ msgstr "Setembro de 2012"
 
 #, fuzzy, no-wrap
 #~| msgid "January 2012"

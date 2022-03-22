@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.10-rc3\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-03-21 21:32+1100\n"
+"POT-Creation-Date: 2022-03-22 21:38+1100\n"
 "PO-Revision-Date: 2015-10-30 09:26-0400\n"
 "Last-Translator: Mingye Wang (Arthur2e5) <arthur200126@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -2857,6 +2857,11 @@ msgid "B<procps>(3), B<procps_pids>(3), B<proc>(5)."
 msgstr ""
 
 #, fuzzy, no-wrap
+#~| msgid "December 2012"
+#~ msgid "October 2011"
+#~ msgstr "2012 年 12 月"
+
+#, fuzzy, no-wrap
 #~| msgid "NAME"
 #~ msgid "NAME\\:"
 #~ msgstr "名称"
@@ -2864,6 +2869,11 @@ msgstr ""
 #, no-wrap
 #~ msgid "COMMANDS"
 #~ msgstr "命令"
+
+#, fuzzy, no-wrap
+#~| msgid "DEPRECATED PARAMETERS"
+#~ msgid "PARAMETERS"
+#~ msgstr "已弃用参数"
 
 #, no-wrap
 #~ msgid "DEPRECATED PARAMETERS"
@@ -2915,9 +2925,19 @@ msgstr ""
 #~ msgstr "描述"
 
 #, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "cmd"
+#~ msgstr "用户命令"
+
+#, fuzzy, no-wrap
 #~| msgid "COMMANDS"
 #~ msgid "COMMAND"
 #~ msgstr "命令"
+
+#, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "comm"
+#~ msgstr "用户命令"
 
 #, fuzzy, no-wrap
 #~| msgid "NAME"
@@ -2925,9 +2945,19 @@ msgstr ""
 #~ msgstr "名称"
 
 #, fuzzy, no-wrap
+#~| msgid "COMMANDS"
+#~ msgid "CMD"
+#~ msgstr "命令"
+
+#, fuzzy, no-wrap
 #~| msgid "User Commands"
 #~ msgid "command"
 #~ msgstr "用户命令"
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
+#~ msgid "DRS"
+#~ msgstr "作者"
 
 #, fuzzy, no-wrap
 #~| msgid "EXAMPLE"
@@ -2936,13 +2966,33 @@ msgstr ""
 
 #, fuzzy, no-wrap
 #~| msgid "AUTHORS"
+#~ msgid "RSS"
+#~ msgstr "作者"
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
+#~ msgid "RSZ"
+#~ msgstr "作者"
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
 #~ msgid "TRS"
 #~ msgstr "作者"
 
 #, fuzzy, no-wrap
-#~| msgid "December 2012"
-#~ msgid "September 2021"
-#~ msgstr "2012 年 12 月"
+#~| msgid "User Commands"
+#~ msgid "ucomm"
+#~ msgstr "用户命令"
+
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT"
+#~ msgid "ENVIRONMENT VARIABLES"
+#~ msgstr "环境"
+
+#, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "command toggle"
+#~ msgstr "用户命令"
 
 #, fuzzy, no-wrap
 #~| msgid "FILES"
@@ -2950,9 +3000,19 @@ msgstr ""
 #~ msgstr "文件"
 
 #, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT"
+#~ msgid "7. ENVIRONMENT VARIABLE(S)"
+#~ msgstr "环境"
+
+#, fuzzy, no-wrap
 #~| msgid "BUGS"
-#~ msgid "8. BUGS"
+#~ msgid "9. BUGS"
 #~ msgstr "错误"
+
+#, fuzzy, no-wrap
+#~| msgid "December 2012"
+#~ msgid "September 2021"
+#~ msgstr "2012 年 12 月"
 
 #, fuzzy, no-wrap
 #~| msgid "2"

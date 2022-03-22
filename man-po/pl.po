@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.16-pre2\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-03-21 21:32+1100\n"
+"POT-Creation-Date: 2022-03-22 21:38+1100\n"
 "PO-Revision-Date: 2019-10-30 17:52+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -3182,6 +3182,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "KILL"
 #~ msgstr "KILL"
 
+#, fuzzy, no-wrap
+#~| msgid "2018-02-19"
+#~ msgid "2020-04-24"
+#~ msgstr "2018-02-19"
+
 #~ msgid "kill - send a signal to a process"
 #~ msgstr "kill - wysłanie sygnału do procesu"
 
@@ -3330,6 +3335,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "PIDOF"
 #~ msgstr "PIDOF"
 
+#, fuzzy, no-wrap
+#~| msgid "2019-03-05"
+#~ msgid "2020-12-22"
+#~ msgstr "2019-03-05"
+
 #, fuzzy
 #~| msgid "pidof -- find the process ID of a running program."
 #~ msgid "pidof -- find the process ID of a running program"
@@ -3390,9 +3400,9 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "-o I<pid_wykl>"
 
 #~ msgid ""
-#~ "Tells I<pidof> to omit processes with that process id. The special pid B<"
-#~ "%PPID> can be used to name the parent process of the I<pidof> program, in "
-#~ "other words the calling shell or shell script."
+#~ "Tells I<pidof> to omit processes with that process id. The special pid "
+#~ "B<%PPID> can be used to name the parent process of the I<pidof> program, "
+#~ "in other words the calling shell or shell script."
 #~ msgstr ""
 #~ "Pominięcie procesów o podanym identyfikatorze. Specjalny pid B<%PPID> "
 #~ "oznacza rodzica procesu programu I<pidof>, czyli powłokę lub skrypt go "
@@ -4491,8 +4501,8 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "obecnie działające w tle."
 
 #~ msgid ""
-#~ "The PCPU time is the time used by the current process, named in the \"what"
-#~ "\" field."
+#~ "The PCPU time is the time used by the current process, named in the "
+#~ "\"what\" field."
 #~ msgstr ""
 #~ "Czas PCPU to czas wykorzystany przez bieżący proces, uwidoczniony w polu "
 #~ "\"co\"."
@@ -4608,6 +4618,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, no-wrap
 #~ msgid "WATCH"
 #~ msgstr "WATCH"
+
+#, fuzzy, no-wrap
+#~| msgid "2019-03-05"
+#~ msgid "2021-04-24"
+#~ msgstr "2019-03-05"
 
 #~ msgid "watch - execute a program periodically, showing output fullscreen"
 #~ msgstr ""
@@ -4827,8 +4842,8 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy
 #~| msgid ""
-#~| "Non-printing characters are stripped from program output.  Use \"cat -v"
-#~| "\" as part of the command pipeline if you want to see them."
+#~| "Non-printing characters are stripped from program output.  Use \"cat -"
+#~| "v\" as part of the command pipeline if you want to see them."
 #~ msgid ""
 #~ "Non-printing characters are stripped from program output.  Use B<cat -v> "
 #~ "as part of the command pipeline if you want to see them."
@@ -4947,11 +4962,6 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "(Uwaga: I<-p> nie daje gwarancji działania między restartami systemu, "
 #~ "szczególnie w obliczu B<ntpdate> czy innych mechanizmów zmieniających "
 #~ "czas w trakcie rozruchu)"
-
-#, fuzzy, no-wrap
-#~| msgid "2019-03-05"
-#~ msgid "2021-06-16"
-#~ msgstr "2019-03-05"
 
 #, fuzzy
 #~| msgid "pmap - report memory map of a process"
@@ -5098,10 +5108,35 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "Display security context format (for SELinux)."
 #~ msgstr "Wyświetlenie informacji o wersji."
 
+#, fuzzy, no-wrap
+#~| msgid "B<--ns >I<pid>"
+#~ msgid "B<--format>I<\\ format>"
+#~ msgstr "B<--ns >I<pid>"
+
 #, fuzzy
 #~| msgid "Display version information."
 #~ msgid "Display BSD long format."
 #~ msgstr "Wyświetlenie informacji o wersji."
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<O>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<-O>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<o>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<-o>I<\\ format>"
+#~ msgstr "B<-l>,B<\\ --list>"
 
 #, fuzzy
 #~| msgid "Display version information."
@@ -5150,6 +5185,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy, no-wrap
 #~| msgid "B<--ns >I<pid>"
+#~ msgid "B<k>I<\\ spec>"
+#~ msgstr "B<--ns >I<pid>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<--ns >I<pid>"
 #~ msgid "B<--lines>I<\\ n>"
 #~ msgstr "B<--ns >I<pid>"
 
@@ -5157,6 +5197,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "B<-h>, B<--no-header>"
 #~ msgid "B<--no-headers>"
 #~ msgstr "B<-h>, B<--no-header>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<-l>,B<\\ --list>"
+#~ msgid "B<O>I<\\ order>"
+#~ msgstr "B<-l>,B<\\ --list>"
 
 #, fuzzy, no-wrap
 #~| msgid "B<--ns >I<pid>"
@@ -5167,6 +5212,16 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "B<--ns >I<pid>"
 #~ msgid "B<--sort>I<\\ spec>"
 #~ msgstr "B<--ns >I<pid>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<--ns >I<pid>"
+#~ msgid "B<--width>I<\\ n>"
+#~ msgstr "B<--ns >I<pid>"
+
+#, fuzzy
+#~| msgid "pmap - report memory map of a process"
+#~ msgid "Show threads as if they were processes."
+#~ msgstr "pmap - informacje o odwzorowaniu pamięci procesu"
 
 #, fuzzy, no-wrap
 #~| msgid "B<-d>, B<--delay> I<seconds>"
@@ -5194,9 +5249,24 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "OPIS"
 
 #, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "cmd"
+#~ msgstr "Polecenia użytkownika"
+
+#, fuzzy, no-wrap
+#~| msgid "CPU"
+#~ msgid "C"
+#~ msgstr "CPU"
+
+#, fuzzy, no-wrap
 #~| msgid "cache utilization"
 #~ msgid "cpu utilization"
 #~ msgstr "wykorzystanie pamięci podręcznej"
+
+#, fuzzy, no-wrap
+#~| msgid "name"
+#~ msgid "user time"
+#~ msgstr "nazwa"
 
 #, fuzzy, no-wrap
 #~| msgid "number of objects"
@@ -5209,9 +5279,29 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "liczba obiektów"
 
 #, fuzzy, no-wrap
+#~| msgid "number of objects"
+#~ msgid "cumulative minor page faults"
+#~ msgstr "liczba obiektów"
+
+#, fuzzy, no-wrap
+#~| msgid "number of objects"
+#~ msgid "cumulative major page faults"
+#~ msgstr "liczba obiektów"
+
+#, fuzzy, no-wrap
+#~| msgid "CPU"
+#~ msgid "P"
+#~ msgstr "CPU"
+
+#, fuzzy, no-wrap
 #~| msgid "B<shared>"
 #~ msgid "share"
 #~ msgstr "B<dzielone>"
+
+#, fuzzy, no-wrap
+#~| msgid "name"
+#~ msgid "user ID number"
+#~ msgstr "nazwa"
 
 #, fuzzy, no-wrap
 #~| msgid "B<user >"
@@ -5239,9 +5329,19 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "c"
 
 #, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "comm"
+#~ msgstr "Polecenia użytkownika"
+
+#, fuzzy, no-wrap
 #~| msgid "n"
 #~ msgid "%n"
 #~ msgstr "n"
+
+#, fuzzy, no-wrap
+#~| msgid "IO"
+#~ msgid "NI"
+#~ msgstr "IO"
 
 #, fuzzy, no-wrap
 #~| msgid "p"
@@ -5269,6 +5369,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "UPTIME"
 
 #, fuzzy, no-wrap
+#~| msgid "s"
+#~ msgid "vsz"
+#~ msgstr "s"
+
+#, fuzzy, no-wrap
 #~| msgid "name"
 #~ msgid "cgname"
 #~ msgstr "nazwa"
@@ -5277,6 +5382,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "NAME"
 #~ msgid "CGNAME"
 #~ msgstr "NAZWA"
+
+#, fuzzy, no-wrap
+#~| msgid "COMMANDS"
+#~ msgid "CMD"
+#~ msgstr "POLECENIA"
 
 #, fuzzy, no-wrap
 #~| msgid "User Commands"
@@ -5292,6 +5402,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "CPU"
 #~ msgid "CP"
 #~ msgstr "CPU"
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
+#~ msgid "DRS"
+#~ msgstr "AUTORZY"
 
 #, fuzzy, no-wrap
 #~| msgid "B<user >"
@@ -5314,9 +5429,49 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "B<użytkownik >"
 
 #, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "GID"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
 #~| msgid "n"
 #~ msgid "ni"
 #~ msgstr "n"
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "PRI"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
+#~| msgid "USE"
+#~ msgid "PSS"
+#~ msgstr "UŻ."
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
+#~ msgid "RSS"
+#~ msgstr "AUTORZY"
+
+#, fuzzy, no-wrap
+#~| msgid "s"
+#~ msgid "rsz"
+#~ msgstr "s"
+
+#, fuzzy, no-wrap
+#~| msgid "AUTHORS"
+#~ msgid "RSZ"
+#~ msgstr "AUTORZY"
+
+#, fuzzy, no-wrap
+#~| msgid "The next expression is a username."
+#~ msgid "real user ID."
+#~ msgstr "Następne wyrażenie jest nazwą użytkownika."
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "SID"
+#~ msgstr "PIDOF"
 
 #, fuzzy, no-wrap
 #~| msgid "OBJ SIZE"
@@ -5344,9 +5499,19 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "s"
 
 #, fuzzy, no-wrap
+#~| msgid "OBJ SIZE"
+#~ msgid "SZ"
+#~ msgstr "ROZM.OB."
+
+#, fuzzy, no-wrap
 #~| msgid "I<count>"
 #~ msgid "thcount"
 #~ msgstr "I<liczba>"
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "TID"
+#~ msgstr "PIDOF"
 
 #, fuzzy, no-wrap
 #~| msgid "name"
@@ -5359,9 +5524,29 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "AUTORZY"
 
 #, fuzzy, no-wrap
+#~| msgid "VMSTAT"
+#~ msgid "TT"
+#~ msgstr "VMSTAT"
+
+#, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "ucomm"
+#~ msgstr "Polecenia użytkownika"
+
+#, fuzzy, no-wrap
+#~| msgid "PIDOF"
+#~ msgid "UID"
+#~ msgstr "PIDOF"
+
+#, fuzzy, no-wrap
 #~| msgid "name"
 #~ msgid "uname"
 #~ msgstr "nazwa"
+
+#, fuzzy, no-wrap
+#~| msgid "B<user >"
+#~ msgid "userns"
+#~ msgstr "B<użytkownik >"
 
 #, fuzzy, no-wrap
 #~| msgid "USE"
@@ -5372,6 +5557,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~| msgid "number of active objects"
 #~ msgid "Number of cancelled write bytes."
 #~ msgstr "a\tliczba aktywnych obiektów"
+
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT"
+#~ msgid "ENVIRONMENT VARIABLES"
+#~ msgstr "ŚRODOWISKO"
 
 #, fuzzy, no-wrap
 #~| msgid "p"
@@ -5394,6 +5584,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy, no-wrap
 #~| msgid "B<total>"
+#~ msgid "top"
+#~ msgstr "B<razem>"
+
+#, fuzzy, no-wrap
+#~| msgid "B<total>"
 #~ msgid "B<top>"
 #~ msgstr "B<razem>"
 
@@ -5403,14 +5598,29 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "Odczyt konfiguracji z I<pliku>"
 
 #, fuzzy, no-wrap
+#~| msgid "User Commands"
+#~ msgid "command toggle"
+#~ msgstr "Polecenia użytkownika"
+
+#, fuzzy, no-wrap
+#~| msgid "Display version information."
+#~ msgid "virtual memory"
+#~ msgstr "Wyświetlenie informacji o wersji."
+
+#, fuzzy, no-wrap
+#~| msgid "c"
+#~ msgid "cpu"
+#~ msgstr "c"
+
+#, fuzzy, no-wrap
 #~| msgid "SLABTOP"
 #~ msgid "TOP"
 #~ msgstr "SLABTOP"
 
 #, fuzzy, no-wrap
-#~| msgid "September 2012"
-#~ msgid "September 2021"
-#~ msgstr "wrzesień 2012"
+#~| msgid "May 2012"
+#~ msgid "March 2022"
+#~ msgstr "maj 2012"
 
 #, fuzzy
 #~| msgid "B<uptime> [I<options>]"
@@ -5513,6 +5723,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "B<-a>, B<--list-full>"
 
 #, fuzzy, no-wrap
+#~| msgid "B<-n>, B<--interval> I<seconds>"
+#~ msgid "-B<o>, B<--sort-override> = I<FIELDNAME>"
+#~ msgstr "B<-n>, B<--interval> I<sekundy>"
+
+#, fuzzy, no-wrap
 #~| msgid "B<-t>, B<--no-title>"
 #~ msgid "-B<S>, B<--accum-time-toggle>"
 #~ msgstr "B<-t>, B<--no-title>"
@@ -5566,7 +5781,27 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
 #, fuzzy
 #~| msgid "The next expression is a username."
+#~ msgid "TheI< effective> group name."
+#~ msgstr "Następne wyrażenie jest nazwą użytkownika."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< real> user ID."
+#~ msgstr "Następne wyrażenie jest nazwą użytkownika."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
 #~ msgid "TheI< real> user name."
+#~ msgstr "Następne wyrażenie jest nazwą użytkownika."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< saved> user ID."
+#~ msgstr "Następne wyrażenie jest nazwą użytkownika."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< saved> user name."
 #~ msgstr "Następne wyrażenie jest nazwą użytkownika."
 
 #, fuzzy, no-wrap
@@ -5575,8 +5810,23 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "PLIKI"
 
 #, fuzzy, no-wrap
+#~| msgid "Read the configuration from I<file>"
+#~ msgid "6a. PERSONAL Configuration File"
+#~ msgstr "Odczyt konfiguracji z I<pliku>"
+
+#, fuzzy, no-wrap
+#~| msgid "Read the configuration from I<file>"
+#~ msgid "6c. SYSTEM Configuration File"
+#~ msgstr "Odczyt konfiguracji z I<pliku>"
+
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT"
+#~ msgid "7. ENVIRONMENT VARIABLE(S)"
+#~ msgstr "ŚRODOWISKO"
+
+#, fuzzy, no-wrap
 #~| msgid "BUGS"
-#~ msgid "8. BUGS"
+#~ msgid "9. BUGS"
 #~ msgstr "BŁĘDY"
 
 #, fuzzy
@@ -5594,6 +5844,16 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "B<vmstat>(8), B<w>(1)"
 #~ msgstr ""
 #~ "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
+
+#, fuzzy, no-wrap
+#~| msgid "2019-03-05"
+#~ msgid "2021-06-16"
+#~ msgstr "2019-03-05"
+
+#, fuzzy, no-wrap
+#~| msgid "September 2012"
+#~ msgid "September 2021"
+#~ msgstr "wrzesień 2012"
 
 #, no-wrap
 #~ msgid "2018-05-31"

@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-03-21 21:32+1100\n"
+"POT-Creation-Date: 2022-03-22 21:38+1100\n"
 "PO-Revision-Date: 2021-01-22 12:13+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -3432,9 +3432,9 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgstr "-o I<überspringen>"
 
 #~ msgid ""
-#~ "Tells I<pidof> to omit processes with that process id. The special pid B<"
-#~ "%PPID> can be used to name the parent process of the I<pidof> program, in "
-#~ "other words the calling shell or shell script."
+#~ "Tells I<pidof> to omit processes with that process id. The special pid "
+#~ "B<%PPID> can be used to name the parent process of the I<pidof> program, "
+#~ "in other words the calling shell or shell script."
 #~ msgstr ""
 #~ "weist I<pidof> an, Prozesse mit der angegebenen PID zu überspringen. Die "
 #~ "spezielle PID B<%PPID> kann verwendet werden, um den Elternprozess des "
@@ -3716,6 +3716,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "SLABTOP"
 #~ msgstr "SLABTOP"
+
+#, fuzzy, no-wrap
+#~| msgid "2020-04-24"
+#~ msgid "2021-03-11"
+#~ msgstr "24. April 2020"
 
 #~ msgid "slabtop - display kernel slab cache information in real time"
 #~ msgstr ""
@@ -4009,6 +4014,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "SYSCTL"
 #~ msgstr "SYSCTL"
+
+#, fuzzy, no-wrap
+#~| msgid "2020-04-24"
+#~ msgid "2021-03-29"
+#~ msgstr "24. April 2020"
 
 #~ msgid "sysctl - configure kernel parameters at runtime"
 #~ msgstr "sysctl - Kernelparameter zur Laufzeit konfigurieren"
@@ -4507,8 +4517,8 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "Hintergrund-Aufträge, jedoch die derzeit laufenden Hintergrund-Aufträge."
 
 #~ msgid ""
-#~ "The PCPU time is the time used by the current process, named in the \"what"
-#~ "\" field."
+#~ "The PCPU time is the time used by the current process, named in the "
+#~ "\"what\" field."
 #~ msgstr ""
 #~ "Die PCPU-Zeit ist die Zeit, die vom derzeit laufenden Prozess bisher "
 #~ "genutzt wurde und im Feld »what« benannt ist."
@@ -4975,11 +4985,6 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "PS"
 #~ msgstr "PS"
 
-#, fuzzy, no-wrap
-#~| msgid "2020-04-24"
-#~ msgid "2021-06-16"
-#~ msgstr "24. April 2020"
-
 #~ msgid "ps - report a snapshot of the current processes."
 #~ msgstr "ps - einen Schnappschuss der aktuellen Prozesse darstellen."
 
@@ -5039,8 +5044,8 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "POSIX- und UNIX-Standards erfordern, dass B<ps\\ -aux> sowohl alle dem "
 #~ "Benutzer namens I<x> gehörenden Prozesse als auch jene Prozesse ausgibt, "
 #~ "die durch die Option B<-a> ausgewählt werden. Falls der Benutzer namens "
-#~ "I<x> nicht existiert, könnte diese Version von B<ps> den Befehl als B<ps"
-#~ "\\ aux> interpetieren und eine Warnung ausgeben. Dieses Verhalten ist "
+#~ "I<x> nicht existiert, könnte diese Version von B<ps> den Befehl als "
+#~ "B<ps\\ aux> interpetieren und eine Warnung ausgeben. Dieses Verhalten ist "
 #~ "dazu gedacht, den Übergang aus alten Skripten und Gewohnheiten zu "
 #~ "erleichtern. Es ist fragil und möglicherweise Änderungen unterworfen. "
 #~ "Daher sollten Sie sich nicht darauf verlassen."
@@ -6093,21 +6098,22 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 
 #, fuzzy
 #~| msgid ""
-#~| "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,[B<"
-#~| "+>|B<->]I<k2>[,...]].  It orders the processes listing according to the "
-#~| "multilevel sort specified by the sequence of one-letter short keys I<k1>,"
-#~| "I<k2>, ...\" described in the B<OBSOLETE SORT KEYS> section below.  The"
-#~| "\\ \"+\" is currently optional, merely re-iterating the default "
-#~| "direction on a key, but may help to distinguish an B<O> sort from an "
-#~| "B<O> format.  The \"-\" reverses direction only on the key it precedes."
+#~| "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,"
+#~| "[B<+>|B<->]I<k2>[,...]].  It orders the processes listing according to "
+#~| "the multilevel sort specified by the sequence of one-letter short keys "
+#~| "I<k1>,I<k2>, ...\" described in the B<OBSOLETE SORT KEYS> section "
+#~| "below.  The\\ \"+\" is currently optional, merely re-iterating the "
+#~| "default direction on a key, but may help to distinguish an B<O> sort "
+#~| "from an B<O> format.  The \"-\" reverses direction only on the key it "
+#~| "precedes."
 #~ msgid ""
-#~ "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,[B<"
-#~ "+>|B<->]I<k2>[,...]].  It orders the processes listing according to the "
-#~ "multilevel sort specified by the sequence of one-letter short keys I<k1>,"
-#~ "I<k2>, ...  described in the B<OBSOLETE SORT KEYS> section below.  The\\ "
-#~ "\"+\" is currently optional, merely re-iterating the default direction on "
-#~ "a key, but may help to distinguish an B<O> sort from an B<O> format.  The "
-#~ "\"-\" reverses direction only on the key it precedes."
+#~ "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,"
+#~ "[B<+>|B<->]I<k2>[,...]].  It orders the processes listing according to "
+#~ "the multilevel sort specified by the sequence of one-letter short keys "
+#~ "I<k1>,I<k2>, ...  described in the B<OBSOLETE SORT KEYS> section below.  "
+#~ "The\\ \"+\" is currently optional, merely re-iterating the default "
+#~ "direction on a key, but may help to distinguish an B<O> sort from an B<O> "
+#~ "format.  The \"-\" reverses direction only on the key it precedes."
 #~ msgstr ""
 #~ "Für die Sortierung ist B<O>[B<+>|B<->]I<k1>[,[B<+>|B<->]I<k2>[, …]] die "
 #~ "Syntax der veralteten BSD-Option B<O>. Es ordnet die Prozessliste anhand "
@@ -6306,10 +6312,10 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "\\:Daten+\\:Stack)."
 
 #~ msgid ""
-#~ "Processes marked E<lt>defunctE<gt> are dead processes (so-called \"zombies"
-#~ "\") that remain because their parent has not destroyed them properly.  "
-#~ "These processes will be destroyed by I<init>(8)  if the parent process "
-#~ "exits."
+#~ "Processes marked E<lt>defunctE<gt> are dead processes (so-called "
+#~ "\"zombies\") that remain because their parent has not destroyed them "
+#~ "properly.  These processes will be destroyed by I<init>(8)  if the parent "
+#~ "process exits."
 #~ msgstr ""
 #~ "Als E<lt>defunctE<gt> markierte Prozesse sind tote Prozesse (sogenannte "
 #~ "»Zombies«). Diese sind deswegen noch vorhanden, weil deren Elternprozesse "
@@ -6784,8 +6790,8 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid ""
 #~ "This B<ps> supports AIX format descriptors, which work somewhat like the "
 #~ "formatting codes of I<printf>(1)  and I<printf>(3).  For example, the "
-#~ "normal default output can be produced with this: B<ps -eo \"%p %y %x %c"
-#~ "\">.  The B<NORMAL> codes are described in the next section."
+#~ "normal default output can be produced with this: B<ps -eo \"%p %y %x "
+#~ "%c\">.  The B<NORMAL> codes are described in the next section."
 #~ msgstr ""
 #~ "Diese Version von B<ps> unterstützt AIX-Formatdeskriptoren, die ähnlich "
 #~ "den Formatierungscodes von I<printf>(1) und I<printf>(3) funktionieren. "
@@ -7399,6 +7405,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "cumulative CPU time in seconds (alias\n"
 #~ "B<times>)."
 #~ msgstr "Kumulative CPU-Zeit in Sekunden (alias B<times>)."
+
+#, fuzzy, no-wrap
+#~| msgid "cpu"
+#~ msgid "cuc"
+#~ msgstr "CPU"
+
+#, fuzzy, no-wrap
+#~| msgid "cpu"
+#~ msgid "cuu"
+#~ msgstr "CPU"
 
 #, no-wrap
 #~ msgid "drs"
@@ -8095,6 +8111,28 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~| msgid "PS"
 #~ msgid "PSS"
 #~ msgstr "PS"
+
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "resident set size, the non-swapped physical memory that a task has used (in\n"
+#~| "kilobytes).  (alias\n"
+#~| "B<rssize>, B<rsz>)."
+#~ msgid ""
+#~ "Proportional share size, the non-swapped physical memory, with shared memory\n"
+#~ "proportionally accounted to all tasks mapping it."
+#~ msgstr ""
+#~ "Hauptspeicherbelegung; der nicht ausgelagerte physische Speicher, den eine\n"
+#~ "Task (in Kilobyte) verwendet (alias B<rssize>, B<rsz>)."
+
+#, fuzzy, no-wrap
+#~| msgid "wchan"
+#~ msgid "rchars"
+#~ msgstr "wchan"
+
+#, fuzzy, no-wrap
+#~| msgid "WCHAN"
+#~ msgid "RCHARS"
+#~ msgstr "WCHAN"
 
 #, no-wrap
 #~ msgid "rgid"
@@ -8939,6 +8977,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "WCHARS"
 #~ msgstr "WCHAN"
 
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT VARIABLES"
+#~ msgid "ENVIRONMENT VARIABLES"
+#~ msgstr "UMGEBUNGSVARIABLEN"
+
 #~ msgid "The following environment variables could affect B<ps>:"
 #~ msgstr "Die folgenden Umgebungsvariablen könnten B<ps> beeinflussen:"
 
@@ -9251,9 +9294,9 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~| "Branko Lankester E<.ME .> E<.MT johnsonm@\\:redhat.\\:com> Michael K.\\& "
 #~| "Johnson E<.ME> re-wrote it significantly to use the proc filesystem, "
 #~| "changing a few things in the process.  E<.MT mjshield@\\:nyx.\\:cs.\\:du."
-#~| "\\:edu> Michael Shields E<.ME> added the pid-list feature.  E<.MT cblake@"
-#~| "\\:bbn.\\:com> Charles Blake E<.ME> added multi-level sorting, the "
-#~| "dirent-style library, the device name-to-number mmaped database, the "
+#~| "\\:edu> Michael Shields E<.ME> added the pid-list feature.  E<.MT "
+#~| "cblake@\\:bbn.\\:com> Charles Blake E<.ME> added multi-level sorting, "
+#~| "the dirent-style library, the device name-to-number mmaped database, the "
 #~| "approximate binary search directly on System.map, and many code and "
 #~| "documentation cleanups.  David Mossberger-Tang wrote the generic BFD "
 #~| "support for psupdate.  E<.MT albert@\\:users.\\:sf.\\:net> Albert "
@@ -9264,14 +9307,14 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "Branko Lankester E<.UE .> E<.UR johnsonm@\\:redhat.\\:com> Michael K. "
 #~ "Johnson E<.UE> re-wrote it significantly to use the proc filesystem, "
 #~ "changing a few things in the process.  E<.UR mjshield@\\:nyx.\\:cs.\\:du."
-#~ "\\:edu> Michael Shields E<.UE> added the pid-list feature.  E<.UR cblake@"
-#~ "\\:bbn.\\:com> Charles Blake E<.UE> added multi-level sorting, the dirent-"
-#~ "style library, the device name-to-number mmaped database, the approximate "
-#~ "binary search directly on System.map, and many code and documentation "
-#~ "cleanups.  David Mossberger-Tang wrote the generic BFD support for "
-#~ "psupdate.  E<.UR albert@\\:users.\\:sf.\\:net> Albert Cahalan E<.UE> "
-#~ "rewrote ps for full Unix98 and BSD support, along with some ugly hacks "
-#~ "for obsolete and foreign syntax."
+#~ "\\:edu> Michael Shields E<.UE> added the pid-list feature.  E<.UR "
+#~ "cblake@\\:bbn.\\:com> Charles Blake E<.UE> added multi-level sorting, the "
+#~ "dirent-style library, the device name-to-number mmaped database, the "
+#~ "approximate binary search directly on System.map, and many code and "
+#~ "documentation cleanups.  David Mossberger-Tang wrote the generic BFD "
+#~ "support for psupdate.  E<.UR albert@\\:users.\\:sf.\\:net> Albert Cahalan "
+#~ "E<.UE> rewrote ps for full Unix98 and BSD support, along with some ugly "
+#~ "hacks for obsolete and foreign syntax."
 #~ msgstr ""
 #~ "B<ps> wurde ursprünglich von E<.MT lankeste@\\:fwi.\\:uva.\\:nl> Branko "
 #~ "LankesterE<.ME>  geschrieben. E<.MT johnsonm@\\:redhat.\\:com> Michael K. "
@@ -9339,6 +9382,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgid "command-line option"
 #~ msgstr "Befehlszeilenoption"
 
+#, fuzzy, no-wrap
+#~| msgid "command"
+#~ msgid "command toggle"
+#~ msgstr "command"
+
+#, fuzzy, no-wrap
+#~| msgid "egroup"
+#~ msgid "field group"
+#~ msgstr "egroup"
+
 #, no-wrap
 #~ msgid "full-screen mode"
 #~ msgstr "Vollbildmodus"
@@ -9402,11 +9455,6 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #, no-wrap
 #~ msgid "TOP"
 #~ msgstr "TOP"
-
-#, fuzzy, no-wrap
-#~| msgid "September 2020"
-#~ msgid "September 2021"
-#~ msgstr "September 2020"
 
 #~ msgid "top - display Linux processes"
 #~ msgstr "top - Linux-Prozesse anzeigen"
@@ -9508,6 +9556,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgstr "B<-a>, B<--list-full>"
 
 #, fuzzy, no-wrap
+#~| msgid "B<-n>, B<--interval> I<seconds>"
+#~ msgid "-B<o>, B<--sort-override> = I<FIELDNAME>"
+#~ msgstr "B<-n>, B<--interval> I<Sekunden>"
+
+#, fuzzy, no-wrap
 #~| msgid "B<-t>, B<--no-title>"
 #~ msgid "-B<S>, B<--accum-time-toggle>"
 #~ msgstr "B<-t>, B<--no-title>"
@@ -9569,21 +9622,152 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "3.14, emuliert in Kernel 2.6.27 und neuer, anderenfalls gleichbedeutend "
 #~ "mit B<Frei>)"
 
+#, fuzzy, no-wrap
+#~| msgid ""
+#~| "               a    b     c    d\n"
+#~| "    %Cpu(s):  B<75.0>/25.0  B<100>[ ...\n"
+#~ msgid ""
+#~ "               a    b          c\n"
+#~ "    GiB Mem : B<18.7>/15.738   [ ...\n"
+#~ "    GiB Swap: B< 0.0>/7.999    [ ...\n"
+#~ msgstr ""
+#~ "               a    b     c    d\n"
+#~ "    %Cpu(s):  B<75.0>/25.0  B<100>[ ...\n"
+
 #~ msgid "\\*(XX."
 #~ msgstr "\\*(XX."
+
+#, fuzzy
+#~| msgid "display name of control groups to which the process belongs."
+#~ msgid ""
+#~ "The name of the control group to which a process belongs, or `-' if not "
+#~ "applicable for that process."
+#~ msgstr ""
+#~ "zeigt den Namen der Control-Gruppen an, zu denen der Prozess gehört."
+
+#, fuzzy
+#~| msgid "display name of control groups to which the process belongs."
+#~ msgid ""
+#~ "The names of the control group(s) to which a process belongs, or `-' if "
+#~ "not applicable for that process."
+#~ msgstr ""
+#~ "zeigt den Namen der Control-Gruppen an, zu denen der Prozess gehört."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< effective> group name."
+#~ msgstr "Der nächste Ausdruck ist ein Benutzername."
+
+#, fuzzy
+#~| msgid ""
+#~| "The name of the lxc container within which a task is running.\n"
+#~| "If a process is not running inside a container, a dash ('-') will be "
+#~| "shown."
+#~ msgid ""
+#~ "The name of the lxc container within which a task is running.  If a "
+#~ "process is not running inside a container, a dash (`-') will be shown."
+#~ msgstr ""
+#~ "Der Name des LXC-Containers, in dem die Task läuft. Falls ein Prozess\n"
+#~ "nicht innerhalb eines Containers läuft, wird ein Bindestrich (»-«) "
+#~ "angezeigt."
+
+#, fuzzy
+#~| msgid ""
+#~| "The node associated with the most recently used processor.\n"
+#~| "A I<-1> means that NUMA information is unavailable."
+#~ msgid ""
+#~ "A number representing the NUMA node associated with the last used "
+#~ "processor (`P').  When -1 is displayed it means that NUMA information is "
+#~ "not available."
+#~ msgstr ""
+#~ "Der Knoten, der dem zuletzt verwendeten Prozessor zugeordnet ist.\n"
+#~ "Ein I<-1> bedeutet, dass keine NUMA-Information verfügbar ist."
+
+#, fuzzy
+#~ msgid ""
+#~ "This value may also be used as: a process group ID (\\*(Xa PGRP); a "
+#~ "session ID for the session leader (\\*(Xa SID); a thread group ID for the "
+#~ "thread group leader (\\*(Xa TGID); and a TTY process group ID for the "
+#~ "process group leader (\\*(Xa TPGID)."
+#~ msgstr ""
+#~ "Eindeutige Zahl, die eine … repräsentiert (alias B<lwp>,B<\\ spid>). "
+#~ "Dieser Wert kann auch folgendermaßen erscheinen: als Prozesskennung "
+#~ "(pid); als Prozessgruppenkennung (pgrp); als Sitzungskennung für den "
+#~ "Sitzungsleiter (sid); als Thread-Gruppenkennung für den Thread-"
+#~ "Gruppenleiter (tgid); und als TTY-Prozessgruppenkennung für den "
+#~ "Prozessgruppenleiter (tpgid)."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< real> user ID."
+#~ msgstr "Der nächste Ausdruck ist ein Benutzername."
 
 #, fuzzy
 #~| msgid "The next expression is a username."
 #~ msgid "TheI< real> user name."
 #~ msgstr "Der nächste Ausdruck ist ein Benutzername."
 
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< saved> user ID."
+#~ msgstr "Der nächste Ausdruck ist ein Benutzername."
+
+#, fuzzy
+#~| msgid "The next expression is a username."
+#~ msgid "TheI< saved> user name."
+#~ msgstr "Der nächste Ausdruck ist ein Benutzername."
+
+#, fuzzy
+#~| msgid ""
+#~| "The number of major page faults that have occurred with this process."
+#~ msgid "The number of threads associated with a process."
+#~ msgstr ""
+#~ "Die Anzahl der großen Seitenfehlerausnahmebehandlungen, die sich mit "
+#~ "diesem Prozess ereignet haben."
+
+#, fuzzy
+#~| msgid ""
+#~| "The number of major page faults that have occurred with this process."
+#~ msgid ""
+#~ "The number ofB< major> page faults that have occurred since the last "
+#~ "update (see nMaj)."
+#~ msgstr ""
+#~ "Die Anzahl der großen Seitenfehlerausnahmebehandlungen, die sich mit "
+#~ "diesem Prozess ereignet haben."
+
+#, fuzzy
+#~| msgid ""
+#~| "The number of minor page faults that have occurred with this process."
+#~ msgid ""
+#~ "The number ofB< minor> page faults that have occurred since the last "
+#~ "update (see nMin)."
+#~ msgstr ""
+#~ "Die Anzahl der geringfügigen Seitenfehlerausnahmebehandlungen, die sich "
+#~ "mit diesem Prozess ereignet haben."
+
 #, fuzzy, no-wrap
 #~| msgid "FILES"
 #~ msgid "6. FILES"
 #~ msgstr "DATEIEN"
 
-#, no-wrap
-#~ msgid "8. BUGS"
+#, fuzzy, no-wrap
+#~| msgid "configuration file"
+#~ msgid "6a. PERSONAL Configuration File"
+#~ msgstr "Konfigurationsdatei"
+
+#, fuzzy, no-wrap
+#~| msgid "configuration file"
+#~ msgid "6c. SYSTEM Configuration File"
+#~ msgstr "Konfigurationsdatei"
+
+#, fuzzy, no-wrap
+#~| msgid "ENVIRONMENT VARIABLES"
+#~ msgid "7. ENVIRONMENT VARIABLE(S)"
+#~ msgstr "UMGEBUNGSVARIABLEN"
+
+#, fuzzy, no-wrap
+#~| msgid "8. BUGS"
+#~ msgid "9. BUGS"
 #~ msgstr "8. FEHLER"
 
 #~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
@@ -9591,8 +9775,9 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ "Bitte schicken Sie Fehlermeldungen (auf Englisch) an E<.UR "
 #~ "procps@freelists.org> E<.UE .>"
 
-#, no-wrap
-#~ msgid "9. SEE Also"
+#, fuzzy, no-wrap
+#~| msgid "9. SEE Also"
+#~ msgid "10. SEE Also"
 #~ msgstr "9. SIEHE AUCH"
 
 #~ msgid ""
@@ -9601,6 +9786,16 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 #~ msgstr ""
 #~ "B<free>(1), B<ps>(1), B<uptime>(1), B<atop>(1), B<slabtop>(1), "
 #~ "B<vmstat>(8), B<w>(1)"
+
+#, fuzzy, no-wrap
+#~| msgid "2020-04-24"
+#~ msgid "2021-06-16"
+#~ msgstr "24. April 2020"
+
+#, fuzzy, no-wrap
+#~| msgid "September 2020"
+#~ msgid "September 2021"
+#~ msgstr "September 2020"
 
 #, no-wrap
 #~ msgid "2018-05-31"
