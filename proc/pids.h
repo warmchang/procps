@@ -54,7 +54,7 @@ enum pids_item {
     PIDS_FLT_MAJ_C,         //   ul_int        derived from stat: maj_flt + cmaj_flt
     PIDS_FLT_MAJ_DELTA,     //    s_int        derived from FLT_MAJ
     PIDS_FLT_MIN,           //   ul_int        stat: min_flt
-    PIDS_FLT_MIN_C,         //   ul_int        stat: min_flt + cmin_flt
+    PIDS_FLT_MIN_C,         //   ul_int        derived from stat: min_flt + cmin_flt
     PIDS_FLT_MIN_DELTA,     //    s_int        derived from FLT_MIN
     PIDS_ID_EGID,           //    u_int        status: Gid
     PIDS_ID_EGROUP,         //      str        derived from EGID, see getgrgid(3)
@@ -151,8 +151,8 @@ enum pids_item {
     PIDS_STATE,             //     s_ch        stat: state or status: State
     PIDS_SUPGIDS,           //      str        status: Groups
     PIDS_SUPGROUPS,         //      str        derived from SUPGIDS, see getgrgid(3)
-    PIDS_TICS_ALL,          //  ull_int        stat: stime + utime
-    PIDS_TICS_ALL_C,        //  ull_int        stat: stime + utime + cstime + cutime
+    PIDS_TICS_ALL,          //  ull_int        derived from stat: stime + utime
+    PIDS_TICS_ALL_C,        //  ull_int        derived from stat: stime + utime + cstime + cutime
     PIDS_TICS_ALL_DELTA,    //    u_int        derived from TICS_ALL
     PIDS_TICS_BEGAN,        //  ull_int        stat: start_time
     PIDS_TICS_BLKIO,        //  ull_int        stat: blkio_ticks
@@ -162,8 +162,8 @@ enum pids_item {
     PIDS_TICS_SYSTEM_C,     //  ull_int        derived from stat: stime + cstime
     PIDS_TICS_USER,         //  ull_int        stat: utime
     PIDS_TICS_USER_C,       //  ull_int        derived from stat: utime + cutime
-    PIDS_TIME_ALL,          //     real        derived from (utime + stime) / hertz
-    PIDS_TIME_ALL_C,        //     real        derived from (utime + stime + cutime + cstime) / hertz
+    PIDS_TIME_ALL,          //     real        derived from stat: (utime + stime) / hertz
+    PIDS_TIME_ALL_C,        //     real        derived from stat: (utime + stime + cutime + cstime) / hertz
     PIDS_TIME_ELAPSED,      //     real        derived from /proc/uptime - (starttime / hertz)
     PIDS_TIME_START,        //     real        derived from stat: start_time / hertz
     PIDS_TTY,               //    s_int        stat: tty_nr
