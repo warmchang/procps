@@ -205,5 +205,10 @@ proc get_tty {} {
         return ""
     }
     regexp "/dev/(.+)" $raw_tty > tty
+    if { $tty == "tty" } {
+        warning "TTY is tty"
+        return ""
+    }
+
     return $tty
 }
