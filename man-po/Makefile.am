@@ -67,6 +67,9 @@ procps-man.pot:
 #	parafiles = $(dist_man_MANS:doc=Ente)
 	po4a-gettextize -M utf8 --option groff_code=verbatim --option generated --option untranslated="a.RE,\|" --option unknown_macros=untranslated -f man $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS))) -p $@
 
+update-po:
+	$(PO4A_V) $(PO4A) $(PO4A_OPTS) --force $(srcdir)/po4a.cfg
+
 
 install-data-local:
 	for lang in $(LINGUAS) ; do \
