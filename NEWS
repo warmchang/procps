@@ -1,4 +1,4 @@
-procps-ng-NEXT
+procps-ng-4.0.0
 ---------------
   * Rename pwait to pidwait
   * free: Add committed line option                        merge #25
