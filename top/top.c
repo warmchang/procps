@@ -3981,14 +3981,14 @@ static int configs_path (const char *const fmts, ...) {
          * 1. 'SYS_RCRESTRICT' contains two lines consisting of the secure
          *     mode switch and an update interval.  Its presence limits what
          *     ordinary users are allowed to do.
-         * 2. 'Rc_name' contains multiple lines - 3 global + 3 per window.
-         *     line 1  : an eyecatcher and creating program/alias name
-         *     line 2  : an id, Mode_altcsr, Mode_irixps, Delay_time, Curwin.
+         * 2. 'Rc_name' contains multiple lines - both global & per window.
+         *       line 1 : an eyecatcher and creating program/alias name
+         *       line 2 : an id, Mode_altcsr, Mode_irixps, Delay_time, Curwin.
          *     For each of the 4 windows:
-         *       line a: contains w->winname, fieldscur
-         *       line b: contains w->winflags, sortindx, maxtasks, etc
-         *       line c: contains w->summclr, msgsclr, headclr, taskclr
-         *     line 15 : miscellaneous additional global settings
+         *       lines a: contains w->winname, fieldscur
+         *       line  b: contains w->winflags, sortindx, maxtasks, etc
+         *       line  c: contains w->summclr, msgsclr, headclr, taskclr
+         *     global   : miscellaneous additional settings
          *     Any remaining lines are devoted to the optional entries
          *     supporting the 'Other Filter' and 'Inspect' provisions.
          * 3. 'SYS_RCDEFAULTS' system-wide defaults if 'Rc_name' absent
