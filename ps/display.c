@@ -289,9 +289,12 @@ static void simple_spew(void){
   // -q option (only single SEL_PID_QUICK typecode entry expected in the list, if present)
   if (selection_list && selection_list->typecode == SEL_PID_QUICK) {
     unsigned *pidlist = xcalloc(selection_list->n, sizeof(unsigned));
+    enum pids_select_type which;
     for (i = 0; i < selection_list->n; i++)
       pidlist[i] = selection_list->u[selection_list->n-i-1].pid;
-    pidread = procps_pids_select(Pids_info, pidlist, selection_list->n, PIDS_SELECT_PID);
+    which = (thread_flags & (TF_loose_tasks|TF_show_task))
+      ? PIDS_SELECT_PID_THREADS : PIDS_SELECT_PID;
+    pidread = procps_pids_select(Pids_info, pidlist, selection_list->n, which);
     free(pidlist);
   } else {
     enum pids_fetch_type which;
