@@ -592,7 +592,7 @@ static void finalize_stacks (void)
   // now accommodate any results not yet satisfied
   f_node = format_list;
   while (f_node) {
-    (*f_node->pr)(NULL, NULL);
+    if (*f_node->pr) (*f_node->pr)(NULL, NULL);
     f_node = f_node->next;
   }
   s_node = sort_list;

@@ -132,17 +132,20 @@ static const char *aix_format_parse(sf_node *sfn){
     c = *walk++;
     if(c=='%')    goto get_desc;
     if(!c)        goto looks_ok;
+    if(c==',')    goto aix_oops;
   /* get_text: */
     items++;
-  get_more_text:
+  get_more:
     c = *walk++;
     if(c=='%')    goto get_desc;
-    if(c)         goto get_more_text;
+    if(c==' ')    goto get_more;
+    if(c)         goto aix_oops;
     goto looks_ok;
   get_desc:
     items++;
     c = *walk++;
     if(c)         goto initial;
+  aix_oops:
     return _("improper AIX field descriptor");
   looks_ok:
     ;
@@ -313,8 +316,7 @@ static const char *format_parse(sf_node *sfn){
   if(0) improper: err=_("improper format list");
   if(0) badwidth: err=_("column widths must be unsigned decimal numbers");
   if(0) notmacro: err=_("can not set width for a macro (multi-column) format specifier");
-  if (!err)
-    if(strchr(sfn->sf,'%')) err = aix_format_parse(sfn);
+  if(strchr(sfn->sf,'%')) err = aix_format_parse(sfn);
   return err;
 }
 
