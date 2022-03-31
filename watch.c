@@ -71,6 +71,7 @@ static int flags;
 #define WATCH_COLOR	(1 << 5)
 #define WATCH_ERREXIT	(1 << 6)
 #define WATCH_CHGEXIT	(1 << 7)
+#define WATCH_EQUEXIT	(1 << 8)
 
 static int curses_started = 0;
 static long height = 24, width = 80;
@@ -96,6 +97,8 @@ static void __attribute__ ((__noreturn__))
                 "                         highlight changes between updates\n"), out);
 	fputs(_("  -e, --errexit          exit if command has a non-zero exit\n"), out);
 	fputs(_("  -g, --chgexit          exit when output from command changes\n"), out);
+	fputs(_("  -q, --equexit <cycles>\n"
+				"                         exit when output from command does not change\n"), out);
 	fputs(_("  -n, --interval <secs>  seconds to wait between updates\n"), out);
 	fputs(_("  -p, --precise          attempt run command in precise intervals\n"), out);
 	fputs(_("  -t, --no-title         turn off header\n"), out);
@@ -561,6 +564,8 @@ static int run_command(char *restrict command, char **restrict command_argv)
 	int pipefd[2];
 	pid_t child;
 	int exit_early = 0;
+	int buffer_size = 0;
+	int unchanged_buffer = 0;
 	int status;
 
 	/* allocate pipes */
@@ -705,6 +710,20 @@ static int run_command(char *restrict command, char **restrict command_argv)
 				exit_early = (unsigned char)c != oldc;
 #endif
 			}
+			if (!first_screen && !exit_early && (flags & WATCH_EQUEXIT)) {
+				buffer_size++;
+#ifdef WITH_WATCH8BIT
+				cchar_t oldc;
+				in_wch(&oldc);
+				if ((wchar_t) c == oldc.chars[0])
+					unchanged_buffer++;
+#else
+				chtype oldch = inch();
+				unsigned char oldc = oldch & A_CHARTEXT;
+				if ((unsigned char)c == oldc)
+					unchanged_buffer++;
+#endif
+			}
 			if (flags & WATCH_DIFF) {
 #ifdef WITH_WATCH8BIT
 				cchar_t oldc;
@@ -753,7 +772,6 @@ static int run_command(char *restrict command, char **restrict command_argv)
 
 	fclose(p);
 
-
 	/* harvest child process and get status, propagated from command */
 	if (waitpid(child, &status, 0) < 0)
 		xerr(8, _("waitpid"));
@@ -771,6 +789,10 @@ static int run_command(char *restrict command, char **restrict command_argv)
 			exit(8);
 		}
 	}
+
+	if (unchanged_buffer == buffer_size && (flags & WATCH_EQUEXIT))
+		exit_early = 1;
+
 	first_screen = 0;
 	refresh();
 	return exit_early;
@@ -780,6 +802,8 @@ int main(int argc, char *argv[])
 {
 	int optc;
 	double interval = 2;
+	int max_cycles = 1;
+	int cycle_count = 0;
 	char *interval_string;
 	char *command;
 	char **command_argv;
@@ -799,6 +823,7 @@ int main(int argc, char *argv[])
 		{"beep", no_argument, 0, 'b'},
 		{"errexit", no_argument, 0, 'e'},
 		{"chgexit", no_argument, 0, 'g'},
+		{"equexit", required_argument, 0, 'q'},
 		{"exec", no_argument, 0, 'x'},
 		{"precise", no_argument, 0, 'p'},
 		{"no-title", no_argument, 0, 't'},
@@ -820,7 +845,7 @@ int main(int argc, char *argv[])
 		interval = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
 
 	while ((optc =
-		getopt_long(argc, argv, "+bced::ghn:pvtwx", longopts, (int *)0))
+		getopt_long(argc, argv, "+bced::ghq:n:pvtwx", longopts, (int *)0))
 	       != EOF) {
 		switch (optc) {
 		case 'b':
@@ -839,6 +864,10 @@ int main(int argc, char *argv[])
 			break;
 		case 'g':
 			flags |= WATCH_CHGEXIT;
+			break;
+		case 'q':
+			flags |= WATCH_EQUEXIT;
+			max_cycles = strtod_nol_or_err(optarg, _("failed to parse argument"));
 			break;
 		case 't':
 			show_title = 0;
@@ -955,9 +984,18 @@ int main(int argc, char *argv[])
 			output_header(command, interval);
 #endif	/* WITH_WATCH8BIT */
 
-		if (run_command(command, command_argv))
+		int exit = run_command(command, command_argv);
+		if (flags & WATCH_EQUEXIT) {
+			if (cycle_count == max_cycles && exit) {
+				break;
+			} else if (exit) {
+				cycle_count++;
+			} else {
+				cycle_count = 0;
+			}
+		} else if (exit) {
 			break;
-
+		}
 
 		if (precise_timekeeping) {
 			watch_usec_t cur_time = get_time_usec();
