@@ -1,6 +1,8 @@
 procps-ng-NEXT
   * library
     Re-add elogind support                                 merge #151
+  * ps: threads again display when -L is used with -q      issue #234
+  * ps: proper aix format string behavior was restored
 
 procps-ng-4.0.0
 ---------------
