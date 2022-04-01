@@ -1,3 +1,7 @@
+procps-ng-NEXT
+  * library
+    Re-add elogind support                                 merge #151
+
 procps-ng-4.0.0
 ---------------
   * Rename pwait to pidwait
