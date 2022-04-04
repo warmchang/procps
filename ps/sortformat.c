@@ -128,11 +128,11 @@ static const char *aix_format_parse(sf_node *sfn){
   items = 0;
   walk = sfn->sf;
   /* state machine */ {
-  int c;
+  int c = *walk++;
   initial:
-    c = *walk++;
     if(c=='%')    goto get_desc;
     if(!c)        goto looks_ok;
+    if(c==' ')    goto get_more;
     if(c==',')    goto aix_oops;
   /* get_text: */
     items++;
@@ -145,7 +145,8 @@ static const char *aix_format_parse(sf_node *sfn){
   get_desc:
     items++;
     c = *walk++;
-    if(c)         goto initial;
+    if(c&&c!=' ') goto initial;
+    return _("missing AIX field descriptor");
   aix_oops:
     return _("improper AIX field descriptor");
   looks_ok:
@@ -163,7 +164,8 @@ static const char *aix_format_parse(sf_node *sfn){
     if(*walk == '%'){
       const aix_struct *aix;
       walk++;
-      if(*walk == '%') goto double_percent;
+      if(*walk == '%')
+        return _("missing AIX field descriptor");
       aix = search_aix_array(*walk);
       walk++;
       if(!aix){
@@ -179,11 +181,6 @@ static const char *aix_format_parse(sf_node *sfn){
       size_t len;
       len = strcspn(walk, "%");
       memcpy(buf,walk,len);
-      if(0){
-double_percent:
-        len = 1;
-        buf[0] = '%';
-      }
       buf[len] = '\0';
       walk += len;
       fnode = malloc(sizeof(format_node));
