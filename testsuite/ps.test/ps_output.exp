@@ -35,3 +35,19 @@ foreach { flag match } $flag_match  {
   spawn $ps -o $flag
   expect_pass "$test" $match
 }
+
+set test "ps with correct AIX field"
+spawn $ps -o "%p"
+expect_pass "$test" "\\s*PID\\s+\(\\s*\\d+\\s+\)+$"
+
+set test "ps with improper AIX field"
+spawn $ps -o "%p %G{"
+expect_pass "$test" "error: improper AIX field descriptor"
+
+set test "ps with missing AIX field"
+spawn $ps -o "%p %%a"
+expect_pass "$test" "error: missing AIX field descriptor"
+
+set test "ps with unknown AIX field"
+spawn $ps -o "%p %Z"
+expect_pass "$test" "error: unknown AIX field descriptor"
