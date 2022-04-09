@@ -1,4 +1,14 @@
 procps-ng-NEXT
+<<<<<<< HEAD
+=======
+  * library
+    Re-add elogind support                                 merge #151
+  * ps: threads again display when -L is used with -q      issue #234
+  * ps: proper aix format string behavior was restored
+  * sysctl: print dotted keys again
+
+procps-ng-4.0.0
+>>>>>>> b159c198 (sysctl: print dotted keys again)
 ---------------
   * Rename pwait to pidwait
   * sysctl: Add support for systemd glob patterns          issue #191
