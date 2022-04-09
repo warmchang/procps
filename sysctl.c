@@ -169,7 +169,7 @@ static SysctlSetting *setting_new(
         strcat(path + proc_len, key+1);
     else
         strcat(path + proc_len, key);
-    /* change . to / */
+    /* change . to / for path */
     slashdot(path + proc_len, '.', '/');
 
     s = xmalloc(sizeof(SysctlSetting));
@@ -535,6 +535,7 @@ static int WriteSetting(
     int rc = EXIT_SUCCESS;
     FILE *fp;
     struct stat ts;
+    char *dotted_key;
 
     if (!key || !path)
         return rc;
@@ -551,13 +552,22 @@ static int WriteSetting(
         return EXIT_FAILURE;
     }
 
+    /* Convert the globbed path into a dotted key */
+    if ( (dotted_key = strdup(path + strlen(PROC_PATH))) == NULL) {
+	xerrx(EXIT_FAILURE, _("strdup key"));
+	return EXIT_FAILURE;
+    }
+    slashdot(dotted_key, '/', '.');
+
     if ((ts.st_mode & S_IWUSR) == 0) {
-        xwarn(_("setting key \"%s\""), key);
+        xwarn(_("setting key \"%s\""), dotted_key);
+	free(dotted_key);
         return rc;
     }
 
     if (S_ISDIR(ts.st_mode)) {
-        xwarn(_("setting key \"%s\""), key);
+        xwarn(_("setting key \"%s\""), dotted_key);
+	free(dotted_key);
         return rc;
     }
 
@@ -567,7 +577,7 @@ static int WriteSetting(
             case ENOENT:
                 if (!IgnoreError) {
                     xwarnx(_("\"%s\" is an unknown key%s"),
-                           key, (ignore_failure?_(", ignoring"):""));
+                           dotted_key, (ignore_failure?_(", ignoring"):""));
                     if (!ignore_failure)
                         rc = EXIT_FAILURE;
                 }
@@ -576,11 +586,11 @@ static int WriteSetting(
             case EROFS:
             case EACCES:
                 xwarnx(_("permission denied on key \"%s\"%s"),
-                       key, (ignore_failure?_(", ignoring"):""));
+                       dotted_key, (ignore_failure?_(", ignoring"):""));
                 break;
             default:
                 xwarn(_("setting key \"%s\"%s"),
-                      key, (ignore_failure?_(", ignoring"):""));
+                      dotted_key, (ignore_failure?_(", ignoring"):""));
                 break;
             }
             if (!ignore_failure && errno != ENOENT)
@@ -589,7 +599,8 @@ static int WriteSetting(
             if (0 < fprintf(fp, "%s\n", value))
                 rc = EXIT_SUCCESS;
             if (close_stream(fp) != 0) {
-                xwarn(_("setting key \"%s\""), path);
+                xwarn(_("setting key \"%s\""), dotted_key);
+		free(dotted_key);
                 return EXIT_FAILURE;
             }
         }
@@ -599,7 +610,7 @@ static int WriteSetting(
             printf("%s\n", value);
         } else {
             if (PrintName) {
-                printf("%s = %s\n", path, value);
+                printf("%s = %s\n", dotted_key, value);
             } else {
                 if (PrintNewline)
                     printf("%s\n", value);
@@ -608,6 +619,7 @@ static int WriteSetting(
             }
         }
     }
+    free(dotted_key);
     return rc;
 }
 
