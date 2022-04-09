@@ -3451,7 +3451,6 @@ static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
  #define doALL STAT_REAP_NUMA_NODES_TOO
-   struct sigaction sa;
    int i, rc;
    int linux_version_code = procps_linux_version();
 
@@ -3515,11 +3514,13 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(-rc)));
 
 #if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
+{  struct sigaction sa;
    Thread_id_main = pthread_self();
    /* in case any of our threads have been enabled, they'll inherit this mask
       with everything blocked. therefore, signals go to the main thread (us). */
    sigfillset(&sa.sa_mask);
    pthread_sigmask(SIG_BLOCK, &sa.sa_mask, NULL);
+}
 #endif
 
 #ifdef THREADED_CPU
@@ -3546,38 +3547,6 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(X_THREADINGS_fmt), __LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_tasks, "update tasks");
 #endif
-
-#ifndef SIGRTMAX       // not available on hurd, maybe others too
-#define SIGRTMAX 32
-#endif
-   // lastly, establish a robust signals environment
-   memset(&sa, 0, sizeof(sa));
-   sigemptyset(&sa.sa_mask);
-   // with user position preserved through SIGWINCH, we must avoid SA_RESTART
-   sa.sa_flags = 0;
-   for (i = SIGRTMAX; i; i--) {
-      switch (i) {
-         case SIGALRM: case SIGHUP:  case SIGINT:
-         case SIGPIPE: case SIGQUIT: case SIGTERM:
-         case SIGUSR1: case SIGUSR2:
-            sa.sa_handler = sig_endpgm;
-            break;
-         case SIGTSTP: case SIGTTIN: case SIGTTOU:
-            sa.sa_handler = sig_paused;
-            break;
-         case SIGCONT: case SIGWINCH:
-            sa.sa_handler = sig_resize;
-            break;
-         default:
-            sa.sa_handler = sig_abexit;
-            break;
-         case SIGKILL: case SIGSTOP:
-         // because uncatchable, fall through
-         case SIGCHLD: // we can't catch this
-            continue;  // when opening a pipe
-      }
-      sigaction(i, &sa, NULL);
-   }
  #undef doALL
 } // end: before
 
@@ -4238,6 +4207,51 @@ static void parse_args (int argc, char **argv) {
       Rc.delay_time = tmp_delay;
    }
 } // end: parse_args
+
+
+        /*
+         * Establish a robust signals environment */
+static void signals_set (void) {
+ #ifndef SIGRTMAX       // not available on hurd, maybe others too
+  #define SIGRTMAX 32
+ #endif
+   int i;
+   struct sigaction sa;
+
+   memset(&sa, 0, sizeof(sa));
+   sigemptyset(&sa.sa_mask);
+   // with user position preserved through SIGWINCH, we must avoid SA_RESTART
+   sa.sa_flags = 0;
+   for (i = SIGRTMAX; i; i--) {
+      switch (i) {
+         case SIGHUP:
+            if (Batch)
+               sa.sa_handler = SIG_IGN;
+            else
+               sa.sa_handler = sig_endpgm;
+            break;
+         case SIGALRM: case SIGINT:  case SIGPIPE:
+         case SIGQUIT: case SIGTERM: case SIGUSR1:
+         case SIGUSR2:
+            sa.sa_handler = sig_endpgm;
+            break;
+         case SIGTSTP: case SIGTTIN: case SIGTTOU:
+            sa.sa_handler = sig_paused;
+            break;
+         case SIGCONT: case SIGWINCH:
+            sa.sa_handler = sig_resize;
+            break;
+         default:
+            sa.sa_handler = sig_abexit;
+            break;
+         case SIGKILL: case SIGSTOP:
+         // because uncatchable, fall through
+         case SIGCHLD: // we can't catch this
+            continue;  // when opening a pipe
+      }
+      sigaction(i, &sa, NULL);
+   }
+} // end: signals_set
 
 
         /*
@@ -6731,8 +6745,9 @@ int main (int argc, char *argv[]) {
                                         //                 +-------------+
    wins_stage_1();                      //                 top (sic) slice
    configs_reads();                     //                 > spread etc, <
-   parse_args(argc, argv);              //                 > lean stuff, <
-   whack_terminal();                    //                 > onions etc. <
+   parse_args(argc, argv);              //                 > onions etc, <
+   signals_set();                       //                 > lean stuff, <
+   whack_terminal();                    //                 > more stuff. <
    wins_stage_2();                      //                 as bottom slice
                                         //                 +-------------+
 

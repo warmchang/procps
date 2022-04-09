@@ -711,6 +711,7 @@ typedef struct WIN_t {
 //atic int           configs_path (const char *const fmts, ...);
 //atic void          configs_reads (void);
 //atic void          parse_args (int argc, char **argv);
+//atic void          signals_set (void);
 //atic void          whack_terminal (void);
 /*------  Windows/Field Groups support  ----------------------------------*/
 //atic void          win_names (WIN_t *q, const char *name);
