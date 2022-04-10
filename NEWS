@@ -4,6 +4,7 @@ procps-ng-NEXT
   * ps: threads again display when -L is used with -q      issue #234
   * ps: proper aix format string behavior was restored
   * sysctl: print dotted keys again
+  * top: fix 'smaps' bug preventing build under clang      issue #235
 
 procps-ng-4.0.0
 ---------------

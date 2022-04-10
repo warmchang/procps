@@ -19,6 +19,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -658,10 +659,9 @@ static void smaps2proc (const char *s, proc_t *restrict P) {
     // 1st proc_t data field
   #define fZERO tid
     // a smaptab entry generator
-  #define mkENT(F) { #F ":", -1, (int)((void*)&q->smap_ ## F - (void*)&q->fZERO) }
+  #define mkENT(F) { #F ":", -1, offsetof(proc_t, smap_ ## F) }
     // make a target field
   #define mkOBJ(X) ( (unsigned long *)((void *)&P->fZERO + smaptab[X].offs) )
-    static const proc_t *q;
     static struct {
         const char *item;
         int slen;
