@@ -1,22 +1,15 @@
 procps-ng-NEXT
-<<<<<<< HEAD
-=======
-  * library
-    Re-add elogind support                                 merge #151
-  * ps: threads again display when -L is used with -q      issue #234
-  * ps: proper aix format string behavior was restored
-  * sysctl: print dotted keys again
-
-procps-ng-4.0.0
->>>>>>> b159c198 (sysctl: print dotted keys again)
 ---------------
   * Rename pwait to pidwait
+  * ps: proper aix format string behavior was restored
+  * sysctl: print dotted keys again
   * sysctl: Add support for systemd glob patterns          issue #191
   * top: 'F' key is now a new forest view 'focus' toggle
   * top: summary area memory lines can print two abreast
   * top: added long versions of command line options
   * top: the time related fields can now be user scaled
   * top: added a 'start time' field (STARTED)
+
 
 procps-ng-3.3.17
 ---------------
