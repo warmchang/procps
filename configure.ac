@@ -69,6 +69,7 @@ AC_C_RESTRICT
 AC_TYPE_SIZE_T
 AC_TYPE_SSIZE_T
 AC_CHECK_MEMBERS([struct stat.st_rdev])
+AC_CHECK_MEMBERS([siginfo_t.si_int], [], [], [[#include <signal.h>]])
 
 dnl libtool
 LT_INIT

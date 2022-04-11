@@ -62,9 +62,9 @@ signal_handler(int signum, siginfo_t *siginfo, void *ucontext)
 	    printf("SIG %s\n", signame);
 	    break;
 	case SI_QUEUE:
-#	    ifndef __GNU__
+#ifdef HAVE_SIGINFO_T_SI_INT
 	        printf("SIG %s value=%d\n", signame, siginfo->si_int);
-#	    else
+#else
 	        printf("case SI_QUEUE: SIG %s siginfo->si_int undefined\n", signame);
 #endif
 	    break;
