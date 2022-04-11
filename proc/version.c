@@ -25,7 +25,13 @@
 #include "misc.h"
 #include "procps-private.h"
 
+#ifdef __CYGWIN__
+#define PROCFS_OSRELEASE "/proc/version"
+#define PROCFS_OSPATTERN "%*s version %u.%u.%u"
+#else
 #define PROCFS_OSRELEASE "/proc/sys/kernel/osrelease"
+#define PROCFS_OSPATTERN "%u.%u.%u"
+#endif
 
 /*
  * procps_linux_version
@@ -55,7 +61,7 @@ PROCPS_EXPORT int procps_linux_version(void)
 	return -EIO;
     }
     fclose(fp);
-    version_string_depth = sscanf(buf, "%u.%u.%u", &x, &y, &z);
+    version_string_depth = sscanf(buf, PROCFS_OSPATTERN, &x, &y, &z);
     if ((version_string_depth < 2) ||		 /* Non-standard for all known kernels */
        ((version_string_depth < 3) && (x < 3))) /* Non-standard for 2.x.x kernels */
 	return -ERANGE;
