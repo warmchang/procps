@@ -3411,9 +3411,6 @@ static void osel_clear (WIN_t *q) {
    }
    q->osel_tot = 0;
    q->osel_1st = NULL;
-#ifndef USE_X_COLHDR
-   OFFw(q, NOHISEL_xxx);
-#endif
 } // end: osel_clear
 
 
@@ -3897,9 +3894,6 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
          if (&w->rc.fieldscur[n] != msch(w->rc.fieldscur, w->rc.fieldscur[n], EU_MAXPFLGS))
             return p;
       }
-#ifndef USE_X_COLHDR
-      OFFw(w, NOHIFND_xxx | NOHISEL_xxx);
-#endif
    } // end: for (GROUPSMAX)
 
    // any new addition(s) last, for older rcfiles compatibility...
@@ -4343,10 +4337,6 @@ static void win_reset (WIN_t *q) {
 
          osel_clear(q);
          q->findstr[0] = '\0';
-#ifndef USE_X_COLHDR
-         // NOHISEL_xxx is redundant (already turned off by osel_clear)
-         OFFw(q, NOHIFND_xxx | NOHISEL_xxx);
-#endif
          q->rc.combine_cpus = 0;
 } // end: win_reset
 
@@ -4913,10 +4903,6 @@ static void find_string (int ch) {
       snprintf(Curwin->findstr, FNDBUFSIZ, "%s", str);
       Curwin->findlen = strlen(Curwin->findstr);
       found = 0;
-#ifndef USE_X_COLHDR
-      if (Curwin->findstr[0]) SETw(Curwin, NOHIFND_xxx);
-      else OFFw(Curwin, NOHIFND_xxx);
-#endif
    }
    if (Curwin->findstr[0]) {
       SETw(Curwin, NOPRINT_xxx);
@@ -4999,9 +4985,6 @@ static void other_filters (int ch) {
             show_msg(p);
             return;
          }
-#ifndef USE_X_COLHDR
-         SETw(w, NOHISEL_xxx);
-#endif
          break;
       case kbd_CtrlO:
          if (VIZCHKw(w)) {
@@ -5511,8 +5494,7 @@ static void keys_task (int ch) {
             TOGw(w, Show_HICOLS);
             capsmk(w);
 #else
-            if (ENUviz(w, w->rc.sortindx)
-            && !CHKw(w, NOHIFND_xxx | NOHISEL_xxx)) {
+            if (ENUviz(w, w->rc.sortindx)) {
                TOGw(w, Show_HICOLS);
                if (ENUpos(w, w->rc.sortindx) < w->begpflg) {
                   if (CHKw(w, Show_HICOLS)) w->begpflg += 2;
@@ -6263,7 +6245,7 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_XOF:
          case EU_XON:
             cp = NULL;
-            if (!CHKw(q, NOPRINT_xxx | NOHIFND_xxx | NOHISEL_xxx)) {
+            if (!CHKw(q, NOPRINT_xxx)) {
                /* treat running tasks specially - entire row may get highlighted
                   so we needn't turn it on and we MUST NOT turn it off */
                if (!('R' == rSv(EU_STA, s_ch) && CHKw(q, Show_HIROWS)))
