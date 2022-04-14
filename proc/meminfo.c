@@ -716,8 +716,6 @@ static int meminfo_read_failed (
 
     if (mHr(SwapFree) < mHr(SwapTotal))
         mHr(derived_swap_used) = mHr(SwapTotal) - mHr(SwapFree);
-    else
-        mHr(derived_swap_used) = 0;
 
     return 0;
  #undef mHr
