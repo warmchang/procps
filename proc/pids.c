@@ -91,7 +91,7 @@ struct pids_info {
     unsigned oldflags;                 // the old library PROC_FILL flagss
     PROCTAB *fetch_PT;                 // oldlib interface for 'select' & 'reap'
     unsigned long hertz;               // for the 'TIME' & 'UTILIZATION' calculations
-    double boot_seconds;               // for TIME_ELAPSED & 'UTILIZATION' calculations
+    unsigned long long boot_tics;      // for TIME_ELAPSED & 'UTILIZATION' calculations
     PROCTAB *get_PT;                   // oldlib interface for active 'get'
     struct stacks_extent *get_ext;     // for active 'get' (also within 'extents')
     enum pids_fetch_type get_type;     // last known type of 'get' request
@@ -281,13 +281,13 @@ REG_set(TICS_USER,        ull_int, utime)
 setDECL(TICS_USER_C)    { (void)I; R->result.ull_int = P->utime + P->cutime; }
 setDECL(TIME_ALL)       { R->result.real = ((double)P->utime + P->stime) / I->hertz; }
 setDECL(TIME_ALL_C)     { R->result.real = ((double)P->utime + P->stime + P->cutime + P->cstime) / I->hertz; }
-setDECL(TIME_ELAPSED)   { double t = (double)P->start_time / I->hertz; R->result.real = I->boot_seconds > t ? I->boot_seconds - t : 0; }
+setDECL(TIME_ELAPSED)   { double t = I->boot_tics - P->start_time; if (t > 0) R->result.real = t / I->hertz; }
 setDECL(TIME_START)     { R->result.real = (double)P->start_time / I->hertz; }
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)       { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 setDECL(TTY_NUMBER)     { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
-setDECL(UTILIZATION)    { double t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((double)P->start_time / I->hertz); if (t > 0) R->result.real = ((P->utime + P->stime) * 100.0f / I->hertz) / t; }}
-setDECL(UTILIZATION_C)  { double t; if (I->boot_seconds > 0) { t = I->boot_seconds - ((double)P->start_time / I->hertz); if (t > 0) R->result.real = ((P->utime + P->stime + P->cutime + P->cstime) * 100.0f / I->hertz) / t; }}
+setDECL(UTILIZATION)    { double t = I->boot_tics - P->start_time; if (t > 0) R->result.real = ((P->utime + P->stime) * 100.0f) / t; }
+setDECL(UTILIZATION_C)  { double t = I->boot_tics - P->start_time; if (t > 0) R->result.real = ((P->utime + P->stime + P->cutime + P->cstime) * 100.0f) / t; }
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
@@ -1440,9 +1440,9 @@ fresh_start:
 
     /* when in a namespace with proc mounted subset=pid,
        we will be restricted to process information only */
-    info->boot_seconds = 0;
+    info->boot_tics = 0;
     if (0 >= procps_uptime(&up_secs, NULL))
-        info->boot_seconds = up_secs;
+        info->boot_tics = up_secs * info->hertz;
 
     if (NULL == info->read_something(info->get_PT, &info->get_proc))
         return NULL;
@@ -1483,9 +1483,9 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
 
     /* when in a namespace with proc mounted subset=pid,
        we will be restricted to process information only */
-    info->boot_seconds = 0;
+    info->boot_tics = 0;
     if (0 >= procps_uptime(&up_secs, NULL))
-        info->boot_seconds = up_secs;
+        info->boot_tics = up_secs * info->hertz;
 
     rc = pids_stacks_fetch(info);
 
@@ -1588,9 +1588,9 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
 
     /* when in a namespace with proc mounted subset=pid,
        we will be restricted to process information only */
-    info->boot_seconds = 0;
+    info->boot_tics = 0;
     if (0 >= procps_uptime(&up_secs, NULL))
-        info->boot_seconds = up_secs;
+        info->boot_tics = up_secs * info->hertz;
 
     rc = pids_stacks_fetch(info);
 
