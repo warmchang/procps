@@ -162,10 +162,10 @@ enum pids_item {
     PIDS_TICS_SYSTEM_C,     //  ull_int        derived from stat: stime + cstime
     PIDS_TICS_USER,         //  ull_int        stat: utime
     PIDS_TICS_USER_C,       //  ull_int        derived from stat: utime + cutime
-    PIDS_TIME_ALL,          //     real        derived from stat: (utime + stime) / hertz
-    PIDS_TIME_ALL_C,        //     real        derived from stat: (utime + stime + cutime + cstime) / hertz
-    PIDS_TIME_ELAPSED,      //     real        derived from /proc/uptime - (starttime / hertz)
-    PIDS_TIME_START,        //     real        derived from stat: start_time / hertz
+    PIDS_TIME_ALL,          //     real     *  derived from stat: (utime + stime) / hertz
+    PIDS_TIME_ALL_C,        //     real     *  derived from stat: (utime + stime + cutime + cstime) / hertz
+    PIDS_TIME_ELAPSED,      //     real     *  derived from /proc/uptime - (starttime / hertz)
+    PIDS_TIME_START,        //     real     *  derived from stat: start_time / hertz
     PIDS_TTY,               //    s_int        stat: tty_nr
     PIDS_TTY_NAME,          //      str        derived from TTY
     PIDS_TTY_NUMBER,        //      str        derived from TTY as str
@@ -186,7 +186,9 @@ enum pids_item {
     PIDS_VSIZE_PGS,         //   ul_int        stat: vsize
     PIDS_WCHAN_NAME         //      str        wchan
 };
-
+                            //              *  while these are all expressed as seconds, each can be
+                            //                 converted into tics/jiffies with no loss of precision
+                            //                 when multiplied by hertz obtained via procps_misc(3).
 enum pids_fetch_type {
     PIDS_FETCH_TASKS_ONLY,
     PIDS_FETCH_THREADS_TOO
