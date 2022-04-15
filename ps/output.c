@@ -517,13 +517,13 @@ setREL1(TIME_ELAPSED)
 static int pr_c(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu;                   /* scaled %cpu, 99 means 99% */
-  unsigned long long seconds;      /* seconds of process life */
+  unsigned long long jiffies;      /* jiffies of process life */
 setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
-  seconds = rSv(TIME_ELAPSED, real, pp);
-  if(seconds) pcpu = (total_time * 100ULL / Hertz) / seconds;
+  jiffies = rSv(TIME_ELAPSED, real, pp) * Hertz;
+  if(jiffies) pcpu = (total_time * 100ULL) / jiffies;
   if (pcpu > 99U) pcpu = 99U;
   return snprintf(outbuf, COLWID, "%2u", pcpu);
 }
@@ -532,13 +532,13 @@ setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
 static int pr_pcpu(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu;                   /* scaled %cpu, 999 means 99.9% */
-  unsigned long long seconds;      /* seconds of process life */
+  unsigned long long jiffies;      /* jiffies of process life */
 setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
-  seconds = rSv(TIME_ELAPSED, real, pp);
-  if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
+  jiffies = rSv(TIME_ELAPSED, real, pp) * Hertz;
+  if(jiffies) pcpu = (total_time * 1000ULL) / jiffies;
   if (pcpu > 999U)
     return snprintf(outbuf, COLWID, "%u", pcpu/10U);
   return snprintf(outbuf, COLWID, "%u.%u", pcpu/10U, pcpu%10U);
@@ -548,13 +548,13 @@ setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
 static int pr_cp(char *restrict const outbuf, const proc_t *restrict const pp){
   unsigned long long total_time;   /* jiffies used by this process */
   unsigned pcpu;                   /* scaled %cpu, 999 means 99.9% */
-  unsigned long long seconds;      /* seconds of process life */
+  unsigned long long jiffies;      /* jiffies of process life */
 setREL4(TICS_ALL,TICS_ALL_C,TIME_ELAPSED,UTILIZATION)
   pcpu = 0;
   if(include_dead_children) total_time = rSv(TICS_ALL_C, ull_int, pp);
   else total_time = rSv(TICS_ALL, ull_int, pp);
-  seconds = rSv(TIME_ELAPSED, real, pp);
-  if(seconds) pcpu = (total_time * 1000ULL / Hertz) / seconds;
+  jiffies = rSv(TIME_ELAPSED, real, pp) * Hertz;
+  if(jiffies) pcpu = (total_time * 1000ULL) / jiffies;
   if (pcpu > 999U) pcpu = 999U;
   return snprintf(outbuf, COLWID, "%3u", pcpu);
 }
