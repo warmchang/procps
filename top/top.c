@@ -1879,7 +1879,7 @@ static struct {
    {     7,     -1,  A_right,  PIDS_TICS_BEGAN     },  // ull_int  EU_TM3
    {     7,     -1,  A_right,  PIDS_TIME_ELAPSED   },  // real     EU_TM4
    {     6,     -1,  A_right,  PIDS_UTILIZATION    },  // real     EU_CUU
-   {     6,     -1,  A_right,  PIDS_UTILIZATION_C  }   // real     EU_CUC
+   {     7,     -1,  A_right,  PIDS_UTILIZATION_C  }   // real     EU_CUC
 #define eu_LAST  EU_CUC
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1

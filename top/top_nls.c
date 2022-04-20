@@ -359,7 +359,7 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum '%CUU' = 6 */
    Head_nlstab[EU_CUU] = _("%CUU");
    Desc_nlstab[EU_CUU] = _("CPU Utilization");
-/* Translation Hint: maximum '%CUC' = 6 */
+/* Translation Hint: maximum '%CUC' = 7 */
    Head_nlstab[EU_CUC] = _("%CUC");
    Desc_nlstab[EU_CUC] = _("Utilization + child");
 }
