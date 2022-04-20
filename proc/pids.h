@@ -42,7 +42,7 @@ enum pids_item {
     PIDS_CGNAME,            //      str        derived from CGROUP ':name='
     PIDS_CGROUP,            //      str        cgroup
     PIDS_CGROUP_V,          //     strv        cgroup, as *str[]
-    PIDS_CMD,               //      str        stat: tcomm or status: Name
+    PIDS_CMD,               //      str        stat: comm or status: Name
     PIDS_CMDLINE,           //      str        cmdline
     PIDS_CMDLINE_V,         //     strv        cmdline, as *str[]
     PIDS_ENVIRON,           //      str        environ
@@ -164,7 +164,7 @@ enum pids_item {
     PIDS_TICS_USER_C,       //  ull_int        derived from stat: utime + cutime
     PIDS_TIME_ALL,          //     real     *  derived from stat: (utime + stime) / hertz
     PIDS_TIME_ALL_C,        //     real     *  derived from stat: (utime + stime + cutime + cstime) / hertz
-    PIDS_TIME_ELAPSED,      //     real     *  derived from /proc/uptime - (starttime / hertz)
+    PIDS_TIME_ELAPSED,      //     real     *  derived from stat: (/proc/uptime - start_time) / hertz
     PIDS_TIME_START,        //     real     *  derived from stat: start_time / hertz
     PIDS_TTY,               //    s_int        stat: tty_nr
     PIDS_TTY_NAME,          //      str        derived from TTY
