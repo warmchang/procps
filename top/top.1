@@ -1262,7 +1262,7 @@ depending on the context in which they are issued.
 .nf
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
-        A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z
+        A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z, ^R
   4b.\fI Summary-Area-Commands \fR
         C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
@@ -1519,6 +1519,22 @@ summarized here for future reference.
 This key will take you to a separate screen where you can change the
 colors for the \*(CW, or for all windows.
 For details regarding this \*(CI \*(Xt 4d. COLOR Mapping.
+
+.TP 7
+*\ \ \fB^R\fR\ \ :\fIRenice-an-Autogroup \fR (Ctrl key + `r')
+You will be prompted for a PID and then the value for its
+autogroup AGNI.
+
+Entering no PID will be interpreted as the default shown in
+the prompt (the first task displayed).
+
+A positive AGNI value will cause processes in that autogroup
+to lose priority.
+Conversely, a negative value causes them to be viewed more
+favorably by the kernel.
+Ordinary users are not allowed to set negative AGNI values.
+
+If you wish to abort the renice process type <Esc>.
 
 .IP "*" 3
 The commands shown with an \*(AK are not available in Secure mode,

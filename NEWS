@@ -6,6 +6,7 @@ procps-ng-NEXT
   * sysctl: print dotted keys again
   * top: fix 'smaps' bug preventing build under clang      issue #235
   * top: column highlighting allowed under 'L' or 'O'
+  * top: can alter autogroup nice value (like 'r' renice)
 
 procps-ng-4.0.0
 ---------------
