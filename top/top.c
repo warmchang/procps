@@ -5223,6 +5223,32 @@ static void keys_global (int ch) {
             Rc.tics_scaled = 0;
 #endif
          break;
+      case kbd_CtrlR:
+         if (Secure_mode)
+            show_msg(N_txt(NOT_onsecure_txt));
+         else {
+            int def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
+                pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
+            if (pid > GET_NUM_ESC) {
+               int val, fd;
+               if (pid == GET_NUM_NOT) pid = def;
+               val = get_int(fmtmk(N_fmt(AGNI_valueof_fmt), pid));
+               if (val > GET_NUM_NOT) {
+                  if (val < -20 || val > +19)
+                     show_msg(N_txt(AGNI_invalid_txt));
+                  else if (0 > (fd = open(fmtmk("/proc/%d/autogroup", pid), O_WRONLY)))
+                     show_msg(fmtmk(N_fmt(AGNI_notopen_fmt), strerror(errno)));
+                  else {
+                     char buf[TNYBUFSIZ];
+                     snprintf(buf, sizeof(buf), "%d", val);
+                     if (0 >= write(fd, buf, strlen(buf)))
+                        show_msg(fmtmk(N_fmt(AGNI_nowrite_fmt), strerror(errno)));
+                     close(fd);
+                  }
+               }
+            }
+         }
+         break;
       case kbd_ENTER:             // these two have the effect of waking us
       case kbd_SPACE:             // from 'pselect', refreshing the display
          break;                   // and updating any hot-plugged resources
@@ -6063,7 +6089,7 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_ENTER, kbd_SPACE, '\0' } },
+         , kbd_CtrlE, kbd_CtrlR, kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,

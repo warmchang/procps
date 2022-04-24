@@ -584,6 +584,10 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[X_SEMAPHORES_fmt] = _("failed sem_init() at %d: %s");
    Norm_nlstab[X_THREADINGS_fmt] = _("failed pthread_create() at %d: %s");
    Norm_nlstab[X_RESTRICTED_txt] = _("sorry, restricted namespace with reduced functionality");
+   Norm_nlstab[AGNI_valueof_fmt] = _("set pid %d AGNI value to");
+   Norm_nlstab[AGNI_invalid_txt] = _("valid AGNI range is -20 to +19");
+   Norm_nlstab[AGNI_notopen_fmt] = _("autogroup open failed, %s");
+   Norm_nlstab[AGNI_nowrite_fmt] = _("autogroup write failed, %s");
 }
 
 
@@ -718,7 +722,7 @@ static void build_uniq_nlstab (void) {
    .                 also imbedded in the translatable text (along with escape seqs)
    .                 should never themselves be translated. */
    Uniq_nlstab[KEYS_helpext_fmt] = _(""
-      "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
+      "  k,r,^R,   Tasks: '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n"
       "  d or s    Set update interval\n");
 
 /* Translation Hint:

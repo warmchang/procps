@@ -130,6 +130,7 @@ char *strcasestr(const char *haystack, const char *needle);
    /* the above might seem pretty stingy, until you consider that with every
       field displayed the column header would be approximately 250 bytes
       -- so SCREENMAX provides for all fields plus a 250+ byte command line */
+#define TNYBUFSIZ    16
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
 #define PFLAGSSIZ   128
@@ -169,8 +170,9 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_BKSP   137
 #define kbd_INS    138
 #define kbd_DEL    139
-#define kbd_CtrlO  '\017'
 #define kbd_CtrlE  '\005'
+#define kbd_CtrlO  '\017'
+#define kbd_CtrlR  '\022'
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */

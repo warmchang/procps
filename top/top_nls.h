@@ -60,6 +60,7 @@ extern const char *Uniq_nlstab[];
          * from any text also containiing c-format specifiers.
          */
 enum norm_nls {
+   AGNI_invalid_txt, AGNI_notopen_fmt, AGNI_nowrite_fmt, AGNI_valueof_fmt,
    AMT_exxabyte_txt, AMT_gigabyte_txt, AMT_kilobyte_txt, AMT_megabyte_txt,
    AMT_petabyte_txt, AMT_terabyte_txt, BAD_delayint_fmt, BAD_integers_txt,
    BAD_max_task_txt, BAD_memscale_fmt, BAD_mon_pids_fmt, BAD_niterate_fmt,
