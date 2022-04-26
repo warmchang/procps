@@ -158,21 +158,25 @@ static void discover_shm_minor(void)
 	void *addr;
 	int shmid;
 	char mapbuf_b[256];
+    FILE *fp;
 
-	if (!freopen("/proc/self/maps", "r", stdin))
+    if ( (fp = fopen("/proc/self/maps", "r")) == NULL)
 		return;
 
 	/* create */
 	shmid = shmget(IPC_PRIVATE, 42, IPC_CREAT | 0666);
 	if (shmid == -1)
+    {
 		/* failed; oh well */
+        fclose(fp);
 		return;
+    }
 	/* attach */
 	addr = shmat(shmid, NULL, SHM_RDONLY);
 	if (addr == (void *)-1)
 		goto out_destroy;
 
-	while (fgets(mapbuf_b, sizeof mapbuf_b, stdin)) {
+	while (fgets(mapbuf_b, sizeof mapbuf_b, fp)) {
 		char perms[32];
 		/* to clean up unprintables */
 		char *tmp;
@@ -207,6 +211,7 @@ static void discover_shm_minor(void)
 		perror(_("shared memory detach"));
 
 out_destroy:
+    fclose(fp);
 	if (shmctl(shmid, IPC_RMID, NULL) && errno != EINVAL)
 		perror(_("shared memory remove"));
 
