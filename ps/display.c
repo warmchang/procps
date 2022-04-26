@@ -39,6 +39,8 @@
 #define SIGCHLD SIGCLD
 #endif
 
+#define SIG_IS_TERM_OR_HUP(signo) (((signo) == SIGTERM) || (signo) == SIGHUP)
+
 char *myname;
 long Hertz;
 
@@ -50,20 +52,23 @@ static void signal_handler(int signo){
   sigprocmask(SIG_BLOCK, &ss, NULL);
   if(signo==SIGPIPE) _exit(0);  /* "ps | head" will cause this */
   /* fprintf() is not reentrant, but we _exit() anyway */
-  fprintf(stderr,
-    _("Signal %d (%s) caught by %s (%s).\n"),
-    signo,
-    signal_number_to_name(signo),
-    myname,
-    PACKAGE_VERSION
-  );
+  if (!SIG_IS_TERM_OR_HUP(signo)) {
+    fprintf(stderr,
+      _("Signal %d (%s) caught by %s (%s).\n"),
+      signo,
+      signal_number_to_name(signo),
+      myname,
+      PACKAGE_VERSION
+    );
+  }
   switch (signo) {
     case SIGHUP:
     case SIGUSR1:
     case SIGUSR2:
       exit(EXIT_FAILURE);
     default:
-      error_at_line(0, 0, __FILE__, __LINE__, "%s", _("please report this bug"));
+      if (!SIG_IS_TERM_OR_HUP(signo))
+        error_at_line(0, 0, __FILE__, __LINE__, "%s", _("please report this bug"));
       signal(signo, SIG_DFL);  /* allow core file creation */
       sigemptyset(&ss);
       sigaddset(&ss, signo);
