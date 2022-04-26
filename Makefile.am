@@ -326,7 +326,8 @@ check_PROGRAMS = \
 	lib/test_strutils \
 	lib/test_fileutils \
 	lib/test_process \
-	lib/test_strtod_nol
+	lib/test_strtod_nol \
+	lib/test_shm
 
 lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
 lib_test_strutils_LDADD = $(CYGWINFLAGS)
@@ -336,6 +337,8 @@ lib_test_process_SOURCES = lib/test_process.c
 lib_test_process_LDADD = $(CYGWINFLAGS)
 lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
 lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
+lib_test_shm_SOURCES = lib/test_shm.c lib/strutils.c
+lib_test_shm_LDADD = $(CYGWINFLAGS)
 
 check_PROGRAMS += \
 	proc/test_Itemtables \

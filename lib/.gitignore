@@ -3,5 +3,6 @@
 test_fileutils
 test_nsutils
 test_process
+test_shm
 test_strutils
 test_strtod_nol

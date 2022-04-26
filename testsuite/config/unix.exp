@@ -186,6 +186,27 @@ proc make_testproc { } {
     set testproc2_pid [ exec $testproc_path & ]
 }
 
+proc make_testshm_proc { } {
+    global testshmproc_pid testshm_spawnid topdir shmid
+
+    set testshm_realpath "${topdir}/lib/test_shm"
+
+    set testshmproc_pid [ spawn $testshm_realpath ]
+    set testshmproc_spawnid $spawn_id
+    expect {
+	-i $testshmproc_spawnid
+	-re "^SHMID: (\\d+)" { set shmid $expect_out(1,string) }
+	default { fail "spawning testshm" }
+    }
+
+}
+
+proc kill_testshm_proc { } {
+    global testshmproc_pid
+
+    kill_process $testshmproc_pid
+}
+
 proc kill_testproc { } {
     global testproc_path testproc1_pid testproc2_pid
 

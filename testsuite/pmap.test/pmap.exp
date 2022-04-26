@@ -66,3 +66,8 @@ set test "pmap XX with unreachable process"
 spawn $pmap -XX 1
 expect_pass $test "$pmap_initname\$"
 
+set test "pmap finding shm"
+make_testshm_proc
+spawn $pmap $testshmproc_pid
+expect_pass $test "\[ shmid=0x$shmid \]"
+kill_testshm_proc
