@@ -5097,7 +5097,7 @@ static void write_rcfile (void) {
 
 static void keys_global (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   int i;
+   int i, num, def, pid;
 
    switch (ch) {
       case '?':
@@ -5154,20 +5154,20 @@ static void keys_global (int ch) {
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
          else {
-            int sig = SIGTERM,
-                def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
-                pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def));
+            num = SIGTERM;
+            def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+            pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def));
             if (pid > GET_NUM_ESC) {
                char *str;
                if (pid == GET_NUM_NOT) pid = def;
                str = ioline(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
                if (*str != kbd_ESC) {
-                  if (*str) sig = signal_name_to_number(str);
+                  if (*str) num = signal_name_to_number(str);
                   if (Frames_signal) break;
-                  if (0 < sig && kill(pid, sig))
+                  if (0 < num && kill(pid, num))
                      show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
-                        , pid, sig, strerror(errno)));
-                  else if (0 > sig) show_msg(N_txt(BAD_signalid_txt));
+                        , pid, num, strerror(errno)));
+                  else if (0 > num) show_msg(N_txt(BAD_signalid_txt));
                }
             }
          }
@@ -5176,16 +5176,15 @@ static void keys_global (int ch) {
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
          else {
-            int val,
-                def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
-                pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
+            def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+            pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
-               val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid));
-               if (val > GET_NUM_NOT
-               && setpriority(PRIO_PROCESS, (unsigned)pid, val))
+               num = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid));
+               if (num > GET_NUM_NOT
+               && setpriority(PRIO_PROCESS, (unsigned)pid, num))
                   show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
-                     , pid, val, strerror(errno)));
+                     , pid, num, strerror(errno)));
             }
          }
          break;
@@ -5201,8 +5200,8 @@ static void keys_global (int ch) {
          if (!Inspect.total)
             ioline(N_txt(YINSP_noents_txt));
          else {
-            int def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
-                pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
+            def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+            pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
                if (pid) inspection_utility(pid);
@@ -5227,20 +5226,20 @@ static void keys_global (int ch) {
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
          else {
-            int def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]),
-                pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
+            def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+            pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
             if (pid > GET_NUM_ESC) {
-               int val, fd;
+               int fd;
                if (pid == GET_NUM_NOT) pid = def;
-               val = get_int(fmtmk(N_fmt(AGNI_valueof_fmt), pid));
-               if (val > GET_NUM_NOT) {
-                  if (val < -20 || val > +19)
+               num = get_int(fmtmk(N_fmt(AGNI_valueof_fmt), pid));
+               if (num > GET_NUM_NOT) {
+                  if (num < -20 || num > +19)
                      show_msg(N_txt(AGNI_invalid_txt));
                   else if (0 > (fd = open(fmtmk("/proc/%d/autogroup", pid), O_WRONLY)))
                      show_msg(fmtmk(N_fmt(AGNI_notopen_fmt), strerror(errno)));
                   else {
                      char buf[TNYBUFSIZ];
-                     snprintf(buf, sizeof(buf), "%d", val);
+                     snprintf(buf, sizeof(buf), "%d", num);
                      if (0 >= write(fd, buf, strlen(buf)))
                         show_msg(fmtmk(N_fmt(AGNI_nowrite_fmt), strerror(errno)));
                      close(fd);
