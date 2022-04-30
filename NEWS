@@ -8,6 +8,8 @@ procps-ng-NEXT
   * top: fix 'smaps' bug preventing build under clang      issue #235
   * top: column highlighting allowed under 'L' or 'O'
   * top: can alter autogroup nice value (like 'r' renice)
+  * top: can display the following with no need to scroll
+  *      cmdline, control groups, environment, supp groups
 
 procps-ng-4.0.0
 ---------------

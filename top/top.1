@@ -1262,7 +1262,8 @@ depending on the context in which they are issued.
 .nf
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
-        A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z, ^R
+        A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z,
+        ^G, ^K, ^U, ^V
   4b.\fI Summary-Area-Commands \fR
         C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
@@ -1519,6 +1520,39 @@ summarized here for future reference.
 This key will take you to a separate screen where you can change the
 colors for the \*(CW, or for all windows.
 For details regarding this \*(CI \*(Xt 4d. COLOR Mapping.
+
+.P
+\ \ \ \fB^G\fR\ \ :\fIDisplay-Full-Control-Groups \fR       (Ctrl key + `g')
+.br
+\ \ \ \fB^K\fR\ \ :\fIDisplay-Full-Cmdline \fR              (Ctrl key + `k')
+.br
+\ \ \ \fB^U\fR\ \ :\fIDisplay-Full-Supplementary-Groups \fR (Ctrl key + `u')
+.br
+\ \ \ \fB^V\fR\ \ :\fIDisplay-Full-Environment \fR          (Ctrl key + `v')
+.br
+.RS +7
+Applied to the first process displayed, these commands will show
+that task's full (potentially wrapped) information.
+Such data will be displayed in a separate window at the bottom of
+the screen.
+
+Keying the same command a second time removes that separate window
+as does the death of the targeted task.
+Keying a different Ctrl combination, while one is already active,
+immediately transitions to the new information.
+
+Notable among these provisions is the Ctrl+V (environment) command.
+Its output can be extensive and not easily read when line wrapped.
+A more readable version can be achieved with an `Inspect' entry
+in the rcfile like the following.
+
+.nf
+    pipe ^I Environment ^I cat /proc/%d/environ | tr '\\0' '\\n'
+.fi
+
+\*(XC `Y' \*(CI above and topic 6b. ADDING INSPECT Entries for
+additional information.
+.RS -7
 
 .TP 7
 *\ \ \fB^R\fR\ \ :\fIRenice-an-Autogroup \fR (Ctrl key + `r')
