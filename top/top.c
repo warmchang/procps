@@ -100,7 +100,19 @@ static int Monpidsidx = 0;
                  basis (see the WIN_t).  Max_lines is the total number of
                  screen rows after deducting summary information overhead. */
         /* Current terminal screen size. */
-static int Screen_cols, Screen_rows, Max_lines;
+static int   Screen_cols, Screen_rows, Max_lines;
+
+        // these are used to potentially set aside a bottom 'window'
+#define      SCREEN_ROWS ( Screen_rows - Tagged_rsvd )
+        // 1 for horizontal separator
+#define      TAGGED_RSVD ( 1 )
+#define      TAGGED_UNDO do { Tagged_task = Tagged_rsvd = Tagged_enum = 0; \
+                              Fieldstab[eu_GENERIC].item = PIDS_extra; } while (0)
+static int   Tagged_task,
+             Tagged_rsvd,
+             Tagged_enum;
+static char *Tagged_name;
+static void(*Tagged_func)(void);
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -1791,7 +1803,7 @@ static struct {
    int           width;         // field width, if applicable
    int           scale;         // scaled target, if applicable
    const int     align;         // the default column alignment flag
-   const enum pids_item item;   // the new libproc item enum identifier
+   enum pids_item item;         // the new libproc item enum identifier
 } Fieldstab[] = {
    // these identifiers reflect the default column alignment but they really
    // contain the WIN_t flag used to check/change justification at run-time!
@@ -1888,12 +1900,14 @@ static struct {
 #define eu_TREE_HID    eu_LAST +4
 #define eu_TREE_LVL    eu_LAST +5
 #define eu_TREE_ADD    eu_LAST +6
+#define eu_GENERIC     eu_LAST +7
    , {  -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
    , {  -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
    , {  -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
    , {  -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
    , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_LVL   )
    , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_ADD   )
+   , {  -1, -1, -1,  PIDS_extra       }  // str      {  special 'tag', eu_GENERIC    }
  #undef A_left
  #undef A_right
 };
@@ -2078,6 +2092,9 @@ static void build_headers (void) {
          f = w->rc.sortindx;
          if (EU_CMD == f) ckCMDS(w);
          else ckITEM(f);
+
+         // lastly, accommodate any special non-display 'tagged' needs...
+         if (Tagged_enum) ckITEM(Tagged_enum);
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
@@ -4331,13 +4348,14 @@ static void win_reset (WIN_t *q) {
 #else
          q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->focus_pid = 0;
 #endif
-         // these next two are global, not really windows based
-         Monpidsidx = 0;
-         Rc.tics_scaled = 0;
-
          osel_clear(q);
          q->findstr[0] = '\0';
          q->rc.combine_cpus = 0;
+
+         // these next guys are global, not really windows based
+         Monpidsidx = 0;
+         Rc.tics_scaled = 0;
+         TAGGED_UNDO;
 } // end: win_reset
 
 
@@ -4610,6 +4628,64 @@ static void wins_stage_2 (void) {
 
 
         /*
+         * This guy manages the bottom margin window |
+         * & the tagged process command line display | */
+static void wins_tag_cmdline (void) {
+   char buf[SMLBUFSIZ];
+   const char *p;
+   int i;
+
+   for (i = 0; i < PIDSmaxt; i++) {
+      if (Tagged_task == PID_VAL(EU_PID, s_int, Curwin->ppt[i]))
+         break;
+   }
+   if (i < PIDSmaxt) {
+      snprintf(buf, sizeof(buf), "command line for pid %d:", Tagged_task);
+#ifndef TAG_CMD_MUST
+      p = PID_VAL(eu_CMDLINE, str, Curwin->ppt[i]);
+      if (!p || !*p) p = "n/a";
+#else
+      p = CHKw(Curwin, Show_CMDLIN) ? PID_VAL(eu_CMDLINE, str, Curwin->ppt[i]) : "n/a";
+#endif
+      Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
+      putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
+      fputs(p, stdout);
+   } else {
+      TAGGED_UNDO;
+   }
+} // end: wins_tag_cmdline
+
+
+        /*
+         * This guy manages the bottom margin window |
+         * showing miscellaneous variable width data | */
+static void wins_tag_generic (void) {
+   char buf[SMLBUFSIZ];
+   const char *p;
+   int i;
+
+   for (i = 0; i < PIDSmaxt; i++) {
+      if (Tagged_task == PID_VAL(EU_PID, s_int, Curwin->ppt[i]))
+         break;
+   }
+   if (i < PIDSmaxt) {
+      snprintf(buf, sizeof(buf), "%s for pid %d:", Tagged_name, Tagged_task);
+      p = PID_VAL(eu_GENERIC, str, Curwin->ppt[i]);
+      if (!p || !*p || !strcmp(p, "-")) p = "n/a";
+      Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
+      putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
+      fputs(p, stdout);
+   } else {
+      TAGGED_UNDO;
+   }
+} // end: wins_tag_generic
+
+
+        /*
          * Determine if this task matches the 'u/U' selection
          * criteria for a given window */
 static inline int wins_usrselect (const WIN_t *q, int idx) {
@@ -4799,7 +4875,7 @@ static void forest_config (WIN_t *q) {
       // if some task 'above' us ended, try to maintain focus
       // ( but allow scrolling when there are many children )
       if (q->begtask > q->focus_beg
-      && (Screen_rows > (q->focus_end - q->focus_beg))) {
+      && (SCREEN_ROWS > (q->focus_end - q->focus_beg))) {
          q->begtask = q->focus_beg;
          q->begnext = 0;     // as 'mkVIZoff' but in any window
       }
@@ -5222,6 +5298,33 @@ static void keys_global (int ch) {
             Rc.tics_scaled = 0;
 #endif
          break;
+      case kbd_CtrlG:
+         def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_CGROUP) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+            Tagged_enum = eu_GENERIC;
+            Tagged_name = "control groups";
+            Tagged_func = wins_tag_generic;
+            Fieldstab[eu_GENERIC].item = PIDS_CGROUP;
+         }
+         break;
+      case kbd_CtrlK:
+         def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Tagged_func == wins_tag_cmdline) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+#ifndef TAG_CMD_MUST
+            Tagged_enum = eu_CMDLINE;
+#endif
+            Tagged_func = wins_tag_cmdline;
+            Fieldstab[eu_GENERIC].item = PIDS_extra;
+         }
+         break;
       case kbd_CtrlR:
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
@@ -5246,6 +5349,32 @@ static void keys_global (int ch) {
                   }
                }
             }
+         }
+         break;
+      case kbd_CtrlU:
+         def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_SUPGROUPS) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+            Tagged_enum = eu_GENERIC;
+            Tagged_name = "supplementary groups";
+            Tagged_func = wins_tag_generic;
+            Fieldstab[eu_GENERIC].item = PIDS_SUPGROUPS;
+         }
+         break;
+      case kbd_CtrlV:
+         def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_ENVIRON) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+            Tagged_enum = eu_GENERIC;
+            Tagged_name = "environment";
+            Tagged_func = wins_tag_generic;
+            Fieldstab[eu_GENERIC].item = PIDS_ENVIRON;
          }
          break;
       case kbd_ENTER:             // these two have the effect of waking us
@@ -5874,7 +6003,7 @@ static int sum_unify (struct stat_stack *this, int nobuf) {
          * A helper function that displays cpu and/or numa node stuff |
          * ( so as to keep the 'summary_show' guy a reasonable size ) | */
 static void do_cpus (void) {
- #define noMAS (Msg_row + 1 >= Screen_rows - 1)
+ #define noMAS (Msg_row + 1 >= SCREEN_ROWS - 1)
    char tmp[MEDBUFSIZ];
    int i;
 
@@ -6088,7 +6217,8 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlR, kbd_ENTER, kbd_SPACE, '\0' } },
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlR, kbd_CtrlU, kbd_CtrlV
+         , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
@@ -6157,7 +6287,7 @@ all_done:
          *    2) Display task/cpu states (maybe)
          *    3) Display memory & swap usage (maybe) */
 static void summary_show (void) {
- #define isROOM(f,n) (CHKw(Curwin, f) && Msg_row + (n) < Screen_rows - 1)
+ #define isROOM(f,n) (CHKw(Curwin, f) && Msg_row + (n) < SCREEN_ROWS - 1)
 
    if (Restrict_some) {
 #ifdef THREADED_TSK
@@ -6712,7 +6842,7 @@ static void frame_make (void) {
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
-   Max_lines = (Screen_rows - Msg_row) - 1;
+   Max_lines = (SCREEN_ROWS - Msg_row) - 1;
 
    // we're now on Msg_row so clear out any residual messages ...
    putp(Cap_clr_eol);
@@ -6739,8 +6869,8 @@ static void frame_make (void) {
       PSU_CLREOS(Pseudo_row);
    }
 
-   if (CHKw(w, View_SCROLL) && VIZISw(Curwin))
-      show_scroll();
+   if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
+   if (Tagged_task) Tagged_func();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
