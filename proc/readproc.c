@@ -1229,9 +1229,13 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
         autogroup_fill(path, p);
 
     // openproc() ensured that a ppid will be present when needed ...
-    if (rc == 0)
-        return (PT->hide_kernel && (p->ppid == 2 || p->tid == 2)) ? NULL : p;
-
+    if (rc == 0) {
+        if (PT->hide_kernel && (p->ppid == 2 || p->tid == 2)) {
+           free_acquired(p);
+           return NULL;
+        }
+        return p;
+    }
     errno = ENOMEM;
 next_proc:
     return NULL;
