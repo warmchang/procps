@@ -4640,7 +4640,8 @@ static void wins_tag_cmdline (void) {
          break;
    }
    if (i < PIDSmaxt) {
-      snprintf(buf, sizeof(buf), "command line for pid %d:", Tagged_task);
+      snprintf(buf, sizeof(buf), " command line for pid %d, %s"
+         , Tagged_task, PID_VAL(EU_CMD, str, Curwin->ppt[i]));
 #ifndef TAG_CMD_MUST
       p = PID_VAL(eu_CMDLINE, str, Curwin->ppt[i]);
       if (!p || !*p) p = "n/a";
@@ -4671,7 +4672,8 @@ static void wins_tag_generic (void) {
          break;
    }
    if (i < PIDSmaxt) {
-      snprintf(buf, sizeof(buf), "%s for pid %d:", Tagged_name, Tagged_task);
+      snprintf(buf, sizeof(buf), " %s for pid %d, %s"
+         , Tagged_name, Tagged_task, PID_VAL(EU_CMD, str, Curwin->ppt[i]));
       p = PID_VAL(eu_GENERIC, str, Curwin->ppt[i]);
       if (!p || !*p || !strcmp(p, "-")) p = "n/a";
       Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
