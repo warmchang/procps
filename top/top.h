@@ -54,7 +54,6 @@
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
-//#define TAG_CMD_MUST            /* CtrlK (cmdline) needs proper 'c' toggle */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define THREADED_CPU            /* separate background thread for cpu updt */
 //#define THREADED_MEM            /* separate background thread for mem updt */

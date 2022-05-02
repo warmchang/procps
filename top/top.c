@@ -106,8 +106,10 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #define      SCREEN_ROWS ( Screen_rows - Tagged_rsvd )
         // 1 for horizontal separator
 #define      TAGGED_RSVD ( 1 )
-#define      TAGGED_UNDO do { Tagged_task = Tagged_rsvd = Tagged_enum = 0; \
-                              Fieldstab[eu_GENERIC].item = PIDS_extra; } while (0)
+#define      TAGGED_KEEP Tagged_func = NULL
+#define      TAGGED_TOSS do { Tagged_func = NULL; \
+                Tagged_task = Tagged_rsvd = Tagged_enum = 0; \
+                Fieldstab[eu_GENERIC].item = PIDS_extra; } while(0)
 static int   Tagged_task,
              Tagged_rsvd,
              Tagged_enum;
@@ -4355,7 +4357,7 @@ static void win_reset (WIN_t *q) {
          // these next guys are global, not really windows based
          Monpidsidx = 0;
          Rc.tics_scaled = 0;
-         TAGGED_UNDO;
+         TAGGED_TOSS;
 } // end: win_reset
 
 
@@ -4642,20 +4644,15 @@ static void wins_tag_cmdline (void) {
    if (i < PIDSmaxt) {
       snprintf(buf, sizeof(buf), " command line for pid %d, %s"
          , Tagged_task, PID_VAL(EU_CMD, str, Curwin->ppt[i]));
-#ifndef TAG_CMD_MUST
       p = PID_VAL(eu_CMDLINE, str, Curwin->ppt[i]);
       if (!p || !*p) p = "n/a";
-#else
-      p = CHKw(Curwin, Show_CMDLIN) ? PID_VAL(eu_CMDLINE, str, Curwin->ppt[i]) : "n/a";
-#endif
       Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
       putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
       fputs(p, stdout);
-   } else {
-      TAGGED_UNDO;
    }
+   TAGGED_KEEP;
 } // end: wins_tag_cmdline
 
 
@@ -4681,9 +4678,8 @@ static void wins_tag_generic (void) {
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
       fputs(p, stdout);
-   } else {
-      TAGGED_UNDO;
    }
+   TAGGED_KEEP;
 } // end: wins_tag_generic
 
 
@@ -5304,7 +5300,7 @@ static void keys_global (int ch) {
          def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
          // if already targeted, assume user wants to turn it off ...
          if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_CGROUP) {
-            TAGGED_UNDO;
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
             Tagged_enum = eu_GENERIC;
@@ -5316,13 +5312,11 @@ static void keys_global (int ch) {
       case kbd_CtrlK:
          def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
          // if already targeted, assume user wants to turn it off ...
-         if (Tagged_task && Tagged_func == wins_tag_cmdline) {
-            TAGGED_UNDO;
+         if (Tagged_task && Tagged_enum == eu_CMDLINE) {
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
-#ifndef TAG_CMD_MUST
             Tagged_enum = eu_CMDLINE;
-#endif
             Tagged_func = wins_tag_cmdline;
             Fieldstab[eu_GENERIC].item = PIDS_extra;
          }
@@ -5357,7 +5351,7 @@ static void keys_global (int ch) {
          def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
          // if already targeted, assume user wants to turn it off ...
          if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_SUPGROUPS) {
-            TAGGED_UNDO;
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
             Tagged_enum = eu_GENERIC;
@@ -5370,7 +5364,7 @@ static void keys_global (int ch) {
          def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
          // if already targeted, assume user wants to turn it off ...
          if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_ENVIRON) {
-            TAGGED_UNDO;
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
             Tagged_enum = eu_GENERIC;
@@ -6807,8 +6801,10 @@ static void frame_make (void) {
 
    /* deal with potential signal(s) since the last time around
       plus any input which may change 'tasks_refresh' needs... */
-   if (Frames_signal)
+   if (Frames_signal) {
+      if (Frames_signal == BREAK_sig) TAGGED_TOSS;
       zap_fieldstab();
+   }
 
 #ifdef THREADED_TSK
    sem_post(&Semaphore_tasks_beg);
@@ -6867,12 +6863,15 @@ static void frame_make (void) {
    /* clear to end-of-screen - critical if last window is 'idleps off'
       (main loop must iterate such that we're always called before sleep) */
    if (scrlins < Max_lines) {
-      putp(Cap_nl_clreos);
+      for (i = scrlins + Msg_row + 1; i < SCREEN_ROWS; i++) {
+         putp(tg2(0, i));
+         putp(Cap_clr_eol);
+      }
       PSU_CLREOS(Pseudo_row);
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Tagged_task) Tagged_func();
+   if (Tagged_func) Tagged_func();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
