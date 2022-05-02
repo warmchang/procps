@@ -173,10 +173,10 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_CtrlE  '\005'
 #define kbd_CtrlG  '\007'
 #define kbd_CtrlK  '\013'
+#define kbd_CtrlN  '\016'
 #define kbd_CtrlO  '\017'
 #define kbd_CtrlR  '\022'
 #define kbd_CtrlU  '\025'
-#define kbd_CtrlV  '\026'
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */

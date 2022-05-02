@@ -5321,6 +5321,19 @@ static void keys_global (int ch) {
             Fieldstab[eu_GENERIC].item = PIDS_extra;
          }
          break;
+      case kbd_CtrlN:
+         def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_ENVIRON) {
+            TAGGED_TOSS;
+         } else {
+            Tagged_task = def;
+            Tagged_enum = eu_GENERIC;
+            Tagged_name = "environment";
+            Tagged_func = wins_tag_generic;
+            Fieldstab[eu_GENERIC].item = PIDS_ENVIRON;
+         }
+         break;
       case kbd_CtrlR:
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
@@ -5358,19 +5371,6 @@ static void keys_global (int ch) {
             Tagged_name = "supplementary groups";
             Tagged_func = wins_tag_generic;
             Fieldstab[eu_GENERIC].item = PIDS_SUPGROUPS;
-         }
-         break;
-      case kbd_CtrlV:
-         def = PID_VAL(EU_PID, s_int, w->ppt[w->begtask]);
-         // if already targeted, assume user wants to turn it off ...
-         if (Tagged_task && Fieldstab[eu_GENERIC].item == PIDS_ENVIRON) {
-            TAGGED_TOSS;
-         } else {
-            Tagged_task = def;
-            Tagged_enum = eu_GENERIC;
-            Tagged_name = "environment";
-            Tagged_func = wins_tag_generic;
-            Fieldstab[eu_GENERIC].item = PIDS_ENVIRON;
          }
          break;
       case kbd_ENTER:             // these two have the effect of waking us
@@ -6213,7 +6213,7 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlR, kbd_CtrlU, kbd_CtrlV
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlN, kbd_CtrlR, kbd_CtrlU
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
