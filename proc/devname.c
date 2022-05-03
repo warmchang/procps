@@ -207,7 +207,7 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   case   3:      /* /dev/[pt]ty[p-za-o][0-9a-z] is 936 */
     if(tmpmin > 255) return 0;   // should never happen; array index protection
 #ifdef __CYGWIN__
-    sprintf(buf, "dev/cons%d", tmpmin);
+    sprintf(buf, "cons%d", tmpmin);
     /* Skip stat call.  The reason is that cons devices are local to
      * the processes running in that console.  Calling stat from another
      * console or pty will return -1. */
@@ -295,7 +295,7 @@ static int link_name(char *restrict const buf, unsigned maj, unsigned min, int p
   return 1;
 }
 
-#ifdef __CYGWIN__
+#ifdef USE_PROC_CTTY
 /* Cygwin keeps the name to the controlling tty in a virtual file called
    /proc/PID/ctty, including a trailing LF (sigh). */
 static int ctty_name(char *restrict const buf, int pid) {
@@ -326,7 +326,7 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid,
   unsigned dev = dev_t_dev;
   unsigned i = 0;
   int c;
-#ifdef __CYGWIN__
+#ifdef USE_PROC_CTTY
   if(  ctty_name(tmp, pid                                        )) goto abbrev;
 #endif
   if(dev == 0u) goto no_tty;
