@@ -38,17 +38,13 @@
  * dev_to_tty   top, ps
  */
 
-#if 0
+#ifdef MAJOR_IN_MKDEV
+#include <sys/mkdev.h>
+#elif defined MAJOR_IN_SYSMACROS
 #include <sys/sysmacros.h>
-#define MAJOR_OF(d) ((unsigned)major(d))
-#define MINOR_OF(d) ((unsigned)minor(d))
 #else
-#define MAJOR_OF(d) ( ((unsigned)(d)>>8u) & 0xfffu )
-#define MINOR_OF(d) ( ((unsigned)(d)&0xffu) | (((unsigned)(d)&0xfff00000u)>>12u) )
-#undef major
-#undef minor
-#define major <-- do not use -->
-#define minor <-- do not use -->
+#define major(d) ( ((unsigned)(d)>>8u) & 0xfffu )
+#define minor(d) ( ((unsigned)(d)&0xffu) | (((unsigned)(d)&0xfff00000u)>>12u) )
 #endif
 
 typedef struct tty_map_node {
@@ -139,8 +135,8 @@ static int driver_name(char *restrict const buf, unsigned maj, unsigned min){
       if(stat(buf, &sbuf) < 0) return 0;
     }
   }
-  if(min != MINOR_OF(sbuf.st_rdev)) return 0;
-  if(maj != MAJOR_OF(sbuf.st_rdev)) return 0;
+  if(min != minor(sbuf.st_rdev)) return 0;
+  if(maj != major(sbuf.st_rdev)) return 0;
   return 1;
 }
 
@@ -275,8 +271,8 @@ static int guess_name(char *restrict const buf, unsigned maj, unsigned min){
   default: return 0;
   }
   if(stat(buf, &sbuf) < 0) return 0;
-  if(min != MINOR_OF(sbuf.st_rdev)) return 0;
-  if(maj != MAJOR_OF(sbuf.st_rdev)) return 0;
+  if(min != minor(sbuf.st_rdev)) return 0;
+  if(maj != major(sbuf.st_rdev)) return 0;
   return 1;
 }
 
@@ -294,8 +290,8 @@ static int link_name(char *restrict const buf, unsigned maj, unsigned min, int p
   if(count <= 0 || count >= TTY_NAME_SIZE-1) return 0;
   buf[count] = '\0';
   if(stat(buf, &sbuf) < 0) return 0;
-  if(min != MINOR_OF(sbuf.st_rdev)) return 0;
-  if(maj != MAJOR_OF(sbuf.st_rdev)) return 0;
+  if(min != minor(sbuf.st_rdev)) return 0;
+  if(maj != major(sbuf.st_rdev)) return 0;
   return 1;
 }
 
@@ -334,10 +330,10 @@ unsigned dev_to_tty(char *restrict ret, unsigned chop, dev_t dev_t_dev, int pid,
   if(  ctty_name(tmp, pid                                        )) goto abbrev;
 #endif
   if(dev == 0u) goto no_tty;
-  if(driver_name(tmp, MAJOR_OF(dev), MINOR_OF(dev)               )) goto abbrev;
-  if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/2"  )) goto abbrev;
-  if( guess_name(tmp, MAJOR_OF(dev), MINOR_OF(dev)               )) goto abbrev;
-  if(  link_name(tmp, MAJOR_OF(dev), MINOR_OF(dev), pid, "fd/255")) goto abbrev;
+  if(driver_name(tmp, major(dev), minor(dev)               )) goto abbrev;
+  if(  link_name(tmp, major(dev), minor(dev), pid, "fd/2"  )) goto abbrev;
+  if( guess_name(tmp, major(dev), minor(dev)               )) goto abbrev;
+  if(  link_name(tmp, major(dev), minor(dev), pid, "fd/255")) goto abbrev;
   // fall through if unable to find a device file
 no_tty:
   strcpy(ret, chop >= 1 ? "?" : "");
