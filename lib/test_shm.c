@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
         xerr(EXIT_FAILURE, "Unable to shmget()");
     if ( (shm_addr = shmat(shm_id, NULL, SHM_RDONLY)) < 0)
         xerr(EXIT_FAILURE, "Unable to shmat()");
-    printf("SHMID: %llx\n", shm_id);
+    printf("SHMID: %x\n", shm_id);
     sleep(sleep_time);
     return EXIT_SUCCESS;
 }
