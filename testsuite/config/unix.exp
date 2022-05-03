@@ -195,8 +195,8 @@ proc make_testshm_proc { } {
     set testshmproc_spawnid $spawn_id
     expect {
 	-i $testshmproc_spawnid
-	-re "^SHMID: (\\d+)" { set shmid $expect_out(1,string) }
-	default { fail "spawning testshm" }
+	-re "^SHMID: (\[0-9a-f\]+)" { set shmid $expect_out(1,string) }
+	default { set shmid "" }
     }
 
 }
