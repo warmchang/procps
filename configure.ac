@@ -103,6 +103,9 @@ then
   AC_SUBST([datadir])
   AC_SUBST([mandir])
   AC_SUBST([infodir])
+ AC_DEFINE([USE_PROC_CTTY], [1], [Use /proc/$PID/ctty to determine controlling TTY])
+else
+ AC_DEFINE([USE_PROC_CTTY], [0], [Use /proc/$PID/ctty to determine controlling TTY])
 fi
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
