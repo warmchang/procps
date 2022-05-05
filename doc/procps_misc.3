@@ -120,10 +120,12 @@ Those inodes will appear in the order proscribed by enum namespace_type.
 .RS 4
 .nf
 enum namespace_type {
+    PROCPS_NS_CGROUP,
     PROCPS_NS_IPC,
     PROCPS_NS_MNT,
     PROCPS_NS_NET,
     PROCPS_NS_PID,
+    PROCPS_NS_TIME,
     PROCPS_NS_USER,
     PROCPS_NS_UTS
 };

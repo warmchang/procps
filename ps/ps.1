@@ -1105,6 +1105,12 @@ cgroup	CGROUP	T{
 display control groups to which the process belongs.
 T}
 
+cgroupns	CGROUPNS	T{
+Unique inode number describing the namespace the process belongs to.
+See
+.IR namespaces (7).
+T}
+
 class	CLS	T{
 scheduling class of the process.  (alias
 .BR policy , \ cls ).
@@ -1812,6 +1818,12 @@ T}
 time	TIME	T{
 cumulative CPU\ time, "[DD\-]HH:MM:SS" format.  (alias
 .BR cputime ).
+T}
+
+timens	TIMENS	T{
+Unique inode number describing the namespace the process belongs to.
+See
+.IR namespaces (7).
 T}
 
 times	TIME	T{

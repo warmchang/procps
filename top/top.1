@@ -1159,6 +1159,11 @@ page available.
 The number of threads associated with a process.
 
 .TP 4
+\fBnsCGROUP \*(Em CGROUP namespace \fR
+The Inode of the namespace used to hide the identity of the control group of
+which process is a member.
+
+.TP 4
 \fBnsIPC \*(Em IPC namespace \fR
 The Inode of the namespace used to isolate interprocess communication (IPC)
 resources such as System V IPC objects and POSIX message queues.
@@ -1179,6 +1184,11 @@ The Inode of the namespace used to isolate process ID numbers
 meaning they need not remain unique.
 Thus, each such namespace could have its own `init/systemd' (PID #1) to
 manage various initialization tasks and reap orphaned child processes.
+
+.TP 4
+\fBnsTIME \*(Em TIME namespace \fR
+The Inode of the namespace which allows processes to see different system
+times in a way similar to the UTS namespace.
 
 .TP 4
 \fBnsUSER \*(Em USER namespace \fR
