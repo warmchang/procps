@@ -100,10 +100,12 @@ enum pids_item {
     PIDS_MEM_VIRT_PGS,      //   ul_int        statm: size
     PIDS_NICE,              //    s_int        stat: nice
     PIDS_NLWP,              //    s_int        stat: num_threads or status: Threads
-    PIDS_NS_IPC,            //   ul_int        ns/
+    PIDS_NS_CGROUP,         //   ul_int        ns/
+    PIDS_NS_IPC,            //   ul_int         "
     PIDS_NS_MNT,            //   ul_int         "
     PIDS_NS_NET,            //   ul_int         "
     PIDS_NS_PID,            //   ul_int         "
+    PIDS_NS_TIME,           //   ul_int         "
     PIDS_NS_USER,           //   ul_int         "
     PIDS_NS_UTS,            //   ul_int         "
     PIDS_OOM_ADJ,           //    s_int        oom_score_adj

@@ -27,12 +27,14 @@
 #define NSPATHLEN 64
 
 static const char *ns_names[] = {
-    [PROCPS_NS_IPC] = "ipc",
-    [PROCPS_NS_MNT] = "mnt",
-    [PROCPS_NS_NET] = "net",
-    [PROCPS_NS_PID] = "pid",
-    [PROCPS_NS_USER] = "user",
-    [PROCPS_NS_UTS] = "uts",
+    [PROCPS_NS_CGROUP] = "cgroup",
+    [PROCPS_NS_IPC]    = "ipc",
+    [PROCPS_NS_MNT]    = "mnt",
+    [PROCPS_NS_NET]    = "net",
+    [PROCPS_NS_PID]    = "pid",
+    [PROCPS_NS_TIME]   = "time",
+    [PROCPS_NS_USER]   = "user",
+    [PROCPS_NS_UTS]    = "uts"
 };
 
 

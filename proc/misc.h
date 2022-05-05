@@ -54,20 +54,22 @@ int procps_linux_version(void);
 // //////////////////////////////////////////////////////////////////
 // Runtime Particulars //////////////////////////////////////////////
 
-int procps_loadavg (double *av1, double *av5, double *av15);
-int procps_uptime(double *uptime_secs, double *idle_secs);
-char *procps_uptime_sprint(void);
-char *procps_uptime_sprint_short(void);
+int   procps_loadavg (double *av1, double *av5, double *av15);
+int   procps_uptime (double *uptime_secs, double *idle_secs);
+char *procps_uptime_sprint (void);
+char *procps_uptime_sprint_short (void);
 
 
 // //////////////////////////////////////////////////////////////////
 // Namespace Particulars ////////////////////////////////////////////
 
 enum namespace_type {
+    PROCPS_NS_CGROUP,
     PROCPS_NS_IPC,
     PROCPS_NS_MNT,
     PROCPS_NS_NET,
     PROCPS_NS_PID,
+    PROCPS_NS_TIME,
     PROCPS_NS_USER,
     PROCPS_NS_UTS,
     PROCPS_NS_COUNT  // total namespaces (fencepost)

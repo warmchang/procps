@@ -217,12 +217,14 @@ CVT_set(MEM_VIRT,         ul_int,  size)
 REG_set(MEM_VIRT_PGS,     ul_int,  size)
 REG_set(NICE,             s_int,   nice)
 REG_set(NLWP,             s_int,   nlwp)
-REG_set(NS_IPC,           ul_int,  ns.ns[0])
-REG_set(NS_MNT,           ul_int,  ns.ns[1])
-REG_set(NS_NET,           ul_int,  ns.ns[2])
-REG_set(NS_PID,           ul_int,  ns.ns[3])
-REG_set(NS_USER,          ul_int,  ns.ns[4])
-REG_set(NS_UTS,           ul_int,  ns.ns[5])
+REG_set(NS_CGROUP,        ul_int,  ns.ns[0])
+REG_set(NS_IPC,           ul_int,  ns.ns[1])
+REG_set(NS_MNT,           ul_int,  ns.ns[2])
+REG_set(NS_NET,           ul_int,  ns.ns[3])
+REG_set(NS_PID,           ul_int,  ns.ns[4])
+REG_set(NS_TIME,          ul_int,  ns.ns[5])
+REG_set(NS_USER,          ul_int,  ns.ns[6])
+REG_set(NS_UTS,           ul_int,  ns.ns[7])
 REG_set(OOM_ADJ,          s_int,   oom_adj)
 REG_set(OOM_SCORE,        s_int,   oom_score)
 REG_set(PRIORITY,         s_int,   priority)
@@ -506,10 +508,12 @@ static struct {
     { RS(MEM_VIRT_PGS),      f_statm,    NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(NICE),              f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(NLWP),              f_either,   NULL,      QS(s_int),     0,        TS(s_int)   },
+    { RS(NS_CGROUP),         f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(NS_IPC),            f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(NS_MNT),            f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(NS_NET),            f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(NS_PID),            f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
+    { RS(NS_TIME),           f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(NS_USER),           f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(NS_UTS),            f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(OOM_ADJ),           f_oom,      NULL,      QS(s_int),     0,        TS(s_int)   },

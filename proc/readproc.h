@@ -165,7 +165,7 @@ typedef struct proc_t {
     int
         oom_score,      // oom_score       (badness for OOM killer)
         oom_adj;        // oom_adj         (adjustment to OOM score)
-    struct procps_ns ns; // (ns subdir)     inode number of namespaces
+    struct procps_ns ns; // (ns subdir)    inode number of namespaces
     char
         *sd_mach,       // n/a             systemd vm/container name
         *sd_ouid,       // n/a             systemd session owner uid
