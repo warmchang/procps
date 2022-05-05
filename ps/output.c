@@ -1406,10 +1406,12 @@ static int pr_##NAME(char *restrict const outbuf, const proc_t *restrict const p
   else \
     return snprintf(outbuf, COLWID, "-"); \
 }
+_pr_ns(cgroupns, CGROUP);
 _pr_ns(ipcns, IPC);
 _pr_ns(mntns, MNT);
 _pr_ns(netns, NET);
 _pr_ns(pidns, PID);
+_pr_ns(timens, TIME);
 _pr_ns(userns, USER);
 _pr_ns(utsns, UTS);
 #undef _pr_ns
@@ -1631,6 +1633,7 @@ static const format_struct format_array[] = { /*
 {"caught",    "CAUGHT",  pr_sigcatch,      PIDS_SIGCATCH,            9,    BSD,  TO|SIGNAL}, /*sigcatch*/
 {"cgname",    "CGNAME",  pr_cgname,        PIDS_CGNAME,             27,    LNX,  PO|UNLIMITED},
 {"cgroup",    "CGROUP",  pr_cgroup,        PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
+{"cgroupns",  "CGROUPNS",pr_cgroupns,      PIDS_NS_CGROUP,          10,    LNX,  ET|RIGHT},
 {"class",     "CLS",     pr_class,         PIDS_SCHED_CLASS,         3,    XXX,  TO|LEFT},
 {"cls",       "CLS",     pr_class,         PIDS_SCHED_CLASS,         3,    HPU,  TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,           PIDS_noop,                1,    LNX,  AN|RIGHT},
@@ -1826,6 +1829,7 @@ static const format_struct format_array[] = { /*
 {"thcount",   "THCNT",   pr_nlwp,          PIDS_NLWP,                5,    AIX,  PO|RIGHT},
 {"tid",       "TID",     pr_tasks,         PIDS_ID_PID,              5,    AIX,  TO|PIDMAX|RIGHT},
 {"time",      "TIME",    pr_time,          PIDS_TIME_ALL,            8,    U98,  ET|RIGHT}, /*cputime*/ /* was 6 wide */
+{"timens",    "TIMENS",  pr_timens,        PIDS_NS_TIME,            10,    LNX,  ET|RIGHT},
 {"timeout",   "TMOUT",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
 {"times",     "TIME",    pr_times,         PIDS_TIME_ALL,            8,    LNX,  ET|RIGHT},
 {"tmout",     "TMOUT",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
