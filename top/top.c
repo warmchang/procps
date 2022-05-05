@@ -6833,7 +6833,7 @@ static void frame_make (void) {
 
    /* clear to end-of-screen - critical if last window is 'idleps off'
       (main loop must iterate such that we're always called before sleep) */
-   if (scrlins < Max_lines) {
+   if (!Batch && scrlins < Max_lines) {
       for (i = scrlins + Msg_row + 1; i < SCREEN_ROWS; i++) {
          putp(tg2(0, i));
          putp(Cap_clr_eol);
