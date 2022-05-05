@@ -1892,8 +1892,10 @@ static struct {
    {     7,     -1,  A_right,  PIDS_TICS_BEGAN     },  // ull_int  EU_TM3
    {     7,     -1,  A_right,  PIDS_TIME_ELAPSED   },  // real     EU_TM4
    {     6,     -1,  A_right,  PIDS_UTILIZATION    },  // real     EU_CUU
-   {     7,     -1,  A_right,  PIDS_UTILIZATION_C  }   // real     EU_CUC
-#define eu_LAST  EU_CUC
+   {     7,     -1,  A_right,  PIDS_UTILIZATION_C  },  // real     EU_CUC
+   {    10,     -1,  A_right,  PIDS_NS_CGROUP      },  // ul_int   EU_NS7
+   {    10,     -1,  A_right,  PIDS_NS_TIME        }   // ul_int   EU_NS8
+#define eu_LAST  EU_NS8
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -2283,7 +2285,7 @@ static void display_fields (int focus, int extend) {
          note: width passed to 'utf8_embody' may go negative, but he'll be just fine */
       snprintf(sbuf, sizeof(sbuf), "= %.*s", utf8_embody(N_fld(f), smax - xEQUS), N_fld(f));
       // obtain translated deltas (if any) ...
-      xcol = utf8_delta(fmtmk("%.*s", utf8_embody(N_col(f), 7), N_col(f)));
+      xcol = utf8_delta(fmtmk("%.*s", utf8_embody(N_col(f), 8), N_col(f)));
       xfld = utf8_delta(sbuf + xEQUS);           // ignore beginning '= '
 
       PUTT("%s%c%s%s %s%-*.*s%s%s%s %-*.*s%s"
@@ -2292,7 +2294,7 @@ static void display_fields (int focus, int extend) {
          , b ? w->cap_bold : Cap_norm
          , e
          , i == focus ? w->capclr_hdr : ""
-         , 7 + xcol, 7 + xcol
+         , 8 + xcol, 8 + xcol
          , N_col(f)
          , Cap_norm
          , b ? w->cap_bold : ""
@@ -2456,7 +2458,8 @@ static void zap_fieldstab (void) {
          = wtab[EU_GID].watx = wtab[EU_GRP].watx = wtab[EU_TTY].watx
          = wtab[EU_WCH].watx = wtab[EU_NS1].watx = wtab[EU_NS2].watx
          = wtab[EU_NS3].watx = wtab[EU_NS4].watx = wtab[EU_NS5].watx
-         = wtab[EU_NS6].watx = wtab[EU_LXC].watx = wtab[EU_LID].watx
+         = wtab[EU_NS6].watx = wtab[EU_NS7].watx = wtab[EU_NS8].watx
+         = wtab[EU_LXC].watx = wtab[EU_LID].watx
          = +1;
       /* establish translatable header 'column' requirements
          and ensure .width reflects the widest value */
@@ -2526,7 +2529,12 @@ static void zap_fieldstab (void) {
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
       Fieldstab[EU_WCH].width
          = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
+      // the initial namespace fields
       for (i = EU_NS1; i <= EU_NS6; i++)
+         Fieldstab[i].width
+            = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
+      // the later namespace additions
+      for (i = EU_NS7; i <= EU_NS8; i++)
          Fieldstab[i].width
             = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
    }
@@ -6465,6 +6473,8 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_NS4:        // PIDS_NS_PID
          case EU_NS5:        // PIDS_NS_USER
          case EU_NS6:        // PIDS_NS_UTS
+         case EU_NS7:        // PIDS_NS_CGROUP
+         case EU_NS8:        // PIDS_NS_TIME
             cp = make_num(rSv(i, ul_int), W, Jn, i, 1);
             break;
    /* ul_int, scale_mem */

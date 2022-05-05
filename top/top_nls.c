@@ -120,7 +120,7 @@ static void build_two_nlstabs (void) {
    .  using the 'X' command. That means the default width might produce
    .  truncation but need not if widened (see the man page 'X' command).
    .
-   .  All headers are subject to a maximum of 7 on the Fields Management
+   .  All headers are subject to a maximum of 8 on the Fields Management
    .  screen where truncation is entirely acceptable.
    .
    .  The associated descriptions are always limited to 20 characters,
@@ -362,6 +362,12 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum '%CUC' = 7 */
    Head_nlstab[EU_CUC] = _("%CUC");
    Desc_nlstab[EU_CUC] = _("Utilization + child");
+/* Translation Hint: maximum 'nsCGROUP' = 10 + */
+   Head_nlstab[EU_NS7] = _("nsCGROUP");
+   Desc_nlstab[EU_NS7] = _("CGRP namespace Inode");
+/* Translation Hint: maximum 'nsTIME' = 10 + */
+   Head_nlstab[EU_NS8] = _("nsTIME");
+   Desc_nlstab[EU_NS8] = _("TIME namespace Inode");
 }
 
 
