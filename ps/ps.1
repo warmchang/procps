@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS "1" "January 2022" "procps-ng" "User Commands"
+.TH PS "1" "2022-05-11" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -538,6 +538,9 @@ options when in doubt.  Use the
 .B PS_FORMAT
 environment variable to specify a default as desired; DefSysV and DefBSD are
 macros that may be used to choose the default UNIX or BSD columns.
+.TP
+.B \-P
+Add a column showing \fBpsr\fR.
 .TP
 .B s
 Display signal format.

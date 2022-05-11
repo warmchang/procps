@@ -139,6 +139,7 @@ void do_help (const char *opt, int rc) {
     fputs(_("  O <format>          as -O, with BSD personality\n"), out);
     fputs(_(" -o, o, --format <format>\n"
             "                      user-defined format\n"), out);
+    fputs(_("  -P                  add psr column\n"), out);
     fputs(_("  s                   signal format\n"), out);
     fputs(_("  u                   user-oriented format\n"), out);
     fputs(_("  v                   virtual memory format\n"), out);
