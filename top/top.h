@@ -26,6 +26,7 @@
 
         /* Development/Debugging defines ----------------------------------- */
 //#define ATEOJ_RPTSTD            /* report on some miscellany at end-of-job */
+//#define BOT_DEAD_ZAP            /* zap Ctrl bottom window when target dies */
 //#define CASEUP_HEXES            /* show all those hex values in upper case */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define EQUCOLHDRYES            /* yes, equalize the column header lengths */
@@ -54,7 +55,6 @@
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
-//#define TAGGED_BRIEF            /* zap Ctrl bottom window when target dies */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define THREADED_CPU            /* separate background thread for cpu updt */
 //#define THREADED_MEM            /* separate background thread for mem updt */
@@ -727,14 +727,16 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
-//atic void          wins_tag_show (void);
-//atic void          wins_tag_toggle (enum pflag enu, const char *str);
 //atic inline int    wins_usrselect (const WIN_t *q, int idx);
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_adds (const int self, int level);
 //atic void          forest_begin (WIN_t *q);
 //atic void          forest_config (WIN_t *q);
 //atic inline const char *forest_display (const WIN_t *q, int idx);
+/*------  Special Separate Bottom Window support  ------------------------*/
+//atic void          bot_do_see (const char *str, const char *pgm);
+//atic void          bot_item_show (void);
+//atic void          bot_item_toggle (enum pflag item, const char *name);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
