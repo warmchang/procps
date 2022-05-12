@@ -9,7 +9,8 @@ procps-ng-NEXT
   * top: column highlighting allowed under 'L' or 'O'
   * top: can alter autogroup nice value (like 'r' renice)
   * top: can display the following with no need to scroll
-  *      cmdline, control groups, environment, supp groups
+  *      cmdline, control groups, environment,
+         supplimentary groups, namespaces
 
 procps-ng-4.0.0
 ---------------

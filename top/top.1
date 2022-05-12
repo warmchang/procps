@@ -59,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "March 2022" "procps-ng" "User Commands"
+.TH TOP 1 "May 2022" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -1273,7 +1273,7 @@ depending on the context in which they are issued.
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z,
-        ^G, ^K, ^U, ^V
+        ^G, ^K, ^U, ^V, ^R
   4b.\fI Summary-Area-Commands \fR
         C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
@@ -1532,27 +1532,28 @@ colors for the \*(CW, or for all windows.
 For details regarding this \*(CI \*(Xt 4d. COLOR Mapping.
 
 .P
-\ \ \ \fB^G\fR\ \ :\fIDisplay-Full-Control-Groups \fR       (Ctrl key + `g')
+\ \ \ \fB^G\fR\ \ :\fIDisplay-Control-Groups \fR       (Ctrl key + `g')
 .br
-\ \ \ \fB^K\fR\ \ :\fIDisplay-Full-Cmdline \fR              (Ctrl key + `k')
+\ \ \ \fB^K\fR\ \ :\fIDisplay-Cmdline \fR              (Ctrl key + `k')
 .br
-\ \ \ \fB^N\fR\ \ :\fIDisplay-Full-Environment \fR          (Ctrl key + `n')
+\ \ \ \fB^N\fR\ \ :\fIDisplay-Environment \fR          (Ctrl key + `n')
 .br
-\ \ \ \fB^U\fR\ \ :\fIDisplay-Full-Supplementary-Groups \fR (Ctrl key + `u')
+\ \ \ \fB^P\fR\ \ :\fIDisplay-Namesspaces \fR          (Ctrl key + `p')
+.br
+\ \ \ \fB^U\fR\ \ :\fIDisplay-Supplementary-Groups \fR (Ctrl key + `u')
 .br
 .RS +7
 Applied to the first process displayed, these commands will show
 that task's full (potentially wrapped) information.
 Such data will be displayed in a separate window at the bottom of
-the screen.
+the screen while normal \*(We monitoring continues.
 
 Keying the\fI same\fR `Ctrl' command a second time removes that
 separate window as does the `=' command.
-
 Keying a different `Ctrl' combination, while one is already active,
 immediately transitions to the new information.
 
-Notable among these provisions is the Ctrl+V (environment) command.
+Notable among these provisions is the Ctrl+N (environment) command.
 Its output can be extensive and not easily read when line wrapped.
 A more readable version can be achieved with an `Inspect' entry
 in the rcfile like the following.
@@ -1563,6 +1564,10 @@ in the rcfile like the following.
 
 \*(XC `Y' \*(CI above and topic 6b. ADDING INSPECT Entries for
 additional information.
+
+As an alternative to `Inspect', and available to all of these `Ctrl'
+commands, the tab key can be used to highlight individual elements
+in the bottom window.
 .RS -7
 
 .TP 7
