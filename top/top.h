@@ -27,6 +27,7 @@
         /* Development/Debugging defines ----------------------------------- */
 //#define ATEOJ_RPTSTD            /* report on some miscellany at end-of-job */
 //#define BOT_DEAD_ZAP            /* zap Ctrl bottom window when target dies */
+//#define BOT_MENU_YES            /* enable bottom window for menu prototype */
 //#define CASEUP_HEXES            /* show all those hex values in upper case */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define EQUCOLHDRYES            /* yes, equalize the column header lengths */
@@ -173,6 +174,9 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_DEL    139
 #define kbd_CtrlE  '\005'
 #define kbd_CtrlG  '\007'
+#ifdef BOT_MENU_YES
+#define kbd_CtrlH  '\010'
+#endif
 #define kbd_CtrlI  '\011'
 #define kbd_CtrlK  '\013'
 #define kbd_CtrlN  '\016'
@@ -743,6 +747,10 @@ typedef struct WIN_t {
 //atic char         *bot_misc_hlp (struct pids_stack *p);
 //atic void          bot_misc_show (void);
 //atic void          bot_misc_toggle (int what, char sep);
+#ifdef BOT_MENU_YES
+//atic void          bot_pick_show (void);
+//atic void          bot_pick_toggle (void);
+#endif
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
