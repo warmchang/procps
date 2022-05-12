@@ -176,6 +176,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_CtrlK  '\013'
 #define kbd_CtrlN  '\016'
 #define kbd_CtrlO  '\017'
+#define kbd_CtrlP  '\020'
 #define kbd_CtrlR  '\022'
 #define kbd_CtrlU  '\025'
 
@@ -737,6 +738,9 @@ typedef struct WIN_t {
 //atic void          bot_do_see (const char *str, const char *pgm);
 //atic void          bot_item_show (void);
 //atic void          bot_item_toggle (enum pflag item, const char *name);
+//atic char         *bot_misc_hlp (struct pids_stack *p);
+//atic void          bot_misc_show (void);
+//atic void          bot_misc_toggle (int what);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);

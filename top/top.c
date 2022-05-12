@@ -104,16 +104,21 @@ static int   Screen_cols, Screen_rows, Max_lines;
 
         // these are for the special separate bottom 'window'
 #define      SCREEN_ROWS ( Screen_rows - Bot_rsvd )
+#define      BOT_MAXIMUM  10
+#define      BOT_DELIMIT  -1
+#define      BOT_MISC_NS  +1
         // 1 for horizontal separator
 #define      BOT_RSVD  1
-#define      BOT_KEEP  Bot_show = 0
-#define      BOT_TOSS  do { Bot_show = 0; \
-                Bot_task = Bot_rsvd = Bot_item = 0; } while(0)
-static int   Bot_show,
+#define      BOT_KEEP  Bot_func = NULL
+#define      BOT_TOSS  do { Bot_func = NULL; Bot_item[0] = BOT_DELIMIT; \
+                Bot_task = Bot_rsvd = Bot_misc = 0; \
+                } while(0)
+static int   Bot_task,
+             Bot_misc,
              Bot_rsvd,
-             Bot_task;
-enum pflag   Bot_item;
+             Bot_item[BOT_MAXIMUM] = { BOT_DELIMIT };
 static char *Bot_name;
+static void(*Bot_func)(void);
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -2095,7 +2100,11 @@ static void build_headers (void) {
          else ckITEM(f);
 
          // lastly, accommodate any special non-display 'tagged' needs...
-         ckITEM(Bot_item);
+         i = 0;
+         while (Bot_item[i] > BOT_DELIMIT) {
+            ckITEM(Bot_item[i]);
+            ++i;
+         }
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
@@ -4907,7 +4916,6 @@ static void bot_do_see (const char *str, const char *pgm) {
 } // end: bot_do_see
 
 
-
         /*
          * This guy manages the bottom margin window, |
          * showing misc stuff based on a single item. | */
@@ -4921,7 +4929,7 @@ static void bot_item_show (void) {
          break;
    }
    if (i < PIDSmaxt) {
-      bot_do_see(PID_VAL(Bot_item, str, p), PID_VAL(EU_CMD, str, p));
+      bot_do_see(PID_VAL(Bot_item[0], str, p), PID_VAL(EU_CMD, str, p));
    }
 #ifdef BOT_DEAD_ZAP
    else
@@ -4937,15 +4945,100 @@ static void bot_item_show (void) {
          * bottom window or arranging to turn it off. | */
 static void bot_item_toggle (enum pflag item, const char *name) {
    // if already targeted, assume user wants to turn it off ...
-   if (Bot_item == item) {
+   if (Bot_item[0] == item) {
       BOT_TOSS;
    } else {
-      Bot_item = item;
+      Bot_misc = 0;
+      Bot_item[0] = item;
+      Bot_item[1] = BOT_DELIMIT;
       Bot_name = (char*)name;
-      Bot_show = 1;
+      Bot_func = bot_item_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
 } // end: bot_item_toggle
+
+
+static struct {
+   enum pflag this;
+   enum namespace_type that;
+} ns_tab[] = {
+   { EU_NS7, PROCPS_NS_CGROUP }, { EU_NS1, PROCPS_NS_IPC  },
+   { EU_NS2, PROCPS_NS_MNT    }, { EU_NS3, PROCPS_NS_NET  },
+   { EU_NS4, PROCPS_NS_PID    }, { EU_NS8, PROCPS_NS_TIME },
+   { EU_NS5, PROCPS_NS_USER   }, { EU_NS6, PROCPS_NS_UTS  }
+};
+
+        /*
+         * A helper function that will gather various |
+         * stuff for dislay by the bot_misc_show guy. | */
+static char *bot_misc_hlp (struct pids_stack *p) {
+   static char buf[BIGBUFSIZ], *b;
+   int i;
+
+   buf[0] = '\0';
+   switch (Bot_misc) {
+      case BOT_MISC_NS:
+         b = &buf[0];
+         for (i = 0; i < MAXTBL(ns_tab); i++)
+            b = scat(b, fmtmk("%s: %-10lu  "
+               , procps_ns_get_name(ns_tab[i].that), PID_VAL(ns_tab[i].this, ul_int, p)));
+         break;
+      default:
+         break;
+   }
+   return buf;
+} // end: bot_misc_hlp
+
+
+        /*
+         * This guy manages the bottom margin window, |
+         * showing misc data based on multiple items. | */
+static void bot_misc_show (void) {
+   struct pids_stack *p;
+   int i;
+
+   for (i = 0; i < PIDSmaxt; i++) {
+      p = Curwin->ppt[i];
+      if (Bot_task == PID_VAL(EU_PID, s_int, p))
+         break;
+   }
+   if (i < PIDSmaxt) {
+      bot_do_see(bot_misc_hlp(p), PID_VAL(EU_CMD, str, p));
+   }
+#ifdef BOT_DEATH
+   else
+      BOT_TOSS;
+#else
+   BOT_KEEP;
+#endif
+} // end: bot_misc_show
+
+
+        /*
+         * This guy toggles between displaying a Ctrl |
+         * bottom window or arranging to turn it off. | */
+static void bot_misc_toggle (int what) {
+   int i;
+
+   // if already targeted, assume user wants to turn it off ...
+   if (Bot_misc == what) {
+      BOT_TOSS;
+   } else {
+      switch (what) {
+         case BOT_MISC_NS:
+            for (i = 0; i < MAXTBL(ns_tab); i++)
+               Bot_item[i] = ns_tab[i].this;
+            Bot_item[i] = BOT_DELIMIT;
+            Bot_name = (char*)"namespaces";
+            break;
+         default:
+            break;
+      }
+      Bot_misc = what;
+      Bot_func = bot_misc_show;
+      Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
+   }
+} // end: bot_misc_toggle
 
 /*######  Interactive Input Tertiary support  ############################*/
 
@@ -5329,6 +5422,9 @@ static void keys_global (int ch) {
          break;
       case kbd_CtrlN:
          bot_item_toggle(EU_ENV, "environment");
+         break;
+      case kbd_CtrlP:
+         bot_misc_toggle(BOT_MISC_NS);
          break;
       case kbd_CtrlR:
          if (Secure_mode)
@@ -6199,7 +6295,7 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlN, kbd_CtrlR, kbd_CtrlU
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlN, kbd_CtrlP, kbd_CtrlR, kbd_CtrlU
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
@@ -6863,7 +6959,7 @@ static void frame_make (void) {
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Bot_show) bot_item_show();
+   if (Bot_func) Bot_func();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
