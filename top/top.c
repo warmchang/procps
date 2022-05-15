@@ -4758,7 +4758,7 @@ static void forest_begin (WIN_t *q) {
             eu_TREE_ADD (u_int):  where a children's tics stored (maybe) | */
       for (i = 0; i < Hide_tot; i++) {
 
-        // if have xtra-procps-debug.h, cannpt use PID_VAL w/ assignment |
+        // if have xtra-procps-debug.h, cannot use PID_VAL w/ assignment |
        #define rSv(E,T,X)  Tree_ppt[X]->head[E].result.T
        #define rSv_Pid(X)  rSv(EU_PID, s_int, X)
        #define rSv_Lvl(X)  rSv(eu_TREE_LVL, s_int, X)
@@ -4859,7 +4859,7 @@ static inline const char *forest_display (const WIN_t *q, int idx) {
  #define rSv_Lvl  PID_VAL(eu_TREE_LVL, s_int, p)
  #define rSv_Hid  PID_VAL(eu_TREE_HID, s_ch, p)
 #ifndef SCROLLVAR_NO
-   static char buf[1024*64*2]; // the same as libray's max buffer size
+   static char buf[MAXBUFSIZ];
 #else
    static char buf[ROWMINSIZ];
 #endif
@@ -4918,12 +4918,12 @@ static void bot_do (const char *str, int focus) {
         /*
          * This guy draws that bottom window's header |
          * then parses/arranges to show the contents. |
-         * ( returns the number of elements printed ) | */
+         * ( returns relative # of elements printed ) | */
 static int bot_focus (const char *hdr, const char *str) {
  #define maxRSVD ( Screen_rows - 1 )
-   static char sav[BIGBUFSIZ*2];
+   static char sav[BOTBUFSIZ];
    const char *end, *beg;
-   char tmp[SCREENMAX];
+   char tmp[BIGBUFSIZ];
    int n, x;
 
    if (str) {
@@ -5119,7 +5119,7 @@ static void bot_pick_toggle (void) {
       Bot_what = BOT_MENU_ON;
       Bot_indx = 0;
       Bot_item[0] = BOT_DELIMIT;
-      Bot_name = (char*)"a menu, please choose among the following ...";
+      Bot_name = (char*)"a menu, please choose among the following, then press <Enter> ...";
       Bot_func = bot_pick_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }

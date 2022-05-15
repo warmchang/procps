@@ -141,6 +141,9 @@ char *strcasestr(const char *haystack, const char *needle);
 #define LRGBUFSIZ   512
 #define OURPATHSZ  1024
 #define BIGBUFSIZ  2048
+#define BOTBUFSIZ 16384
+        // next is same as library's max buffer size
+#define MAXBUFSIZ (1024*64*2)
    /* in addition to the actual display data, our row might have to accommodate
       many termcap/color transitions - these definitions ensure we have room */
 #define ROWMINSIZ  ( SCREENMAX +  8 * (CAPBUFSIZ + CLRBUFSIZ) )
