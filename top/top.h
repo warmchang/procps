@@ -744,9 +744,10 @@ typedef struct WIN_t {
 //atic inline const char *forest_display (const WIN_t *q, int idx);
 /*------  Special Separate Bottom Window support  ------------------------*/
 //atic void          bot_do (const char *str, int focus);
-//atic int           bot_focus (const char *hdr, const char *str);
+//atic int           bot_focus_str (const char *hdr, const char *str);
+//atic int           bot_focus_strv (const char *hdr, const char **strv);
 //atic void          bot_item_show (void);
-//atic void          bot_item_toggle (enum pflag item, const char *name, char sep);
+//atic void          bot_item_toggle (int item, const char *name, char sep);
 //atic char         *bot_misc_hlp (struct pids_stack *p);
 //atic void          bot_misc_show (void);
 //atic void          bot_misc_toggle (int what, char sep);

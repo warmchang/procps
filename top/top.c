@@ -114,8 +114,8 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #endif
         // 1 for horizontal separator
 #define      BOT_RSVD  1
-#define      BOT_KEEP  Bot_func = NULL
-#define      BOT_TOSS  do { Bot_func = NULL; Bot_item[0] = BOT_DELIMIT; \
+#define      BOT_KEEP  Bot_show_func = NULL
+#define      BOT_TOSS  do { Bot_show_func = NULL; Bot_item[0] = BOT_DELIMIT; \
                 Bot_task = Bot_rsvd = Bot_what = 0; \
                 Bot_indx = BOT_UNFOCUS; \
                 } while(0)
@@ -126,7 +126,10 @@ static int   Bot_task,
              Bot_item[BOT_MAXIMUM] = { BOT_DELIMIT };
 static char *Bot_name,
              Bot_sep;
-static void(*Bot_func)(void);
+typedef int(*BOT_f)(const void *, const void *);
+static BOT_f Bot_focus_func;
+static void(*Bot_show_func)(void);
+static char  Bot_buf[BOTBUFSIZ];       // the 'environ' can be huge
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -1916,12 +1919,16 @@ static struct {
 #define eu_TREE_HID    eu_LAST +4
 #define eu_TREE_LVL    eu_LAST +5
 #define eu_TREE_ADD    eu_LAST +6
+#define eu_CMDLINE_V   eu_LAST +7
+#define eu_ENVIRON_V   eu_LAST +8
    , {  -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
    , {  -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
    , {  -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
    , {  -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
    , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_LVL   )
    , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_ADD   )
+   , {  -1, -1, -1,  PIDS_CMDLINE_V   }  // strv     ( if Ctrlk,       eu_CMDLINE_V  )
+   , {  -1, -1, -1,  PIDS_ENVIRON_V   }  // strv     ( if CtrlN,       eu_ENVIRON_V  )
  #undef A_left
  #undef A_right
 };
@@ -4919,17 +4926,16 @@ static void bot_do (const char *str, int focus) {
          * This guy draws that bottom window's header |
          * then parses/arranges to show the contents. |
          * ( returns relative # of elements printed ) | */
-static int bot_focus (const char *hdr, const char *str) {
+static int bot_focus_str (const char *hdr, const char *str) {
  #define maxRSVD ( Screen_rows - 1 )
-   static char sav[BOTBUFSIZ];
    const char *end, *beg;
    char tmp[BIGBUFSIZ];
    int n, x;
 
    if (str) {
-      if (!*str || !strcmp(str, "-")) strcpy(sav, "n/a");
-      else memccpy(sav, str, '\0', sizeof(sav) - 1);
-      Bot_rsvd = 1 + BOT_RSVD + (strlen(sav) / Screen_cols);
+      if (!*str || !strcmp(str, "-")) strcpy(Bot_buf, "n/a");
+      else memccpy(Bot_buf, str, '\0', sizeof(Bot_buf) - 1);
+      Bot_rsvd = 1 + BOT_RSVD + (strlen(Bot_buf) / Screen_cols);
       if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
       // caller itself may have used fmtmk, so we'll old school it ...
       snprintf(tmp, sizeof(tmp), "%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, hdr);
@@ -4938,7 +4944,7 @@ static int bot_focus (const char *hdr, const char *str) {
    // now fmtmk is safe to use ...
    putp(fmtmk("%s%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos, Cap_norm));
 
-   beg = &sav[0];
+   beg = &Bot_buf[0];
    x = BOT_UNFOCUS;
 
    while (*beg) {
@@ -4955,7 +4961,48 @@ static int bot_focus (const char *hdr, const char *str) {
    }
    return x;
  #undef maxRSVD
-} // end: bot_focus
+} // end: bot_focus_str
+
+
+        /*
+         * This guy draws that bottom window's header |
+         * & parses/arranges to show vector contents. |
+         * ( returns relative # of elements printed ) | */
+static int bot_focus_strv (const char *hdr, const char **strv) {
+ #define maxRSVD ( Screen_rows - 1 )
+   static int nsav;
+   char tmp[SCREENMAX], *p;
+   int i, n, x;
+
+   if (strv) {
+      // we won't worry about picking up some trailing garbage ...
+      mempcpy(Bot_buf, strv[0], sizeof(Bot_buf));
+      for (nsav= 0, p = Bot_buf; strv[nsav] != NULL; nsav++) {
+         p += strlen(strv[nsav]) + 1;
+         if ((p - Bot_buf) >= sizeof(Bot_buf))
+            break;
+         n = p - Bot_buf;
+      }
+      Bot_rsvd = 1 + BOT_RSVD + (n / Screen_cols);
+      if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
+      // caller itself may have used fmtmk, so we'll old school it ...
+      snprintf(tmp, sizeof(tmp), "%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, hdr);
+      putp(tmp);
+   }
+   // now fmtmk is safe to use ...
+   putp(fmtmk("%s%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos, Cap_norm));
+
+   p = Bot_buf;
+   x = BOT_UNFOCUS;
+
+   for (i = 0; i < nsav; i++) {
+      bot_do(p, (++x == Bot_indx));
+      p += strlen(p) + 1;
+      putchar(' ');
+   }
+   return x;
+ #undef maxRSVD
+} // end: bot_focus_strv
 
 
         /*
@@ -4972,7 +5019,8 @@ static void bot_item_show (void) {
          break;
    }
    if (i < PIDSmaxt) {
-      bot_focus(mkHDR, PID_VAL(Bot_item[0], str, p));
+      // shhhh, this result 'type' might be a fib (maybe it's strv) ...
+      Bot_focus_func(mkHDR, p->head[Bot_item[0]].result.str);
    }
 #ifdef BOT_DEAD_ZAP
    else
@@ -4987,7 +5035,7 @@ static void bot_item_show (void) {
         /*
          * This guy can toggle between displaying the |
          * bottom window or arranging to turn it off. | */
-static void bot_item_toggle (enum pflag item, const char *name, char sep) {
+static void bot_item_toggle (int item, const char *name, char sep) {
    // if already targeted, assume user wants to turn it off ...
    if (Bot_item[0] == item) {
       BOT_TOSS;
@@ -4998,7 +5046,16 @@ static void bot_item_toggle (enum pflag item, const char *name, char sep) {
       Bot_item[0] = item;
       Bot_item[1] = BOT_DELIMIT;
       Bot_name = (char*)name;
-      Bot_func = bot_item_show;
+      switch (item) {
+         case eu_CMDLINE_V:
+         case eu_ENVIRON_V:
+            Bot_focus_func = (BOT_f)bot_focus_strv;
+            break;
+         default:
+            Bot_focus_func = (BOT_f)bot_focus_str;
+            break;
+      }
+      Bot_show_func = bot_item_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
 } // end: bot_item_toggle
@@ -5056,7 +5113,7 @@ static void bot_misc_show (void) {
          break;
    }
    if (i < PIDSmaxt) {
-      bot_focus(mkHDR, bot_misc_hlp(p));
+      Bot_focus_func(mkHDR, bot_misc_hlp(p));
    }
 #ifdef BOT_DEAD_ZAP
    else
@@ -5091,7 +5148,8 @@ static void bot_misc_toggle (int what, char sep) {
       Bot_sep = sep;
       Bot_what = what;
       Bot_indx = BOT_UNFOCUS;
-      Bot_func = bot_misc_show;
+      Bot_focus_func = (BOT_f)bot_focus_str;
+      Bot_show_func = bot_misc_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
 } // end: bot_misc_toggle
@@ -5102,7 +5160,7 @@ static void bot_misc_toggle (int what, char sep) {
          * This guy manages that bottom margin window |
          * when it is used as a menu of user choices. | */
 static void bot_pick_show (void) {
-   bot_focus(Bot_name, "selection #1\t selection #2\t selecttion #3");
+   Bot_focus_func(Bot_name, "selection #1\t selection #2\t selecttion #3");
    BOT_KEEP;
 } // end: bot_pick_show
 
@@ -5120,7 +5178,8 @@ static void bot_pick_toggle (void) {
       Bot_indx = 0;
       Bot_item[0] = BOT_DELIMIT;
       Bot_name = (char*)"a menu, please choose among the following, then press <Enter> ...";
-      Bot_func = bot_pick_show;
+      Bot_focus_func = (BOT_f)bot_focus_str;
+      Bot_show_func = bot_pick_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
 } // end: bot_pick_toggle
@@ -5511,15 +5570,15 @@ static void keys_global (int ch) {
       case kbd_CtrlI:
          if (Bot_what) {
             ++Bot_indx;
-            if (Bot_indx > bot_focus(NULL, NULL))
+            if (Bot_indx > Bot_focus_func(NULL, NULL))
                Bot_indx = BOT_UNFOCUS;
          }
          break;
       case kbd_CtrlK:
-         bot_item_toggle(eu_CMDLINE, "command line", ' ');
+         bot_item_toggle(eu_CMDLINE_V, "command line", ' ');
          break;
       case kbd_CtrlN:
-         bot_item_toggle(EU_ENV, "environment", ' ');
+         bot_item_toggle(eu_ENVIRON_V, "environment", ' ');
          break;
       case kbd_CtrlP:
          bot_misc_toggle(BOT_MISC_NS, ',');
@@ -7064,7 +7123,7 @@ static void frame_make (void) {
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Bot_func) Bot_func();
+   if (Bot_show_func) Bot_show_func();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
