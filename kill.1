@@ -5,7 +5,7 @@
 .\" Licensed under version 2 of the GNU General Public License.
 .\" Written by Albert Cahalan; converted to a man page by
 .\" Michael K. Johnson
-.TH KILL 1 "2020-04-24" "procps-ng" "User Commands"
+.TH KILL 1 "2021-05-18" "procps-ng" "User Commands"
 .SH NAME
 kill \- send a signal to a process
 .SH SYNOPSIS
@@ -52,8 +52,8 @@ rather than
 and the value argument is used to specify
 an integer to be sent with the signal. If the receiving process has
 installed a handler for this signal using the SA_SIGINFO flag to
-.BR sigaction(2)
-, then it can obtain this data via the si_value field of the
+.BR sigaction(2) ,
+then it can obtain this data via the si_value field of the
 siginfo_t structure.
 .TP
 \fB\-l\fR, \fB\-\-list\fR [\fIsignal\fR]
