@@ -11,6 +11,7 @@ procps-ng-NEXT
   * top: can display the following with no need to scroll
   *      cmdline, control groups, environment,
          supplimentary groups, namespaces
+  * watch: Add equexit no-change and exit option           merge #153
 
 procps-ng-4.0.0
 ---------------
