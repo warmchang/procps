@@ -212,34 +212,47 @@ AC_SUBST([HARDEN_LDFLAGS])
 # Optional packages - AC_ARG_WITH
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
-  [], [with_ncurses=yes]
+  [AS_IF([test "x$enable_watch8bit" = "xyes"],
+    [AC_MSG_ERROR([Cannot have both --enable-watch8bit and --without-ncurses])]
+  )],
+  [with_ncurses=yes]
 )
 if test "x$with_ncurses" = xno; then
   AM_CONDITIONAL(WITH_NCURSES, false)
 else
-  PKG_CHECK_MODULES([NCURSES], [ncurses], [], [
-    AC_CHECK_LIB(ncurses, initscr, [have_ncurses=yes], [have_ncurses=no])
-    AC_CHECK_HEADERS(curses.h ncurses.h term.h, [], [have_ncurses=no], AC_INCLUDES_DEFAULT)
-    if test "x$have_ncurses" = xno; then
-      AC_MSG_ERROR([ncurses support missing/incomplete (for partial build use --without-ncurses)])
-    fi
-    NCURSES_LIBS="-lncurses"
-  ])
   AM_CONDITIONAL(WITH_NCURSES, true)
-  if test "$enable_watch8bit" = yes; then
-    PKG_CHECK_MODULES([NCURSESW], [ncursesw], [WATCH_NCURSES_LIBS="$NCURSESW_LIBS"], [
-      AC_CHECK_LIB([ncursesw], [addwstr], [WATCH_NCURSES_LIBS=-lncursesw], [
-        AC_CHECK_LIB([ncurses], [addwstr], [WATCH_NCURSES_LIBS=-lncurses], [
-          AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])
-	])
-      ])
-    ])
-  else
-    WATCH_NCURSES_LIBS="$NCURSES_LIBS"
-  fi
+  PKG_CHECK_MODULES([NCURSES], [ncursesw],
+    [AC_DEFINE([HAVE_NCURSES], [1], [Use NCURSESW])],
+    [
+      AS_IF([test "x$enable_watch8bit" = "xyes"],
+        [AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])])
+      PKG_CHECK_MODULES([NCURSES], [ncurses],
+        [AC_DEFINE([HAVE_NCURSES], [1], [Use NCURSES])],
+        [AC_MSG_ERROR([ncurses support missing/incomplete (for partial build use --without-ncurses)])]
+      )
+    ]
+  )
 fi
-AC_SUBST([NCURSES_LIBS])
-AC_SUBST([WATCH_NCURSES_LIBS])
+#  PKG_CHECK_MODULES([NCURSES], [ncurses], [], [
+#    AC_CHECK_LIB(ncurses, initscr, [have_ncurses=yes], [have_ncurses=no])
+#    AC_CHECK_HEADERS(curses.h ncurses.h term.h, [], [have_ncurses=no], AC_INCLUDES_DEFAULT)
+#    if test "x$have_ncurses" = xno; then
+#      AC_MSG_ERROR([ncurses support missing/incomplete (for partial build use --without-ncurses)])
+#    fi
+#    NCURSES_LIBS="-lncurses"
+#  ])
+#  AM_CONDITIONAL(WITH_NCURSES, true)
+#  if test "$enable_watch8bit" = yes; then
+#    PKG_CHECK_MODULES([NCURSESW], [ncursesw], [WATCH_NCURSES_LIBS="$NCURSESW_LIBS"], [
+#      AC_CHECK_LIB([ncursesw], [addwstr], [WATCH_NCURSES_LIBS=-lncursesw], [
+#        AC_CHECK_LIB([ncurses], [addwstr], [WATCH_NCURSES_LIBS=-lncurses], [
+#          AC_MSG_ERROR([Cannot find ncurses wide library ncursesw with --enable-watch8bit])
+#	])
+#      ])
+#    ])
+#  else
+#    WATCH_NCURSES_LIBS="$NCURSES_LIBS"
+#  fi
 
 AC_ARG_WITH([systemd],
   [AS_HELP_STRING([--with-systemd], [enable systemd support])],

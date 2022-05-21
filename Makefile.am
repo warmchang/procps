@@ -178,7 +178,7 @@ slabtop_SOURCES = slabtop.c lib/strutils.c lib/fileutils.c
 slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
 watch_SOURCES = watch.c lib/strutils.c lib/fileutils.c
-watch_LDADD = @WATCH_NCURSES_LIBS@ $(CYGWINFLAGS)
+watch_LDADD = @NCURSES_LIBS@ $(CYGWINFLAGS)
 top_top_SOURCES = \
 	top/top.h \
 	top/top.c \
