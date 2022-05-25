@@ -102,15 +102,16 @@ static int Monpidsidx = 0;
         /* Current terminal screen size. */
 static int   Screen_cols, Screen_rows, Max_lines;
 
-        // these are for the special separate bottom 'window'
+        /* These 'SCREEN_ROWS', 'BOT_ and 'Bot_' guys are used
+           in managing the special separate bottom 'window' ... */
 #define      SCREEN_ROWS ( Screen_rows - Bot_rsvd )
-#define      BOT_MAXIMUM  10           // size of tagged item array
-#define      BOT_DELIMIT  -1           // fenchpost with item array
+#define      BOT_MAXIMUM  10           // Bot_item array's max size
+#define      BOT_DELIMIT  -1           // fencepost with item array
 #define      BOT_UNFOCUS  -1           // tab focus not established
-#define      BOT_TAB_YES  -1           // tab focus could be active
-#define      BOT_MISC_NS  +1           // data for namespaces req'd
+        // a negative 'item' won't be seen by build_headers() ...
+#define      BOT_ITEM_NS  -2           // data for namespaces req'd
 #ifdef BOT_MENU_YES
-# define     BOT_MENU_ON  -2           // in menu, tab focus active
+# define     BOT_MENU_ON  -3           // in menu, tab focus active
 #endif
         // next 4 are used when toggling window contents
 #define      BOT_SEP_CMA  ','
@@ -131,12 +132,12 @@ static int   Bot_task,
              Bot_rsvd,
              Bot_indx = BOT_UNFOCUS,
              Bot_item[BOT_MAXIMUM] = { BOT_DELIMIT };
-static char *Bot_name,
-             Bot_sep;
+static char  Bot_sep,
+            *Bot_name,
+             Bot_buf[BOTBUFSIZ];       // the 'environ' can be huge
 typedef int(*BOT_f)(const void *, const void *);
 static BOT_f Bot_focus_func;
 static void(*Bot_show_func)(void);
-static char  Bot_buf[BOTBUFSIZ];       // the 'environ' can be huge
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -4955,7 +4956,7 @@ static int bot_focus_str (const char *hdr, const char *str) {
       else memccpy(Bot_buf, str, '\0', n);
       Bot_rsvd = 1 + BOT_RSVD + (strlen(Bot_buf) / Screen_cols);
       if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
-      // caller itself may have used fmtmk, so we'll old school it ...
+      // somewhere down call chain fmtmk() may be used, so we'll old school it
       snprintf(tmp, sizeof(tmp), "%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, hdr);
       putp(tmp);
    }
@@ -4995,10 +4996,10 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
    if (strv) {
       // we're a little careless with overhead here (it's a one time cost)
       memset(Bot_buf, '\0', sizeof(Bot_buf));
-      n = (char*)&strv[0] - strv[0];
+      n = (char *)&strv[0] - strv[0];
       if (n >= sizeof(Bot_buf)) n = sizeof(Bot_buf) - 1;
       memcpy(Bot_buf, strv[0], n);
-      if (!Bot_buf[0] || (!strcmp(Bot_buf, "-") && n <= sizeof(char*)))
+      if (!Bot_buf[0] || (!strcmp(Bot_buf, "-") && n <= sizeof(char *)))
          strcpy(Bot_buf, "n/a");
       for (nsav= 0, p = Bot_buf; strv[nsav] != NULL; nsav++) {
          p += strlen(strv[nsav]) + 1;
@@ -5008,7 +5009,7 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
       }
       Bot_rsvd = 1 + BOT_RSVD + (n / Screen_cols);
       if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
-      // caller itself may have used fmtmk, so we'll old school it ...
+      // somewhere down call chain fmtmk() may be used, so we'll old school it
       snprintf(tmp, sizeof(tmp), "%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, hdr);
       putp(tmp);
    }
@@ -5028,9 +5029,50 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
 } // end: bot_focus_strv
 
 
+static struct {
+   enum pflag this;
+   enum namespace_type that;
+} ns_tab[] = {
+   // careful, cgroup & time were late additions ...
+   { EU_NS7, PROCPS_NS_CGROUP }, { EU_NS1, PROCPS_NS_IPC  },
+   { EU_NS2, PROCPS_NS_MNT    }, { EU_NS3, PROCPS_NS_NET  },
+   { EU_NS4, PROCPS_NS_PID    }, { EU_NS8, PROCPS_NS_TIME },
+   { EU_NS5, PROCPS_NS_USER   }, { EU_NS6, PROCPS_NS_UTS  }
+};
+
+
+        /*
+         * A helper function that will gather various |
+         * stuff for dislay by the bot_item_show guy. | */
+static void *bot_item_hlp (struct pids_stack *p) {
+   static char buf[BIGBUFSIZ];
+   char tmp[SMLBUFSIZ], *b;
+   int i;
+
+   switch (Bot_what) {
+      case BOT_ITEM_NS:
+         *(b = &buf[0]) = '\0';
+         for (i = 0; i < MAXTBL(ns_tab); i++) {
+            // caller itself may have used fmtmk, so we'll old school it ...
+            snprintf(tmp, sizeof(tmp), "%s: %-10lu"
+               , procps_ns_get_name(ns_tab[i].that)
+               , PID_VAL(ns_tab[i].this, ul_int, p));
+            b = scat(b, tmp);
+            if (i < (MAXTBL(ns_tab) - 1)) b = scat(b, ", ");
+         }
+         return buf;
+      case eu_CMDLINE_V:
+      case eu_ENVIRON_V:
+         return p->head[Bot_item[0]].result.strv;
+      default:
+         return p->head[Bot_item[0]].result.str;
+   }
+} // end: bot_item_hlp
+
+
         /*
          * This guy manages that bottom margin window |
-         * showing misc stuff based on a single item. | */
+         * which shows various process related stuff. | */
 static void bot_item_show (void) {
  #define mkHDR  fmtmk("%s for pid %d, %s", Bot_name, Bot_task, PID_VAL(EU_CMD, str, p))
    struct pids_stack *p;
@@ -5042,8 +5084,7 @@ static void bot_item_show (void) {
          break;
    }
    if (i < PIDSmaxt) {
-      // shhhh, this result 'type' might be a fib (maybe it's strv) ...
-      Bot_focus_func(mkHDR, p->head[Bot_item[0]].result.str);
+      Bot_focus_func(mkHDR, bot_item_hlp(p));
    }
 #ifdef BOT_DEAD_ZAP
    else
@@ -5058,100 +5099,7 @@ static void bot_item_show (void) {
         /*
          * This guy can toggle between displaying the |
          * bottom window or arranging to turn it off. | */
-static void bot_item_toggle (int item, const char *name, char sep) {
-   // if already targeted, assume user wants to turn it off ...
-   if (Bot_item[0] == item) {
-      BOT_TOSS;
-   } else {
-      Bot_sep = sep;
-      Bot_what = BOT_TAB_YES;
-      Bot_indx = BOT_UNFOCUS;
-      Bot_item[0] = item;
-      Bot_item[1] = BOT_DELIMIT;
-      Bot_name = (char*)name;
-      switch (item) {
-         case eu_CMDLINE_V:
-         case eu_ENVIRON_V:
-            Bot_focus_func = (BOT_f)bot_focus_strv;
-            break;
-         default:
-            Bot_focus_func = (BOT_f)bot_focus_str;
-            break;
-      }
-      Bot_show_func = bot_item_show;
-      Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
-   }
-} // end: bot_item_toggle
-
-
-static struct {
-   enum pflag this;
-   enum namespace_type that;
-} ns_tab[] = {
-   { EU_NS7, PROCPS_NS_CGROUP }, { EU_NS1, PROCPS_NS_IPC  },
-   { EU_NS2, PROCPS_NS_MNT    }, { EU_NS3, PROCPS_NS_NET  },
-   { EU_NS4, PROCPS_NS_PID    }, { EU_NS8, PROCPS_NS_TIME },
-   { EU_NS5, PROCPS_NS_USER   }, { EU_NS6, PROCPS_NS_UTS  }
-};
-
-
-        /*
-         * A helper function that will gather various |
-         * stuff for dislay by the bot_misc_show guy. | */
-static char *bot_misc_hlp (struct pids_stack *p) {
-   static char tmp[SMLBUFSIZ], buf[BIGBUFSIZ], *b;
-   int i;
-
-   buf[0] = '\0';
-   switch (Bot_what) {
-      case BOT_MISC_NS:
-         b = &buf[0];
-         for (i = 0; i < MAXTBL(ns_tab); i++) {
-            // caller itself may have used fmtmk, so we'll old school it ...
-            snprintf(tmp, sizeof(tmp), "%s: %-10lu"
-               , procps_ns_get_name(ns_tab[i].that)
-               , PID_VAL(ns_tab[i].this, ul_int, p));
-            b = scat(b, tmp);
-            if (i < (MAXTBL(ns_tab) - 1)) b = scat(b, ", ");
-         }
-         break;
-      default:
-         break;
-   }
-   return buf;
-} // end: bot_misc_hlp
-
-
-        /*
-         * This guy manages that bottom margin window |
-         * showing misc data based on multiple items. | */
-static void bot_misc_show (void) {
- #define mkHDR  fmtmk("%s for pid %d, %s", Bot_name, Bot_task, PID_VAL(EU_CMD, str, p))
-   struct pids_stack *p;
-   int i;
-
-   for (i = 0; i < PIDSmaxt; i++) {
-      p = Curwin->ppt[i];
-      if (Bot_task == PID_VAL(EU_PID, s_int, p))
-         break;
-   }
-   if (i < PIDSmaxt) {
-      Bot_focus_func(mkHDR, bot_misc_hlp(p));
-   }
-#ifdef BOT_DEAD_ZAP
-   else
-      BOT_TOSS;
-#else
-   BOT_KEEP;
-#endif
- #undef mkHDR
-} // end: bot_misc_show
-
-
-        /*
-         * This guy can toggle between displaying the |
-         * bottom window or arranging to turn it off. | */
-static void bot_misc_toggle (int what, char sep) {
+static void bot_item_toggle (int what, const char *name, char sep) {
    int i;
 
    // if already targeted, assume user wants to turn it off ...
@@ -5159,39 +5107,48 @@ static void bot_misc_toggle (int what, char sep) {
       BOT_TOSS;
    } else {
       switch (what) {
-         case BOT_MISC_NS:
+         case BOT_ITEM_NS:
             for (i = 0; i < MAXTBL(ns_tab); i++)
                Bot_item[i] = ns_tab[i].this;
             Bot_item[i] = BOT_DELIMIT;
-            Bot_name = (char*)"namespaces";
+            Bot_focus_func = (BOT_f)bot_focus_str;
+            break;
+         case eu_CMDLINE_V:
+         case eu_ENVIRON_V:
+            Bot_item[0] = what;
+            Bot_item[1] = BOT_DELIMIT;
+            Bot_focus_func = (BOT_f)bot_focus_strv;
             break;
          default:
+            Bot_item[0] = what;
+            Bot_item[1] = BOT_DELIMIT;
+            Bot_focus_func = (BOT_f)bot_focus_str;
             break;
       }
       Bot_sep = sep;
       Bot_what = what;
       Bot_indx = BOT_UNFOCUS;
-      Bot_focus_func = (BOT_f)bot_focus_str;
-      Bot_show_func = bot_misc_show;
+      Bot_name = (char *)name;
+      Bot_show_func = bot_item_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
-} // end: bot_misc_toggle
+} // end: bot_item_toggle
 
 
 #ifdef BOT_MENU_YES
         /*
          * This guy manages that bottom margin window |
          * when it is used as a menu of user choices. | */
-static void bot_pick_show (void) {
+static void bot_menu_show (void) {
    Bot_focus_func(Bot_name, "selection #1\t selection #2\t selecttion #3");
    BOT_KEEP;
-} // end: bot_pick_show
+} // end: bot_menu_show
 
 
         /*
          * This guy can toggle between displaying the |
          * bottom window or arranging to turn it off. | */
-static void bot_pick_toggle (void) {
+static void bot_menu_toggle (void) {
    // if already in menu mode, assume user wants to exit ...
    if (Bot_what == BOT_MENU_ON) {
       BOT_TOSS;
@@ -5200,12 +5157,12 @@ static void bot_pick_toggle (void) {
       Bot_what = BOT_MENU_ON;
       Bot_indx = 0;
       Bot_item[0] = BOT_DELIMIT;
-      Bot_name = (char*)"a menu, please choose among the following, then press <Enter> ...";
+      Bot_name = (char *)"a menu, please choose among the following, then press <Enter> ...";
       Bot_focus_func = (BOT_f)bot_focus_str;
-      Bot_show_func = bot_pick_show;
+      Bot_show_func = bot_menu_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
-} // end: bot_pick_toggle
+} // end: bot_menu_toggle
 #endif
 
 /*######  Interactive Input Tertiary support  ############################*/
@@ -5587,7 +5544,7 @@ static void keys_global (int ch) {
          break;
 #ifdef BOT_MENU_YES
       case kbd_CtrlH:
-         bot_pick_toggle();
+         bot_menu_toggle();
          break;
 #endif
       case kbd_CtrlI:
@@ -5606,7 +5563,7 @@ static void keys_global (int ch) {
          bot_item_toggle(eu_ENVIRON_V, "environment", BOT_SEP_SPC);
          break;
       case kbd_CtrlP:
-         bot_misc_toggle(BOT_MISC_NS, ',');
+         bot_item_toggle(BOT_ITEM_NS, "namespaces", BOT_SEP_CMA);
          break;
       case kbd_CtrlR:
          if (Secure_mode)
