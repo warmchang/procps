@@ -40,7 +40,14 @@ AM_PROG_CC_C_O
 AC_PROG_CPP
 AC_PROG_INSTALL
 AC_PROG_LN_S
+
+dnl Check pkg-config is there for autoconf and at ./configure
+m4_ifndef([PKG_PREREQ],
+  [m4_fatal([must install pkg-config 0.29 or later before running autoconf/autogen])])
 PKG_PROG_PKG_CONFIG
+AS_IF([test -z "$PKG_CONFIG"],[
+  AC_MSG_ERROR([Could not find pkg-config])])
+
 AC_PROG_MAKE_SET
 
 AC_DEFUN([PROCPS_PROG_PO4A], [
