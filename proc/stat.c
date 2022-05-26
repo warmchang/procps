@@ -601,7 +601,11 @@ static int stat_read_failed (
     sum_ptr->numa_node = STAT_NODE_INVALID;     // mark as invalid
 
     // now value the cpu summary tics from line #1
+#ifdef __CYGWIN__
+    if (4 > sscanf(bp, "cpu %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
+#else
     if (8 > sscanf(bp, "cpu %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
+#endif
         , &sum_ptr->new.user,  &sum_ptr->new.nice,   &sum_ptr->new.system
         , &sum_ptr->new.idle,  &sum_ptr->new.iowait, &sum_ptr->new.irq
         , &sum_ptr->new.sirq,  &sum_ptr->new.stolen
@@ -630,7 +634,11 @@ reap_em_again:
         cpu_ptr->numa_node = STAT_NODE_INVALID;
         cpu_ptr->count = 1;
 
+#ifdef __CYGWIN__
+        if (4 > (rc = sscanf(bp, "cpu%d %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
+#else
         if (8 > (rc = sscanf(bp, "cpu%d %llu %llu %llu %llu %llu %llu %llu %llu %llu %llu"
+#endif
             , &cpu_ptr->id
             , &cpu_ptr->new.user,  &cpu_ptr->new.nice,   &cpu_ptr->new.system
             , &cpu_ptr->new.idle,  &cpu_ptr->new.iowait, &cpu_ptr->new.irq
