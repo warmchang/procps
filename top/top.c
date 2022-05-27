@@ -5509,12 +5509,11 @@ static void keys_global (int ch) {
          }
          break;
       case 'X':
-      {  int wide = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
-         if (wide > GET_NUM_NOT) {
-            if (wide >= 0 && wide <= SCREENMAX) Rc.fixed_widest = wide;
+         num = get_int(fmtmk(N_fmt(XTRA_fixwide_fmt), Rc.fixed_widest));
+         if (num > GET_NUM_NOT) {
+            if (num >= 0 && num <= SCREENMAX) Rc.fixed_widest = num;
             else Rc.fixed_widest = -1;
          }
-      }
          break;
       case 'Y':
          if (!Inspect.total)

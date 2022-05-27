@@ -729,7 +729,7 @@ static void build_uniq_nlstab (void) {
    .                 also imbedded in the translatable text (along with escape seqs)
    .                 should never themselves be translated. */
    Uniq_nlstab[KEYS_helpext_fmt] = _(""
-      "  d,k,r,^R, '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n");
+      "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n");
 
 /* Translation Hint:
    .  This Fields Management header should be 3 lines long so as
