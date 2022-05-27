@@ -110,16 +110,10 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #define      BOT_UNFOCUS  -1           // tab focus not established
         // a negative 'item' won't be seen by build_headers() ...
 #define      BOT_ITEM_NS  -2           // data for namespaces req'd
-#ifdef BOT_MENU_YES
-# define     BOT_MENU_ON  -3           // in menu, tab focus active
-#endif
         // next 4 are used when toggling window contents
 #define      BOT_SEP_CMA  ','
 #define      BOT_SEP_SLS  '/'
 #define      BOT_SEP_SPC  ' '
-#ifdef BOT_MENU_YES
-#define      BOT_SEP_TAB  '\t'
-#endif
         // 1 for horizontal separator
 #define      BOT_RSVD  1
 #define      BOT_KEEP  Bot_show_func = NULL
@@ -5142,37 +5136,6 @@ static void bot_item_toggle (int what, const char *name, char sep) {
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
 } // end: bot_item_toggle
-
-
-#ifdef BOT_MENU_YES
-        /*
-         * This guy manages that bottom margin window |
-         * when it is used as a menu of user choices. | */
-static void bot_menu_show (void) {
-   Bot_focus_func(Bot_name, "selection #1\t selection #2\t selecttion #3");
-   BOT_KEEP;
-} // end: bot_menu_show
-
-
-        /*
-         * This guy can toggle between displaying the |
-         * bottom window or arranging to turn it off. | */
-static void bot_menu_toggle (void) {
-   // if already in menu mode, assume user wants to exit ...
-   if (Bot_what == BOT_MENU_ON) {
-      BOT_TOSS;
-   } else {
-      Bot_sep = BOT_SEP_TAB;
-      Bot_what = BOT_MENU_ON;
-      Bot_indx = 0;
-      Bot_item[0] = BOT_DELIMIT;
-      Bot_name = (char *)"a menu, please choose among the following, then press <Enter> ...";
-      Bot_focus_func = (BOT_f)bot_focus_str;
-      Bot_show_func = bot_menu_show;
-      Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
-   }
-} // end: bot_menu_toggle
-#endif
 
 /*######  Interactive Input Tertiary support  ############################*/
 
@@ -5554,11 +5517,6 @@ static void keys_global (int ch) {
       case kbd_CtrlG:
          bot_item_toggle(EU_CGR, "control groups", BOT_SEP_SLS);
          break;
-#ifdef BOT_MENU_YES
-      case kbd_CtrlH:
-         bot_menu_toggle();
-         break;
-#endif
       case kbd_CtrlI:
          if (Bot_what) {
             ++Bot_indx;
@@ -5614,15 +5572,11 @@ static void keys_global (int ch) {
                Bot_indx = num + 1;
          }
          break;
-      case kbd_ENTER:             // fall through
-#ifdef BOT_MENU_YES
-         if (Bot_what == BOT_MENU_ON && Bot_indx != BOT_UNFOCUS)
-            show_msg(fmtmk("thanks for selecting menu item #%d", Bot_indx + 1));
-#endif                            // the enter plus space keys will wake us
+      case kbd_ENTER:             // these two have the effect of waking us
       case kbd_SPACE:             // from 'pselect', refreshing the display
          break;                   // and updating any hot-plugged resources
-      default:
-         break;                   // keep gcc happy
+      default:                    // keep gcc happy
+         break;
    }
 } // end: keys_global
 
@@ -6460,9 +6414,6 @@ static void do_key (int ch) {
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
          , kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK
          , kbd_CtrlN, kbd_CtrlP, kbd_CtrlR, kbd_CtrlU
-#ifdef BOT_MENU_YES
-         , kbd_CtrlH
-#endif
          , kbd_ENTER, kbd_SPACE, kbd_BTAB, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
