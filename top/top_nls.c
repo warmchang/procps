@@ -591,6 +591,11 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[AGNI_invalid_txt] = _("valid AGNI range is -20 to +19");
    Norm_nlstab[AGNI_notopen_fmt] = _("autogroup open failed, %s");
    Norm_nlstab[AGNI_nowrite_fmt] = _("autogroup write failed, %s");
+   Norm_nlstab[X_BOT_cmdlin_fmt] = _("command line for pid %d, %s");
+   Norm_nlstab[X_BOT_ctlgrp_fmt] = _("control groups for pid %d, %s");
+   Norm_nlstab[X_BOT_envirn_fmt] = _("environment for pid %d, %s");
+   Norm_nlstab[X_BOT_namesp_fmt] = _("namespaces for pid %d, %s");
+   Norm_nlstab[X_BOT_supgrp_fmt] = _("supplementary groups for pid %d, %s");
 }
 
 

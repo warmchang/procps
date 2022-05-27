@@ -746,7 +746,7 @@ typedef struct WIN_t {
 //atic int           bot_focus_strv (const char *hdr, const char **strv);
 //atic void         *bot_item_hlp (struct pids_stack *p);
 //atic void          bot_item_show (void);
-//atic void          bot_item_toggle (int what, const char *name, char sep);
+//atic void          bot_item_toggle (int what, const char *head, char sep);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);

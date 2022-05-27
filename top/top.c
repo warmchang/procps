@@ -127,7 +127,7 @@ static int   Bot_task,
              Bot_indx = BOT_UNFOCUS,
              Bot_item[BOT_MAXIMUM] = { BOT_DELIMIT };
 static char  Bot_sep,
-            *Bot_name,
+            *Bot_head,
              Bot_buf[BOTBUFSIZ];       // the 'environ' can be huge
 typedef int(*BOT_f)(const void *, const void *);
 static BOT_f Bot_focus_func;
@@ -5077,7 +5077,7 @@ static void *bot_item_hlp (struct pids_stack *p) {
          * This guy manages that bottom margin window |
          * which shows various process related stuff. | */
 static void bot_item_show (void) {
- #define mkHDR  fmtmk("%s for pid %d, %s", Bot_name, Bot_task, PID_VAL(EU_CMD, str, p))
+ #define mkHDR  fmtmk(Bot_head, Bot_task, PID_VAL(EU_CMD, str, p))
    struct pids_stack *p;
    int i;
 
@@ -5102,7 +5102,7 @@ static void bot_item_show (void) {
         /*
          * This guy can toggle between displaying the |
          * bottom window or arranging to turn it off. | */
-static void bot_item_toggle (int what, const char *name, char sep) {
+static void bot_item_toggle (int what, const char *head, char sep) {
    int i;
 
    // if already targeted, assume user wants to turn it off ...
@@ -5131,7 +5131,7 @@ static void bot_item_toggle (int what, const char *name, char sep) {
       Bot_sep = sep;
       Bot_what = what;
       Bot_indx = BOT_UNFOCUS;
-      Bot_name = (char *)name;
+      Bot_head = (char *)head;
       Bot_show_func = bot_item_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
@@ -5515,7 +5515,7 @@ static void keys_global (int ch) {
 #endif
          break;
       case kbd_CtrlG:
-         bot_item_toggle(EU_CGR, "control groups", BOT_SEP_SLS);
+         bot_item_toggle(EU_CGR, N_fmt(X_BOT_ctlgrp_fmt), BOT_SEP_SLS);
          break;
       case kbd_CtrlI:
          if (Bot_what) {
@@ -5526,14 +5526,14 @@ static void keys_global (int ch) {
          break;
       case kbd_CtrlK:
          // with string vectors, the 'separator' may serve a different purpose
-         bot_item_toggle(eu_CMDLINE_V, "command line", BOT_SEP_SPC);
+         bot_item_toggle(eu_CMDLINE_V, N_fmt(X_BOT_cmdlin_fmt), BOT_SEP_SPC);
          break;
       case kbd_CtrlN:
          // with string vectors, the 'separator' may serve a different purpose
-         bot_item_toggle(eu_ENVIRON_V, "environment", BOT_SEP_SPC);
+         bot_item_toggle(eu_ENVIRON_V, N_fmt(X_BOT_envirn_fmt), BOT_SEP_SPC);
          break;
       case kbd_CtrlP:
-         bot_item_toggle(BOT_ITEM_NS, "namespaces", BOT_SEP_CMA);
+         bot_item_toggle(BOT_ITEM_NS, N_fmt(X_BOT_namesp_fmt), BOT_SEP_CMA);
          break;
       case kbd_CtrlR:
          if (Secure_mode)
@@ -5562,7 +5562,7 @@ static void keys_global (int ch) {
          }
          break;
       case kbd_CtrlU:
-         bot_item_toggle(EU_SGN, "supplementary groups", BOT_SEP_CMA);
+         bot_item_toggle(EU_SGN, N_fmt(X_BOT_supgrp_fmt), BOT_SEP_CMA);
          break;
       case kbd_BTAB:
          if (Bot_what) {
