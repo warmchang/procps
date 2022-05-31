@@ -92,7 +92,7 @@ PROCPS_EXPORT int procps_loadavg(
 {
     double avg_1=0, avg_5=0, avg_15=0;
     locale_t tmplocale;
-    int retval;
+    int retval=0;
     FILE *fp;
 
     if ((fp = fopen(LOADAVG_FILE, "r")) == NULL)
