@@ -170,11 +170,20 @@ int main(int argc, char **argv)
 	alrm(0);
 
 	while (1) {
+        int rc;
 
 		if (scale_fact < max_scale)
 			scale_fact *= 2.0;	/* help it drift back up. */
 
-		procps_loadavg(&av[0], &av[1], &av[2]);
+		if ((rc = procps_loadavg(&av[0], &av[1], &av[2])) < 0)
+        {
+            if (rc == -ENOENT)
+                xerrx(EXIT_FAILURE,
+                      _("Load average file /proc/loadavg does not exist"));
+            else
+                xerrx(EXIT_FAILURE,
+                      _("Unable to get load average"));
+        }
 
 		do {
 			lines = av[0] * scale_fact;
