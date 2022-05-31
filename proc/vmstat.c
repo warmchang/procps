@@ -1170,6 +1170,7 @@ static int vmstat_read_failed (
     // clear out the soon to be 'current' values
     memset(&info->hist.new, 0, sizeof(struct vmstat_data));
 
+#ifndef __CYGWIN__ /* /proc/vmstat does not exist */
     if (-1 == info->vmstat_fd
     && (-1 == (info->vmstat_fd = open(VMSTAT_FILE, O_RDONLY))))
         return 1;
@@ -1213,7 +1214,7 @@ static int vmstat_read_failed (
             break;
         head = tail + 1;
     }
-
+#endif /* !__CYGWIN__ */
     return 0;
 } // end: vmstat_read_failed
 
