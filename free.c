@@ -205,7 +205,7 @@ static void print_head_col(const char *str)
 
 int main(int argc, char **argv)
 {
-	int c, flags = 0, unit_set = 0;
+	int c, flags = 0, unit_set = 0, rc = 0;
 	struct commandline_arguments args;
 	struct meminfo_info *mem_info = NULL;
 
@@ -360,9 +360,15 @@ int main(int argc, char **argv)
 	if (optind != argc)
 	    usage(stderr);
 
-	if (procps_meminfo_new(&mem_info) < 0)
-	    xerrx(EXIT_FAILURE,
-		    _("Unable to create meminfo structure"));
+	if ( (rc = procps_meminfo_new(&mem_info)) < 0)
+    {
+        if (rc == -ENOENT)
+            xerrx(EXIT_FAILURE,
+                  _("Memory information file /proc/meminfo does not exist"));
+        else
+            xerrx(EXIT_FAILURE,
+                  _("Unable to create meminfo structure"));
+    }
 	do {
 		/* Translation Hint: You can use 9 character words in
 		 * the header, and the words need to be right align to
