@@ -36,40 +36,7 @@
 #include "procps-private.h"
 
 
-#define BAD_OPEN_MESSAGE					\
-"Error: /proc must be mounted\n"				\
-"  To mount /proc at boot you need an /etc/fstab line like:\n"	\
-"      proc   /proc   proc    defaults\n"			\
-"  In the meantime, run \"mount proc /proc -t proc\"\n"
-
 #define LOADAVG_FILE "/proc/loadavg"
-static int loadavg_fd = -1;
-
-// As of 2.6.24 /proc/meminfo seems to need 888 on 64-bit,
-// and would need 1258 if the obsolete fields were there.
-// As of 3.13 /proc/vmstat needs 2623,
-// and /proc/stat needs 3076.
-static __thread char buf[8192];
-
-/* This macro opens filename only if necessary and seeks to 0 so
- * that successive calls to the functions are more efficient.
- * It also reads the current contents of the file into the global buf.
- */
-#define FILE_TO_BUF(filename, fd) do{				\
-    static __thread int local_n;				\
-    if (fd == -1 && (fd = open(filename, O_RDONLY)) == -1) {	\
-	fputs(BAD_OPEN_MESSAGE, stderr);			\
-	fflush(NULL);						\
-	_exit(102);						\
-    }								\
-    lseek(fd, 0L, SEEK_SET);					\
-    if ((local_n = read(fd, buf, sizeof buf - 1)) < 0) {	\
-	perror(filename);					\
-	fflush(NULL);						\
-	_exit(103);						\
-    }								\
-    buf[local_n] = '\0';					\
-}while(0)
 
 /* evals 'x' twice */
 #define SET_IF_DESIRED(x,y) do{  if(x) *(x) = (y); }while(0)
@@ -125,12 +92,15 @@ PROCPS_EXPORT int procps_loadavg(
 {
     double avg_1=0, avg_5=0, avg_15=0;
     locale_t tmplocale;
-    int retval=0;
+    int retval;
+    FILE *fp;
 
-    FILE_TO_BUF(LOADAVG_FILE,loadavg_fd);
+    if ((fp = fopen(LOADAVG_FILE, "r")) == NULL)
+        return -errno;
+
     tmplocale = newlocale(LC_NUMERIC_MASK, "C", (locale_t)0);
     uselocale(tmplocale);
-    if (sscanf(buf, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3)
+    if (fscanf(fp, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3)
         retval = -ERANGE;
 
     uselocale(LC_GLOBAL_LOCALE);
