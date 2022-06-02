@@ -103,6 +103,7 @@ PROCPS_EXPORT int procps_loadavg(
     if (fscanf(fp, "%lf %lf %lf", &avg_1, &avg_5, &avg_15) < 3)
         retval = -ERANGE;
 
+    fclose(fp);
     uselocale(LC_GLOBAL_LOCALE);
     freelocale(tmplocale);
     SET_IF_DESIRED(av1,  avg_1);
