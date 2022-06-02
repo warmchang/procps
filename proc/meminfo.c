@@ -859,6 +859,9 @@ PROCPS_EXPORT int procps_meminfo_unref (
     if ((*info)->refcount < 1) {
         int errno_sav = errno;
 
+        if ((*info)->meminfo_fd != -1)
+            close((*info)->meminfo_fd);
+
         if ((*info)->extents)
             meminfo_extents_free_all((*info));
         if ((*info)->items)

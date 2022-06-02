@@ -1356,6 +1356,9 @@ PROCPS_EXPORT int procps_vmstat_unref (
     if ((*info)->refcount < 1) {
         int errno_sav = errno;
 
+        if ((*info)->vmstat_fd != -1)
+            close((*info)->vmstat_fd);
+
         if ((*info)->extents)
             vmstat_extents_free_all((*info));
         if ((*info)->items)
