@@ -1273,7 +1273,7 @@ depending on the context in which they are issued.
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z,
-        ^G, ^K, ^U, ^V, ^R
+        ^G, ^K, ^N, ^P, ^U, ^L, ^R
   4b.\fI Summary-Area-Commands \fR
         C, l, t, m, 1, 2, 3, 4, !
   4c.\fI Task-Area-Commands \fR
@@ -1569,6 +1569,13 @@ As an alternative to `Inspect', and available to all of these `Ctrl'
 commands, the tab key can be used to highlight individual elements
 in the bottom window.
 .RS -7
+
+.TP 7
+\ \ \ \fB^L\fR\ \ :\fILogged-Messages \fR (Ctrl key + `l')
+The 10 most recent messages are displayed in a separate window at
+the bottom of the screen while normal \*(We monitoring continues.
+Keying `^L' a second time removes that window as does the `=' command.
+Use the tab key to highlight individual messages.
 
 .TP 7
 *\ \ \fB^R\fR\ \ :\fIRenice-an-Autogroup \fR (Ctrl key + `r')
