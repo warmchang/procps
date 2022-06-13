@@ -2435,6 +2435,9 @@ signify_that:
             break;
       }
    } while (key != 'q' && key != kbd_ESC);
+
+   // signal that we just corrupted entire screen
+   Frames_signal = BREAK_screen;
  #undef unSCRL
  #undef swapEM
  #undef spewFI
@@ -3362,6 +3365,8 @@ signify_that:
       }
    } while (key != 'q' && key != kbd_ESC);
 
+   // signal that we just corrupted entire screen
+   Frames_signal = BREAK_screen;
  #undef mkSEL
 } // end: inspection_utility
 
@@ -4567,7 +4572,8 @@ signify_that:
    } while (key != kbdAPPLY && key != kbdABORT);
 
    if (key == kbdABORT || key == kbd_ESC) wins_clrhlp(w, 0);
-
+   // signal that we just corrupted entire screen
+   Frames_signal = BREAK_screen;
  #undef kbdABORT
  #undef kbdAPPLY
 } // end: wins_colors
@@ -5275,6 +5281,8 @@ signify_that:
       default:
          goto signify_that;
    }
+   // signal that we just corrupted entire screen
+   Frames_signal = BREAK_screen;
 } // end: help_view
 
 
@@ -5413,8 +5421,6 @@ static void keys_global (int ch) {
       case '?':
       case 'h':
          help_view();
-         // signal that we just corrupted entire screen
-         Frames_signal = BREAK_screen;
          mkVIZrow1
          break;
       case 'B':
@@ -5439,8 +5445,6 @@ static void keys_global (int ch) {
          break;
       case 'f':
          fields_utility();
-         // signal that we just corrupted entire screen
-         Frames_signal = BREAK_screen;
          break;
       case 'g':
          win_select(0);
@@ -5523,18 +5527,12 @@ static void keys_global (int ch) {
             pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
-               if (pid) {
-                  inspection_utility(pid);
-                  // signal that we just corrupted entire screen
-                  Frames_signal = BREAK_screen;
-               }
+               if (pid) inspection_utility(pid);
             }
          }
          break;
       case 'Z':
          wins_colors();
-         // signal that we just corrupted entire screen
-         Frames_signal = BREAK_screen;
          mkVIZrow1
          break;
       case '0':
