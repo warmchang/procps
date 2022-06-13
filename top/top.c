@@ -1157,7 +1157,7 @@ static int iokey (int action) {
 #ifdef TERMIOS_ONLY
    char buf[SMLBUFSIZ], *pb;
 #else
-   static char buf[SMLBUFSIZ];
+   static char buf[MEDBUFSIZ];
    static int pos, len;
    char *pb;
 #endif
@@ -1196,7 +1196,7 @@ static int iokey (int action) {
       pos = len = 0;
       memset(buf, '\0', sizeof(buf));
       if (1 > ioch(0, buf, sizeof(buf)-1)) return 0;
-      if (isprint(buf[0])) {           // no need for translation
+      if (!iscntrl(buf[0])) {          // no need for translation
          len = strlen(buf);
          pos = 1;
          return buf[0];
@@ -1240,44 +1240,56 @@ static char *ioline (const char *prompt) {
 
 #else
         /*
-         * Get line oriented interactive input from the user,
-         * going way beyond native tty support by providing:
-         * . true line editing, not just destructive backspace
-         * . an input limit sensitive to current screen dimensions
-         * . ability to recall prior strings for re-input/re-editing */
+         * Get some line oriented interactive input from the ol' user,
+         * going way, way beyond that native tty support by providing:
+         * . true input line editing, not just a destructive backspace
+         * . an input limit sensitive to the current screen dimensions
+         * . an ability to recall prior strings for editing & re-input */
 static char *ioline (const char *prompt) {
+ #define setLEN    ( len = strlen(buf) - utf8_delta(buf) )
+ #define setPOS(X) ( pos = utf8_embody(buf, X) )
+ #define utfCHR(X) ( (unsigned char *)&buf[X] )
+ #define utfTOT(X) ( UTF8_tab[(unsigned char)buf[X]] )
+ #define utfCOL(X) ( utf8_cols(utfCHR(X), utfTOT(X)) )
+ #define movBKW    { setPOS(cur - 1); while (utfTOT(pos) < 0) --pos; }
+ #define chkCUR    { if (cur < 0) cur = 0; if (cur > len) cur = len; }
+    // thank goodness ol' memmove will safely allow strings to overlap
+ #define sqzSTR  { i = utfTOT(pos); while (i < 0) i = utfTOT(--pos); \
+       memmove(&buf[pos], &buf[pos + i], bufMAX-(pos + i)); \
+       memset(&buf[bufMAX - i], '\0', i); }
+ #define expSTR(X)  if (bufNXT < bufMAX && scrNXT < Screen_cols) { \
+       memmove(&buf[pos + X], &buf[pos], bufMAX - pos); }
  #define savMAX  50
-    // thank goodness memmove allows the two strings to overlap
- #define sqzSTR  { memmove(&buf[pos], &buf[pos+1], bufMAX-pos); \
-       buf[sizeof(buf)-1] = '\0'; }
- #define expSTR  if (len+1 < bufMAX && len+beg+1 < Screen_cols) { \
-       memmove(&buf[pos+1], &buf[pos], bufMAX-pos); buf[pos] = ' '; }
- #define logCOL  (pos+1)
- #define phyCOL  (beg+pos+1)
+ #define bufNXT  ( pos + 4 )           // four equals longest utf8 str
+ #define scrNXT  ( beg + len + 2 )     // two due to multi-column char
  #define bufMAX  ((int)sizeof(buf)-2)  // -1 for '\0' string delimeter
    static char buf[MEDBUFSIZ+1];       // +1 for '\0' string delimeter
    static int ovt;
-   int beg, pos, len, key, i;
+   int beg,           // the physical column where input began, buf[0]
+       cur,           // the logical current column/insertion position
+       len,           // the logical input length, thus the end column
+       pos,           // the physical position in the buffer currently
+       key, i;
    struct lin_s {
-      struct lin_s *bkw;               // ptr to older saved strs
-      struct lin_s *fwd;               // ptr to newer saved strs
-      char *str;                       // the saved string
+      struct lin_s *bkw;               // pointer for older saved strs
+      struct lin_s *fwd;               // pointer for newer saved strs
+      char *str;                       // an actual saved input string
    };
    static struct lin_s *anchor, *plin;
 
    if (!anchor) {
       anchor = alloc_c(sizeof(struct lin_s));
-      anchor->str = alloc_s("");       // top-of-stack == empty str
+      anchor->str = alloc_s("");       // the top-of-stack (empty str)
    }
    plin = anchor;
-   pos = 0;
+   cur = len = pos = 0;
    beg = show_pmt(prompt);
    memset(buf, '\0', sizeof(buf));
+   // this may not work under a gui emulator (but linux console is ok)
    putp(ovt ? Cap_curs_huge : Cap_curs_norm);
 
    do {
       fflush(stdout);
-      len = strlen(buf);
       key = iokey(IOKEY_NEXT);
       switch (key) {
          case 0:
@@ -1287,6 +1299,7 @@ static char *ioline (const char *prompt) {
             buf[0] = kbd_ESC;
             return buf;
          case kbd_ENTER:
+         case kbd_BTAB: case kbd_PGUP: case kbd_PGDN:
             continue;
          case kbd_INS:
             ovt = !ovt;
@@ -1295,45 +1308,63 @@ static char *ioline (const char *prompt) {
          case kbd_DEL:
             sqzSTR
             break;
-         case kbd_BKSP :
-            if (0 < pos) { --pos; sqzSTR }
+         case kbd_BKSP:
+            if (0 < cur) { movBKW; cur -= utfCOL(pos); setPOS(cur); sqzSTR; }
             break;
          case kbd_LEFT:
-            if (0 < pos) --pos;
+            if (0 < cur) { movBKW; cur -= utfCOL(pos); }
             break;
          case kbd_RIGHT:
-            if (pos < len) ++pos;
+            if (cur < len) cur += utfCOL(pos);
             break;
          case kbd_HOME:
-            pos = 0;
+            cur = pos = 0;
             break;
          case kbd_END:
-            pos = len;
+            cur = len;
+            pos = strlen(buf);
             break;
          case kbd_UP:
             if (plin->bkw) {
                plin = plin->bkw;
                memset(buf, '\0', sizeof(buf));
-               pos = snprintf(buf, sizeof(buf), "%.*s", Screen_cols - beg - 1, plin->str);
+               memccpy(buf, plin->str, '\0', bufMAX);
+               cur = setLEN;
+               pos = strlen(buf);
             }
             break;
          case kbd_DOWN:
-            memset(buf, '\0', sizeof(buf));
             if (plin->fwd) plin = plin->fwd;
-            pos = snprintf(buf, sizeof(buf), "%.*s", Screen_cols - beg - 1, plin->str);
+            memset(buf, '\0', sizeof(buf));
+            memccpy(buf, plin->str, '\0', bufMAX);
+            cur = setLEN;
+            pos = strlen(buf);
             break;
          default:                      // what we REALLY wanted (maybe)
-            if (isprint(key) && logCOL < bufMAX && phyCOL < Screen_cols) {
-               if (!ovt) expSTR
+            if (bufNXT < bufMAX && scrNXT < Screen_cols) {
+               int tot = UTF8_tab[(unsigned char)key],
+                   sav = pos;
+               if (tot < 1) tot = 1;
+               if (!ovt) { expSTR(tot); }
+               else { pos = utf8_embody(buf, cur); sqzSTR; expSTR(tot); }
                buf[pos++] = key;
+               while (tot > 1) {
+                 key = iokey(IOKEY_NEXT);
+                 buf[pos++] = key;
+                 --tot;
+               }
+               cur += utfCOL(sav);
             }
             break;
       }
+      setLEN;
+      chkCUR;
+      setPOS(cur);
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
 #ifdef OVERTYPE_SEE
       putp(fmtmk("%s%c", tg2(beg - 1, Msg_row), ovt ? '^' : ' '));
 #endif
-      putp(tg2(beg+pos, Msg_row));
+      putp(tg2(beg + cur, Msg_row));
    } while (key != kbd_ENTER);
 
    // weed out duplicates, including empty strings (top-of-stack)...
@@ -1372,11 +1403,18 @@ static char *ioline (const char *prompt) {
    anchor->bkw = plin;                 // by sliding it in as new number 2!
 
    return buf;                         // protect our copy, return original
- #undef savMAX
+ #undef setLEN
+ #undef setPOS
+ #undef utfCHR
+ #undef utfTOT
+ #undef utfCOL
+ #undef movBKW
+ #undef chkCUR
  #undef sqzSTR
  #undef expSTR
- #undef logCOL
- #undef phyCOL
+ #undef savMAX
+ #undef bufNXT
+ #undef scrNXT
  #undef bufMAX
 } // end: ioline
 #endif
