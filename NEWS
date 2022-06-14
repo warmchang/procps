@@ -12,6 +12,8 @@ procps-ng-NEXT
   *      cmdline, control groups, environment,
          supplimentary groups, namespaces
   * top: adds a 'message log' recall capability
+  * top: will accept utf8 multi-byte input with support
+         for full line editing and previous line recall
   * watch: Add equexit no-change and exit option           merge #153
 
 procps-ng-4.0.0
