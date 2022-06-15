@@ -61,7 +61,6 @@
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
-//#define TAG_CMD_MUST            /* CtrlK (cmdline) needs proper 'c' toggle */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
 //#define TOG4_NOTRUNC            /* ensure no truncation for 2 abreast mode */

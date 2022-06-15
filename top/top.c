@@ -116,7 +116,9 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #define      SCREEN_ROWS ( Screen_rows - Tagged_rsvd )
         // 1 for horizontal separator
 #define      TAGGED_RSVD ( 1 )
-#define      TAGGED_UNDO do { Tagged_task = Tagged_rsvd = Tagged_lflg = 0; } while (0)
+#define      TAGGED_KEEP Tagged_func = NULL
+#define      TAGGED_TOSS do { Tagged_func = NULL; \
+                Tagged_task = Tagged_rsvd = Tagged_lflg = 0; } while (0)
 static int   Tagged_task,
              Tagged_rsvd,
              Tagged_lflg;
@@ -4561,7 +4563,7 @@ static void win_reset (WIN_t *q) {
          // these next guys are global, not really windows based
          Monpidsidx = 0;
          Rc.tics_scaled = 0;
-         TAGGED_UNDO;
+         TAGGED_TOSS;
 } // end: win_reset
 
 
@@ -4867,9 +4869,8 @@ static void wins_tag_cmdline (void) {
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
       fputs(p, stdout);
-   } else {
-      TAGGED_UNDO;
    }
+   TAGGED_KEEP;
 } // end: wins_tag_cmdline
 
 
@@ -4906,9 +4907,8 @@ static void wins_tag_generic (void) {
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
       fputs(p, stdout);
-   } else {
-      TAGGED_UNDO;
    }
+   TAGGED_KEEP;
 } // end: wins_tag_generic
 
 
@@ -5504,7 +5504,7 @@ static void keys_global (int ch) {
          def = w->ppt[w->begtask]->tid;
          // if already targeted, assume user wants to turn it off ...
          if (Tagged_task && Tagged_lflg == (L_CGROUP)) {
-            TAGGED_UNDO;
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
             Tagged_lflg = L_CGROUP;
@@ -5516,7 +5516,7 @@ static void keys_global (int ch) {
          def = w->ppt[w->begtask]->tid;
          // if already targeted, assume user wants to turn it off ...
          if (Tagged_task && Tagged_lflg == (L_CMDLINE)) {
-            TAGGED_UNDO;
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
             Tagged_lflg = L_CMDLINE;
@@ -5527,7 +5527,7 @@ static void keys_global (int ch) {
          def = w->ppt[w->begtask]->tid;
          // if already targeted, assume user wants to turn it off ...
          if (Tagged_task && Tagged_lflg == (L_SUPGRP)) {
-            TAGGED_UNDO;
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
             Tagged_lflg = L_SUPGRP;
@@ -5539,7 +5539,7 @@ static void keys_global (int ch) {
          def = w->ppt[w->begtask]->tid;
          // if already targeted, assume user wants to turn it off ...
          if (Tagged_task && Tagged_lflg == (L_ENVIRON)) {
-            TAGGED_UNDO;
+            TAGGED_TOSS;
          } else {
             Tagged_task = def;
             Tagged_lflg = L_ENVIRON;
@@ -6928,8 +6928,10 @@ static void frame_make (void) {
       widths_resize();
 
    // deal with potential signal(s) since the last time around...
-   if (Frames_signal)
+   if (Frames_signal) {
+      if (Frames_signal == BREAK_sig) TAGGED_TOSS;
       zap_fieldstab();
+   }
 
    // whoa either first time or thread/task mode change, (re)prime the pump...
    if (Pseudo_row == PROC_XTRA) {
@@ -6969,12 +6971,15 @@ static void frame_make (void) {
    /* clear to end-of-screen - critical if last window is 'idleps off'
       (main loop must iterate such that we're always called before sleep) */
    if (scrlins < Max_lines) {
-      putp(Cap_nl_clreos);
+      for (i = scrlins + Msg_row + 1; i < SCREEN_ROWS; i++) {
+         putp(tg2(0, i));
+         putp(Cap_clr_eol);
+      }
       PSU_CLREOS(Pseudo_row);
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Tagged_task) Tagged_func();
+   if (Tagged_func) Tagged_func();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
