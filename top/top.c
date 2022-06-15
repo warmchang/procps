@@ -114,16 +114,19 @@ static int   Screen_cols, Screen_rows, Max_lines;
 
         // these are for the special separate bottom 'window'
 #define      SCREEN_ROWS ( Screen_rows - Bot_rsvd )
+#define      BOT_MISC_NS  +1           // data for namespaces req'd
         // 1 for horizontal separator
 #define      BOT_RSVD  1
-#define      BOT_KEEP  Bot_show = 0
-#define      BOT_TOSS  do { Bot_show = 0; \
-                Bot_task = Bot_rsvd = Bot_lflg = 0; } while (0)
-static int   Bot_show,
-             Bot_task,
+#define      BOT_KEEP  Bot_func = NULL
+#define      BOT_TOSS  do { Bot_func = NULL; Bot_lflg = 0; \
+                Bot_task = Bot_rsvd = Bot_misc = 0; } \
+                while (0)
+static int   Bot_task,
+             Bot_misc,
              Bot_rsvd,
              Bot_lflg;
 static char *Bot_name;
+static void(*Bot_func)(void);
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -2143,7 +2146,7 @@ static void build_headers (void) {
          if (w->usrseltyp == 'U') Frames_libflags |= L_status;
 
          // lastly, accommodate any special non-display 'tagged' needs...
-         if (Bot_lflg) Frames_libflags |= Bot_lflg;
+         Frames_libflags |= Bot_lflg;
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
@@ -5099,7 +5102,6 @@ static void bot_do_see (const char *str, const char *pgm) {
  #undef maxRSVD
 } // end: bot_do_see
 
-
         /*
          * This guy manages the bottom margin window, |
          * showing miscellaneous variable width data. | */
@@ -5151,10 +5153,81 @@ static void bot_item_toggle (int flg, const char *str) {
    } else {
       Bot_lflg = flg;
       Bot_name = (char*)str;
-      Bot_show = 1;
+      Bot_func = bot_item_show;
       Bot_task = Curwin->ppt[Curwin->begtask]->tid;
    }
 } // end: bot_item_toggle
+
+
+        /*
+         * A helper function that will gather various |
+         * stuff for dislay by the bot_misc_show guy. | */
+static char *bot_misc_hlp (proc_t *p) {
+   static enum ns_type ns_tab[] = {
+   // eu_ns1  eu_ns2  eu_ns3  eu_ns4  eu_ns5  eu_ns6
+      IPCNS,  MNTNS,  NETNS,  PIDNS,  USERNS, UTSNS };
+   static char buf[BIGBUFSIZ], *b;
+   int i;
+
+   buf[0] = '\0';
+   switch (Bot_misc) {
+      case BOT_MISC_NS:
+         b = &buf[0];
+         for (i = 0; i < MAXTBL(ns_tab); i++)
+            b = scat(b, fmtmk("%s: %-10lu  ", get_ns_name(ns_tab[i]), p->ns[i]));
+         break;
+      default:
+         break;
+   }
+   return buf;
+} // end: bot_misc_hlp
+
+
+        /*
+         * This guy manages the bottom margin window, |
+         * showing misc data based on multiple items. | */
+static void bot_misc_show (void) {
+   proc_t *p;
+   int i;
+
+   for (i = 0; i < Frame_maxtask; i++) {
+      p = Curwin->ppt[i];
+      if (Bot_task == p->tid)
+         break;
+   }
+   if (i < Frame_maxtask) {
+      bot_do_see(bot_misc_hlp(p), p->cmd);
+   }
+#ifdef BOT_DEAD_ZAP
+   else
+      BOT_TOSS;
+#else
+   BOT_KEEP;
+#endif
+} // end: bot_misc_show
+
+
+        /*
+         * This guy toggles between displaying a Ctrl |
+         * bottom window or arranging to turn it off. | */
+static void bot_misc_toggle (int what) {
+   // if already targeted, assume user wants to turn it off ...
+   if (Bot_misc == what) {
+      BOT_TOSS;
+   } else {
+      switch (what) {
+         case BOT_MISC_NS:
+            Bot_lflg = L_NS;
+            Bot_name = (char*)"namespaces";
+            break;
+         default:
+            break;
+      }
+      Bot_misc = what;
+      Bot_func = bot_misc_show;
+      Bot_task = Curwin->ppt[Curwin->begtask]->tid;
+   }
+} // end: bot_misc_toggle
 
 /*######  Interactive Input Tertiary support  ############################*/
 
@@ -5532,6 +5605,9 @@ static void keys_global (int ch) {
          break;
       case kbd_CtrlN:
          bot_item_toggle((L_ENVIRON), "environment");
+         break;
+      case kbd_CtrlP:
+         bot_misc_toggle(BOT_MISC_NS);
          break;
       case kbd_CtrlU:
          bot_item_toggle((L_SUPGRP), "supplementary groups");
@@ -6349,7 +6425,7 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlN, kbd_CtrlU
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlN, kbd_CtrlP, kbd_CtrlU
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
@@ -6972,7 +7048,7 @@ static void frame_make (void) {
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Bot_show) bot_item_show();
+   if (Bot_func) Bot_func();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
