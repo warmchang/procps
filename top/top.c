@@ -132,7 +132,7 @@ static int   Bot_task,
              Bot_rsvd,
              Bot_indx = BOT_UNFOCUS;
 static char  Bot_sep,
-            *Bot_name,
+            *Bot_head,
              Bot_buf[BOTBUFSIZ];       // the 'environ' can be huge
 typedef int(*BOT_f)(const void *, const void *);
 static BOT_f Bot_focus_func;
@@ -5253,7 +5253,7 @@ static void *bot_item_hlp (proc_t *p) {
          * This guy manages the bottom margin window, |
          * showing miscellaneous variable width data. | */
 static void bot_item_show (void) {
- #define mkHDR  fmtmk("%s for pid %d, %s", Bot_name, Bot_task, p->cmd)
+ #define mkHDR  fmtmk(Bot_head, Bot_task, p->cmd)
    proc_t *p;
    int i;
 
@@ -5278,7 +5278,7 @@ static void bot_item_show (void) {
         /*
          * This guy toggles between displaying a Ctrl |
          * bottom window or arranging to turn it off. | */
-static void bot_item_toggle (int what, const char *name, char sep) {
+static void bot_item_toggle (int what, const char *head, char sep) {
    // if already targeted, assume user wants to turn it off ...
    if (Bot_what == what) {
       BOT_TOSS;
@@ -5296,7 +5296,7 @@ static void bot_item_toggle (int what, const char *name, char sep) {
       Bot_sep = sep;
       Bot_what = what;
       Bot_indx = BOT_UNFOCUS;
-      Bot_name = (char *)name;
+      Bot_head = (char *)head;
       Bot_show_func = bot_item_show;
       Bot_task = Curwin->ppt[Curwin->begtask]->tid;
    }
@@ -5685,17 +5685,17 @@ static void keys_global (int ch) {
           break;
       case kbd_CtrlK:
          // with string vectors, the 'separator' may serve a different purpose
-         bot_item_toggle(PROC_FILLARG, "command line", BOT_SEP_SPC);
+         bot_item_toggle(PROC_FILLARG, N_fmt(X_BOT_cmdlin_fmt), BOT_SEP_SPC);
          break;
       case kbd_CtrlN:
          // with string vectors, the 'separator' may serve a different purpose
-         bot_item_toggle(PROC_FILLENV, "environment", BOT_SEP_SPC);
+         bot_item_toggle(PROC_FILLENV, N_fmt(X_BOT_envirn_fmt), BOT_SEP_SPC);
          break;
       case kbd_CtrlP:
-         bot_item_toggle((L_NS), "namespaces", BOT_SEP_CMA);
+         bot_item_toggle((L_NS), N_fmt(X_BOT_namesp_fmt), BOT_SEP_CMA);
          break;
       case kbd_CtrlU:
-         bot_item_toggle((L_SUPGRP), "supplementary groups", BOT_SEP_CMA);
+         bot_item_toggle((L_SUPGRP), N_fmt(X_BOT_supgrp_fmt), BOT_SEP_CMA);
          break;
       case kbd_BTAB:
          if (Bot_what) {

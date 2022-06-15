@@ -524,6 +524,11 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[XTRA_size2up_txt] = _("terminal is not wide enough");
    Norm_nlstab[XTRA_modebad_txt] = _("wrong mode, command inactive");
    Norm_nlstab[XTRA_warnold_txt] = _("saving prevents older top from reading, save anyway?");
+   Norm_nlstab[X_BOT_cmdlin_fmt] = _("command line for pid %d, %s");
+   Norm_nlstab[X_BOT_ctlgrp_fmt] = _("control groups for pid %d, %s");
+   Norm_nlstab[X_BOT_envirn_fmt] = _("environment for pid %d, %s");
+   Norm_nlstab[X_BOT_namesp_fmt] = _("namespaces for pid %d, %s");
+   Norm_nlstab[X_BOT_supgrp_fmt] = _("supplementary groups for pid %d, %s");
 }
 
 
