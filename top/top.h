@@ -834,14 +834,12 @@ typedef struct WIN_t {
 //atic void          bot_do (const char *str, int focus);
 //atic int           bot_focus_str (const char *hdr, const char *str);
 //atic int           bot_focus_strv (const char *hdr, const char **strv);
+//atic void         *bot_item_hlp (proc_t *p);
 //atic void          bot_item_show (void);
-//atic void          bot_item_toggle (int item, const char *name, char sep);
-//atic char         *bot_misc_hlp (proc_t *p);
-//atic void          bot_misc_show (void);
-//atic void          bot_misc_toggle (int what, char sep);
+//atic void          bot_item_toggle (int what, const char *name, char sep);
 #ifdef BOT_MENU_YES
-//atic void          bot_pick_show (void);
-//atic void          bot_pick_toggle (void);
+//atic void          bot_menu_show (void);
+//atic void          bot_menu_toggle (void);
 #endif
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
