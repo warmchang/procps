@@ -61,6 +61,7 @@
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
+//#define TAG_CMD_MUST            /* CtrlK (cmdline) needs proper 'c' toggle */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
 //#define TOG4_NOTRUNC            /* ensure no truncation for 2 abreast mode */
@@ -182,8 +183,12 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_BKSP   137
 #define kbd_INS    138
 #define kbd_DEL    139
-#define kbd_CtrlO  '\017'
 #define kbd_CtrlE  '\005'
+#define kbd_CtrlG  '\007'
+#define kbd_CtrlK  '\013'
+#define kbd_CtrlO  '\017'
+#define kbd_CtrlU  '\025'
+#define kbd_CtrlV  '\026'
 
         /* Special value in Pseudo_row to force an additional procs refresh
            -- used at startup and for task/thread mode transitions */
@@ -805,6 +810,8 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
+//atic void          wins_tag_cmdline (void);
+//atic void          wins_tag_generic (void);
 //atic inline int    wins_usrselect (const WIN_t *q, const int idx);
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_adds (const int self, int level);

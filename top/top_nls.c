@@ -590,7 +590,8 @@ static void build_uniq_nlstab (void) {
       "  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' keep focused\n"
       "\n"
       "%s"
-      "  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1Ctrl~2+'~1E~2'\n"
+      "  ^G,K,U,V  View: ctl groups ~1^g~2; cmdline ~1^k~2; supp groups ~1^u~2; environment ~1^v~2\n"
+      "  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^e~2'\n"
       "  q         Quit\n"
       "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
@@ -661,8 +662,7 @@ static void build_uniq_nlstab (void) {
    .                 also imbedded in the translatable text (along with escape seqs)
    .                 should never themselves be translated. */
    Uniq_nlstab[KEYS_helpext_fmt] = _(""
-      "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
-      "  d or s    Set update interval\n");
+      "  d,k,r,^R, '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n");
 
 /* Translation Hint:
    .  This Fields Management header should be 3 lines long so as

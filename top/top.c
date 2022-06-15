@@ -110,7 +110,18 @@ static int   Monpidsidx = 0;
                  basis (see the WIN_t).  Max_lines is the total number of
                  screen rows after deducting summary information overhead. */
         /* Current terminal screen size. */
-static int Screen_cols, Screen_rows, Max_lines;
+static int   Screen_cols, Screen_rows, Max_lines;
+
+        // these are used to potentially set aside a bottom 'window'
+#define      SCREEN_ROWS ( Screen_rows - Tagged_rsvd )
+        // 1 for horizontal separator
+#define      TAGGED_RSVD ( 1 )
+#define      TAGGED_UNDO do { Tagged_task = Tagged_rsvd = Tagged_lflg = 0; } while (0)
+static int   Tagged_task,
+             Tagged_rsvd,
+             Tagged_lflg;
+static char *Tagged_name;
+static void(*Tagged_func)(void);
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -2128,6 +2139,9 @@ static void build_headers (void) {
          if (EU_CMD == f && CHKw(w, Show_CMDLIN)) Frames_libflags |= L_CMDLINE;
          // for 'U' filtering we need the other user ids too
          if (w->usrseltyp == 'U') Frames_libflags |= L_status;
+
+         // lastly, accommodate any special non-display 'tagged' needs...
+         if (Tagged_lflg) Frames_libflags |= Tagged_lflg;
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
@@ -4540,13 +4554,14 @@ static void win_reset (WIN_t *q) {
 #else
          q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->focus_pid = 0;
 #endif
-         // these next two are global, not really windows based
-         Monpidsidx = 0;
-         Rc.tics_scaled = 0;
-
          osel_clear(q);
          q->findstr[0] = '\0';
          q->rc.combine_cpus = 0;
+
+         // these next guys are global, not really windows based
+         Monpidsidx = 0;
+         Rc.tics_scaled = 0;
+         TAGGED_UNDO;
 } // end: win_reset
 
 
@@ -4830,6 +4845,70 @@ static void wins_stage_2 (void) {
 
 
         /*
+         * This guy manages the bottom margin window |
+         * & the tagged process command line display | */
+static void wins_tag_cmdline (void) {
+   char buf[SMLBUFSIZ];
+   const char *p;
+   int i;
+
+   for (i = 0; i < Frame_maxtask; i++) {
+      if (Tagged_task == Curwin->ppt[i]->tid)
+         break;
+   }
+   if (i < Frame_maxtask) {
+      snprintf(buf, sizeof(buf), "command line for pid %d:", Tagged_task);
+      p = *Curwin->ppt[i]->cmdline;
+      if (!p || !*p) p = "n/a";
+      Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
+      putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
+      fputs(p, stdout);
+   } else {
+      TAGGED_UNDO;
+   }
+} // end: wins_tag_cmdline
+
+
+        /*
+         * This guy manages the bottom margin window |
+         * showing miscellaneous variable width data | */
+static void wins_tag_generic (void) {
+   char buf[SMLBUFSIZ];
+   const char *p;
+   int i;
+
+   for (i = 0; i < Frame_maxtask; i++) {
+      if (Tagged_task == Curwin->ppt[i]->tid)
+         break;
+   }
+   if (i < Frame_maxtask) {
+      snprintf(buf, sizeof(buf), "%s for pid %d:", Tagged_name, Tagged_task);
+      switch (Tagged_lflg) {
+         case (L_CGROUP):         // Ctrl-G
+            p = *Curwin->ppt[i]->cgroup;
+            break;
+         case (L_SUPGRP):         // Ctrl-U
+            p = Curwin->ppt[i]->supgrp;
+            break;
+         case (L_ENVIRON):        // Ctrl-V
+            p = *Curwin->ppt[i]->environ;
+            break;
+      }
+      if (!p || !*p || !strcmp(p, "-")) p = "n/a";
+      Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
+      putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
+      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
+      fputs(p, stdout);
+   } else {
+      TAGGED_UNDO;
+   }
+} // end: wins_tag_generic
+
+
+        /*
          * Determine if this task matches the 'u/U' selection
          * criteria for a given window */
 static inline int wins_usrselect (const WIN_t *q, const int idx) {
@@ -5053,7 +5132,7 @@ static void forest_excluded (WIN_t *q) {
       // if some task 'above' us ended, try to maintain focus
       // ( but allow scrolling when there are many children )
       if (q->begtask > q->focus_beg
-      && (Screen_rows > (q->focus_end - q->focus_beg))) {
+      && (SCREEN_ROWS > (q->focus_end - q->focus_beg))) {
          q->begtask = q->focus_beg;
          q->begnext = 0;     // as 'mkVIZoff' but in any window
       }
@@ -5416,6 +5495,53 @@ static void keys_global (int ch) {
          if (Rc.tics_scaled > TICS_AS_LAST)
             Rc.tics_scaled = 0;
 #endif
+         break;
+      case kbd_CtrlG:
+         def = w->ppt[w->begtask]->tid;
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Tagged_lflg == (L_CGROUP)) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+            Tagged_lflg = L_CGROUP;
+            Tagged_name = "control groups";
+            Tagged_func = wins_tag_generic;
+         }
+         break;
+      case kbd_CtrlK:
+         def = w->ppt[w->begtask]->tid;
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Tagged_lflg == (L_CMDLINE)) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+            Tagged_lflg = L_CMDLINE;
+            Tagged_func = wins_tag_cmdline;
+         }
+         break;
+      case kbd_CtrlU:
+         def = w->ppt[w->begtask]->tid;
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Tagged_lflg == (L_SUPGRP)) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+            Tagged_lflg = L_SUPGRP;
+            Tagged_name = "supplementary groups";
+            Tagged_func = wins_tag_generic;
+         }
+         break;
+      case kbd_CtrlV:
+         def = w->ppt[w->begtask]->tid;
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Tagged_lflg == (L_ENVIRON)) {
+            TAGGED_UNDO;
+         } else {
+            Tagged_task = def;
+            Tagged_lflg = L_ENVIRON;
+            Tagged_name = "environment";
+            Tagged_func = wins_tag_generic;
+         }
          break;
       case kbd_ENTER:             // these two have the effect of waking us
       case kbd_SPACE:             // from 'pselect', refreshing the display
@@ -6040,7 +6166,7 @@ static int sum_unify (CPU_t *cpu, int nobuf) {
          * A helper function that displays cpu and/or numa node stuff |
          * ( so as to keep the 'summary_show' guy a reasonable size ) | */
 static void do_cpus (void) {
- #define noMAS (Msg_row + 1 >= Screen_rows - 1)
+ #define noMAS (Msg_row + 1 >= SCREEN_ROWS - 1)
    char tmp[MEDBUFSIZ];
    int i;
 
@@ -6230,7 +6356,8 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_ENTER, kbd_SPACE, '\0' } },
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlU, kbd_CtrlV
+         , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
@@ -6300,7 +6427,7 @@ all_done:
          *    2) Display task/cpu states (maybe)
          *    3) Display memory & swap usage (maybe) */
 static void summary_show (void) {
- #define isROOM(f,n) (CHKw(Curwin, f) && Msg_row + (n) < Screen_rows - 1)
+ #define isROOM(f,n) (CHKw(Curwin, f) && Msg_row + (n) < SCREEN_ROWS - 1)
 
    // Display Uptime and Loadavg
    if (isROOM(View_LOADAV, 1)) {
@@ -6815,7 +6942,7 @@ static void frame_make (void) {
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
-   Max_lines = (Screen_rows - Msg_row) - 1;
+   Max_lines = (SCREEN_ROWS - Msg_row) - 1;
 
    // we're now on Msg_row so clear out any residual messages ...
    putp(Cap_clr_eol);
@@ -6842,8 +6969,8 @@ static void frame_make (void) {
       PSU_CLREOS(Pseudo_row);
    }
 
-   if (CHKw(w, View_SCROLL) && VIZISw(Curwin))
-      show_scroll();
+   if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
+   if (Tagged_task) Tagged_func();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
