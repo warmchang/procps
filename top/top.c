@@ -5523,6 +5523,18 @@ static void keys_global (int ch) {
             Tagged_func = wins_tag_cmdline;
          }
          break;
+      case kbd_CtrlN:
+         def = w->ppt[w->begtask]->tid;
+         // if already targeted, assume user wants to turn it off ...
+         if (Tagged_task && Tagged_lflg == (L_ENVIRON)) {
+            TAGGED_TOSS;
+         } else {
+            Tagged_task = def;
+            Tagged_lflg = L_ENVIRON;
+            Tagged_name = "environment";
+            Tagged_func = wins_tag_generic;
+         }
+         break;
       case kbd_CtrlU:
          def = w->ppt[w->begtask]->tid;
          // if already targeted, assume user wants to turn it off ...
@@ -5532,18 +5544,6 @@ static void keys_global (int ch) {
             Tagged_task = def;
             Tagged_lflg = L_SUPGRP;
             Tagged_name = "supplementary groups";
-            Tagged_func = wins_tag_generic;
-         }
-         break;
-      case kbd_CtrlV:
-         def = w->ppt[w->begtask]->tid;
-         // if already targeted, assume user wants to turn it off ...
-         if (Tagged_task && Tagged_lflg == (L_ENVIRON)) {
-            TAGGED_TOSS;
-         } else {
-            Tagged_task = def;
-            Tagged_lflg = L_ENVIRON;
-            Tagged_name = "environment";
             Tagged_func = wins_tag_generic;
          }
          break;
@@ -6360,7 +6360,7 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlU, kbd_CtrlV
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlK, kbd_CtrlN, kbd_CtrlU
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
