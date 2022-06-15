@@ -1227,7 +1227,8 @@ static int iokey (int action) {
       { "\xC3\xA8", kbd_LEFT  }, { "\xC3\xAA", kbd_DOWN  }, /* meta+      h,j (some xterms) */
       { "\xC3\xAB", kbd_UP    }, { "\xC3\xAC", kbd_RIGHT }, /* meta+      k,l (some xterms) */
       { "\xC2\x88", kbd_HOME  }, { "\xC2\x8A", kbd_PGDN  }, /* ctrl+meta+ h,j (some xterms) */
-      { "\xC2\x8B", kbd_PGUP  }, { "\xC2\x8C", kbd_END   }  /* ctrl+meta+ k,l (some xterms) */
+      { "\xC2\x8B", kbd_PGUP  }, { "\xC2\x8C", kbd_END   }, /* ctrl+meta+ k,l (some xterms) */
+      { "\033\011", kbd_BTAB  }
    };
 #ifdef TERMIOS_ONLY
    char buf[SMLBUFSIZ], *pb;
