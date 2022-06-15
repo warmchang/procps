@@ -3738,7 +3738,6 @@ static inline int osel_matched (const WIN_t *q, FLG_t enu, const char *str) {
          * No matter what *they* say, we handle the really really BIG and
          * IMPORTANT stuff upon which all those lessor functions depend! */
 static void before (char *me) {
-   struct sigaction sa;
    proc_t p;
    int i;
 #ifndef PRETEND2_5_X
@@ -3786,43 +3785,6 @@ static void before (char *me) {
    memcpy(HHash_one, HHash_nul, sizeof(HHash_nul));
    memcpy(HHash_two, HHash_nul, sizeof(HHash_nul));
 #endif
-
-   numa_init();
-#ifndef PRETEND0NUMA
-   Numa_node_tot = numa_max_node() + 1;
-#endif
-
-#ifndef SIGRTMAX       // not available on hurd, maybe others too
-#define SIGRTMAX 32
-#endif
-   // lastly, establish a robust signals environment
-   memset(&sa, 0, sizeof(sa));
-   sigemptyset(&sa.sa_mask);
-   // with user position preserved through SIGWINCH, we must avoid SA_RESTART
-   sa.sa_flags = 0;
-   for (i = SIGRTMAX; i; i--) {
-      switch (i) {
-         case SIGALRM: case SIGHUP:  case SIGINT:
-         case SIGPIPE: case SIGQUIT: case SIGTERM:
-         case SIGUSR1: case SIGUSR2:
-            sa.sa_handler = sig_endpgm;
-            break;
-         case SIGTSTP: case SIGTTIN: case SIGTTOU:
-            sa.sa_handler = sig_paused;
-            break;
-         case SIGCONT: case SIGWINCH:
-            sa.sa_handler = sig_resize;
-            break;
-         default:
-            sa.sa_handler = sig_abexit;
-            break;
-         case SIGKILL: case SIGSTOP:
-         // because uncatchable, fall through
-         case SIGCHLD: // we can't catch this
-            continue;  // when opening a pipe
-      }
-      sigaction(i, &sa, NULL);
-   }
 } // end: before
 
 
@@ -4454,6 +4416,51 @@ static void parse_args (int argc, char **argv) {
       Rc.delay_time = tmp_delay;
    }
 } // end: parse_args
+
+
+        /*
+         * Establish a robust signals environment */
+static void signals_set (void) {
+ #ifndef SIGRTMAX       // not available on hurd, maybe others too
+  #define SIGRTMAX 32
+ #endif
+   int i;
+   struct sigaction sa;
+
+   memset(&sa, 0, sizeof(sa));
+   sigemptyset(&sa.sa_mask);
+   // with user position preserved through SIGWINCH, we must avoid SA_RESTART
+   sa.sa_flags = 0;
+   for (i = SIGRTMAX; i; i--) {
+      switch (i) {
+         case SIGHUP:
+            if (Batch)
+               sa.sa_handler = SIG_IGN;
+            else
+               sa.sa_handler = sig_endpgm;
+            break;
+         case SIGALRM: case SIGINT:  case SIGPIPE:
+         case SIGQUIT: case SIGTERM: case SIGUSR1:
+         case SIGUSR2:
+            sa.sa_handler = sig_endpgm;
+            break;
+         case SIGTSTP: case SIGTTIN: case SIGTTOU:
+            sa.sa_handler = sig_paused;
+            break;
+         case SIGCONT: case SIGWINCH:
+            sa.sa_handler = sig_resize;
+            break;
+         default:
+            sa.sa_handler = sig_abexit;
+            break;
+         case SIGKILL: case SIGSTOP:
+         // because uncatchable, fall through
+         case SIGCHLD: // we can't catch this
+            continue;  // when opening a pipe
+      }
+      sigaction(i, &sa, NULL);
+   }
+} // end: signals_set
 
 
         /*
@@ -6867,8 +6874,9 @@ int main (int argc, char *argv[]) {
                                         //                 +-------------+
    wins_stage_1();                      //                 top (sic) slice
    configs_reads();                     //                 > spread etc, <
-   parse_args(argc, argv);              //                 > lean stuff, <
-   whack_terminal();                    //                 > onions etc. <
+   parse_args(argc, argv);              //                 > onions etc, <
+   signals_set();                       //                 > lean stuff, <
+   whack_terminal();                    //                 > more stuff. <
    wins_stage_2();                      //                 as bottom slice
                                         //                 +-------------+
 
