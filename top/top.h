@@ -187,6 +187,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_BKSP   137
 #define kbd_INS    138
 #define kbd_DEL    139
+#define kbd_BTAB   140
 #define kbd_CtrlE  '\005'
 #define kbd_CtrlG  '\007'
 #ifdef BOT_MENU_YES

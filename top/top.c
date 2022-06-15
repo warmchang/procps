@@ -1208,9 +1208,9 @@ static int iokey (int action) {
       const char *str;
       int key;
    } tinfo_tab[] = {
-      { NULL, kbd_BKSP  }, { NULL, kbd_INS   }, { NULL, kbd_DEL   },
-      { NULL, kbd_LEFT  }, { NULL, kbd_DOWN  }, { NULL, kbd_UP    }, { NULL, kbd_RIGHT },
-      { NULL, kbd_HOME  }, { NULL, kbd_PGDN  }, { NULL, kbd_PGUP  }, { NULL, kbd_END   },
+      { NULL, kbd_BKSP  }, { NULL, kbd_INS   }, { NULL, kbd_DEL   }, { NULL, kbd_LEFT  },
+      { NULL, kbd_DOWN  }, { NULL, kbd_UP    }, { NULL, kbd_RIGHT }, { NULL, kbd_HOME  },
+      { NULL, kbd_PGDN  }, { NULL, kbd_PGUP  }, { NULL, kbd_END   }, { NULL, kbd_BTAB  },
          // remainder are alternatives for above, just in case...
          // ( the h,j,k,l entries are the vim cursor motion keys )
       { "\033h",    kbd_LEFT  }, { "\033j",    kbd_DOWN  }, /* meta+      h,j */
@@ -1244,6 +1244,7 @@ static int iokey (int action) {
       tinfo_tab[8].str  = tOk(key_npage);
       tinfo_tab[9].str  = tOk(key_ppage);
       tinfo_tab[10].str = tOk(key_end);
+      tinfo_tab[11].str = tOk(back_tab);
       // next is critical so returned results match bound terminfo keys
       putp(tOk(keypad_xmit));
       // ( converse keypad_local issued at pause/pgm end, just in case )
@@ -5771,6 +5772,14 @@ static void keys_global (int ch) {
       case kbd_CtrlU:
          bot_item_toggle((L_SUPGRP), "supplementary groups", ',');
          break;
+      case kbd_BTAB:
+         if (Bot_what) {
+            --Bot_indx;
+            num = Bot_focus_func(NULL, NULL);
+            if (Bot_indx <= BOT_UNFOCUS)
+               Bot_indx = num + 1;
+         }
+         break;
       case kbd_ENTER:             // fall through
 #ifdef BOT_MENU_YES
          if (Bot_what == BOT_MENU_ON && Bot_indx != BOT_UNFOCUS)
@@ -6588,11 +6597,12 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK, kbd_CtrlN, kbd_CtrlP, kbd_CtrlU
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK
+         , kbd_CtrlN, kbd_CtrlP, kbd_CtrlU
 #ifdef BOT_MENU_YES
          , kbd_CtrlH
 #endif
-         , kbd_ENTER, kbd_SPACE, '\0' } },
+         , kbd_ENTER, kbd_SPACE, kbd_BTAB, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
       { keys_task,
