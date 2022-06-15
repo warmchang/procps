@@ -343,10 +343,6 @@ typedef struct CPU_t {
         // these flag(s) have no command as such - they're for internal use
 #define NOPRINT_xxx  0x010000     // build task rows only (not for display)
 #define EQUWINS_xxx  0x000001     // rebalance all wins & tasks (off i,n,u/U)
-#ifndef USE_X_COLHDR
-#define NOHISEL_xxx  0x200000     // restrict Show_HICOLS for osel temporarily
-#define NOHIFND_xxx  0x100000     // restrict Show_HICOLS for find temporarily
-#endif
 
         // Default flags if there's no rcfile to provide user customizations
 #ifdef ORIG_TOPDEFS

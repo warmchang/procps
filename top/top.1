@@ -1566,11 +1566,6 @@ The sort field might\fI not\fR be visible because:
     1) there is insufficient\fI Screen Width \fR
     2) the `f' \*(CI turned it \*F
 
-\*(NT Whenever Searching and/or Other Filtering is active in a window,
-column highlighting is temporarily disabled.
-\*(XC notes at the end of topics 5d. SEARCHING and 5e. FILTERING for an
-explanation why.
-
 .TP 7
 \ \ \ \fBy\fR\ \ :\fIRow-Highlight\fR toggle \fR
 Changes highlighting for "running" tasks.
@@ -2070,12 +2065,6 @@ could yet produce a successful `&' search.
 The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
 available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 
-\*(NT Whenever a Search is active in a window, \*(We will turn
-column highlighting \*F to prevent false matches on internal non-display
-escape sequences.
-Such highlighting will be restored when a window's search string is empty.
-\*(XC `x' \*(CI for additional information on sort column highlighting.
-
 .\" ......................................................................
 .SS 5e. FILTERING in a Window
 .\" ----------------------------------------------------------------------
@@ -2244,14 +2233,6 @@ achieve the failed `9999' objective discussed above.
      `!nMin=0 ' + `!nMin=1 ' + `!nMin=2 ' + `!nMin=3 ' ...
 .fi
 .RS -3
-
-\*(NT Whenever Other Filtering is active in a window, \*(We will turn
-column highlighting \*F to prevent false matches on internal non-display
-escape sequences.
-Such highlighting will be restored when a window is no longer subject
-to filtering.
-\*(XC `x' \*(CI for additional information on sort column highlighting.
-.RE
 
 .\" ----------------------------------------------------------------------
 .SH 6. FILES
