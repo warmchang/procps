@@ -4869,8 +4869,13 @@ static void wins_tag_cmdline (void) {
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
       fputs(p, stdout);
+#ifdef TAGGED_BRIEF
+   } else
+      TAGGED_TOSS;
+#else
    }
    TAGGED_KEEP;
+#endif
 } // end: wins_tag_cmdline
 
 
@@ -4907,8 +4912,13 @@ static void wins_tag_generic (void) {
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
       fputs(p, stdout);
+#ifdef TAGGED_BRIEF
+   } else
+      TAGGED_TOSS;
+#else
    }
    TAGGED_KEEP;
+#endif
 } // end: wins_tag_generic
 
 
