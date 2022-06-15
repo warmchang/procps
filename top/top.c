@@ -2511,7 +2511,11 @@ static void zap_fieldstab (void) {
    Cpu_pmax = 99.9;
    if (Rc.mode_irixps && smp_num_cpus > 1 && !Thread_mode) {
       Cpu_pmax = 100.0 * smp_num_cpus;
-      if (smp_num_cpus > 10) {
+      if (smp_num_cpus > 1000) {
+         if (Cpu_pmax > 9999999.0) Cpu_pmax = 9999999.0;
+      } else if (smp_num_cpus > 100) {
+         if (smp_num_cpus > 999999.0) Cpu_pmax = 999999.0;
+      } else if (smp_num_cpus > 10) {
          if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
       } else {
          if (Cpu_pmax > 999.9) Cpu_pmax = 999.9;
