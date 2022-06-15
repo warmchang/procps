@@ -5292,7 +5292,7 @@ static void write_rcfile (void) {
 
 static void keys_global (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
-   int i;
+   int i, num, def, pid;
 
    switch (ch) {
       case '?':
@@ -5349,20 +5349,20 @@ static void keys_global (int ch) {
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
          else {
-            int sig = SIGTERM,
-                def = w->ppt[w->begtask]->tid,
-                pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def));
+            num = SIGTERM;
+            def = w->ppt[w->begtask]->tid;
+            pid = get_int(fmtmk(N_txt(GET_pid2kill_fmt), def));
             if (pid > GET_NUM_ESC) {
                char *str;
                if (pid == GET_NUM_NOT) pid = def;
                str = ioline(fmtmk(N_fmt(GET_sigs_num_fmt), pid, SIGTERM));
                if (*str != kbd_ESC) {
-                  if (*str) sig = signal_name_to_number(str);
+                  if (*str) num = signal_name_to_number(str);
                   if (Frames_signal) break;
-                  if (0 < sig && kill(pid, sig))
+                  if (0 < num && kill(pid, num))
                      show_msg(fmtmk(N_fmt(FAIL_signals_fmt)
-                        , pid, sig, strerror(errno)));
-                  else if (0 > sig) show_msg(N_txt(BAD_signalid_txt));
+                        , pid, num, strerror(errno)));
+                  else if (0 > num) show_msg(N_txt(BAD_signalid_txt));
                }
             }
          }
@@ -5371,16 +5371,15 @@ static void keys_global (int ch) {
          if (Secure_mode)
             show_msg(N_txt(NOT_onsecure_txt));
          else {
-            int val,
-                def = w->ppt[w->begtask]->tid,
-                pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
+            def = w->ppt[w->begtask]->tid;
+            pid = get_int(fmtmk(N_fmt(GET_pid2nice_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
-               val = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid));
-               if (val > GET_NUM_NOT
-               && setpriority(PRIO_PROCESS, (unsigned)pid, val))
+               num = get_int(fmtmk(N_fmt(GET_nice_num_fmt), pid));
+               if (num > GET_NUM_NOT
+               && setpriority(PRIO_PROCESS, (unsigned)pid, num))
                   show_msg(fmtmk(N_fmt(FAIL_re_nice_fmt)
-                     , pid, val, strerror(errno)));
+                     , pid, num, strerror(errno)));
             }
          }
          break;
@@ -5396,8 +5395,8 @@ static void keys_global (int ch) {
          if (!Inspect.total)
             ioline(N_txt(YINSP_noents_txt));
          else {
-            int def = w->ppt[w->begtask]->tid,
-                pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
+            def = w->ppt[w->begtask]->tid;
+            pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
                if (pid) inspection_utility(pid);
