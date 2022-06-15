@@ -120,6 +120,13 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #ifdef BOT_MENU_YES
 # define     BOT_MENU_ON  -2           // in menu, tab focus active
 #endif
+        // next 4 are used when toggling window contents
+#define      BOT_SEP_CMA  ','
+#define      BOT_SEP_SLS  '/'
+#define      BOT_SEP_SPC  ' '
+#ifdef BOT_MENU_YES
+#define      BOT_SEP_TAB  '\t'
+#endif
         // 1 for horizontal separator
 #define      BOT_RSVD  1
 #define      BOT_KEEP  Bot_show_func = NULL
@@ -5368,7 +5375,7 @@ static void bot_pick_toggle (void) {
    if (Bot_what == BOT_MENU_ON) {
       BOT_TOSS;
    } else {
-      Bot_sep = '\t';
+      Bot_sep = BOT_SEP_TAB;
       Bot_what = BOT_MENU_ON;
       Bot_indx = 0;
       Bot_name = (char*)"a menu, please choose among the following, then press <Enter> ...";
@@ -5748,7 +5755,7 @@ static void keys_global (int ch) {
 #endif
          break;
       case kbd_CtrlG:
-         bot_item_toggle((L_CGROUP), "control groups", '/');
+         bot_item_toggle(L_CGROUP, "control groups", BOT_SEP_SLS);
          break;
 #ifdef BOT_MENU_YES
       case kbd_CtrlH:
@@ -5763,16 +5770,16 @@ static void keys_global (int ch) {
          }
           break;
       case kbd_CtrlK:
-         bot_item_toggle(PROC_FILLCOM|PROC_FILLARG, "command line", ' ');
+         bot_item_toggle(PROC_FILLCOM|PROC_FILLARG, "command line", BOT_SEP_SPC);
          break;
       case kbd_CtrlN:
-         bot_item_toggle(PROC_FILLENV, "environment", ' ');
+         bot_item_toggle(PROC_FILLENV, "environment", BOT_SEP_SPC);
          break;
       case kbd_CtrlP:
          bot_misc_toggle(BOT_MISC_NS, ',');
          break;
       case kbd_CtrlU:
-         bot_item_toggle((L_SUPGRP), "supplementary groups", ',');
+         bot_item_toggle(L_SUPGRP, "supplementary groups", BOT_SEP_CMA);
          break;
       case kbd_BTAB:
          if (Bot_what) {
