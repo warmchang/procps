@@ -11,7 +11,8 @@ procps-ng-NEXT
   * top: added a 'start time' field (STARTED)
   * top: column highlighting allowed under 'L' or 'O'
   * top: can display the following with no need to scroll
-  *      cmdline, control groups, environment, supp groups
+  *      cmdline, control groups, environment,
+         supplimentary groups, namespaces
 
 
 procps-ng-3.3.17
