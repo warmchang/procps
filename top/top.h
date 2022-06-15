@@ -810,8 +810,8 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
-//atic void          wins_tag_cmdline (void);
-//atic void          wins_tag_generic (void);
+//atic void          wins_tag_show (void);
+//atic void          wins_tag_toggle (enum pflag enu, const char *str);
 //atic inline int    wins_usrselect (const WIN_t *q, const int idx);
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_adds (const int self, int level);

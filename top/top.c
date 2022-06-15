@@ -116,14 +116,14 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #define      SCREEN_ROWS ( Screen_rows - Tagged_rsvd )
         // 1 for horizontal separator
 #define      TAGGED_RSVD ( 1 )
-#define      TAGGED_KEEP Tagged_func = NULL
-#define      TAGGED_TOSS do { Tagged_func = NULL; \
+#define      TAGGED_KEEP Tagged_show = 0
+#define      TAGGED_TOSS do { Tagged_show = 0; \
                 Tagged_task = Tagged_rsvd = Tagged_lflg = 0; } while (0)
-static int   Tagged_task,
+static int   Tagged_show,
+             Tagged_task,
              Tagged_rsvd,
              Tagged_lflg;
 static char *Tagged_name;
-static void(*Tagged_func)(void);
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -4847,9 +4847,10 @@ static void wins_stage_2 (void) {
 
 
         /*
-         * This guy manages the bottom margin window |
-         * & the tagged process command line display | */
-static void wins_tag_cmdline (void) {
+         * This guy manages the bottom margin window,
+         * showing miscellaneous variable width data.  */
+static void wins_tag_show (void) {
+ #define maxRSVD  ( Screen_rows - 1 )
    char buf[SMLBUFSIZ];
    const char *p;
    int i;
@@ -4859,55 +4860,25 @@ static void wins_tag_cmdline (void) {
          break;
    }
    if (i < Frame_maxtask) {
-      snprintf(buf, sizeof(buf), "command line for pid %d:", Tagged_task);
-      snprintf(buf, sizeof(buf), " command line for pid %d, %s"
-         , Tagged_task, Curwin->ppt[i]->cmd);
-      p = *Curwin->ppt[i]->cmdline;
-      if (!p || !*p) p = "n/a";
-      Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
-      putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
-      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
-      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
-      fputs(p, stdout);
-#ifdef TAGGED_BRIEF
-   } else
-      TAGGED_TOSS;
-#else
-   }
-   TAGGED_KEEP;
-#endif
-} // end: wins_tag_cmdline
-
-
-        /*
-         * This guy manages the bottom margin window |
-         * showing miscellaneous variable width data | */
-static void wins_tag_generic (void) {
-   char buf[SMLBUFSIZ];
-   const char *p;
-   int i;
-
-   for (i = 0; i < Frame_maxtask; i++) {
-      if (Tagged_task == Curwin->ppt[i]->tid)
-         break;
-   }
-   if (i < Frame_maxtask) {
-      snprintf(buf, sizeof(buf), "%s for pid %d:", Tagged_name, Tagged_task);
       snprintf(buf, sizeof(buf), " %s for pid %d, %s"
          , Tagged_name, Tagged_task, Curwin->ppt[i]->cmd);
       switch (Tagged_lflg) {
          case (L_CGROUP):         // Ctrl-G
             p = *Curwin->ppt[i]->cgroup;
             break;
+         case (L_CMDLINE):        // Ctrl-K
+            p = *Curwin->ppt[i]->cmdline;
+            break;
+         case (L_ENVIRON):        // Ctrl-N
+            p = *Curwin->ppt[i]->environ;
+            break;
          case (L_SUPGRP):         // Ctrl-U
             p = Curwin->ppt[i]->supgrp;
-            break;
-         case (L_ENVIRON):        // Ctrl-V
-            p = *Curwin->ppt[i]->environ;
             break;
       }
       if (!p || !*p || !strcmp(p, "-")) p = "n/a";
       Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
+      if (Tagged_rsvd > maxRSVD) Tagged_rsvd = maxRSVD;
       putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
       putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
@@ -4919,7 +4890,25 @@ static void wins_tag_generic (void) {
    }
    TAGGED_KEEP;
 #endif
-} // end: wins_tag_generic
+} // end: wins_tag_show
+
+
+        /*
+         * This guy toggles between displaying a Ctrl
+         * bottom window or arranging to turn it off. */
+static void wins_tag_toggle (int flg, const char *str) {
+   int pid = Curwin->ppt[Curwin->begtask]->tid;
+
+   // if already targeted, assume user wants to turn it off ...
+   if (Tagged_lflg == flg) {
+      TAGGED_TOSS;
+   } else {
+      Tagged_task = pid;
+      Tagged_lflg = flg;
+      Tagged_name = (char*)str;
+      Tagged_show = 1;
+   }
+} // end: wins_tag_toggle
 
 
         /*
@@ -5521,51 +5510,16 @@ static void keys_global (int ch) {
 #endif
          break;
       case kbd_CtrlG:
-         def = w->ppt[w->begtask]->tid;
-         // if already targeted, assume user wants to turn it off ...
-         if (Tagged_task && Tagged_lflg == (L_CGROUP)) {
-            TAGGED_TOSS;
-         } else {
-            Tagged_task = def;
-            Tagged_lflg = L_CGROUP;
-            Tagged_name = "control groups";
-            Tagged_func = wins_tag_generic;
-         }
+         wins_tag_toggle((L_CGROUP), "control groups");
          break;
       case kbd_CtrlK:
-         def = w->ppt[w->begtask]->tid;
-         // if already targeted, assume user wants to turn it off ...
-         if (Tagged_task && Tagged_lflg == (L_CMDLINE)) {
-            TAGGED_TOSS;
-         } else {
-            Tagged_task = def;
-            Tagged_lflg = L_CMDLINE;
-            Tagged_func = wins_tag_cmdline;
-         }
+         wins_tag_toggle((L_CMDLINE), "command line");
          break;
       case kbd_CtrlN:
-         def = w->ppt[w->begtask]->tid;
-         // if already targeted, assume user wants to turn it off ...
-         if (Tagged_task && Tagged_lflg == (L_ENVIRON)) {
-            TAGGED_TOSS;
-         } else {
-            Tagged_task = def;
-            Tagged_lflg = L_ENVIRON;
-            Tagged_name = "environment";
-            Tagged_func = wins_tag_generic;
-         }
+         wins_tag_toggle((L_ENVIRON), "environment");
          break;
       case kbd_CtrlU:
-         def = w->ppt[w->begtask]->tid;
-         // if already targeted, assume user wants to turn it off ...
-         if (Tagged_task && Tagged_lflg == (L_SUPGRP)) {
-            TAGGED_TOSS;
-         } else {
-            Tagged_task = def;
-            Tagged_lflg = L_SUPGRP;
-            Tagged_name = "supplementary groups";
-            Tagged_func = wins_tag_generic;
-         }
+         wins_tag_toggle((L_SUPGRP), "supplementary groups");
          break;
       case kbd_ENTER:             // these two have the effect of waking us
       case kbd_SPACE:             // from 'pselect', refreshing the display
@@ -7003,7 +6957,7 @@ static void frame_make (void) {
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Tagged_func) Tagged_func();
+   if (Tagged_show) wins_tag_show();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
