@@ -5422,6 +5422,8 @@ static void keys_global (int ch) {
             Winstk[i].begtask = Winstk[i].focus_pid = 0;
          // force an extra procs refresh to avoid %cpu distortions...
          Pseudo_row = PROC_XTRA;
+         // signal that we just corrupted entire screen
+         Frames_signal = BREAK_screen;
          break;
       case 'I':
          if (smp_num_cpus > 1) {
