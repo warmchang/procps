@@ -132,8 +132,6 @@ static const char *aix_format_parse(sf_node *sfn){
   initial:
     if(c=='%')    goto get_desc;
     if(!c)        goto looks_ok;
-    if(c==' ')    goto get_more;
-    if(c==',')    goto aix_oops;
   /* get_text: */
     items++;
   get_more:
