@@ -13,7 +13,7 @@ procps-ng-NEXT
   * top: can display the following with no need to scroll
   *      cmdline, control groups, environment,
          supplimentary groups, namespaces
-
+  * top: adds a 'message log' recall capability
 
 procps-ng-3.3.17
 ---------------
