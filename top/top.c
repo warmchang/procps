@@ -5675,7 +5675,11 @@ static void keys_global (int ch) {
          break;
       case 'Y':
          if (!Inspect.total)
-            ioline(N_txt(YINSP_noents_txt));
+#ifndef INSP_OFFDEMO
+            ioline(N_txt(YINSP_noent1_txt));
+#else
+            ioline(N_txt(YINSP_noent2_txt));
+#endif
          else {
             def = w->ppt[w->begtask]->tid;
             pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));

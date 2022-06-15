@@ -84,12 +84,10 @@ enum norm_nls {
    WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt, WRONG_switch_fmt,
    XTRA_badflds_fmt, XTRA_fixwide_fmt, XTRA_modebad_txt, XTRA_size2up_txt,
    XTRA_vforest_fmt, XTRA_warncfg_txt, XTRA_warnold_txt, XTRA_winsize_txt,
-#ifndef INSP_OFFDEMO
    YINSP_demo01_txt, YINSP_demo02_txt, YINSP_demo03_txt, YINSP_deqfmt_txt,
    YINSP_deqtyp_txt, YINSP_dstory_txt,
-#endif
-   YINSP_failed_fmt, YINSP_noents_txt, YINSP_pidbad_fmt, YINSP_pidsee_fmt,
-   YINSP_status_fmt, YINSP_waitin_txt, YINSP_workin_txt,
+   YINSP_failed_fmt, YINSP_noent1_txt, YINSP_noent2_txt, YINSP_pidbad_fmt,
+   YINSP_pidsee_fmt, YINSP_status_fmt, YINSP_waitin_txt, YINSP_workin_txt,
       norm_MAX
 };
 

@@ -450,7 +450,6 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[XTRA_warncfg_txt] = _("rcfile has inspect/other-filter error(s), save anyway?");
    Norm_nlstab[XTRA_badflds_fmt] = _("unrecognized field name '%s'");
    Norm_nlstab[XTRA_winsize_txt] = _("even using field names only, window is now too small");
-#ifndef INSP_OFFDEMO
    Norm_nlstab[YINSP_demo01_txt] = _("Open Files");
    Norm_nlstab[YINSP_demo02_txt] = _("NUMA Info");
    Norm_nlstab[YINSP_demo03_txt] = _("Log");
@@ -488,10 +487,8 @@ static void build_norm_nlstab (void) {
       "Then, enhance top with your very own customized 'file' and/or 'pipe' entries.\n"
       "\n"
       "Enjoy!\n");
-   Norm_nlstab[YINSP_noents_txt] = _("to enable 'Y' press <Enter> then type 'W' and restart top");
-#else
-   Norm_nlstab[YINSP_noents_txt] = _("to enable 'Y' please consult the top man page (press Enter)");
-#endif
+   Norm_nlstab[YINSP_noent1_txt] = _("to enable 'Y' press <Enter> then type 'W' and restart top");
+   Norm_nlstab[YINSP_noent2_txt] = _("to enable 'Y' please consult the top man page (press Enter)");
    Norm_nlstab[YINSP_failed_fmt] = _("Selection failed with: %s\n");
    Norm_nlstab[YINSP_pidbad_fmt] = _("unable to inspect, pid %d not found");
    Norm_nlstab[YINSP_pidsee_fmt] = _("inspect at PID [default pid = %d]");
