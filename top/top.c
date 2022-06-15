@@ -5134,10 +5134,14 @@ static int bot_focus_str (const char *hdr, const char *str) {
       if (n >= sizeof(Bot_buf)) n = sizeof(Bot_buf) - 1;
       if (!*str || !strcmp(str, "-")) strcpy(Bot_buf, "n/a");
       else memccpy(Bot_buf, str, '\0', n);
-      Bot_rsvd = 1 + BOT_RSVD + (strlen(Bot_buf) / Screen_cols);
+      Bot_rsvd = 1 + BOT_RSVD + ((strlen(Bot_buf) - utf8_delta(Bot_buf)) / Screen_cols);
       if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
       // somewhere down call chain fmtmk() may be used, so we'll old school it
-      snprintf(tmp, sizeof(tmp), "%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, hdr);
+      snprintf(tmp, sizeof(tmp), "%s%s%-*s"
+         , tg2(0, SCREEN_ROWS)
+         , Curwin->capclr_hdr
+         , Screen_cols + utf8_delta(hdr)
+         , hdr);
       putp(tmp);
    }
    // now fmtmk is safe to use ...
@@ -5181,16 +5185,21 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
       memcpy(Bot_buf, strv[0], n);
       if (!Bot_buf[0] || (!strcmp(Bot_buf, "-") && n <= sizeof(char *)))
          strcpy(Bot_buf, "n/a");
-      for (nsav= 0, p = Bot_buf; strv[nsav] != NULL; nsav++) {
+      for (nsav= 0, p = Bot_buf, x = 0; strv[nsav] != NULL; nsav++) {
          p += strlen(strv[nsav]) + 1;
          if ((p - Bot_buf) >= sizeof(Bot_buf))
             break;
-         n = p - Bot_buf;
+         x += utf8_delta(strv[nsav]);
       }
+      n  = (p - Bot_buf) - (x + 1);
       Bot_rsvd = 1 + BOT_RSVD + (n / Screen_cols);
       if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
       // somewhere down call chain fmtmk() may be used, so we'll old school it
-      snprintf(tmp, sizeof(tmp), "%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, hdr);
+      snprintf(tmp, sizeof(tmp), "%s%s%-*s"
+         , tg2(0, SCREEN_ROWS)
+         , Curwin->capclr_hdr
+         , Screen_cols + utf8_delta(hdr)
+         , hdr);
       putp(tmp);
    }
    // now fmtmk is safe to use ...
