@@ -1412,6 +1412,9 @@ static char *ioline (const char *prompt) {
             break;
       }
       putp(fmtmk("%s%s%s", tg2(beg, Msg_row), Cap_clr_eol, buf));
+#ifdef OVERTYPE_SEE
+      putp(fmtmk("%s%c", tg2(beg - 1, Msg_row), ovt ? '^' : ' '));
+#endif
       putp(tg2(beg+pos, Msg_row));
    } while (key != kbd_ENTER);
 

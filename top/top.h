@@ -50,6 +50,7 @@
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout 'IOFBF' override */
 //#define OFF_XTRAWIDE            /* disable our extra wide multi-byte logic */
+//#define OVERTYPE_SEE            /* display a visual hint for overtype mode */
 //#define PRETEND0NUMA            /* pretend that there ain't any numa nodes */
 //#define PRETEND2_5_X            /* pretend we're linux 2.5.x (for IO-wait) */
 //#define PRETEND48CPU            /* pretend we're smp with 48 ticsers (sic) */
