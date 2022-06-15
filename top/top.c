@@ -5391,6 +5391,8 @@ static void keys_global (int ch) {
       case '?':
       case 'h':
          help_view();
+         // signal that we just corrupted entire screen
+         Frames_signal = BREAK_screen;
          mkVIZrow1
          break;
       case 'B':
@@ -5415,6 +5417,8 @@ static void keys_global (int ch) {
          break;
       case 'f':
          fields_utility();
+         // signal that we just corrupted entire screen
+         Frames_signal = BREAK_screen;
          break;
       case 'g':
          win_select(0);
@@ -5492,12 +5496,18 @@ static void keys_global (int ch) {
             pid = get_int(fmtmk(N_fmt(YINSP_pidsee_fmt), def));
             if (pid > GET_NUM_ESC) {
                if (pid == GET_NUM_NOT) pid = def;
-               if (pid) inspection_utility(pid);
+               if (pid) {
+                  inspection_utility(pid);
+                  // signal that we just corrupted entire screen
+                  Frames_signal = BREAK_screen;
+               }
             }
          }
          break;
       case 'Z':
          wins_colors();
+         // signal that we just corrupted entire screen
+         Frames_signal = BREAK_screen;
          mkVIZrow1
          break;
       case '0':
@@ -6387,6 +6397,7 @@ static void do_key (int ch) {
    };
    int i;
 
+   Frames_signal = BREAK_off;
    switch (ch) {
       case 0:                // ignored (always)
       case kbd_ESC:          // ignored (sometimes)
@@ -6402,7 +6413,8 @@ static void do_key (int ch) {
          for (i = 0; i < MAXTBL(key_tab); ++i)
             if (strchr(key_tab[i].keys, ch)) {
                key_tab[i].func(ch);
-               Frames_signal = BREAK_kbd;
+               if (Frames_signal == BREAK_off)
+                  Frames_signal = BREAK_kbd;
                goto all_done;
             }
    };
@@ -6939,7 +6951,9 @@ static void frame_make (void) {
 
    // deal with potential signal(s) since the last time around...
    if (Frames_signal) {
-      if (Frames_signal == BREAK_sig) TAGGED_TOSS;
+      if (Frames_signal == BREAK_sig
+      || (Frames_signal == BREAK_screen))
+         TAGGED_TOSS;
       zap_fieldstab();
    }
 
