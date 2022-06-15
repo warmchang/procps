@@ -112,18 +112,18 @@ static int   Monpidsidx = 0;
         /* Current terminal screen size. */
 static int   Screen_cols, Screen_rows, Max_lines;
 
-        // these are used to potentially set aside a bottom 'window'
-#define      SCREEN_ROWS ( Screen_rows - Tagged_rsvd )
+        // these are for the special separate bottom 'window'
+#define      SCREEN_ROWS ( Screen_rows - Bot_rsvd )
         // 1 for horizontal separator
-#define      TAGGED_RSVD ( 1 )
-#define      TAGGED_KEEP Tagged_show = 0
-#define      TAGGED_TOSS do { Tagged_show = 0; \
-                Tagged_task = Tagged_rsvd = Tagged_lflg = 0; } while (0)
-static int   Tagged_show,
-             Tagged_task,
-             Tagged_rsvd,
-             Tagged_lflg;
-static char *Tagged_name;
+#define      BOT_RSVD  1
+#define      BOT_KEEP  Bot_show = 0
+#define      BOT_TOSS  do { Bot_show = 0; \
+                Bot_task = Bot_rsvd = Bot_lflg = 0; } while (0)
+static int   Bot_show,
+             Bot_task,
+             Bot_rsvd,
+             Bot_lflg;
+static char *Bot_name;
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -2143,7 +2143,7 @@ static void build_headers (void) {
          if (w->usrseltyp == 'U') Frames_libflags |= L_status;
 
          // lastly, accommodate any special non-display 'tagged' needs...
-         if (Tagged_lflg) Frames_libflags |= Tagged_lflg;
+         if (Bot_lflg) Frames_libflags |= Bot_lflg;
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
@@ -4563,7 +4563,7 @@ static void win_reset (WIN_t *q) {
          // these next guys are global, not really windows based
          Monpidsidx = 0;
          Rc.tics_scaled = 0;
-         TAGGED_TOSS;
+         BOT_TOSS;
 } // end: win_reset
 
 
@@ -4847,76 +4847,11 @@ static void wins_stage_2 (void) {
 
 
         /*
-         * This guy manages the bottom margin window,
-         * showing miscellaneous variable width data.  */
-static void wins_tag_show (void) {
- #define maxRSVD  ( Screen_rows - 1 )
-   char buf[SMLBUFSIZ];
-   const char *p;
-   int i;
-
-   for (i = 0; i < Frame_maxtask; i++) {
-      if (Tagged_task == Curwin->ppt[i]->tid)
-         break;
-   }
-   if (i < Frame_maxtask) {
-      snprintf(buf, sizeof(buf), " %s for pid %d, %s"
-         , Tagged_name, Tagged_task, Curwin->ppt[i]->cmd);
-      switch (Tagged_lflg) {
-         case (L_CGROUP):         // Ctrl-G
-            p = *Curwin->ppt[i]->cgroup;
-            break;
-         case (L_CMDLINE):        // Ctrl-K
-            p = *Curwin->ppt[i]->cmdline;
-            break;
-         case (L_ENVIRON):        // Ctrl-N
-            p = *Curwin->ppt[i]->environ;
-            break;
-         case (L_SUPGRP):         // Ctrl-U
-            p = Curwin->ppt[i]->supgrp;
-            break;
-      }
-      if (!p || !*p || !strcmp(p, "-")) p = "n/a";
-      Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
-      if (Tagged_rsvd > maxRSVD) Tagged_rsvd = maxRSVD;
-      putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
-      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
-      putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
-      fputs(p, stdout);
-#ifdef TAGGED_BRIEF
-   } else
-      TAGGED_TOSS;
-#else
-   }
-   TAGGED_KEEP;
-#endif
-} // end: wins_tag_show
-
-
-        /*
-         * This guy toggles between displaying a Ctrl
-         * bottom window or arranging to turn it off. */
-static void wins_tag_toggle (int flg, const char *str) {
-   int pid = Curwin->ppt[Curwin->begtask]->tid;
-
-   // if already targeted, assume user wants to turn it off ...
-   if (Tagged_lflg == flg) {
-      TAGGED_TOSS;
-   } else {
-      Tagged_task = pid;
-      Tagged_lflg = flg;
-      Tagged_name = (char*)str;
-      Tagged_show = 1;
-   }
-} // end: wins_tag_toggle
-
-
-        /*
          * Determine if this task matches the 'u/U' selection
          * criteria for a given window */
 static inline int wins_usrselect (const WIN_t *q, const int idx) {
    proc_t *p = q->ppt[idx];
-   switch(q->usrseltyp) {
+   switch (q->usrseltyp) {
       case 0:                                    // uid selection inactive
          return 1;
       case 'U':                                  // match any uid
@@ -5142,6 +5077,84 @@ static void forest_excluded (WIN_t *q) {
 #endif
    }
 } // end: forest_excluded
+
+/*######  Special Separate Bottom Window support  ########################*/
+
+        /*
+         * This guy actually draws the bottom window, |
+         * including the contents passed as a string. | */
+static void bot_do_see (const char *str, const char *pgm) {
+ #define maxRSVD ( Screen_rows - 1 )
+   char buf[SMLBUFSIZ];
+
+   snprintf(buf, sizeof(buf), " %s for pid %d, %s"
+      , Bot_name, Bot_task, pgm);
+   if (!str || !*str || !strcmp(str, "-")) str = "n/a";
+   Bot_rsvd = 1 + BOT_RSVD + (strlen(str) / Screen_cols);
+   if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
+   putp(fmtmk("%s%s%-*s", tg2(0, SCREEN_ROWS), Curwin->capclr_hdr, Screen_cols, buf));
+   putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_clr_eos));
+   putp(fmtmk("%s%s", tg2(0, SCREEN_ROWS + 1), Cap_norm));
+   fputs(str, stdout);
+ #undef maxRSVD
+} // end: bot_do_see
+
+
+        /*
+         * This guy manages the bottom margin window, |
+         * showing miscellaneous variable width data. | */
+static void bot_item_show (void) {
+ #define maxRSVD  ( Screen_rows - 1 )
+   char buf[SMLBUFSIZ];
+   const char *p;
+   int i;
+
+   for (i = 0; i < Frame_maxtask; i++) {
+      if (Bot_task == Curwin->ppt[i]->tid)
+         break;
+   }
+   if (i < Frame_maxtask) {
+      snprintf(buf, sizeof(buf), " %s for pid %d, %s"
+         , Bot_name, Bot_task, Curwin->ppt[i]->cmd);
+      switch (Bot_lflg) {
+         case (L_CGROUP):         // Ctrl-G
+            p = *Curwin->ppt[i]->cgroup;
+            break;
+         case (L_CMDLINE):        // Ctrl-K
+            p = *Curwin->ppt[i]->cmdline;
+            break;
+         case (L_ENVIRON):        // Ctrl-N
+            p = *Curwin->ppt[i]->environ;
+            break;
+         case (L_SUPGRP):         // Ctrl-U
+            p = Curwin->ppt[i]->supgrp;
+            break;
+      }
+      bot_do_see(p, Curwin->ppt[i]->cmd);
+   }
+#ifdef BOT_DEAD_ZAP
+   else
+      BOT_TOSS;
+#else
+   BOT_KEEP;
+#endif
+} // end: bot_item_show
+
+
+        /*
+         * This guy toggles between displaying a Ctrl |
+         * bottom window or arranging to turn it off. | */
+static void bot_item_toggle (int flg, const char *str) {
+   // if already targeted, assume user wants to turn it off ...
+   if (Bot_lflg == flg) {
+      BOT_TOSS;
+   } else {
+      Bot_lflg = flg;
+      Bot_name = (char*)str;
+      Bot_show = 1;
+      Bot_task = Curwin->ppt[Curwin->begtask]->tid;
+   }
+} // end: bot_item_toggle
 
 /*######  Interactive Input Tertiary support  ############################*/
 
@@ -5512,16 +5525,16 @@ static void keys_global (int ch) {
 #endif
          break;
       case kbd_CtrlG:
-         wins_tag_toggle((L_CGROUP), "control groups");
+         bot_item_toggle((L_CGROUP), "control groups");
          break;
       case kbd_CtrlK:
-         wins_tag_toggle((L_CMDLINE), "command line");
+         bot_item_toggle((L_CMDLINE), "command line");
          break;
       case kbd_CtrlN:
-         wins_tag_toggle((L_ENVIRON), "environment");
+         bot_item_toggle((L_ENVIRON), "environment");
          break;
       case kbd_CtrlU:
-         wins_tag_toggle((L_SUPGRP), "supplementary groups");
+         bot_item_toggle((L_SUPGRP), "supplementary groups");
          break;
       case kbd_ENTER:             // these two have the effect of waking us
       case kbd_SPACE:             // from 'pselect', refreshing the display
@@ -6909,7 +6922,7 @@ static void frame_make (void) {
    if (Frames_signal) {
       if (Frames_signal == BREAK_sig
       || (Frames_signal == BREAK_screen))
-         TAGGED_TOSS;
+         BOT_TOSS;
       zap_fieldstab();
    }
 
@@ -6959,7 +6972,7 @@ static void frame_make (void) {
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Tagged_show) wins_tag_show();
+   if (Bot_show) bot_item_show();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable

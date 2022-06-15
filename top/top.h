@@ -29,6 +29,7 @@
         /* Development/Debugging defines ----------------------------------- */
 //#define ATEOJ_RPTHSH            /* report on hash specifics, at end-of-job */
 //#define ATEOJ_RPTSTD            /* report on some miscellany at end-of-job */
+//#define BOT_DEAD_ZAP            /* zap Ctrl bottom window when target dies */
 //#define CASEUP_HEXES            /* show all those hex values in upper case */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */
@@ -61,7 +62,6 @@
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
-//#define TAGGED_BRIEF            /* zap Ctrl bottom window when target dies */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
 //#define TOG4_NOTRUNC            /* ensure no truncation for 2 abreast mode */
@@ -810,8 +810,6 @@ typedef struct WIN_t {
 //atic void          wins_reflag (int what, int flg);
 //atic void          wins_stage_1 (void);
 //atic void          wins_stage_2 (void);
-//atic void          wins_tag_show (void);
-//atic void          wins_tag_toggle (enum pflag enu, const char *str);
 //atic inline int    wins_usrselect (const WIN_t *q, const int idx);
 /*------  Forest View support  -------------------------------------------*/
 //atic void          forest_adds (const int self, int level);
@@ -821,6 +819,10 @@ typedef struct WIN_t {
 //atic void          forest_create (WIN_t *q);
 //atic inline const char *forest_display (const WIN_t *q, int idx);
 //atic void          forest_excluded (WIN_t *q);
+/*------  Special Separate Bottom Window support  ------------------------*/
+//atic void          bot_do_see (const char *str, const char *pgm);
+//atic void          bot_item_show (void);
+//atic void          bot_item_toggle (enum pflag item, const char *name);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
