@@ -31,6 +31,7 @@
 //#define ATEOJ_RPTSTD            /* report on some miscellany at end-of-job */
 //#define BOT_DEAD_ZAP            /* zap Ctrl bottom window when target dies */
 //#define BOT_MENU_YES            /* enable bottom window for menu prototype */
+//#define BOT_STRV_OFF            /* don't emphasize strv w/ focus if spaces */
 //#define CASEUP_HEXES            /* show all those hex values in upper case */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
 //#define CPU_ZEROTICS            /* tolerate few tics when cpu off vs. idle */

@@ -5105,11 +5105,16 @@ static void forest_excluded (WIN_t *q) {
          * This guy actually draws the parsed strings |
          * including adding a highlight if necessary. | */
 static void bot_do (const char *str, int focus) {
+   char *cap = Cap_norm;
+
    while (*str == ' ') putchar(*(str++));
-   putp(fmtmk("%s%s%s"
-      , focus ? Cap_reverse : Cap_norm
-      , str
-      , Cap_norm));
+   if (focus)
+#ifdef BOT_STRV_OFF
+      cap = Cap_reverse;
+#else
+      cap = strchr(str, Bot_sep) ? Curwin->capclr_msg : Cap_reverse;
+#endif
+   putp(fmtmk("%s%s%s", cap, str, Cap_norm));
 } // end: bot_do
 
 
@@ -5770,9 +5775,11 @@ static void keys_global (int ch) {
          }
           break;
       case kbd_CtrlK:
+         // with string vectors, the 'separator' may serve a different purpose
          bot_item_toggle(PROC_FILLCOM|PROC_FILLARG, "command line", BOT_SEP_SPC);
          break;
       case kbd_CtrlN:
+         // with string vectors, the 'separator' may serve a different purpose
          bot_item_toggle(PROC_FILLENV, "environment", BOT_SEP_SPC);
          break;
       case kbd_CtrlP:
