@@ -117,6 +117,9 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #define      BOT_UNFOCUS  -1           // tab focus not established
 #define      BOT_TAB_YES  -1           // tab focus could be active
 #define      BOT_MISC_NS  +1           // data for namespaces req'd
+#ifdef BOT_MENU_YES
+# define     BOT_MENU_ON  -2           // in menu, tab focus active
+#endif
         // 1 for horizontal separator
 #define      BOT_RSVD  1
 #define      BOT_KEEP  Bot_func = NULL
@@ -5282,6 +5285,35 @@ static void bot_misc_toggle (int what, char sep) {
       Bot_task = Curwin->ppt[Curwin->begtask]->tid;
    }
 } // end: bot_misc_toggle
+
+
+#ifdef BOT_MENU_YES
+        /*
+         * This guy manages that bottom margin window |
+         * when it is used as a menu of user choices. | */
+static void bot_pick_show (void) {
+   bot_focus(Bot_name, "selection #1\t selection #2\t selecttion #3");
+   BOT_KEEP;
+} // end: bot_pick_show
+
+
+        /*
+         * This guy can toggle between displaying the |
+         * bottom window or arranging to turn it off. | */
+static void bot_pick_toggle (void) {
+   // if already in menu mode, assume user wants to exit ...
+   if (Bot_what == BOT_MENU_ON) {
+      BOT_TOSS;
+   } else {
+      Bot_sep = '\t';
+      Bot_what = BOT_MENU_ON;
+      Bot_indx = 0;
+      Bot_name = (char*)"a menu, please choose among the following ...";
+      Bot_func = bot_pick_show;
+      Bot_task = Curwin->ppt[Curwin->begtask]->tid;
+   }
+} // end: bot_pick_toggle
+#endif
 
 /*######  Interactive Input Tertiary support  ############################*/
 
@@ -5654,6 +5686,11 @@ static void keys_global (int ch) {
       case kbd_CtrlG:
          bot_item_toggle((L_CGROUP), "control groups", '/');
          break;
+#ifdef BOT_MENU_YES
+      case kbd_CtrlH:
+         bot_pick_toggle();
+         break;
+#endif
       case kbd_CtrlI:
          if (Bot_what) {
             ++Bot_indx;
@@ -5673,11 +5710,15 @@ static void keys_global (int ch) {
       case kbd_CtrlU:
          bot_item_toggle((L_SUPGRP), "supplementary groups", ',');
          break;
-      case kbd_ENTER:             // these two have the effect of waking us
+      case kbd_ENTER:             // fall through
+#ifdef BOT_MENU_YES
+         if (Bot_what == BOT_MENU_ON && Bot_indx != BOT_UNFOCUS)
+            show_msg(fmtmk("thanks for selecting menu item #%d", Bot_indx + 1));
+#endif                            // the enter plus space keys will wake us
       case kbd_SPACE:             // from 'pselect', refreshing the display
          break;                   // and updating any hot-plugged resources
-      default:                    // keep gcc happy
-         break;
+      default:
+         break;                   // keep gcc happy
    }
 } // end: keys_global
 
@@ -6487,6 +6528,9 @@ static void do_key (int ch) {
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
          , kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK, kbd_CtrlN, kbd_CtrlP, kbd_CtrlU
+#ifdef BOT_MENU_YES
+         , kbd_CtrlH
+#endif
          , kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
