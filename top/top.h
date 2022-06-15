@@ -185,6 +185,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_DEL    139
 #define kbd_CtrlE  '\005'
 #define kbd_CtrlG  '\007'
+#define kbd_CtrlI  '\011'
 #define kbd_CtrlK  '\013'
 #define kbd_CtrlN  '\016'
 #define kbd_CtrlO  '\017'
@@ -821,12 +822,13 @@ typedef struct WIN_t {
 //atic inline const char *forest_display (const WIN_t *q, int idx);
 //atic void          forest_excluded (WIN_t *q);
 /*------  Special Separate Bottom Window support  ------------------------*/
-//atic void          bot_do_see (const char *str, const char *pgm);
+//atic void          bot_do (const char *str, int focus);
+//atic int           bot_focus (const char *hdr, const char *str);
 //atic void          bot_item_show (void);
-//atic void          bot_item_toggle (enum pflag item, const char *name);
+//atic void          bot_item_toggle (enum pflag item, const char *name, char sep);
 //atic char         *bot_misc_hlp (proc_t *p);
 //atic void          bot_misc_show (void);
-//atic void          bot_misc_toggle (int what);
+//atic void          bot_misc_toggle (int what, char sep);
 /*------  Interactive Input Tertiary support  ----------------------------*/
 //atic inline int    find_ofs (const WIN_t *q, const char *buf);
 //atic void          find_string (int ch);
