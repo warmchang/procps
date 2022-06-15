@@ -5008,7 +5008,7 @@ static void forest_create (WIN_t *q) {
          * if we are in forest view mode otherwise he just returns them. | */
 static inline const char *forest_display (const WIN_t *q, int idx) {
 #ifndef SCROLLVAR_NO
-   static char buf[1024*64*2]; // the same as readproc's MAX_BUFSZ
+   static char buf[MAXBUFSIZ];
 #else
    static char buf[ROWMINSIZ];
 #endif
@@ -5105,12 +5105,12 @@ static void bot_do (const char *str, int focus) {
         /*
          * This guy draws that bottom window's header |
          * then parses/arranges to show the contents. |
-         * ( returns the number of elements printed ) | */
+         * ( returns relative # of elements printed ) | */
 static int bot_focus (const char *hdr, const char *str) {
  #define maxRSVD ( Screen_rows - 1 )
-   static char sav[BIGBUFSIZ*2];
+   static char sav[BOTBUFSIZ];
    const char *end, *beg;
-   char tmp[SCREENMAX];
+   char tmp[BIGBUFSIZ];
    int n, x;
 
    if (str) {
@@ -5307,7 +5307,7 @@ static void bot_pick_toggle (void) {
       Bot_sep = '\t';
       Bot_what = BOT_MENU_ON;
       Bot_indx = 0;
-      Bot_name = (char*)"a menu, please choose among the following ...";
+      Bot_name = (char*)"a menu, please choose among the following, then press <Enter> ...";
       Bot_func = bot_pick_show;
       Bot_task = Curwin->ppt[Curwin->begtask]->tid;
    }
