@@ -115,10 +115,14 @@ static int   Screen_cols, Screen_rows, Max_lines;
         /* These 'SCREEN_ROWS', 'BOT_ and 'Bot_' guys are used
            in managing the special separate bottom 'window' ... */
 #define      SCREEN_ROWS ( Screen_rows - Bot_rsvd )
+#define      BOT_MSGSMAX  10           // total entries for Msg_tab
 #define      BOT_UNFOCUS  -1           // tab focus not established
+        // negative 'item' values won't be seen by build_headers() ...
+#define      BOT_MSG_LOG  -3           // show the most recent msgs
         // next 4 are used when toggling window contents
 #define      BOT_SEP_CMA  ','
 #define      BOT_SEP_SLS  '/'
+#define      BOT_SEP_SMI  ';'
 #define      BOT_SEP_SPC  ' '
         // 1 for horizontal separator
 #define      BOT_RSVD  1
@@ -921,9 +925,19 @@ static void capsmk (WIN_t *q) {
 } // end: capsmk
 
 
+static struct msg_node {
+   char msg[SMLBUFSIZ];
+   struct msg_node *prev;
+} Msg_tab[BOT_MSGSMAX];
+
+static struct msg_node *Msg_this = Msg_tab;
+
         /*
          * Show an error message (caller may include '\a' for sound) */
 static void show_msg (const char *str) {
+   STRLCPY(Msg_this->msg, str);
+   if (++Msg_this > &Msg_tab[BOT_MSGSMAX - 1]) Msg_this = Msg_tab;
+
    PUTT("%s%s %.*s %s%s%s"
       , tg2(0, Msg_row)
       , Curwin->capclr_msg
@@ -2156,12 +2170,14 @@ static void build_headers (void) {
          // for 'U' filtering we need the other user ids too
          if (w->usrseltyp == 'U') Frames_libflags |= L_status;
 
-         // lastly, accommodate any special non-display 'tagged' needs...
-         Frames_libflags |= Bot_what;
       } // end: VIZISw(w)
 
       if (Rc.mode_altscr) w = w->next;
    } while (w != Curwin);
+
+   // lastly, accommodate any special bottom window needs...
+   if (Bot_what > 0)
+      Frames_libflags |= Bot_what;
 
 #ifdef EQUCOLHDRYES
    /* now we can finally even out column header lengths
@@ -4807,6 +4823,10 @@ static void wins_stage_1 (void) {
    Winstk[GROUPSMAX - 1].next = &Winstk[0];
    Winstk[0].prev = &Winstk[GROUPSMAX - 1];
    Curwin = Winstk;
+
+   for (i = 1; i < BOT_MSGSMAX; i++)
+      Msg_tab[i].prev = &Msg_tab[i - 1];
+   Msg_tab[0].prev = &Msg_tab[BOT_MSGSMAX -1];
 } // end: wins_stage_1
 
 
@@ -5117,7 +5137,7 @@ static void bot_do (const char *str, int focus) {
          * ( returns relative # of elements printed ) | */
 static int bot_focus_str (const char *hdr, const char *str) {
  #define maxRSVD ( Screen_rows - 1 )
-   const char *end, *beg;
+   char *beg, *end;
    char tmp[BIGBUFSIZ];
    int n, x;
 
@@ -5221,10 +5241,26 @@ static void *bot_item_hlp (proc_t *p) {
       IPCNS,  MNTNS,  NETNS,  PIDNS,  USERNS, UTSNS };
    static char buf[BIGBUFSIZ];
    char tmp[SMLBUFSIZ], *b;
+   struct msg_node *m;
    int i;
 
    buf[0] = '\0';
    switch (Bot_what) {
+      case BOT_MSG_LOG:
+         *(b = &buf[0]) = '\0';
+         m = Msg_this->prev;
+         do {
+            if (m->msg[0]) {
+               b = scat(b, m->msg);
+               if (m != Msg_this && m->prev->msg[0]) {
+                  // caller itself may have used fmtmk, so we'll old school it ...
+                  snprintf(tmp, sizeof(tmp), "%c ", BOT_SEP_SMI);
+                  b = scat(b, tmp);
+               }
+            }
+            m = m->prev;
+         } while (m != Msg_this->prev);
+         return buf;
       case (L_NS):
          b = &buf[0];
          for (i = 0; i < MAXTBL(ns_tab); i++) {
@@ -5686,6 +5722,9 @@ static void keys_global (int ch) {
       case kbd_CtrlK:
          // with string vectors, the 'separator' may serve a different purpose
          bot_item_toggle(PROC_FILLARG, N_fmt(X_BOT_cmdlin_fmt), BOT_SEP_SPC);
+         break;
+      case kbd_CtrlL:
+         bot_item_toggle(BOT_MSG_LOG, N_txt(X_BOT_msglog_txt), BOT_SEP_SMI);
          break;
       case kbd_CtrlN:
          // with string vectors, the 'separator' may serve a different purpose
@@ -6518,7 +6557,7 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK
+         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK, kbd_CtrlL
          , kbd_CtrlN, kbd_CtrlP, kbd_CtrlU
          , kbd_ENTER, kbd_SPACE, kbd_BTAB, '\0' } },
       { keys_summary,

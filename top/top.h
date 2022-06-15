@@ -192,6 +192,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_CtrlG  '\007'
 #define kbd_CtrlI  '\011'
 #define kbd_CtrlK  '\013'
+#define kbd_CtrlL  '\014'
 #define kbd_CtrlN  '\016'
 #define kbd_CtrlO  '\017'
 #define kbd_CtrlP  '\020'

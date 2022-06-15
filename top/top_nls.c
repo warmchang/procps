@@ -529,6 +529,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[X_BOT_envirn_fmt] = _("environment for pid %d, %s");
    Norm_nlstab[X_BOT_namesp_fmt] = _("namespaces for pid %d, %s");
    Norm_nlstab[X_BOT_supgrp_fmt] = _("supplementary groups for pid %d, %s");
+   Norm_nlstab[X_BOT_msglog_txt] = _("message log, last 10 messages:");
 }
 
 
