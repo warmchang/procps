@@ -5165,9 +5165,11 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
    if (strv) {
       // we're a little careless with overhead here (it's a one time cost)
       memset(Bot_buf, '\0', sizeof(Bot_buf));
-      n = (void*)&strv[0] - (void*)strv[0];
+      n = (char*)&strv[0] - strv[0];
       if (n >= sizeof(Bot_buf)) n = sizeof(Bot_buf) - 1;
       memcpy(Bot_buf, strv[0], n);
+      if (!Bot_buf[0] || (!strcmp(Bot_buf, "-") && n <= sizeof(char*)))
+         strcpy(Bot_buf, "n/a");
       for (nsav= 0, p = Bot_buf; strv[nsav] != NULL; nsav++) {
          p += strlen(strv[nsav]) + 1;
          if ((p - Bot_buf) >= sizeof(Bot_buf))
