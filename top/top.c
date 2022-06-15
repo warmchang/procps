@@ -4858,6 +4858,8 @@ static void wins_tag_cmdline (void) {
    }
    if (i < Frame_maxtask) {
       snprintf(buf, sizeof(buf), "command line for pid %d:", Tagged_task);
+      snprintf(buf, sizeof(buf), " command line for pid %d, %s"
+         , Tagged_task, Curwin->ppt[i]->cmd);
       p = *Curwin->ppt[i]->cmdline;
       if (!p || !*p) p = "n/a";
       Tagged_rsvd = 1 + TAGGED_RSVD + (strlen(p) / Screen_cols);
@@ -4885,6 +4887,8 @@ static void wins_tag_generic (void) {
    }
    if (i < Frame_maxtask) {
       snprintf(buf, sizeof(buf), "%s for pid %d:", Tagged_name, Tagged_task);
+      snprintf(buf, sizeof(buf), " %s for pid %d, %s"
+         , Tagged_name, Tagged_task, Curwin->ppt[i]->cmd);
       switch (Tagged_lflg) {
          case (L_CGROUP):         // Ctrl-G
             p = *Curwin->ppt[i]->cgroup;
