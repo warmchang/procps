@@ -5010,7 +5010,7 @@ static int bot_focus_str (const char *hdr, const char *str) {
       memset(Bot_buf, '\0', sizeof(Bot_buf));
       n = strlen(str);
       if (n >= sizeof(Bot_buf)) n = sizeof(Bot_buf) - 1;
-      if (!*str || !strcmp(str, "-")) strcpy(Bot_buf, "n/a");
+      if (!*str || !strcmp(str, "-")) strcpy(Bot_buf, N_txt(X_BOT_nodata_txt));
       else memccpy(Bot_buf, str, '\0', n);
       Bot_rsvd = 1 + BOT_RSVD + ((strlen(Bot_buf) - utf8_delta(Bot_buf)) / Screen_cols);
       if (Bot_rsvd > maxRSVD) Bot_rsvd = maxRSVD;
@@ -5062,7 +5062,7 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
       if (n >= sizeof(Bot_buf)) n = sizeof(Bot_buf) - 1;
       memcpy(Bot_buf, strv[0], n);
       if (!Bot_buf[0] || (!strcmp(Bot_buf, "-") && n <= sizeof(char *)))
-         strcpy(Bot_buf, "n/a");
+         strcpy(Bot_buf, N_txt(X_BOT_nodata_txt));
       for (nsav= 0, p = Bot_buf, x = 0; strv[nsav] != NULL; nsav++) {
          p += strlen(strv[nsav]) + 1;
          if ((p - Bot_buf) >= sizeof(Bot_buf))
