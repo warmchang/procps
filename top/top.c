@@ -5061,7 +5061,7 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
       n = (char *)&strv[0] - strv[0];
       if (n >= sizeof(Bot_buf)) n = sizeof(Bot_buf) - 1;
       memcpy(Bot_buf, strv[0], n);
-      if (!Bot_buf[0] || (!strcmp(Bot_buf, "-") && n <= sizeof(char *)))
+      if ((!Bot_buf[0] || !strcmp(Bot_buf, "-")) && n <= sizeof(char *))
          strcpy(Bot_buf, N_txt(X_BOT_nodata_txt));
       for (nsav= 0, p = Bot_buf, x = 0; strv[nsav] != NULL; nsav++) {
          p += strlen(strv[nsav]) + 1;
