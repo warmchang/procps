@@ -6143,7 +6143,7 @@ static void keys_xtra (int ch) {
          * ( surely, this must make us run much more efficiently. amirite? ) | */
 
         /*
-         * Cpu *Helper* function to show the percentages for one or two cpus |
+         * A *Helper* function to show summary information for up to 2 lines |
          * as a single line. We return the number of lines actually printed. | */
 static inline int sum_see (const char *str, int nobuf) {
    static char row[ROWMINSIZ];
@@ -6410,7 +6410,7 @@ static void do_memory (void) {
    char used[SMLBUFSIZ], util[SMLBUFSIZ], dual[MEDBUFSIZ], row[ROWMINSIZ];
    float pct_used, pct_misc, pct_swap;
    int ix, num_used, num_misc;
-   unsigned long my_misc;
+   unsigned long my_ulong;
 
    if (!scaletab[0].label) {
       scaletab[0].label = N_txt(AMT_kilobyte_txt);
@@ -6422,11 +6422,12 @@ static void do_memory (void) {
    }
 
    if (Curwin->rc.graph_mems) {
-      pct_used = (float)MEM_VAL(mem_USE) * (100.0 / (float)MEM_VAL(mem_TOT));
+      my_ulong = MEM_VAL(mem_TOT) - MEM_VAL(mem_BUF) - MEM_VAL(mem_QUE) - MEM_VAL(mem_FRE);
+      pct_used = (float)my_ulong * (100.0 / (float)MEM_VAL(mem_TOT));
 #ifdef MEMGRAPH_OLD
       pct_misc = (float)(MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE)) * (100.0 / (float)MEM_VAL(mem_TOT));
 #else
-      pct_misc = (float)(MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - MEM_VAL(mem_USE)) * (100.0 / (float)MEM_VAL(mem_TOT));
+      pct_misc = (float)(MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - my_ulong) * (100.0 / (float)MEM_VAL(mem_TOT));
 #endif
       if (pct_used + pct_misc > 100.0 || pct_misc < 0) pct_misc = 0;
       pct_swap = MEM_VAL(swp_TOT) ? (float)MEM_VAL(swp_USE) * (100.0 / (float)MEM_VAL(swp_TOT)) : 0;
@@ -6454,9 +6455,9 @@ static void do_memory (void) {
       Msg_row += sum_see(row, memPARM);
 
    } else {
-      my_misc = MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE);
+      my_ulong = MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE);
       prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(mem_FRE)));
-      prT(bfT(2), mkM(MEM_VAL(mem_USE))); prT(bfT(3), mkM(my_misc));
+      prT(bfT(2), mkM(MEM_VAL(mem_USE))); prT(bfT(3), mkM(my_ulong));
       prT(bfT(4), mkM(MEM_VAL(swp_TOT))); prT(bfT(5), mkM(MEM_VAL(swp_FRE)));
       prT(bfT(6), mkM(MEM_VAL(swp_USE))); prT(bfT(7), mkM(MEM_VAL(mem_AVL)));
 
