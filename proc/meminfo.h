@@ -89,7 +89,7 @@ enum meminfo_item {
     MEMINFO_MEM_SLAB_UNRECLAIM,    //   ul_int         "
     MEMINFO_MEM_TOTAL,             //   ul_int         "
     MEMINFO_MEM_UNEVICTABLE,       //   ul_int         "
-    MEMINFO_MEM_USED,              //   ul_int        derived from MEM_TOTAL - MEM_BUFFERS - MEM_CACHED_ALL - MEM_FREE
+    MEMINFO_MEM_USED,              //   ul_int        derived from MEM_TOTAL - MEM_AVAILABLE
     MEMINFO_MEM_VM_ALLOC_CHUNK,    //   ul_int        /proc/meminfo
     MEMINFO_MEM_VM_ALLOC_TOTAL,    //   ul_int         "
     MEMINFO_MEM_VM_ALLOC_USED,     //   ul_int         "

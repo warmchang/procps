@@ -699,7 +699,7 @@ static int meminfo_read_failed (
        such values will be dramatically distorted over those of the host. */
     if (mHr(MemAvailable) > mHr(MemTotal))
         mHr(MemAvailable) = mHr(MemFree);
-    mem_used = mHr(MemTotal) - mHr(MemFree) - mHr(derived_mem_cached) - mHr(Buffers);
+    mem_used = mHr(MemTotal) - mHr(MemAvailable);
     if (mem_used < 0)
         mem_used = mHr(MemTotal) - mHr(MemFree);
     mHr(derived_mem_used) = (unsigned long)mem_used;
