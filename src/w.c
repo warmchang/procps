@@ -357,7 +357,8 @@ static int find_best_proc(
         const char *restrict const tty,
         unsigned long long *restrict const jcpu,
         unsigned long long *restrict const pcpu,
-        char *cmdline)
+        char *cmdline,
+        pid_t *pid)
 {
 #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], info)
 #define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i], info)
@@ -372,6 +373,7 @@ static int find_best_proc(
     struct pids_info *info=NULL;
     struct pids_fetch *reap;
     enum pids_item items[] = {
+        PIDS_ID_PID,
         PIDS_ID_TGID,
         PIDS_TICS_BEGAN,
         PIDS_ID_EUID,
@@ -382,7 +384,7 @@ static int find_best_proc(
         PIDS_TICS_ALL,
         PIDS_CMDLINE};
     enum rel_items {
-        EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
+        EU_PID, EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
         EU_TICS_ALL, EU_CMDLINE};
 
     *jcpu = 0;
@@ -400,7 +402,7 @@ static int find_best_proc(
 
     line = get_tty_device(tty);
 
-    if (procps_pids_new(&info, items, 9) < 0)
+    if (procps_pids_new(&info, items, 10) < 0)
         xerrx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
     if ((reap = procps_pids_reap(info, PIDS_FETCH_TASKS_ONLY)) == NULL)
@@ -415,6 +417,7 @@ static int find_best_proc(
             if (!best_time) {
                 best_time = PIDS_GETULL(START);
                 strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
+                *pid = PIDS_GETULL(PID);
                 *pcpu = PIDS_GETULL(TICS_ALL);
             }
 
@@ -426,6 +429,7 @@ static int find_best_proc(
             secondbest_time = PIDS_GETULL(START);
             if (cmdline[0] == '-' && cmdline[1] == '\0') {
                 strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
+                *pid = PIDS_GETULL(PID);
                 *pcpu = PIDS_GETULL(TICS_ALL);
             }
         }
@@ -438,6 +442,7 @@ static int find_best_proc(
             continue;
         best_time = PIDS_GETULL(START);
         strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
+        *pid = PIDS_GETULL(PID);
         *pcpu = PIDS_GETULL(TICS_ALL);
     }
     procps_pids_unref(&info);
@@ -450,13 +455,16 @@ static int find_best_proc(
 
 static void showinfo(
             utmp_t * u, int formtype, int maxcmd, int from,
-            const int userlen, const int fromlen, const int ip_addresses)
+            const int userlen, const int fromlen, const int ip_addresses,
+            const int pids)
 {
     unsigned long long jcpu, pcpu;
     unsigned i;
     char uname[UT_NAMESIZE + 1] = "", tty[5 + UT_LINESIZE + 1] = "/dev/";
     long hertz;
     char cmdline[MAX_CMD_WIDTH + 1];
+    pid_t best_pid;
+    int pids_length = 0;
 
     strcpy(cmdline, "-");
 
@@ -468,7 +476,7 @@ static void showinfo(
         else
             tty[i + 5] = '\0';
 
-    if (find_best_proc(u, tty + 5, &jcpu, &pcpu, cmdline) == 0)
+    if (find_best_proc(u, tty + 5, &jcpu, &pcpu, cmdline, &best_pid) == 0)
     /*
      * just skip if stale utmp entry (i.e. login proc doesn't
      * exist). If there is a desire a cmdline flag could be
@@ -513,6 +521,14 @@ static void showinfo(
         else
             print_time_ival7(idletime(tty), 0, stdout);
     }
+    if (pids) {
+        pids_length = printf(" %d/%d", u->ut_pid, best_pid);
+        if (pids_length > maxcmd) {
+            maxcmd = 0;
+        } else if (pids_length > 0) {
+            maxcmd -= pids_length;
+        }
+    }
     printf(" %.*s\n", maxcmd, cmdline);
 }
 
@@ -529,6 +545,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_(" -f, --from          show remote hostname field\n"),out);
 	fputs(_(" -o, --old-style     old style output\n"),out);
 	fputs(_(" -i, --ip-addr       display IP address instead of hostname (if possible)\n"), out);
+	fputs(_(" -p, --pids          show the PID(s) of processes in WHAT\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(_("     --help     display this help and exit\n"), out);
 	fputs(USAGE_VERSION, out);
@@ -553,6 +570,7 @@ int main(int argc, char **argv)
 	int longform = 1;
 	int from = 1;
 	int ip_addresses = 0;
+	int pids = 0;
 
 	enum {
 		HELP_OPTION = CHAR_MAX + 1
@@ -565,6 +583,7 @@ int main(int argc, char **argv)
 		{"from", no_argument, NULL, 'f'},
 		{"old-style", no_argument, NULL, 'o'},
 		{"ip-addr", no_argument, NULL, 'i'},
+		{"pids", no_argument, NULL, 'p'},
 		{"help", no_argument, NULL, HELP_OPTION},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -583,7 +602,7 @@ int main(int argc, char **argv)
 #endif
 
 	while ((ch =
-		getopt_long(argc, argv, "husfoVi", longopts, NULL)) != -1)
+		getopt_long(argc, argv, "husfoVip", longopts, NULL)) != -1)
 		switch (ch) {
 		case 'h':
 			header = 0;
@@ -606,6 +625,9 @@ int main(int argc, char **argv)
 		case 'i':
 			ip_addresses = 1;
 			from = 1;
+			break;
+		case 'p':
+			pids = 1;
 			break;
 		case HELP_OPTION:
 			usage(stdout);
@@ -686,7 +708,7 @@ int main(int argc, char **argv)
 				continue;
 			if (!strncmp(u->ut_user, user, UT_NAMESIZE))
 				showinfo(u, longform, maxcmd, from, userlen,
-					 fromlen, ip_addresses);
+					 fromlen, ip_addresses, pids);
 		}
 	} else {
 		for (;;) {
@@ -701,7 +723,7 @@ int main(int argc, char **argv)
 				continue;
 			if (*u->ut_user)
 				showinfo(u, longform, maxcmd, from, userlen,
-					 fromlen, ip_addresses);
+					 fromlen, ip_addresses, pids);
 		}
 	}
 #ifdef HAVE_UTMPX_H
