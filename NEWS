@@ -1,6 +1,7 @@
 procps-ng-NEXT
   * library
     Re-add elogind support                                 merge #151
+    Used memory is Total - Available
   * pmap: Dont reuse stdin filehandle                      issue #231
   * ps: threads again display when -L is used with -q      issue #234
   * ps: proper aix format string behavior was restored
