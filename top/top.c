@@ -1423,7 +1423,7 @@ static char *ioline (const char *prompt) {
             pos = strlen(buf);
             break;
          default:                      // what we REALLY wanted (maybe)
-            if (bufNXT < bufMAX && scrNXT < Screen_cols) {
+            if (bufNXT < bufMAX && scrNXT < Screen_cols && strlen(buf) < bufMAX) {
                int tot = UTF8_tab[(unsigned char)key],
                    sav = pos;
                if (tot < 1) tot = 1;
