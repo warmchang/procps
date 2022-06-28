@@ -1255,6 +1255,7 @@ static char *ioline (const char *prompt) {
  #define chkCUR    { if (cur < 0) cur = 0; if (cur > len) cur = len; }
     // thank goodness ol' memmove will safely allow strings to overlap
  #define sqzSTR  { i = utfTOT(pos); while (i < 0) i = utfTOT(--pos); \
+       if (!utfCOL(pos + i)) i += utfTOT(pos + i); \
        memmove(&buf[pos], &buf[pos + i], bufMAX-(pos + i)); \
        memset(&buf[bufMAX - i], '\0', i); }
  #define expSTR(X)  if (bufNXT < bufMAX && scrNXT < Screen_cols) { \
