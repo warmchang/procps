@@ -1058,23 +1058,25 @@ setREL1(TICS_BEGAN)
  * as long as it still shows as STIME when using the -f option.
  */
 static int pr_stime(char *restrict const outbuf, const proc_t *restrict const pp){
-  struct tm *proc_time;
-  struct tm *our_time;
+  struct tm proc_time;
+  struct tm our_time;
   time_t t;
   const char *fmt;
   int tm_year;
   int tm_yday;
   size_t len;
 setREL1(TICS_BEGAN)
-  our_time = localtime(&seconds_since_1970);   /* not reentrant */
-  tm_year = our_time->tm_year;
-  tm_yday = our_time->tm_yday;
+  if (localtime_r(&seconds_since_1970, &our_time) == NULL)
+      return 0;
+  tm_year = our_time.tm_year;
+  tm_yday = our_time.tm_yday;
   t = boot_time() + rSv(TICS_BEGAN, ull_int, pp) / Hertz;
-  proc_time = localtime(&t); /* not reentrant, this corrupts our_time */
+  if (localtime_r(&t, &proc_time) == NULL)
+      return 0;
   fmt = "%H:%M";                                   /* 03:02 23:59 */
-  if(tm_yday != proc_time->tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
-  if(tm_year != proc_time->tm_year) fmt = "%Y";    /* 1991 2001 */
-  len = strftime(outbuf, COLWID, fmt, proc_time);
+  if(tm_yday != proc_time.tm_yday) fmt = "%b%d";  /* Jun06 Aug27 */
+  if(tm_year != proc_time.tm_year) fmt = "%Y";    /* 1991 2001 */
+  len = strftime(outbuf, COLWID, fmt, &proc_time);
   if(len <= 0 || len >= COLWID) outbuf[len = 0] = '\0';
   return len;
 }
