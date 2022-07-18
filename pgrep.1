@@ -7,7 +7,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2021-12-25" "procps-ng" "User Commands"
+.TH PGREP "1" "2022-07-18" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
@@ -281,7 +281,11 @@ can not be combined.  Let
 me know if you need to do this.
 .PP
 Defunct processes are reported.
-
+.PP
+.B pidwait
+requires the
+.BR pidfd_open (2)
+system call which first appeared in Linux 5.3.
 .SH "SEE ALSO"
 .BR ps (1),
 .BR regex (7),

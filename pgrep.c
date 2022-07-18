@@ -1064,6 +1064,8 @@ int main (int argc, char **argv)
                 printf(_("waiting for %s (pid %lu)\n"), procs[i].str, procs[i].num);
             int pidfd = pidfd_open(procs[i].num, 0);
             if (pidfd == -1) {
+		if (errno == ENOSYS)
+		    xerrx(EXIT_FAILURE, _("pidfd_open() not implemented in Linux < 5.3"));
                 /* ignore ESRCH, same as pkill */
                 if (errno != ESRCH)
                     xwarn(_("opening pid %ld failed"), procs[i].num);
