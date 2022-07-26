@@ -16,7 +16,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS 3 "January 2022" "libproc-2"
+.TH PROCPS 3 "July 2022" "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -32,34 +32,34 @@ the files they access in the /proc pseudo filesystem:
 .RS +4
 #include <procps/\fBnamed_interface\fR.h>
 
-.BI "int procps_new   (struct info **" info );
-.BI "int procps_ref   (struct info  *" info );
-.BI "int procps_unref (struct info **" info );
+.RI "int\fB procps_new  \fR (struct info **" info );
+.RI "int\fB procps_ref  \fR (struct info  *" info );
+.RI "int\fB procps_unref\fR (struct info **" info );
 
-.BI "struct result *procps_get ("
-.BI "    struct info *" info ,
+.RB "struct result *" procps_get " ("
+.RI "    struct info *" info ,
 .RI "[   const char *" name ",      ]   \fBdiskstats\fR api only"
-.BI "    enum item " item );
+.RI "    enum item " item );
 
-.BI "struct stack *procps_select ("
-.BI "    struct info *" info ,
+.RB "struct stack *" procps_select " ("
+.RI "    struct info *" info ,
 .RI "[   const char *" name ",      ]   \fBdiskstats\fR api only"
-.BI "    enum item *" items ,
-.BI "    int " numitems );
+.RI "    enum item *" items ,
+.RI "    int " numitems );
 
-.BI "struct reaped *procps_reap ("
-.BI "    struct info *" info ,
+.RB "struct reaped *" procps_reap " ("
+.RI "    struct info *" info ,
 .RI "[   enum reap_type " what ",   ]   \fBstat\fR api only"
-.BI "    enum item *" items ,
-.BI "    int " numitems );
+.RI "    enum item *" items ,
+.RI "    int " numitems );
 
-.BI "struct stack **procps_sort ("
-.BI "    struct info *" info ,
-.BI "    struct stack *" stacks[] ,
-.BI "    int " numstacked ,
-.BI "    enum item " sortitem ,
-.BI "    enum sort_order " order );
-.RE
+.RB "struct stack **" procps_sort " ("
+.RI "    struct info *" info ,
+.RI "    struct stack *" stacks [],
+.RI "    int " numstacked ,
+.RI "    enum item " sortitem ,
+.RI "    enum sort_order " order );
+
 .fi
 
 The above functions and structures are generic but the specific

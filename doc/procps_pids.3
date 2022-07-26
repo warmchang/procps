@@ -16,7 +16,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_PIDS 3 "January 2022" "libproc-2"
+.TH PROCPS_PIDS 3 "July 2022" "libproc-2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -27,41 +27,40 @@ procps_pids \- API to access process information in the /proc filesystem
 .nf
 #include <procps/pids.h>
 
-.BI "int procps_pids_new   (struct pids_info **" info ", enum pids_item *" items ", int " numitems );
-.BI "int procps_pids_ref   (struct pids_info  *" info );
-.BI "int procps_pids_unref (struct pids_info **" info );
+.RI "int\fB procps_pids_new  \fR (struct pids_info **" info ", enum pids_item *" items ", int " numitems );
+.RI "int\fB procps_pids_ref  \fR (struct pids_info  *" info );
+.RI "int\fB procps_pids_unref\fR (struct pids_info **" info );
 
 
-.BI "struct pids_stack *procps_pids_get ("
-.BI "    struct pids_info *" info ,
-.BI "    enum pids_fetch_type " which );
+.RB "struct pids_stack *" procps_pids_get " ("
+.RI "    struct pids_info *" info ,
+.RI "    enum pids_fetch_type " which );
 
-.BI "struct pids_fetch *procps_pids_reap ("
-.BI "    struct pids_info *" info ,
-.BI "    enum pids_fetch_type " which );
+.RB "struct pids_fetch *" procps_pids_reap " ("
+.RI "    struct pids_info *" info ,
+.RI "    enum pids_fetch_type " which );
 
-.BI "struct pids_fetch *procps_pids_select ("
-.BI "    struct pids_info *" info ,
-.BI "    unsigned *" these ,
-.BI "    int " numthese ,
-.BI "    enum pids_select_type " which );
+.RB "struct pids_fetch *" procps_pids_select " ("
+.RI "    struct pids_info *" info ,
+.RI "    unsigned *" these ,
+.RI "    int " numthese ,
+.RI "    enum pids_select_type " which );
 
-.BI "struct pids_stack **procps_pids_sort ("
-.BI "    struct pids_info *" info ,
-.BI "    struct pids_stack *" stacks[] ,
-.BI "    int " numstacked ,
-.BI "    enum pids_item " sortitem ,
-.BI "    enum pids_sort_order " order );
+.RB "struct pids_stack **" procps_pids_sort " ("
+.RI "    struct pids_info *" info ,
+.RI "    struct pids_stack *" stacks [],
+.RI "    int " numstacked ,
+.RI "    enum pids_item " sortitem ,
+.RI "    enum pids_sort_order " order );
 
+.RB "int " procps_pids_reset " ("
+.RI "    struct pids_info *" info ,
+.RI "    enum pids_item *" newitems ,
+.RI "    int " newnumitems );
 
-.BI "int procps_pids_reset ("
-.BI "    struct pids_info *" info ,
-.BI "    enum pids_item *" newitems ,
-.BI "    int " newnumitems );
-
-.BI "struct pids_stack *fatal_proc_unmounted ("
-.BI "    struct pids_info *" info ,
-.BI "    int " return_self );
+.RB "struct pids_stack *" fatal_proc_unmounted " ("
+.RI "    struct pids_info *" info ,
+.RI "    int " return_self );
 
 .fi
 
