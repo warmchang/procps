@@ -440,9 +440,10 @@ typedef struct WIN_t {
 
         // Support for a proper (visible) row #1 whenever Curwin changes
         // ( or a key which might affect vertical scrolling was struck )
-#define mkVIZyes       Curwin->begnext != 0
+#define mkVIZyes     ( Curwin->begnext != 0 )
 #define mkVIZrow1    { Curwin->begnext = +1; Curwin->begtask -= 1; }
 #define mkVIZrowX(n) { Curwin->begnext = (n); }
+#define mkVIZoff(w)  { w->begnext = 0; }
 
         /* Special Section: end ------------------------------------------ */
         /* /////////////////////////////////////////////////////////////// */
