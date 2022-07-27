@@ -4630,10 +4630,11 @@ static void win_names (WIN_t *q, const char *name) {
 static void win_reset (WIN_t *q) {
          SETw(q, Show_IDLEPS | Show_TASKON);
 #ifndef SCROLLVAR_NO
-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->varcolbeg = q->focus_pid = 0;
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->varcolbeg = q->focus_pid = 0;
 #else
-         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->begnext = q->focus_pid = 0;
+         q->rc.maxtasks = q->usrseltyp = q->begpflg = q->begtask = q->focus_pid = 0;
 #endif
+         mkVIZoff(q)
          osel_clear(q);
          q->findstr[0] = '\0';
          q->rc.combine_cpus = 0;
@@ -5147,7 +5148,7 @@ static void forest_excluded (WIN_t *q) {
       // watch out for newly forked/cloned tasks 'above' us ...
       if (q->begtask < q->focus_beg) {
          q->begtask = q->focus_beg;
-         q->begnext = 0;     // as 'mkVIZoff' but in any window
+         mkVIZoff(q)
       }
 #ifdef FOCUS_HARD_Y
       // if some task 'above' us ended, try to maintain focus
@@ -5155,7 +5156,7 @@ static void forest_excluded (WIN_t *q) {
       if (q->begtask > q->focus_beg
       && (SCREEN_ROWS > (q->focus_end - q->focus_beg))) {
          q->begtask = q->focus_beg;
-         q->begnext = 0;     // as 'mkVIZoff' but in any window
+         mkVIZoff(q)
       }
 #endif
    }
@@ -5626,7 +5627,6 @@ static void keys_global (int ch) {
       case '?':
       case 'h':
          help_view();
-         mkVIZrow1
          break;
       case 'B':
          TOGw(w, View_NOBOLD);
@@ -5653,7 +5653,6 @@ static void keys_global (int ch) {
          break;
       case 'g':
          win_select(0);
-         mkVIZrow1
          break;
       case 'H':
          Thread_mode = !Thread_mode;
@@ -5738,7 +5737,6 @@ static void keys_global (int ch) {
          break;
       case 'Z':
          wins_colors();
-         mkVIZrow1
          break;
       case '0':
          Rc.zero_suppress = !Rc.zero_suppress;
@@ -5991,10 +5989,7 @@ static void keys_task (int ch) {
       case 'O':
       case 'o':
       case kbd_CtrlO:
-         if (VIZCHKw(w)) {
-            other_filters(ch);
-            mkVIZrow1
-         }
+         if (VIZCHKw(w)) other_filters(ch);
          break;
       case 'U':
       case 'u':
@@ -6003,7 +5998,6 @@ static void keys_task (int ch) {
             if (*str != kbd_ESC
             && (errmsg = user_certify(w, str, ch)))
                 show_msg(errmsg);
-            mkVIZrow1
          }
          break;
       case 'V':
@@ -6109,10 +6103,7 @@ static void keys_window (int ch) {
          break;
       case 'a':
       case 'w':
-         if (ALTCHKw) {
-            win_select(ch);
-            mkVIZrow1
-         }
+         if (ALTCHKw) win_select(ch);
          break;
       case 'G':
          if (ALTCHKw) {
@@ -6209,10 +6200,8 @@ static void keys_window (int ch) {
       case kbd_HOME:
 #ifndef SCROLLVAR_NO
          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = w->varcolbeg = 0;
-         mkVIZrow1
 #else
          if (VIZCHKw(w)) if (CHKw(w, Show_IDLEPS)) w->begtask = w->begpflg = 0;
-         mkVIZrow1
 #endif
          break;
       case kbd_END:
@@ -6634,6 +6623,13 @@ static void do_key (int ch) {
                key_tab[i].func(ch);
                if (Frames_signal == BREAK_off)
                   Frames_signal = BREAK_kbd;
+               /* due to the proliferation of the need for 'mkVIZrow1', |
+                  aside from 'wins_stage_2' use, we'll now issue it one |
+                  time here. there will remain several places where the |
+                  companion 'mkVIZrowX' macro is issued, thus the check |
+                  for a value already in 'begnext' in this conditional. | */
+               if (CHKw(Curwin, Show_TASKON) && !mkVIZyes)
+                  mkVIZrow1
                goto all_done;
             }
    };
@@ -7003,14 +6999,11 @@ static const char *task_show (const WIN_t *q, const int idx) {
 
 
         /*
-         * A window_show *Helper* function ensuring that Curwin's 'begtask'
-         * represents a visible process (not any hidden/filtered-out task).
-         * In reality, this function is called:
-         *   1) exclusively for the 'current' window
-         *   2) immediately after interacting with the user
-         *   3) who struck: up, down, pgup, pgdn, home, end, 'o/O' or 'u/U'
-         *   4) or upon the user switching from one window to another window
-         * ( note: it's entirely possible there are NO visible tasks to show ) */
+         * A window_show *Helper* function ensuring that a window 'begtask' |
+         * represents a visible process (not any hidden/filtered-out task). |
+         * In reality this function is called exclusively for the 'current' |
+         * window and only after available user keystroke(s) are processed. |
+         * Note: it's entirely possible there are NO visible tasks to show! | */
 static void window_hlp (void) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, reversed;
@@ -7058,7 +7051,7 @@ fwd_redux:
    }
 
 wrap_up:
-   w->begnext = 0;
+   mkVIZoff(w)
    OFFw(w, NOPRINT_xxx);
 } // end: window_hlp
 
