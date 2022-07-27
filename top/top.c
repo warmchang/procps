@@ -6277,7 +6277,7 @@ static void keys_xtra (int ch) {
          * ( surely, this must make us run much more efficiently. amirite? ) | */
 
         /*
-         * Cpu *Helper* function to show the percentages for one or two cpus |
+         * A *Helper* function to show summary information for up to 2 lines |
          * as a single line. We return the number of lines actually printed. | */
 static inline int sum_see (const char *str, int nobuf) {
    static char row[ROWMINSIZ];
