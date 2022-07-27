@@ -152,6 +152,10 @@ As such, the \fIinfo\fR parameter would be NULL and the
 If, however, some items are desired for the issuing program (a
 \fIreturn_self\fR other than zero) then the \fBnew\fR call must precede
 it to identify the \fIitems\fR and obtain the required \fIinfo\fR pointer.
+\fBfatal_proc_unmounted\fR function used in this way will only return a
+subset of values found in /proc/self/stat file. Check the \fIpids_item\fR
+enum in <procps/pids.h> for items with origin of \fIstat:\fR to see what
+are the available values.
 
 .SH RETURN VALUE
 .SS Functions Returning an `int'
