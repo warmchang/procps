@@ -82,8 +82,8 @@ struct pids_info {
     int curitems;                      // includes 'logical_end' delimiter
     enum pids_item *items;             // includes 'logical_end' delimiter
     struct stacks_extent *extents;     // anchor for all resettable extents
-    struct stacks_extent *otherexts;   // anchor for single stack invariant extents
-    struct fetch_support fetch;        // support for procps_pids_reap & select
+    struct stacks_extent *otherexts;   // anchor for invariant extents // <=== currently unused
+    struct fetch_support fetch;        // support for procps_pids_reap, select, fatal
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
     proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
@@ -900,6 +900,7 @@ static inline void pids_cleanup_stacks_all (
 } // end: pids_cleanup_stacks_all
 
 
+#if 0   // not currently needed after 'fatal_proc_unmounted' was refactored
         /*
          * This routine exists in case we ever want to offer something like
          * 'static' or 'invarient' results stacks.  By unsplicing an extent
@@ -925,6 +926,7 @@ static struct stacks_extent *pids_extent_cut (
     }
     return NULL;
 } // end: pids_extent_cut
+#endif  // ----------------------------------------------------------------
 
 
 static inline struct pids_result *pids_itemize_stack (
@@ -1377,8 +1379,9 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
         struct pids_info *info,
         int return_self)
 {
-    static __thread proc_t self;
-    struct stacks_extent *ext;
+    struct pids_fetch *fetched;
+    unsigned tid;
+    proc_t self;
 
     /* this is very likely the *only* newlib function where the
        context (pids_info) of NULL will ever be permitted */
@@ -1386,27 +1389,10 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
     || (!return_self))
         return NULL;
 
-    errno = EINVAL;
-    if (info == NULL)
+    tid = getpid();
+    if (!(fetched = procps_pids_select(info, &tid, 1, PIDS_SELECT_PID)))
         return NULL;
-    /* with items & numitems technically optional at 'new' time, it's
-       expected 'reset' will have been called -- but just in case ... */
-    if (!info->curitems)
-        return NULL;
-    errno = 0;
-
-    if (!(ext = pids_stacks_alloc(info, 1)))
-        return NULL;
-    if (!pids_extent_cut(info, ext)) {
-        errno = EADDRNOTAVAIL;
-        return NULL;
-    }
-    ext->next = info->otherexts;
-    info->otherexts = ext;
-    if (!pids_assign_results(info, ext->stacks[0], &self))
-        return NULL;
-
-    return ext->stacks[0];
+    return fetched->stacks[0];
 } // end: fatal_proc_unmounted
 
 
