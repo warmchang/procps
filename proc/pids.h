@@ -185,7 +185,7 @@ enum pids_item {
     PIDS_VM_STACK,          //   ul_int        status: VmStk
     PIDS_VM_SWAP,           //   ul_int        status: VmSwap
     PIDS_VM_USED,           //   ul_int        derived from status: VmRSS + VmSwap
-    PIDS_VSIZE_PGS,         //   ul_int        stat: vsize
+    PIDS_VSIZE_BYTES,       //   ul_int        stat: vsize
     PIDS_WCHAN_NAME         //      str        wchan
 };
                             //              *  while these are all expressed as seconds, each can be
