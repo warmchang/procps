@@ -941,48 +941,48 @@ setREL1(VM_SIZE)
 /* kB data size. See drs, tsiz & trs. */
 static int pr_dsiz(char *restrict const outbuf, const proc_t *restrict const pp){
     long dsiz;
-setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
+setREL3(VSIZE_BYTES,ADDR_CODE_END,ADDR_CODE_START)
     dsiz = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) dsiz += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_CODE_END, ul_int, pp) + rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_BYTES, ul_int, pp)) dsiz += (rSv(VSIZE_BYTES, ul_int, pp) - rSv(ADDR_CODE_END, ul_int, pp) + rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", dsiz);
 }
 
 /* kB text (code) size. See trs, dsiz & drs. */
 static int pr_tsiz(char *restrict const outbuf, const proc_t *restrict const pp){
     long tsiz;
-setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
+setREL3(VSIZE_BYTES,ADDR_CODE_END,ADDR_CODE_START)
     tsiz = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) tsiz += (rSv(ADDR_CODE_END, ul_int, pp) - rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_BYTES, ul_int, pp)) tsiz += (rSv(ADDR_CODE_END, ul_int, pp) - rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", tsiz);
 }
 
 /* kB _resident_ data size. See dsiz, tsiz & trs. */
 static int pr_drs(char *restrict const outbuf, const proc_t *restrict const pp){
     long drs;
-setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
+setREL3(VSIZE_BYTES,ADDR_CODE_END,ADDR_CODE_START)
     drs = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) drs += (rSv(VSIZE_PGS, ul_int, pp) - rSv(ADDR_CODE_END, ul_int, pp) + rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_BYTES, ul_int, pp)) drs += (rSv(VSIZE_BYTES, ul_int, pp) - rSv(ADDR_CODE_END, ul_int, pp) + rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", drs);
 }
 
 /* kB text _resident_ (code) size. See tsiz, dsiz & drs. */
 static int pr_trs(char *restrict const outbuf, const proc_t *restrict const pp){
     long trs;
-setREL3(VSIZE_PGS,ADDR_CODE_END,ADDR_CODE_START)
+setREL3(VSIZE_BYTES,ADDR_CODE_END,ADDR_CODE_START)
     trs = 0;
-    if(rSv(VSIZE_PGS, ul_int, pp)) trs += (rSv(ADDR_CODE_END, ul_int, pp) - rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
+    if(rSv(VSIZE_BYTES, ul_int, pp)) trs += (rSv(ADDR_CODE_END, ul_int, pp) - rSv(ADDR_CODE_START, ul_int, pp)) >> 10;
     return snprintf(outbuf, COLWID, "%ld", trs);
 }
 
 static int pr_swapable(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL3(VM_DATA,VM_STACK,VSIZE_PGS)    // that last enum will approximate sort needs
+setREL3(VM_DATA,VM_STACK,VSIZE_BYTES)    // that last enum will approximate sort needs
   return snprintf(outbuf, COLWID, "%lu", rSv(VM_DATA, ul_int, pp) + rSv(VM_STACK, ul_int, pp));
 }
 
 /* nasty old Debian thing */
 static int pr_size(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL1(VSIZE_PGS)
-  return snprintf(outbuf, COLWID, "%lu", rSv(VSIZE_PGS, ul_int, pp));
+setREL1(VSIZE_BYTES)
+  return snprintf(outbuf, COLWID, "%lu", rSv(VSIZE_BYTES, ul_int, pp));
 }
 
 static int pr_minflt(char *restrict const outbuf, const proc_t *restrict const pp){
@@ -1656,8 +1656,8 @@ static const format_struct format_array[] = { /*
 {"cutime",    "-",       pr_nop,           PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
 {"cuu",       "%CUU",    pr_utilization,   PIDS_UTILIZATION,         6,    XXX,  AN|RIGHT},
 {"cwd",       "CWD",     pr_nop,           PIDS_noop,                3,    LNX,  AN|LEFT},
-{"drs",       "DRS",     pr_drs,           PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
-{"dsiz",      "DSIZ",    pr_dsiz,          PIDS_VSIZE_PGS,           4,    LNX,  PO|RIGHT},
+{"drs",       "DRS",     pr_drs,           PIDS_VSIZE_BYTES,         5,    LNX,  PO|RIGHT},
+{"dsiz",      "DSIZ",    pr_dsiz,          PIDS_VSIZE_BYTES,         4,    LNX,  PO|RIGHT},
 {"egid",      "EGID",    pr_egid,          PIDS_ID_EGID,             5,    LNX,  ET|RIGHT},
 {"egroup",    "EGROUP",  pr_egroup,        PIDS_ID_EGROUP,           8,    LNX,  ET|USER},
 {"eip",       "EIP",     pr_eip,           PIDS_ADDR_CURR_EIP, (int)(2*sizeof(long)), LNX, TO|RIGHT},
@@ -1705,14 +1705,14 @@ static const format_struct format_array[] = { /*
 {"luser",     "LUSER",   pr_nop,           PIDS_noop,                8,    LNX,  ET|USER},  /* login USER */
 {"lwp",       "LWP",     pr_tasks,         PIDS_ID_PID,              5,    SUN,  TO|PIDMAX|RIGHT},
 {"lxc",       "LXC",     pr_lxcname,       PIDS_LXCNAME,             8,    LNX,  ET|LEFT},
-{"m_drs",     "DRS",     pr_drs,           PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
+{"m_drs",     "DRS",     pr_drs,           PIDS_VSIZE_BYTES,         5,    LNx,  PO|RIGHT},
 {"m_dt",      "DT",      pr_nop,           PIDS_noop,                4,    LNx,  PO|RIGHT},
 {"m_lrs",     "LRS",     pr_nop,           PIDS_noop,                5,    LNx,  PO|RIGHT},
 {"m_resident", "RES",    pr_nop,           PIDS_MEM_RES_PGS,         5,    LNx,  PO|RIGHT},
 {"m_share",   "SHRD",    pr_nop,           PIDS_MEM_SHR_PGS,         5,    LNx,  PO|RIGHT},
-{"m_size",    "SIZE",    pr_size,          PIDS_VSIZE_PGS,           5,    LNX,  PO|RIGHT},
+{"m_size",    "SIZE",    pr_size,          PIDS_VSIZE_BYTES,         5,    LNX,  PO|RIGHT},
 {"m_swap",    "SWAP",    pr_nop,           PIDS_noop,                5,    LNx,  PO|RIGHT},
-{"m_trs",     "TRS",     pr_trs,           PIDS_VSIZE_PGS,           5,    LNx,  PO|RIGHT},
+{"m_trs",     "TRS",     pr_trs,           PIDS_VSIZE_BYTES,         5,    LNx,  PO|RIGHT},
 {"machine",   "MACHINE", pr_sd_machine,    PIDS_SD_MACH,            31,    LNX,  ET|LEFT},
 {"maj_flt",   "MAJFL",   pr_majflt,        PIDS_FLT_MAJ,             6,    LNX,  AN|RIGHT},
 {"majflt",    "MAJFLT",  pr_majflt,        PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
@@ -1802,7 +1802,7 @@ static const format_struct format_array[] = { /*
 {"sigcatch",  "CAUGHT",  pr_sigcatch,      PIDS_SIGCATCH,            9,    XXX,  TO|SIGNAL}, /*caught*/
 {"sigignore", "IGNORED", pr_sigignore,     PIDS_SIGIGNORE,           9,    XXX,  TO|SIGNAL}, /*ignored*/
 {"sigmask",   "BLOCKED", pr_sigmask,       PIDS_SIGBLOCKED,          9,    XXX,  TO|SIGNAL}, /*blocked*/
-{"size",      "SIZE",    pr_swapable,      PIDS_VSIZE_PGS,           5,    SCO,  PO|RIGHT},
+{"size",      "SIZE",    pr_swapable,      PIDS_VSIZE_BYTES,         5,    SCO,  PO|RIGHT},
 {"sl",        "SL",      pr_nop,           PIDS_noop,                3,    XXX,  AN|RIGHT},
 {"slice",      "SLICE",  pr_sd_slice,      PIDS_SD_SLICE,           31,    LNX,  ET|LEFT},
 {"spid",      "SPID",    pr_tasks,         PIDS_ID_PID,              5,    SGI,  TO|PIDMAX|RIGHT},
@@ -1837,13 +1837,13 @@ static const format_struct format_array[] = { /*
 {"tmout",     "TMOUT",   pr_nop,           PIDS_noop,                5,    LNX,  AN|RIGHT}, // 2.0.xx era
 {"tname",     "TTY",     pr_tty8,          PIDS_TTY_NAME,            8,    DEC,  PO|LEFT},
 {"tpgid",     "TPGID",   pr_tpgid,         PIDS_ID_TPGID,            5,    XXX,  PO|PIDMAX|RIGHT},
-{"trs",       "TRS",     pr_trs,           PIDS_VSIZE_PGS,           4,    AIX,  PO|RIGHT},
-{"trss",      "TRSS",    pr_trs,           PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT}, /* 4.3BSD NET/2 */
+{"trs",       "TRS",     pr_trs,           PIDS_VSIZE_BYTES,         4,    AIX,  PO|RIGHT},
+{"trss",      "TRSS",    pr_trs,           PIDS_VSIZE_BYTES,         4,    BSD,  PO|RIGHT}, /* 4.3BSD NET/2 */
 {"tsess",     "TSESS",   pr_nop,           PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
 {"tsession",  "TSESS",   pr_nop,           PIDS_noop,                5,    DEC,  PO|PIDMAX|RIGHT},
 {"tsid",      "TSID",    pr_nop,           PIDS_noop,                5,    BSD,  PO|PIDMAX|RIGHT},
 {"tsig",      "PENDING", pr_tsig,          PIDS_SIGPENDING,          9,    BSD,  ET|SIGNAL}, /* Dragonfly used this for thread-specific, and "sig" for whole-proc */
-{"tsiz",      "TSIZ",    pr_tsiz,          PIDS_VSIZE_PGS,           4,    BSD,  PO|RIGHT},
+{"tsiz",      "TSIZ",    pr_tsiz,          PIDS_VSIZE_BYTES,         4,    BSD,  PO|RIGHT},
 {"tt",        "TT",      pr_tty8,          PIDS_TTY_NAME,            8,    BSD,  PO|LEFT},
 {"tty",       "TT",      pr_tty8,          PIDS_TTY_NAME,            8,    U98,  PO|LEFT}, /* Unix98 requires "TT" but has "TTY" too. :-( */  /* was 3 wide */
 {"tty4",      "TTY",     pr_tty4,          PIDS_TTY_NAME,            4,    LNX,  PO|LEFT},
@@ -1872,7 +1872,7 @@ static const format_struct format_array[] = { /*
 {"vm_lib",    "LIB",     pr_nop,           PIDS_VM_LIB,              5,    LNx,  PO|RIGHT},
 {"vm_lock",   "LCK",     pr_nop,           PIDS_VM_RSS_LOCKED,       3,    LNx,  PO|RIGHT},
 {"vm_stack",  "STACK",   pr_nop,           PIDS_VM_STACK,            5,    LNx,  PO|RIGHT},
-{"vsize",     "VSZ",     pr_vsz,           PIDS_VSIZE_PGS,           6,    DEC,  PO|RIGHT}, /*vsz*/
+{"vsize",     "VSZ",     pr_vsz,           PIDS_VSIZE_BYTES,         6,    DEC,  PO|RIGHT}, /*vsz*/
 {"vsz",       "VSZ",     pr_vsz,           PIDS_VM_SIZE,             6,    U98,  PO|RIGHT}, /*vsize*/
 {"wbytes",    "WBYTES",  pr_wbytes,        PIDS_IO_WRITE_BYTES,      5,    LNX,  TO|RIGHT},
 {"wcbytes",   "WCBYTES", pr_wcbytes,       PIDS_IO_WRITE_CBYTES,     5,    LNX,  TO|RIGHT},
