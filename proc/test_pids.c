@@ -24,6 +24,7 @@
 #include "tests.h"
 
 enum pids_item items[] = { PIDS_ID_PID, PIDS_ID_PID };
+enum pids_item items2[] = { PIDS_ID_PID, PIDS_VM_RSS };
 
 int check_pids_new_nullinfo(void *data)
 {
@@ -47,10 +48,23 @@ int check_pids_new_and_unref(void *data)
              info == NULL);
 }
 
+int check_fatal_proc_unmounted(void *data)
+{
+    struct pids_info *info = NULL;
+    struct pids_stack *stack;
+    testname = "check_fatal_proc_unmounted";
+
+    return ( (procps_pids_new(&info, items2, 2) == 0) &&
+	    ( (stack = fatal_proc_unmounted(info, 1)) != NULL) &&
+	    ( PIDS_VAL(0, s_int, stack, info) > 0) &&
+	    ( PIDS_VAL(1, u_int, stack, info) > 0));
+}
+
 TestFunction test_funcs[] = {
     check_pids_new_nullinfo,
     // skipped, ask Jim check_pids_new_toomany,
     check_pids_new_and_unref,
+    check_fatal_proc_unmounted,
     NULL };
 
 int main(int argc, char *argv[])
