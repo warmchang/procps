@@ -124,6 +124,7 @@ static struct el *opt_pgrp = NULL;
 static struct el *opt_rgid = NULL;
 static struct el *opt_pid = NULL;
 static struct el *opt_ppid = NULL;
+static struct el *opt_ignore_ancestors = NULL;
 static struct el *opt_sid = NULL;
 static struct el *opt_term = NULL;
 static struct el *opt_euid = NULL;
@@ -180,6 +181,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -F, --pidfile <file>      read PIDs from file\n"), fp);
     fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
     fputs(_(" -r, --runstates <state>   match runstates [D,S,Z,...]\n"), fp);
+    fputs(_(" -A, --ignore-ancestors    exclude our ancestors from results\n"), fp);
     fputs(_(" --cgroup <grp,...>        match by cgroup v2 names\n"), fp);
     fputs(_(" --ns <PID>                match the processes that belong to the same\n"
         "                           namespace as <pid>\n"), fp);
@@ -192,6 +194,50 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fprintf(fp, USAGE_MAN_TAIL("pgrep(1)"));
 
     exit(fp == stderr ? EXIT_USAGE : EXIT_SUCCESS);
+}
+
+static struct el *get_our_ancestors(void)
+{
+#define PIDS_GETINT(e) PIDS_VAL(EU_##e, s_int, stack, info)
+    struct pids_info *info = NULL;
+    struct el *list = NULL;
+    int i = 0;
+    int size = 0;
+    int done = 0;
+    pid_t search_pid = getpid();
+    struct pids_stack *stack;
+
+    if (procps_pids_new(&info, Items, 15) < 0)
+        xerrx(EXIT_FATAL, _("Unable to create pid info structure"));
+
+    while (!done) {
+        if (search_pid == 0)
+            break;
+
+        if (i == size) {
+            grow_size(size);
+            list = xrealloc(list, (1 + size) * sizeof(*list));
+        }
+
+        while ((stack = procps_pids_get(info, PIDS_FETCH_TASKS_ONLY))) {
+            if (PIDS_GETINT(PID) == search_pid) {
+                list[++i].num = PIDS_GETINT(PPID);
+                search_pid = list[i].num;
+                break;
+            }
+
+            done = 1;
+        }
+    }
+
+    if (i == 0) {
+        free(list);
+        list = NULL;
+    } else {
+        list[0].num = i;
+    }
+    return list;
+#undef PIDS_GETINT
 }
 
 static struct el *split_list (const char *restrict str, int (*convert)(const char *, struct el *))
@@ -612,6 +658,8 @@ static struct el * select_procs (int *num)
 
         if (PIDS_GETINT(PID) == myself)
             continue;
+        else if (opt_ignore_ancestors && match_numlist(PIDS_GETINT(PID), opt_ignore_ancestors))
+            continue;
         else if (opt_newest && PIDS_GETULL(STARTTIME) < saved_start_time)
             match = 0;
         else if (opt_oldest && PIDS_GETULL(STARTTIME) > saved_start_time)
@@ -756,6 +804,7 @@ static void parse_opts (int argc, char **argv)
     };
     static const struct option longopts[] = {
         {"signal", required_argument, NULL, SIGNAL_OPTION},
+        {"ignore-ancestors", no_argument, NULL, 'A'},
         {"count", no_argument, NULL, 'c'},
         {"cgroup", required_argument, NULL, CGROUP_OPTION},
         {"delimiter", required_argument, NULL, 'd'},
@@ -808,7 +857,7 @@ static void parse_opts (int argc, char **argv)
         prog_mode = PGREP;
     }
 
-    strcat (opts, "LF:cfinoxP:O:g:s:u:U:G:t:r:?Vh");
+    strcat (opts, "LF:cfinoxP:O:Ag:s:u:U:G:t:r:?Vh");
 
     while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
         switch (opt) {
@@ -891,6 +940,9 @@ static void parse_opts (int argc, char **argv)
             break;
         case 'a':
             opt_longlong = 1;
+            break;
+        case 'A':
+            opt_ignore_ancestors = get_our_ancestors();
             break;
         case 'n':   /* Solaris: match only the newest */
             if (opt_oldest|opt_negate|opt_newest)
