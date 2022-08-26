@@ -1258,11 +1258,13 @@ otherwise.  (alias
 T}
 
 eip	EIP	T{
-instruction pointer.
+instruction pointer. As of kernel 4.9.xx will be zeroed out unless task is 
+exiting or being core dumped.
 T}
 
 esp	ESP	T{
-stack pointer.
+stack pointer. As of kernel 4.9.xx will be zeroed out unless task is 
+exiting or being core dumped.
 T}
 
 etime	ELAPSED	T{
