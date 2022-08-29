@@ -2,7 +2,7 @@
 # Testsuite for lib/strutils program
 #
 
-set teststr "${topdir}lib/test_strutils"
+set teststr "${topdir}src/tests/test_strutils"
 
 set test "without argument"
 spawn $teststr

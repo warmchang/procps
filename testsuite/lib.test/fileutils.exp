@@ -2,7 +2,7 @@
 # Testsuite for lib/fileutils program
 #
 
-set noarg "${topdir}lib/test_fileutils"
+set noarg "${topdir}src/tests/test_fileutils"
 
 set test "without argument"
 spawn $noarg

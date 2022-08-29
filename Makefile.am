@@ -287,7 +287,7 @@ library_libproc2_la_SOURCES = \
 	library/uptime.c \
 	library/include/xtra-procps-debug.h
 
-library_libproc2_la_includedir = $(includedir)/procps/
+library_libproc2_la_includedir = $(includedir)/libproc2/
 library_libproc2_la_include_HEADERS = \
 	library/include/diskstats.h \
 	library/include/meminfo.h \

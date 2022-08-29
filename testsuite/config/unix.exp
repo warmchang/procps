@@ -148,7 +148,7 @@ proc expect_spawn_retval { test retval } {
 proc make_pipeproc { } {
     global pipeproc_pid pipeproc_spawnid topdir
 
-    set testproc_realpath "${topdir}/lib/test_process"
+    set testproc_realpath "${topdir}/src/tests/test_process"
 
     set pipeproc_pid [ spawn $testproc_realpath ]
     set pipeproc_spawnid $spawn_id
@@ -157,7 +157,7 @@ proc make_pipeproc { } {
 proc make_testproc { } {
     global testproc_path testproc_comm testproc_arg_str testproc1_pid testproc2_pid topdir
 
-    set testproc_realpath "${topdir}/lib/test_process"
+    set testproc_realpath "${topdir}/src/tests/test_process"
     set testproc_comm "spcorp"
 
     set testproc_path [ exec mktemp -u ]
@@ -189,7 +189,7 @@ proc make_testproc { } {
 proc make_testshm_proc { } {
     global testshmproc_pid testshm_spawnid topdir shmid
 
-    set testshm_realpath "${topdir}/lib/test_shm"
+    set testshm_realpath "${topdir}/src/tests/test_shm"
 
     set testshmproc_pid [ spawn $testshm_realpath ]
     set testshmproc_spawnid $spawn_id

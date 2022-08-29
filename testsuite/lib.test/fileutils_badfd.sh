@@ -1,3 +1,3 @@
 #!/bin/sh
 
-${PWD}/../lib/test_fileutils >&-
+${PWD}/../src/tests/test_fileutils >&-
