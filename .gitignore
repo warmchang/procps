@@ -44,11 +44,11 @@ src/pkill
 src/pmap
 src/pidwait
 procps-ng-*.tar.xz
-proc/.depend
-proc/libproc-2.la
-proc/libproc-2.pc
-proc/Makefile
-proc/Makefile.in
+library/.depend
+library/libproc2.la
+library/libproc2.pc
+library/Makefile
+library/Makefile.in
 src/ps/Makefile
 src/ps/Makefile.in
 src/ps/pscommand

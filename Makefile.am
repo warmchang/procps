@@ -25,10 +25,10 @@ SUBDIRS = \
 	testsuite
 
 AM_CFLAGS = -Ilibrary/include
-LDADD = ./library/libproc-2.la $(CYGWINFLAGS)
+LDADD = ./library/libproc2.la $(CYGWINFLAGS)
 
 if CYGWIN
-AM_LDFLAGS += ./library/libproc-2.la $(CYGWINFLAGS)
+AM_LDFLAGS += ./library/libproc2.la $(CYGWINFLAGS)
 endif
 
 transform =
@@ -67,7 +67,7 @@ usrbin_exec_PROGRAMS += \
 endif
 
 lib_LTLIBRARIES = \
-	library/libproc-2.la
+	library/libproc2.la
 
 dist_man_MANS = \
 	man/free.1 \
@@ -235,26 +235,26 @@ src_vmstat_SOURCES = src/vmstat.c local/strutils.c local/fileutils.c
 
 
 # See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
-LIBproc_2_CURRENT=0
-LIBproc_2_REVISION=0
-LIBproc_2_AGE=0
+LIBproc2_CURRENT=0
+LIBproc2_REVISION=0
+LIBproc2_AGE=0
 
-library_libproc_2_la_LIBADD = $(LIB_KPARTS)
+library_libproc2_la_LIBADD = $(LIB_KPARTS)
 
 if WITH_SYSTEMD
-library_libproc_2_la_LIBADD += @SYSTEMD_LIBS@
+library_libproc2_la_LIBADD += @SYSTEMD_LIBS@
 endif
 
 if WITH_ELOGIND
-library_libproc_2_la_LIBADD += @ELOGIND_LIBS@
+library_libproc2_la_LIBADD += @ELOGIND_LIBS@
 endif
 
-library_libproc_2_la_LDFLAGS = \
-	-version-info $(LIBproc_2_CURRENT):$(LIBproc_2_REVISION):$(LIBproc_2_AGE) \
+library_libproc2_la_LDFLAGS = \
+	-version-info $(LIBproc2_CURRENT):$(LIBproc2_REVISION):$(LIBproc2_AGE) \
 	-no-undefined \
-	-Wl,--version-script=$(top_srcdir)/library/libproc-2.sym
+	-Wl,--version-script=$(top_srcdir)/library/libproc2.sym
 
-library_libproc_2_la_SOURCES = \
+library_libproc2_la_SOURCES = \
 	library/devname.c \
 	library/include/devname.h \
 	library/diskstats.c \
@@ -287,8 +287,8 @@ library_libproc_2_la_SOURCES = \
 	library/uptime.c \
 	library/include/xtra-procps-debug.h
 
-library_libproc_2_la_includedir = $(includedir)/procps/
-library_libproc_2_la_include_HEADERS = \
+library_libproc2_la_includedir = $(includedir)/procps/
+library_libproc2_la_include_HEADERS = \
 	library/include/diskstats.h \
 	library/include/meminfo.h \
 	library/include/misc.h \
@@ -300,9 +300,9 @@ library_libproc_2_la_include_HEADERS = \
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
-	library/libproc-2.pc
+	library/libproc2.pc
 
-EXTRA_DIST += library/libproc-2.sym
+EXTRA_DIST += library/libproc2.sym
 
 # ps/pscommand
 
@@ -348,17 +348,17 @@ check_PROGRAMS += \
 	library/tests/test_namespace
 
 library_tests_test_Itemtables_SOURCES = library/tests/test_Itemtables.c
-library_tests_test_Itemtables_LDADD = library/libproc-2.la
+library_tests_test_Itemtables_LDADD = library/libproc2.la
 library_tests_test_pids_SOURCES = library/tests/test_pids.c
-library_tests_test_pids_LDADD = library/libproc-2.la
+library_tests_test_pids_LDADD = library/libproc2.la
 library_tests_test_uptime_SOURCES = library/tests/test_uptime.c
-library_tests_test_uptime_LDADD = library/libproc-2.la
+library_tests_test_uptime_LDADD = library/libproc2.la
 library_tests_test_sysinfo_SOURCES = library/tests/test_sysinfo.c
-library_tests_test_sysinfo_LDADD = library/libproc-2.la
+library_tests_test_sysinfo_LDADD = library/libproc2.la
 library_tests_test_version_SOURCES = library/tests/test_version.c
-library_tests_test_version_LDADD = library/libproc-2.la
+library_tests_test_version_LDADD = library/libproc2.la
 library_tests_test_namespace_SOURCES = library/tests/test_namespace.c
-library_tests_test_namespace_LDADD = library/libproc-2.la
+library_tests_test_namespace_LDADD = library/libproc2.la
 
 if CYGWIN
 	src_skill_LDADD = $(CYGWINFLAGS)
