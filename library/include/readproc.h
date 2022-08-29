@@ -13,7 +13,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
-#include <proc/misc.h>
+#include "misc.h"
 
 // the following is development only, forcing display of "[ duplicate ENUM ]" strings
 // #define FALSE_THREADS        /* set most child string fields to NULL */

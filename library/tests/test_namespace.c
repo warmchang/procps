@@ -1,8 +1,6 @@
 /*
  * libprocps - Library to read proc filesystem
- * Tests for version library calls
- *
- * Copyright 2016 Craig Small <csmall@dropbear.xyz>
+ * Tests for namespace library calls
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -20,47 +18,54 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
-#include <proc/misc.h>
+#include "misc.h"
 #include "tests.h"
 
-int check_linux_version(void *data)
+int check_name_minus(void *data)
 {
-    testname = "procps_linux_version()";
-    return (procps_linux_version() > 0);
+    testname = "procps_ns_get_name() negative id";
+    return (procps_ns_get_name(-1) == NULL);
 }
 
-int check_conversion(void *data)
+int check_name_over(void *data)
 {
-    testname = "LINUX_VERSION macro";
-    struct testvals {
-        int retval;
-        int major, minor, patch;
-    };
+    testname = "procps_ns_get_name() id over limit";
+    return (procps_ns_get_name(999) == NULL);
+}
 
-    struct testvals *tv;
-    struct testvals tvs[] = {
-        { 132096, 2, 4, 0 },
-        { 132635, 2, 6, 27 },
-        { 199936, 3, 13, 0 },
-        { 263426, 4, 5, 2 },
-        { 0, 0, 0, 0}
-    };
+int check_name_ipc(void *data)
+{
+    testname = "procps_ns_get_name() ipc";
+    return (strcmp(procps_ns_get_name(PROCPS_NS_IPC),"ipc")==0);
+}
 
-    for (tv=tvs; tv->major != 0; tv++)
-    {
-        if (LINUX_VERSION(tv->major, tv->minor, tv->patch) != tv->retval) {
-            fprintf(stderr, "Failed %d != %d\n", LINUX_VERSION(tv->major, tv->minor,
-                    tv->patch), tv->retval);
-            return 0;
-        }
-    }
-    return 1;
+int check_id_null(void *data)
+{
+    testname = "procps_ns_get_id(NULL)";
+    return (procps_ns_get_id(NULL) < 0);
+}
+
+int check_id_unfound(void *data)
+{
+    testname = "procps_ns_get_id(unknown)";
+    return (procps_ns_get_id("foobar") < 0);
+}
+
+int check_id_mnt(void *data)
+{
+    testname = "procps_ns_get_id(mnt)";
+    return (procps_ns_get_id("mnt") == PROCPS_NS_MNT);
 }
 
 TestFunction test_funcs[] = {
-    check_conversion,
-    check_linux_version,
+    check_name_minus,
+    check_name_over,
+    check_name_ipc,
+    check_id_null,
+    check_id_unfound,
+    check_id_mnt,
     NULL
 };
 
@@ -68,5 +73,4 @@ int main(int argc, char *argv[])
 {
     return run_tests(test_funcs, NULL);
 }
-
 

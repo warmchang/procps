@@ -43,7 +43,7 @@
 #include "nls.h"
 #include "strutils.h"
 
-#include <proc/slabinfo.h>
+#include "slabinfo.h"
 
 #define DEFAULT_SORT  SLAB_NUM_OBJS
 #define CHAINS_ALLOC  150

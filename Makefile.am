@@ -24,11 +24,11 @@ SUBDIRS = \
 	po \
 	testsuite
 
-AM_CFLAGS = -Iproc
-LDADD = ./proc/libproc-2.la $(CYGWINFLAGS)
+AM_CFLAGS = -Ilibrary/include
+LDADD = ./library/libproc-2.la $(CYGWINFLAGS)
 
 if CYGWIN
-AM_LDFLAGS += ./proc/libproc-2.la $(CYGWINFLAGS)
+AM_LDFLAGS += ./library/libproc-2.la $(CYGWINFLAGS)
 endif
 
 transform =
@@ -67,7 +67,7 @@ usrbin_exec_PROGRAMS += \
 endif
 
 lib_LTLIBRARIES = \
-	proc/libproc-2.la
+	library/libproc-2.la
 
 dist_man_MANS = \
 	man/free.1 \
@@ -239,70 +239,70 @@ LIBproc_2_CURRENT=0
 LIBproc_2_REVISION=0
 LIBproc_2_AGE=0
 
-proc_libproc_2_la_LIBADD = $(LIB_KPARTS)
+library_libproc_2_la_LIBADD = $(LIB_KPARTS)
 
 if WITH_SYSTEMD
-proc_libproc_2_la_LIBADD += @SYSTEMD_LIBS@
+library_libproc_2_la_LIBADD += @SYSTEMD_LIBS@
 endif
 
 if WITH_ELOGIND
-proc_libproc_2_la_LIBADD += @ELOGIND_LIBS@
+library_libproc_2_la_LIBADD += @ELOGIND_LIBS@
 endif
 
-proc_libproc_2_la_LDFLAGS = \
+library_libproc_2_la_LDFLAGS = \
 	-version-info $(LIBproc_2_CURRENT):$(LIBproc_2_REVISION):$(LIBproc_2_AGE) \
 	-no-undefined \
-	-Wl,--version-script=$(top_srcdir)/proc/libproc-2.sym
+	-Wl,--version-script=$(top_srcdir)/library/libproc-2.sym
 
-proc_libproc_2_la_SOURCES = \
-	proc/devname.c \
-	proc/devname.h \
-	proc/diskstats.c \
-	proc/diskstats.h \
-	proc/escape.c \
-	proc/escape.h \
-	proc/procps-private.h \
-	proc/meminfo.c \
-	proc/meminfo.h \
-	proc/misc.h \
-	proc/namespace.c \
-	proc/numa.c \
-	proc/numa.h \
-	proc/pids.c \
-	proc/pids.h \
-	proc/pwcache.c \
-	proc/pwcache.h \
-	proc/readproc.c \
-	proc/readproc.h \
-	proc/slabinfo.c \
-	proc/slabinfo.h \
-	proc/stat.c \
-	proc/stat.h \
-	proc/sysinfo.c \
-	proc/version.c \
-	proc/vmstat.c \
-	proc/vmstat.h \
-	proc/wchan.c \
-	proc/wchan.h \
-	proc/uptime.c \
-	proc/xtra-procps-debug.h
+library_libproc_2_la_SOURCES = \
+	library/devname.c \
+	library/include/devname.h \
+	library/diskstats.c \
+	library/include/diskstats.h \
+	library/escape.c \
+	library/include/escape.h \
+	library/include/procps-private.h \
+	library/meminfo.c \
+	library/include/meminfo.h \
+	library/include/misc.h \
+	library/namespace.c \
+	library/numa.c \
+	library/include/numa.h \
+	library/pids.c \
+	library/include/pids.h \
+	library/pwcache.c \
+	library/include/pwcache.h \
+	library/readproc.c \
+	library/include/readproc.h \
+	library/slabinfo.c \
+	library/include/slabinfo.h \
+	library/stat.c \
+	library/include/stat.h \
+	library/sysinfo.c \
+	library/version.c \
+	library/vmstat.c \
+	library/include/vmstat.h \
+	library/wchan.c \
+	library/include/wchan.h \
+	library/uptime.c \
+	library/include/xtra-procps-debug.h
 
-proc_libproc_2_la_includedir = $(includedir)/procps/
-proc_libproc_2_la_include_HEADERS = \
-	proc/diskstats.h \
-	proc/meminfo.h \
-	proc/misc.h \
-	proc/pids.h \
-	proc/slabinfo.h \
-	proc/stat.h \
-	proc/vmstat.h \
-	proc/xtra-procps-debug.h
+library_libproc_2_la_includedir = $(includedir)/procps/
+library_libproc_2_la_include_HEADERS = \
+	library/include/diskstats.h \
+	library/include/meminfo.h \
+	library/include/misc.h \
+	library/include/pids.h \
+	library/include/slabinfo.h \
+	library/include/stat.h \
+	library/include/vmstat.h \
+	library/include/xtra-procps-debug.h
 
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = \
-	proc/libproc-2.pc
+	library/libproc-2.pc
 
-EXTRA_DIST += proc/libproc-2.sym
+EXTRA_DIST += library/libproc-2.sym
 
 # ps/pscommand
 
@@ -340,25 +340,25 @@ lib_test_shm_SOURCES = lib/test_shm.c lib/strutils.c
 lib_test_shm_LDADD = $(CYGWINFLAGS)
 
 check_PROGRAMS += \
-	proc/test_Itemtables \
-	proc/test_pids \
-	proc/test_uptime \
-	proc/test_sysinfo \
-	proc/test_version \
-	proc/test_namespace
+	library/tests/test_Itemtables \
+	library/tests/test_pids \
+	library/tests/test_uptime \
+	library/tests/test_sysinfo \
+	library/tests/test_version \
+	library/tests/test_namespace
 
-proc_test_Itemtables_SOURCES = proc/test_Itemtables.c
-proc_test_Itemtables_LDADD = proc/libproc-2.la
-proc_test_pids_SOURCES = proc/test_pids.c
-proc_test_pids_LDADD = proc/libproc-2.la
-proc_test_uptime_SOURCES = proc/test_uptime.c
-proc_test_uptime_LDADD = proc/libproc-2.la
-proc_test_sysinfo_SOURCES = proc/test_sysinfo.c
-proc_test_sysinfo_LDADD = proc/libproc-2.la
-proc_test_version_SOURCES = proc/test_version.c
-proc_test_version_LDADD = proc/libproc-2.la
-proc_test_namespace_SOURCES = proc/test_namespace.c
-proc_test_namespace_LDADD = proc/libproc-2.la
+library_tests_test_Itemtables_SOURCES = library/tests/test_Itemtables.c
+library_tests_test_Itemtables_LDADD = library/libproc-2.la
+library_tests_test_pids_SOURCES = library/tests/test_pids.c
+library_tests_test_pids_LDADD = library/libproc-2.la
+library_tests_test_uptime_SOURCES = library/tests/test_uptime.c
+library_tests_test_uptime_LDADD = library/libproc-2.la
+library_tests_test_sysinfo_SOURCES = library/tests/test_sysinfo.c
+library_tests_test_sysinfo_LDADD = library/libproc-2.la
+library_tests_test_version_SOURCES = library/tests/test_version.c
+library_tests_test_version_LDADD = library/libproc-2.la
+library_tests_test_namespace_SOURCES = library/tests/test_namespace.c
+library_tests_test_namespace_LDADD = library/libproc-2.la
 
 if CYGWIN
 	src_skill_LDADD = $(CYGWINFLAGS)
@@ -384,17 +384,17 @@ endif
 BUILT_SOURCES = $(top_srcdir)/.version
 
 check-lib: clean
-	$(MAKE) CFLAGS=-DITEMTABLE_DEBUG proc/test_Itemtables
-	$(top_builddir)/proc/test_Itemtables
+	$(MAKE) CFLAGS=-DITEMTABLE_DEBUG library/test_Itemtables
+	$(top_builddir)/library/test_Itemtables
 	$(MAKE) clean &>/dev/null
 
 # Test programs not used by dejagnu but run directly
 TESTS = \
-	proc/test_pids \
-	proc/test_uptime \
-	proc/test_sysinfo \
-	proc/test_version \
-	proc/test_namespace \
+	library/tests/test_pids \
+	library/tests/test_uptime \
+	library/tests/test_sysinfo \
+	library/tests/test_version \
+	library/tests/test_namespace \
 	lib/test_fileutils \
 	lib/test_strtod_nol
 

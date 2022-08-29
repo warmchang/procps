@@ -33,8 +33,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/procps-private.h>
-#include <proc/diskstats.h>
+#include "procps-private.h"
+#include "diskstats.h"
 
 /* The following define will cause the 'node_add' function to maintain our |
    nodes list in ascending alphabetical order which could be used to avoid |

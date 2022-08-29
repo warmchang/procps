@@ -34,8 +34,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/procps-private.h>
-#include <proc/slabinfo.h>
+#include "procps-private.h"
+#include "slabinfo.h"
 
 
 #define SLABINFO_FILE        "/proc/slabinfo"

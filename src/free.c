@@ -42,7 +42,7 @@
 #include "strutils.h"
 #include "fileutils.h"
 
-#include <proc/meminfo.h>
+#include "meminfo.h"
 
 #ifndef SIZE_MAX
 #define SIZE_MAX		32

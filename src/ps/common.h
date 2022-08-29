@@ -13,10 +13,10 @@
 #define PROCPS_PS_H
 
 #include "../include/nls.h"
-#include <proc/meminfo.h>
-#include <proc/misc.h>
-#include <proc/pids.h>
-#include <proc/stat.h>
+#include "meminfo.h"
+#include "misc.h"
+#include "pids.h"
+#include "stat.h"
 
 // --- <pids> interface begin ||||||||||||||||||||||||||||||||||||||||||||
 // -----------------------------------------------------------------------

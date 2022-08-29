@@ -19,12 +19,12 @@
 
 #include <stdlib.h>
 
-#include <proc/diskstats.h>
-#include <proc/meminfo.h>
-#include <proc/pids.h>
-#include <proc/slabinfo.h>
-#include <proc/stat.h>
-#include <proc/vmstat.h>
+#include "diskstats.h"
+#include "meminfo.h"
+#include "pids.h"
+#include "slabinfo.h"
+#include "stat.h"
+#include "vmstat.h"
 
 #include "tests.h"
 

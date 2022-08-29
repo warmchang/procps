@@ -31,8 +31,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/procps-private.h>
-#include <proc/meminfo.h>
+#include "procps-private.h"
+#include "meminfo.h"
 
 
 #define MEMINFO_FILE  "/proc/meminfo"

@@ -43,7 +43,7 @@
 #include "strutils.h"
 #include "xalloc.h"
 
-#include <proc/misc.h>
+#include "misc.h"
 
 static char *screen;
 

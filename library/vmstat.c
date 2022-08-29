@@ -34,8 +34,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/procps-private.h>
-#include <proc/vmstat.h>
+#include "procps-private.h"
+#include "vmstat.h"
 
 
 #define VMSTAT_FILE  "/proc/vmstat"

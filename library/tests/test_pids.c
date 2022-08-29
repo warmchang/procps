@@ -20,7 +20,7 @@
 #include <stdio.h>
 #include <errno.h>
 
-#include <proc/pids.h>
+#include "pids.h"
 #include "tests.h"
 
 enum pids_item items[] = { PIDS_ID_PID, PIDS_ID_PID };

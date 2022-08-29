@@ -30,10 +30,10 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/numa.h>
+#include "numa.h"
 
-#include <proc/procps-private.h>
-#include <proc/stat.h>
+#include "procps-private.h"
+#include "stat.h"
 
 
 #define STAT_FILE "/proc/stat"

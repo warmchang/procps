@@ -35,14 +35,14 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#include <proc/devname.h>
-#include <proc/misc.h>
-#include <proc/numa.h>
-#include <proc/readproc.h>
-#include <proc/wchan.h>
+#include "devname.h"
+#include "misc.h"
+#include "numa.h"
+#include "readproc.h"
+#include "wchan.h"
 
-#include <proc/procps-private.h>
-#include <proc/pids.h>
+#include "procps-private.h"
+#include "pids.h"
 
 
 //#define UNREF_RPTHASH                // report hash details at uref() time

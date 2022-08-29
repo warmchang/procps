@@ -1,6 +1,6 @@
 /*
  * libprocps - Library to read proc filesystem
- * Tests for namespace library calls
+ * Tests for sysinfo library calls
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -18,59 +18,47 @@
  */
 #include <stdlib.h>
 #include <stdio.h>
-#include <string.h>
 
-#include <proc/misc.h>
+#include "misc.h"
 #include "tests.h"
 
-int check_name_minus(void *data)
+int check_hertz(void *data)
 {
-    testname = "procps_ns_get_name() negative id";
-    return (procps_ns_get_name(-1) == NULL);
+    long hz;
+    testname = "procps_hertz_get()";
+
+    hz =  procps_hertz_get();
+    return (hz > 0);
 }
 
-int check_name_over(void *data)
+int check_loadavg(void *data)
 {
-    testname = "procps_ns_get_name() id over limit";
-    return (procps_ns_get_name(999) == NULL);
+    double a,b,c;
+    testname = "procps_loadavg()";
+
+    if (procps_loadavg(&a, &b, &c) == 0)
+        return 1;
+    return (a>0 && b>0 && c>0);
 }
 
-int check_name_ipc(void *data)
+int check_loadavg_null(void *data)
 {
-    testname = "procps_ns_get_name() ipc";
-    return (strcmp(procps_ns_get_name(PROCPS_NS_IPC),"ipc")==0);
-}
-
-int check_id_null(void *data)
-{
-    testname = "procps_ns_get_id(NULL)";
-    return (procps_ns_get_id(NULL) < 0);
-}
-
-int check_id_unfound(void *data)
-{
-    testname = "procps_ns_get_id(unknown)";
-    return (procps_ns_get_id("foobar") < 0);
-}
-
-int check_id_mnt(void *data)
-{
-    testname = "procps_ns_get_id(mnt)";
-    return (procps_ns_get_id("mnt") == PROCPS_NS_MNT);
+    testname = "procps_loadavg() with NULLs";
+    if (procps_loadavg(NULL, NULL, NULL) == 0)
+        return 1;
+    return 0;
 }
 
 TestFunction test_funcs[] = {
-    check_name_minus,
-    check_name_over,
-    check_name_ipc,
-    check_id_null,
-    check_id_unfound,
-    check_id_mnt,
-    NULL
+    check_hertz,
+    check_loadavg,
+    check_loadavg_null,
+    NULL,
 };
 
 int main(int argc, char *argv[])
 {
     return run_tests(test_funcs, NULL);
 }
+
 

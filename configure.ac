@@ -395,6 +395,6 @@ AC_CONFIG_FILES([Makefile
                  include/Makefile
                  po-man/Makefile
                  po/Makefile.in
-                 proc/libproc-2.pc
+                 library/libproc-2.pc
                  testsuite/Makefile])
 AC_OUTPUT

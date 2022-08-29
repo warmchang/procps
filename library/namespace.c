@@ -21,8 +21,8 @@
 #include <string.h>
 #include <sys/stat.h>
 
-#include <proc/misc.h>
-#include "proc/procps-private.h"
+#include "misc.h"
+#include "procps-private.h"
 
 #define NSPATHLEN 64
 

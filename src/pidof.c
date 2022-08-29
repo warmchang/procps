@@ -29,7 +29,7 @@
 #include "nls.h"
 #include "xalloc.h"
 
-#include <proc/pids.h>
+#include "pids.h"
 
 
 #define grow_size(x) do { \

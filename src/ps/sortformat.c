@@ -26,7 +26,7 @@
 
 #include <sys/types.h>
 
-#include "../proc/misc.h"
+#include "misc.h"
 #include "../include/xalloc.h"
 
 #include "common.h"

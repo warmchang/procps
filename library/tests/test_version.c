@@ -1,6 +1,8 @@
 /*
  * libprocps - Library to read proc filesystem
- * Tests for sysinfo library calls
+ * Tests for version library calls
+ *
+ * Copyright 2016 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,41 +21,47 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#include <proc/misc.h>
+#include "misc.h"
 #include "tests.h"
 
-int check_hertz(void *data)
+int check_linux_version(void *data)
 {
-    long hz;
-    testname = "procps_hertz_get()";
-
-    hz =  procps_hertz_get();
-    return (hz > 0);
+    testname = "procps_linux_version()";
+    return (procps_linux_version() > 0);
 }
 
-int check_loadavg(void *data)
+int check_conversion(void *data)
 {
-    double a,b,c;
-    testname = "procps_loadavg()";
+    testname = "LINUX_VERSION macro";
+    struct testvals {
+        int retval;
+        int major, minor, patch;
+    };
 
-    if (procps_loadavg(&a, &b, &c) == 0)
-        return 1;
-    return (a>0 && b>0 && c>0);
-}
+    struct testvals *tv;
+    struct testvals tvs[] = {
+        { 132096, 2, 4, 0 },
+        { 132635, 2, 6, 27 },
+        { 199936, 3, 13, 0 },
+        { 263426, 4, 5, 2 },
+        { 0, 0, 0, 0}
+    };
 
-int check_loadavg_null(void *data)
-{
-    testname = "procps_loadavg() with NULLs";
-    if (procps_loadavg(NULL, NULL, NULL) == 0)
-        return 1;
-    return 0;
+    for (tv=tvs; tv->major != 0; tv++)
+    {
+        if (LINUX_VERSION(tv->major, tv->minor, tv->patch) != tv->retval) {
+            fprintf(stderr, "Failed %d != %d\n", LINUX_VERSION(tv->major, tv->minor,
+                    tv->patch), tv->retval);
+            return 0;
+        }
+    }
+    return 1;
 }
 
 TestFunction test_funcs[] = {
-    check_hertz,
-    check_loadavg,
-    check_loadavg_null,
-    NULL,
+    check_conversion,
+    check_linux_version,
+    NULL
 };
 
 int main(int argc, char *argv[])

@@ -55,8 +55,8 @@
 #include "signals.h"
 #include "xalloc.h"
 
-#include <proc/misc.h>
-#include <proc/pids.h>
+#include "misc.h"
+#include "pids.h"
 
 enum pids_item Items[] = {
     PIDS_ID_PID,
