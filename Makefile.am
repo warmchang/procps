@@ -98,8 +98,8 @@ EXTRA_DIST = \
 	autogen.sh \
 	COPYING.LIB \
 	misc/git-version-gen \
-	Documentation/CodingStyle.md \
-	Documentation/TODO \
+	doc/CodingStyle.md \
+	doc/TODO \
 	src/ps/HACKING \
 	src/ps/regression \
 	$(DIST_MAN_POTS)
@@ -111,9 +111,9 @@ endif
 
 procpsngdir = $(docdir)
 dist_procpsng_DATA = \
-	Documentation/bugs.md \
-	Documentation/FAQ \
-	Documentation/libproc.supp
+	doc/bugs.md \
+	doc/FAQ \
+	doc/libproc.supp
 
 if BUILD_PIDOF
 if !CYGWIN
