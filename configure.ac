@@ -8,7 +8,7 @@ AC_INIT([procps-ng],
 	[procps@freelists.org],,[https://gitlab.com/procps-ng/procps])
 AM_INIT_AUTOMAKE([foreign 1.11 subdir-objects -Wall -Wno-portability tar-pax no-dist-gzip dist-xz])
 AM_SILENT_RULES([yes])
-AC_CONFIG_SRCDIR([free.c])
+AC_CONFIG_SRCDIR([src/free.c])
 AC_CONFIG_HEADERS([config.h])
 AC_LANG([C])
 

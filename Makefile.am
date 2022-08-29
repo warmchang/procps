@@ -36,34 +36,34 @@ transform =
 if !CYGWIN
 transform += s/pscommand/ps/; $(program_transform_name)
 sbin_PROGRAMS = \
-	sysctl
+	src/sysctl
 else
 transform += s/pscommand/procps/; $(program_transform_name)
 endif
 
 if !CYGWIN
 bin_PROGRAMS = \
-	ps/pscommand \
-	free \
-	pgrep \
-	pkill \
-	pmap \
-	pwdx \
-	tload \
-	uptime \
-	vmstat
+	src/ps/pscommand \
+	src/free \
+	src/pgrep \
+	src/pkill \
+	src/pmap \
+	src/pwdx \
+	src/tload \
+	src/uptime \
+	src/vmstat
 if BUILD_PIDWAIT
-bin_PROGRAMS += pidwait
+bin_PROGRAMS += src/pidwait
 endif
 else
 usrbin_exec_PROGRAMS += \
-	ps/pscommand \
-	free \
-	pgrep \
-	pkill \
-	pmap \
-	uptime \
-	vmstat
+	src/ps/pscommand \
+	src/free \
+	src/pgrep \
+	src/pkill \
+	src/pmap \
+	src/uptime \
+	src/vmstat
 endif
 
 lib_LTLIBRARIES = \
@@ -100,8 +100,8 @@ EXTRA_DIST = \
 	misc/git-version-gen \
 	Documentation/CodingStyle.md \
 	Documentation/TODO \
-	ps/HACKING \
-	ps/regression \
+	src/ps/HACKING \
+	src/ps/regression \
 	$(DIST_MAN_POTS)
 
 if !CYGWIN
@@ -117,12 +117,12 @@ dist_procpsng_DATA = \
 
 if BUILD_PIDOF
 if !CYGWIN
-bin_PROGRAMS += pidof
+bin_PROGRAMS += src/pidof
 else
-usrbin_exec_PROGRAMS += pidof
+usrbin_exec_PROGRAMS += src/pidof
 endif
 dist_man_MANS += man/pidof.1
-pidof_SOURCES = man/pidof.c lib/fileutils.c
+src_pidof_SOURCES = src/pidof.c lib/fileutils.c
 else
   EXTRA_DIST += man/pidof.1
 endif
@@ -130,26 +130,26 @@ endif
 if BUILD_KILL
 if CYGWIN
 transform += ;s/^kill/prockill/; $(program_transform_name)
-usrbin_exec_PROGRAMS += kill
+usrbin_exec_PROGRAMS += src/kill
 else
-bin_PROGRAMS += kill
+bin_PROGRAMS += src/kill
 endif
 dist_man_MANS += man/kill.1
-kill_SOURCES = kill.c lib/strutils.c lib/fileutils.c lib/signals.c
-kill_LDADD =
+src_kill_SOURCES = src/kill.c lib/strutils.c lib/fileutils.c lib/signals.c
+src_kill_LDADD =
 else
   EXTRA_DIST += man/kill.1
 endif
 
 if BUILD_W
 if CYGWIN
-usrbin_exec_PROGRAMS += w
+usrbin_exec_PROGRAMS += src/w
 else
-bin_PROGRAMS += w
+bin_PROGRAMS += src/w
 endif
 
 dist_man_MANS += man/w.1
-w_SOURCES = w.c lib/fileutils.c
+src_w_SOURCES = src/w.c lib/fileutils.c
 else
   EXTRA_DIST += man/w.1
 endif
@@ -157,12 +157,12 @@ endif
 if WITH_NCURSES
 if !CYGWIN
 bin_PROGRAMS += \
-	watch \
-	top/top
+	src/watch \
+	src/top/top
 else
 usrbin_exec_PROGRAMS += \
-	watch \
-	top/top
+	src/watch \
+	src/top/top
 endif
 
 dist_man_MANS += \
@@ -170,40 +170,40 @@ dist_man_MANS += \
 	man/top.1
 if !CYGWIN
 bin_PROGRAMS += \
-	slabtop
+	src/slabtop
 dist_man_MANS += \
 	man/slabtop.1
-slabtop_SOURCES = slabtop.c lib/strutils.c lib/fileutils.c
-slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
+src_slabtop_SOURCES = src/slabtop.c lib/strutils.c lib/fileutils.c
+src_slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
-watch_SOURCES = watch.c lib/strutils.c lib/fileutils.c
-watch_LDADD = @NCURSES_LIBS@ $(CYGWINFLAGS)
-top_top_SOURCES = \
-	top/top.h \
-	top/top.c \
-	top/top_nls.h \
-	top/top_nls.c \
+src_watch_SOURCES = src/watch.c lib/strutils.c lib/fileutils.c
+src_watch_LDADD = @NCURSES_LIBS@ $(CYGWINFLAGS)
+src_top_top_SOURCES = \
+	src/top/top.h \
+	src/top/top.c \
+	src/top/top_nls.h \
+	src/top/top_nls.c \
 	lib/fileutils.c \
 	lib/signals.c
 if CYGWIN
-top_top_SOURCES += lib/strverscmp.c
+src_top_top_SOURCES += lib/strverscmp.c
 endif
 
-top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
+src_top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
 endif
 
 if BUILD_SKILL
 if !CYGWIN
 bin_PROGRAMS += \
-	skill \
-	snice
+	src/skill \
+	src/snice
 else
 usrbin_exec_PROGRAMS += \
-	skill \
-	snice
+	src/skill \
+	src/snice
 endif
-skill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
-snice_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
+src_skill_SOURCES = src/skill.c lib/strutils.c lib/fileutils.c lib/signals.c
+src_snice_SOURCES = src/skill.c lib/strutils.c lib/fileutils.c lib/signals.c
 dist_man_MANS += \
 	man/skill.1 \
 	man/snice.1
@@ -213,25 +213,25 @@ else
 	man/snice.1
 endif
 
-free_SOURCES = free.c lib/strutils.c lib/fileutils.c
-pgrep_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
-pkill_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
-pmap_SOURCES = pmap.c lib/fileutils.c
+src_free_SOURCES = src/free.c lib/strutils.c lib/fileutils.c
+src_pgrep_SOURCES = src/pgrep.c lib/fileutils.c lib/signals.c
+src_pkill_SOURCES = src/pgrep.c lib/fileutils.c lib/signals.c
+src_pmap_SOURCES = src/pmap.c lib/fileutils.c
 if BUILD_PIDWAIT
-pidwait_SOURCES = pgrep.c lib/fileutils.c lib/signals.c
+src_pidwait_SOURCES = src/pgrep.c lib/fileutils.c lib/signals.c
 endif
 if !CYGWIN
-pwdx_SOURCES = pwdx.c lib/fileutils.c
-pwdx_LDADD= $(CYGWINFLAGS)
-sysctl_SOURCES = \
-	sysctl.c \
+src_pwdx_SOURCES = src/pwdx.c lib/fileutils.c
+src_pwdx_LDADD= $(CYGWINFLAGS)
+src_sysctl_SOURCES = \
+	src/sysctl.c \
 	lib/fileutils.c \
 	lib/procio.c
-sysctl_LDADD=
+src_sysctl_LDADD=
 endif
-tload_SOURCES = tload.c lib/strutils.c lib/fileutils.c
-uptime_SOURCES = uptime.c lib/fileutils.c
-vmstat_SOURCES = vmstat.c lib/strutils.c lib/fileutils.c
+src_tload_SOURCES = src/tload.c lib/strutils.c lib/fileutils.c
+src_uptime_SOURCES = src/uptime.c lib/fileutils.c
+src_vmstat_SOURCES = src/vmstat.c lib/strutils.c lib/fileutils.c
 
 
 # See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
@@ -306,16 +306,16 @@ EXTRA_DIST += proc/libproc-2.sym
 
 # ps/pscommand
 
-ps_pscommand_SOURCES =  \
-	ps/common.h \
-	ps/display.c \
-	ps/global.c \
-	ps/help.c \
-	ps/output.c \
-	ps/parser.c \
-	ps/select.c \
-	ps/sortformat.c \
-	ps/stacktrace.c \
+src_ps_pscommand_SOURCES =  \
+	src/ps/common.h \
+	src/ps/display.c \
+	src/ps/global.c \
+	src/ps/help.c \
+	src/ps/output.c \
+	src/ps/parser.c \
+	src/ps/select.c \
+	src/ps/sortformat.c \
+	src/ps/stacktrace.c \
 	lib/fileutils.c \
 	lib/signals.c
 
@@ -361,18 +361,18 @@ proc_test_namespace_SOURCES = proc/test_namespace.c
 proc_test_namespace_LDADD = proc/libproc-2.la
 
 if CYGWIN
-	skill_LDADD = $(CYGWINFLAGS)
-	kill_LDADD = $(CYGWINFLAGS)
-	free_LDADD = $(CYGWINFLAGS)
-	pgrep_LDADD = $(CYGWINFLAGS)
-	pkill_LDADD = $(CYGWINFLAGS)
-	pidof_LDADD = $(CYGWINFLAGS)
-	pmap_LDADD = $(CYGWINFLAGS)
-	snice_LDADD = $(CYGWINFLAGS)
-	tload_LDADD = $(CYGWINFLAGS)
-	uptime_LDADD = $(CYGWINFLAGS)
-	w_LDADD = $(CYGWINFLAGS)
-	vmstat_LDADD = $(CYGWINFLAGS)
+	src_skill_LDADD = $(CYGWINFLAGS)
+	src_kill_LDADD = $(CYGWINFLAGS)
+	src_free_LDADD = $(CYGWINFLAGS)
+	src_pgrep_LDADD = $(CYGWINFLAGS)
+	src_pkill_LDADD = $(CYGWINFLAGS)
+	src_pidof_LDADD = $(CYGWINFLAGS)
+	src_pmap_LDADD = $(CYGWINFLAGS)
+	src_snice_LDADD = $(CYGWINFLAGS)
+	src_tload_LDADD = $(CYGWINFLAGS)
+	src_uptime_LDADD = $(CYGWINFLAGS)
+	src_w_LDADD = $(CYGWINFLAGS)
+	src_vmstat_LDADD = $(CYGWINFLAGS)
 endif
 
 if EXAMPLE_FILES
