@@ -3,9 +3,9 @@ exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
 
-Name: libproc-2
+Name: libproc2
 Description: Library to control and query process state
 Version: @VERSION@
-Libs: -L${libdir} -lproc-2
+Libs: -L${libdir} -lproc2
 Libs.private:
 Cflags: -I${includedir}
