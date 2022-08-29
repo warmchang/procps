@@ -20,7 +20,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
 	include \
-	man-po \
+	po-man \
 	po \
 	testsuite
 
@@ -70,26 +70,26 @@ lib_LTLIBRARIES = \
 	proc/libproc-2.la
 
 dist_man_MANS = \
-	free.1 \
-	pgrep.1 \
-	pkill.1 \
-	pmap.1 \
-	uptime.1 \
-	vmstat.8 \
-	doc/procps.3 \
-	doc/procps_pids.3 \
-	doc/procps_misc.3
+	man/free.1 \
+	man/pgrep.1 \
+	man/pkill.1 \
+	man/pmap.1 \
+	man/uptime.1 \
+	man/vmstat.8 \
+	man/procps.3 \
+	man/procps_pids.3 \
+	man/procps_misc.3
 
 if !CYGWIN
 dist_man_MANS += \
-	pwdx.1 \
-	tload.1 \
-	sysctl.8 \
-	sysctl.conf.5 \
-	ps/ps.1
+	man/pwdx.1 \
+	man/tload.1 \
+	man/sysctl.8 \
+	man/sysctl.conf.5 \
+	man/ps.1
 
 if BUILD_PIDWAIT
-dist_man_MANS += pidwait.1
+dist_man_MANS += man/pidwait.1
 endif
 endif
 
@@ -121,10 +121,10 @@ bin_PROGRAMS += pidof
 else
 usrbin_exec_PROGRAMS += pidof
 endif
-dist_man_MANS += pidof.1
-pidof_SOURCES = pidof.c lib/fileutils.c
+dist_man_MANS += man/pidof.1
+pidof_SOURCES = man/pidof.c lib/fileutils.c
 else
-  EXTRA_DIST += pidof.1
+  EXTRA_DIST += man/pidof.1
 endif
 
 if BUILD_KILL
@@ -134,11 +134,11 @@ usrbin_exec_PROGRAMS += kill
 else
 bin_PROGRAMS += kill
 endif
-dist_man_MANS += kill.1
+dist_man_MANS += man/kill.1
 kill_SOURCES = kill.c lib/strutils.c lib/fileutils.c lib/signals.c
 kill_LDADD =
 else
-  EXTRA_DIST += kill.1
+  EXTRA_DIST += man/kill.1
 endif
 
 if BUILD_W
@@ -148,10 +148,10 @@ else
 bin_PROGRAMS += w
 endif
 
-dist_man_MANS += w.1
+dist_man_MANS += man/w.1
 w_SOURCES = w.c lib/fileutils.c
 else
-  EXTRA_DIST += w.1
+  EXTRA_DIST += man/w.1
 endif
 
 if WITH_NCURSES
@@ -166,13 +166,13 @@ usrbin_exec_PROGRAMS += \
 endif
 
 dist_man_MANS += \
-	watch.1 \
-	top/top.1
+	man/watch.1 \
+	man/top.1
 if !CYGWIN
 bin_PROGRAMS += \
 	slabtop
 dist_man_MANS += \
-	slabtop.1
+	man/slabtop.1
 slabtop_SOURCES = slabtop.c lib/strutils.c lib/fileutils.c
 slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
@@ -205,12 +205,12 @@ endif
 skill_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
 snice_SOURCES = skill.c lib/strutils.c lib/fileutils.c lib/signals.c
 dist_man_MANS += \
-	skill.1 \
-	snice.1
+	man/skill.1 \
+	man/snice.1
 else
   EXTRA_DIST += \
-	skill.1 \
-	snice.1
+	man/skill.1 \
+	man/snice.1
 endif
 
 free_SOURCES = free.c lib/strutils.c lib/fileutils.c
@@ -410,4 +410,4 @@ dist-hook:
 get-trans:
 	echo "Getting the latest translations from translationproject.org..."
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng/  po
-	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  man-po
+	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  po-man

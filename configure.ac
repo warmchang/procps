@@ -393,7 +393,7 @@ AC_CHECK_FUNCS([__fpending alarm atexit dup2 gethostname getpagesize gettimeofda
 
 AC_CONFIG_FILES([Makefile
                  include/Makefile
-                 man-po/Makefile
+                 po-man/Makefile
                  po/Makefile.in
                  proc/libproc-2.pc
                  testsuite/Makefile])

@@ -5,13 +5,13 @@
 SRCDIR=$(dirname ${0})
 test -z "${SRCDIR}" && SRCDIR=.
 
-if [ -d man-po ] ; then
-  echo "man-po: directory exists, will be reused"
+if [ -d po-man ] ; then
+  echo "po-man: directory exists, will be reused"
   else
-    mkdir -p man-po
+    mkdir -p po-man
 fi
 
-PO_FILES="man-po/*.po"
+PO_FILES="po-man/*.po"
 
 po4a-updatepo -f man -m ${SRCDIR}/free.1 \
                      -m ${SRCDIR}/kill.1 \
@@ -30,13 +30,13 @@ po4a-updatepo -f man -m ${SRCDIR}/free.1 \
                      -m ${SRCDIR}/vmstat.8 \
                      -m ${SRCDIR}/w.1 \
                      -m ${SRCDIR}/watch.1 \
-                     -p man-po/template-man.pot ${PO_FILES}
+                     -p po-man/template-man.pot ${PO_FILES}
 
 po4a-updatepo -f man -m ${SRCDIR}/ps/ps.1 \
-                     -p man-po/template-man-ps.pot
+                     -p po-man/template-man-ps.pot
 
 po4a-updatepo -f man -m ${SRCDIR}/top/top.1 \
-                     -p man-po/template-man-top.pot
+                     -p po-man/template-man-top.pot
 
 # Rename the file according to the version of your (pre-release) tarball.
 # Send the new file together with a link to the tarball to the TP coordinators:

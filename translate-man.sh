@@ -4,17 +4,17 @@
 #
 # Once the TP module has been created, this commands get the latest po files:
 # echo "Getting the latest translations from translationproject.org..."
-# rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  man-po
-# rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-ps/  man-po/ps
-# rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-top/  man-po/top
+# rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  po-man
+# rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-ps/  po-man/ps
+# rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man-top/  po-man/top
 
-if [ -d man-po ] ; then
-  echo "man-po: directory exists, will be reused"
+if [ -d po-man ] ; then
+  echo "po-man: directory exists, will be reused"
   else
-    mkdir -p man-po/{ps,top}
+    mkdir -p po-man/{ps,top}
 fi
 
-cd man-po
+cd po-man
 
 langfiles=*.po
 if [ $langfiles = '*.po' ] ; then
