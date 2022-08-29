@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-08-29 18:33+1000\n"
+"POT-Creation-Date: 2022-08-29 20:49+1000\n"
 "PO-Revision-Date: 2021-01-22 12:30+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Lokalize 20.11.70\n"
 
-#: lib/fileutils.c:38
+#: local/fileutils.c:38
 msgid "write error"
 msgstr "помилка під час спроби запису"
 
@@ -4867,7 +4867,7 @@ msgstr "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 msgid "   IDLE WHAT\n"
 msgstr "   IDLE WHAT\n"
 
-#: include/c.h:153
+#: local/c.h:153
 msgid ""
 "\n"
 "Usage:\n"
@@ -4875,7 +4875,7 @@ msgstr ""
 "\n"
 "Користування:\n"
 
-#: include/c.h:154
+#: local/c.h:154
 msgid ""
 "\n"
 "Options:\n"
@@ -4883,19 +4883,19 @@ msgstr ""
 "\n"
 "Параметри:\n"
 
-#: include/c.h:155
+#: local/c.h:155
 msgid "\n"
 msgstr "\n"
 
-#: include/c.h:156
+#: local/c.h:156
 msgid " -h, --help     display this help and exit\n"
 msgstr " -h, --help     вивести довідку та завершити роботу\n"
 
-#: include/c.h:157
+#: local/c.h:157
 msgid " -V, --version  output version information and exit\n"
 msgstr " -V, --version  вивести інформацію щодо версії і вийти\n"
 
-#: include/c.h:158
+#: local/c.h:158
 #, c-format
 msgid ""
 "\n"
@@ -4904,7 +4904,7 @@ msgstr ""
 "\n"
 "Докладніший опис можна знайти у %s.\n"
 
-#: include/c.h:160
+#: local/c.h:160
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s з %s\n"

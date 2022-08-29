@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-08-29 18:33+1000\n"
+"POT-Creation-Date: 2022-08-29 20:49+1000\n"
 "PO-Revision-Date: 2021-01-24 13:12+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -19,7 +19,7 @@ msgstr ""
 "X-Generator: Lokalize 20.12.1\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: lib/fileutils.c:38
+#: local/fileutils.c:38
 msgid "write error"
 msgstr "Schreibfehler"
 
@@ -4736,7 +4736,7 @@ msgstr ""
 msgid "   IDLE WHAT\n"
 msgstr ""
 
-#: include/c.h:153
+#: local/c.h:153
 msgid ""
 "\n"
 "Usage:\n"
@@ -4744,7 +4744,7 @@ msgstr ""
 "\n"
 "Aufruf:\n"
 
-#: include/c.h:154
+#: local/c.h:154
 msgid ""
 "\n"
 "Options:\n"
@@ -4752,19 +4752,19 @@ msgstr ""
 "\n"
 "Optionen:\n"
 
-#: include/c.h:155
+#: local/c.h:155
 msgid "\n"
 msgstr "\n"
 
-#: include/c.h:156
+#: local/c.h:156
 msgid " -h, --help     display this help and exit\n"
 msgstr " -h, --help     diese Hilfe anzeigen und beenden\n"
 
-#: include/c.h:157
+#: local/c.h:157
 msgid " -V, --version  output version information and exit\n"
 msgstr " -V, --version  Versionsinformationen ausgeben und beenden\n"
 
-#: include/c.h:158
+#: local/c.h:158
 #, c-format
 msgid ""
 "\n"
@@ -4773,7 +4773,7 @@ msgstr ""
 "\n"
 "Für weitere Einzelheiten siehe %s.\n"
 
-#: include/c.h:160
+#: local/c.h:160
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s von %s\n"

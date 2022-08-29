@@ -11,4 +11,4 @@ find . -name '*.c' |
 /^contrib/d
 /^procps-ng/d' > po/POTFILES.in
 
-echo include/c.h >> po/POTFILES.in
+echo local/c.h >> po/POTFILES.in

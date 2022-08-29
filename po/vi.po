@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.10-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-08-29 18:33+1000\n"
+"POT-Creation-Date: 2022-08-29 20:49+1000\n"
 "PO-Revision-Date: 2014-09-13 08:57+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Poedit-Basepath: ../\n"
 
-#: lib/fileutils.c:38
+#: local/fileutils.c:38
 msgid "write error"
 msgstr "lỗi ghi"
 
@@ -4813,7 +4813,7 @@ msgstr " ĐNHẬP@      NGHỈ   JCPU   PCPU   GÌ\n"
 msgid "   IDLE WHAT\n"
 msgstr "   NGHỈ GÌ\n"
 
-#: include/c.h:153
+#: local/c.h:153
 msgid ""
 "\n"
 "Usage:\n"
@@ -4821,7 +4821,7 @@ msgstr ""
 "\n"
 "Cách dùng:\n"
 
-#: include/c.h:154
+#: local/c.h:154
 msgid ""
 "\n"
 "Options:\n"
@@ -4829,19 +4829,19 @@ msgstr ""
 "\n"
 "Các tùy chọn:\n"
 
-#: include/c.h:155
+#: local/c.h:155
 msgid "\n"
 msgstr "\n"
 
-#: include/c.h:156
+#: local/c.h:156
 msgid " -h, --help     display this help and exit\n"
 msgstr " -h, --help     hiển thị trợ giúp này rồi thoát\n"
 
-#: include/c.h:157
+#: local/c.h:157
 msgid " -V, --version  output version information and exit\n"
 msgstr " -V, --version  hiển thị thông tin phiên bản rồi thoát\n"
 
-#: include/c.h:158
+#: local/c.h:158
 #, c-format
 msgid ""
 "\n"
@@ -4850,7 +4850,7 @@ msgstr ""
 "\n"
 "Để có thêm thông tin vui lòng xem %s.\n"
 
-#: include/c.h:160
+#: local/c.h:160
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s nằm trong gói phần mềm “%s”.\n"
