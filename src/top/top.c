@@ -47,9 +47,9 @@
 #include <sys/time.h>
 #include <sys/types.h>       // also available via <stdlib.h>
 
-#include "../include/fileutils.h"
-#include "../include/signals.h"
-#include "../include/nls.h"
+#include "fileutils.h"
+#include "signals.h"
+#include "nls.h"
 
 #include "meminfo.h"
 #include "misc.h"

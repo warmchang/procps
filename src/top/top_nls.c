@@ -19,7 +19,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../include/nls.h"
+#include "nls.h"
 
 #include "top.h"
 #include "top_nls.h"

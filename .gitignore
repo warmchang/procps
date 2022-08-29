@@ -67,6 +67,11 @@ src/uptime
 src/vmstat
 src/w
 src/watch
+src/tests/test_fileutils
+src/tests/test_process
+src/tests/test_shm
+src/tests/test_strtod_nol
+src/tests/test_strutils
 *~
 *.log
 *.sum

@@ -7,8 +7,7 @@ endif
 
 AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
-	-I$(top_srcdir) \
-	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/local \
 	-I$(top_srcdir)/library/include \
 	-Wno-unused-result \
 	-DLOCALEDIR=\"$(localedir)\" \
@@ -20,7 +19,7 @@ PACKAGE_VERSION = @PACKAGE_VERSION@
 
 ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = \
-	include \
+	local \
 	po-man \
 	po \
 	testsuite
@@ -123,7 +122,7 @@ else
 usrbin_exec_PROGRAMS += src/pidof
 endif
 dist_man_MANS += man/pidof.1
-src_pidof_SOURCES = src/pidof.c lib/fileutils.c
+src_pidof_SOURCES = src/pidof.c local/fileutils.c
 else
   EXTRA_DIST += man/pidof.1
 endif
@@ -136,7 +135,7 @@ else
 bin_PROGRAMS += src/kill
 endif
 dist_man_MANS += man/kill.1
-src_kill_SOURCES = src/kill.c lib/strutils.c lib/fileutils.c lib/signals.c
+src_kill_SOURCES = src/kill.c local/strutils.c local/fileutils.c local/signals.c
 src_kill_LDADD =
 else
   EXTRA_DIST += man/kill.1
@@ -150,7 +149,7 @@ bin_PROGRAMS += src/w
 endif
 
 dist_man_MANS += man/w.1
-src_w_SOURCES = src/w.c lib/fileutils.c
+src_w_SOURCES = src/w.c local/fileutils.c
 else
   EXTRA_DIST += man/w.1
 endif
@@ -174,20 +173,20 @@ bin_PROGRAMS += \
 	src/slabtop
 dist_man_MANS += \
 	man/slabtop.1
-src_slabtop_SOURCES = src/slabtop.c lib/strutils.c lib/fileutils.c
+src_slabtop_SOURCES = src/slabtop.c local/strutils.c local/fileutils.c
 src_slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
-src_watch_SOURCES = src/watch.c lib/strutils.c lib/fileutils.c
+src_watch_SOURCES = src/watch.c local/strutils.c local/fileutils.c
 src_watch_LDADD = @NCURSES_LIBS@ $(CYGWINFLAGS)
 src_top_top_SOURCES = \
 	src/top/top.h \
 	src/top/top.c \
 	src/top/top_nls.h \
 	src/top/top_nls.c \
-	lib/fileutils.c \
-	lib/signals.c
+	local/fileutils.c \
+	local/signals.c
 if CYGWIN
-src_top_top_SOURCES += lib/strverscmp.c
+src_top_top_SOURCES += local/strverscmp.c
 endif
 
 src_top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
@@ -203,8 +202,8 @@ usrbin_exec_PROGRAMS += \
 	src/skill \
 	src/snice
 endif
-src_skill_SOURCES = src/skill.c lib/strutils.c lib/fileutils.c lib/signals.c
-src_snice_SOURCES = src/skill.c lib/strutils.c lib/fileutils.c lib/signals.c
+src_skill_SOURCES = src/skill.c local/strutils.c local/fileutils.c local/signals.c
+src_snice_SOURCES = src/skill.c local/strutils.c local/fileutils.c local/signals.c
 dist_man_MANS += \
 	man/skill.1 \
 	man/snice.1
@@ -214,25 +213,25 @@ else
 	man/snice.1
 endif
 
-src_free_SOURCES = src/free.c lib/strutils.c lib/fileutils.c
-src_pgrep_SOURCES = src/pgrep.c lib/fileutils.c lib/signals.c
-src_pkill_SOURCES = src/pgrep.c lib/fileutils.c lib/signals.c
-src_pmap_SOURCES = src/pmap.c lib/fileutils.c
+src_free_SOURCES = src/free.c local/strutils.c local/fileutils.c
+src_pgrep_SOURCES = src/pgrep.c local/fileutils.c local/signals.c
+src_pkill_SOURCES = src/pgrep.c local/fileutils.c local/signals.c
+src_pmap_SOURCES = src/pmap.c local/fileutils.c
 if BUILD_PIDWAIT
-src_pidwait_SOURCES = src/pgrep.c lib/fileutils.c lib/signals.c
+src_pidwait_SOURCES = src/pgrep.c local/fileutils.c local/signals.c
 endif
 if !CYGWIN
-src_pwdx_SOURCES = src/pwdx.c lib/fileutils.c
+src_pwdx_SOURCES = src/pwdx.c local/fileutils.c
 src_pwdx_LDADD= $(CYGWINFLAGS)
 src_sysctl_SOURCES = \
 	src/sysctl.c \
-	lib/fileutils.c \
-	lib/procio.c
+	local/fileutils.c \
+	local/procio.c
 src_sysctl_LDADD=
 endif
-src_tload_SOURCES = src/tload.c lib/strutils.c lib/fileutils.c
-src_uptime_SOURCES = src/uptime.c lib/fileutils.c
-src_vmstat_SOURCES = src/vmstat.c lib/strutils.c lib/fileutils.c
+src_tload_SOURCES = src/tload.c local/strutils.c local/fileutils.c
+src_uptime_SOURCES = src/uptime.c local/fileutils.c
+src_vmstat_SOURCES = src/vmstat.c local/strutils.c local/fileutils.c
 
 
 # See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
@@ -317,28 +316,28 @@ src_ps_pscommand_SOURCES =  \
 	src/ps/select.c \
 	src/ps/sortformat.c \
 	src/ps/stacktrace.c \
-	lib/fileutils.c \
-	lib/signals.c
+	local/fileutils.c \
+	local/signals.c
 
 
 # Test programs required for dejagnu or standalone testing
 check_PROGRAMS = \
-	lib/test_strutils \
-	lib/test_fileutils \
-	lib/test_process \
-	lib/test_strtod_nol \
-	lib/test_shm
+	src/tests/test_strutils \
+	src/tests/test_fileutils \
+	src/tests/test_process \
+	src/tests/test_strtod_nol \
+	src/tests/test_shm
 
-lib_test_strutils_SOURCES = lib/test_strutils.c lib/strutils.c
-lib_test_strutils_LDADD = $(CYGWINFLAGS)
-lib_test_fileutils_SOURCES = lib/test_fileutils.c lib/fileutils.c
-lib_test_fileutils_LDADD = $(CYGWINFLAGS)
-lib_test_process_SOURCES = lib/test_process.c
-lib_test_process_LDADD = $(CYGWINFLAGS)
-lib_test_strtod_nol_SOURCES = lib/test_strtod_nol.c lib/strutils.c
-lib_test_strtod_nol_LDADD = $(CYGWINFLAGS)
-lib_test_shm_SOURCES = lib/test_shm.c lib/strutils.c
-lib_test_shm_LDADD = $(CYGWINFLAGS)
+src_tests_test_strutils_SOURCES = src/tests/test_strutils.c local/strutils.c
+src_tests_test_strutils_LDADD = $(CYGWINFLAGS)
+src_tests_test_fileutils_SOURCES = src/tests/test_fileutils.c local/fileutils.c
+src_tests_test_fileutils_LDADD = $(CYGWINFLAGS)
+src_tests_test_process_SOURCES = src/tests/test_process.c
+src_tests_test_process_LDADD = $(CYGWINFLAGS)
+src_tests_test_strtod_nol_SOURCES = src/tests/test_strtod_nol.c local/strutils.c
+src_tests_test_strtod_nol_LDADD = $(CYGWINFLAGS)
+src_tests_test_shm_SOURCES = src/tests/test_shm.c local/strutils.c
+src_tests_test_shm_LDADD = $(CYGWINFLAGS)
 
 check_PROGRAMS += \
 	library/tests/test_Itemtables \
@@ -396,8 +395,8 @@ TESTS = \
 	library/tests/test_sysinfo \
 	library/tests/test_version \
 	library/tests/test_namespace \
-	lib/test_fileutils \
-	lib/test_strtod_nol
+	src/tests/test_fileutils \
+	src/tests/test_strtod_nol
 
 # Automake should do this, but it doesn't
 check: $(check_PROGRAMS) $(PROGRAMS)

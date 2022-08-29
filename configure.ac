@@ -392,7 +392,7 @@ AC_SUBST(DEJAGNU)
 AC_CHECK_FUNCS([__fpending alarm atexit dup2 gethostname getpagesize gettimeofday iswprint memchr memmove memset mkdir nl_langinfo putenv regcomp rpmatch select setlocale strcasecmp strchr strcspn strdup strerror strncasecmp strndup strpbrk strrchr strspn strstr strtol strtoul strverscmp utmpname wcwidth])
 
 AC_CONFIG_FILES([Makefile
-                 include/Makefile
+                 local/Makefile
                  po-man/Makefile
                  po/Makefile.in
                  library/libproc-2.pc

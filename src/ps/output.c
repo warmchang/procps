@@ -68,7 +68,7 @@
 #include <sys/resource.h>
 #include <sys/types.h>
 
-#include "../include/c.h"
+#include "c.h"
 
 #include "common.h"
 

@@ -31,8 +31,8 @@
 #include <sys/sysmacros.h>
 #include <sys/types.h>
 
-#include "../include/c.h"
-#include "../include/xalloc.h"
+#include "c.h"
+#include "xalloc.h"
 
 #include "common.h"
 

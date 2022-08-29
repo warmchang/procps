@@ -12,7 +12,7 @@
 #ifndef PROCPS_PS_H
 #define PROCPS_PS_H
 
-#include "../include/nls.h"
+#include "nls.h"
 #include "meminfo.h"
 #include "misc.h"
 #include "pids.h"
