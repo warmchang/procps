@@ -9,6 +9,7 @@ AM_CPPFLAGS = \
 	-include $(top_builddir)/config.h \
 	-I$(top_srcdir) \
 	-I$(top_srcdir)/include \
+	-I$(top_srcdir)/library/include \
 	-Wno-unused-result \
 	-DLOCALEDIR=\"$(localedir)\" \
 	@HARDEN_CFLAGS@
