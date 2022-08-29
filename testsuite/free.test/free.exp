@@ -2,7 +2,7 @@
 # Testsuite for free program
 #
 
-set free "${topdir}free"
+set free "${topdir}src/free"
 set meminfo [ exec cat /proc/meminfo ]
 regexp "MemTotal:\\s+\(\\d+\)" $meminfo -> memtotal_kb
 regexp "SwapTotal:\\s+\(\\d+\)" $meminfo -> swaptotal_kb

@@ -1,7 +1,7 @@
 #
 # Dejagnu tests for pgrep - part of procps
 #
-set pmap "${topdir}pmap"
+set pmap "${topdir}src/pmap"
 set mypid [pid]
 
 set pmap_procname "${mypid}:\\s+\\S+\[^\\r\]+\\s+"

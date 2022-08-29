@@ -1,7 +1,7 @@
 #
 # check the ps SCHED_BATCH scheduler policy output
 #
-set ps "${topdir}ps/pscommand"
+set ps "${topdir}src/ps/pscommand"
 set schedbatch "${topdir}testsuite/test-schedbatch"
 
 spawn $schedbatch 18

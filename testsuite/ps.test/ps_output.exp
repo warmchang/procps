@@ -1,7 +1,7 @@
 #
 # Dejagnu tests for ps (output options) - part of procps
 #
-set ps ${topdir}ps/pscommand
+set ps ${topdir}src/ps/pscommand
 
 set mypid [pid]
 set not_ppid [ expr { $mypid + 1 } ]

@@ -1,7 +1,7 @@
 #
 # Dejagnu tests for sysctl (read only) - part of procps
 #
-set sysctl ${topdir}sysctl
+set sysctl ${topdir}src/sysctl
 set hostname [ exec cat "/proc/sys/kernel/hostname" ]
 
 set test "sysctl with no arguments"

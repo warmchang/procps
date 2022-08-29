@@ -1,7 +1,7 @@
 #
 # Dehagnu testing for slabtop - part of procps
 #
-set slabtop ${topdir}slabtop
+set slabtop ${topdir}src/slabtop
 
 set avst "Active / Total"
 set used "\\\(% used\\\)\\s+:"

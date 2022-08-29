@@ -1,5 +1,5 @@
 
-set sysctl ${topdir}sysctl
+set sysctl ${topdir}src/sysctl
 
 set test "sysctl write from command line"
 spawn $sysctl --dry-run kernel.hostname=procps-test

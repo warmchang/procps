@@ -3,7 +3,7 @@
 #
 set mypid [pid]
 set not_ppid [ expr { $mypid + 1 } ]
-set pwait "${topdir}pwait"
+set pwait "${topdir}src/pwait"
 set uid [ exec id -u ]
 set not_uid [ expr { $uid + 1 } ]
 set gid [ exec id -g ]

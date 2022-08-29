@@ -2,7 +2,7 @@
 #
 # Dejagnu tests for vmstat - part of procps
 
-set vmstat "${topdir}vmstat"
+set vmstat "${topdir}src/vmstat"
 
 # Tests that need to see /proc/vmstat
 if { [ file readable "/proc/vmstat" ] == 0 } {

@@ -1,7 +1,7 @@
 #
 # Dejagnu tests for uptime - part of procps
 #
-set uptime "${topdir}uptime"
+set uptime "${topdir}src/uptime"
 
 set test "uptime"
 spawn $uptime

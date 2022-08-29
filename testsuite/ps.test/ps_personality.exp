@@ -1,7 +1,7 @@
 #
 # check the ps personalities
 #
-set ps ${topdir}ps/pscommand
+set ps ${topdir}src/ps/pscommand
 
 set pers_match { 
   bsd       "\\s+PID\\s+TTY\\s+STAT\\s+TIME\\s+COMMAND\\r"

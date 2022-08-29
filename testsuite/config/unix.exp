@@ -16,7 +16,7 @@ proc kill_process pid {
 
 proc procps_v_version { tool } {
   global topdir
-  set toolpath ${topdir}${tool}
+  set toolpath ${topdir}src/${tool}
   set tmp [ exec $toolpath -V ]
   regexp "from procps-ng (\[0-9.\]*)" $tmp tmp version
   clone_output "$toolpath version $version\n"

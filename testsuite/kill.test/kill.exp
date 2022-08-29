@@ -1,7 +1,7 @@
 #
 # Dejagnu testsuite for kill - part of procps
 #
-set kill ${topdir}kill
+set kill ${topdir}src/kill
 
 if { ![ file exists $kill ] } {
     untested { skipping (not build)}
