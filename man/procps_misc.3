@@ -17,7 +17,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_MISC 3 "July 2022" "libproc-2"
+.TH PROCPS_MISC 3 "August 2022" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -25,7 +25,7 @@
 procps_misc \- API for miscellaneous information in the /proc filesystem
 .SH SYNOPSIS
 .nf
-.B #include <procps/misc.h>
+.B #include <libproc2/misc.h>
 .PP
 Platform Particulars
 .RS 4
@@ -53,7 +53,7 @@ Namespace Particulars
 .RI "int       \fB  procps_ns_read_pid\fR (int " pid ", struct procps_ns *" nsp ");"
 .RE
 
-Link with \fI\-lproc-2\fP.
+Link with \fI\-lproc2\fP.
 
 .SH DESCRIPTION
 .BR procps_cpu_count ()

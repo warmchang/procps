@@ -16,7 +16,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS 3 "July 2022" "libproc-2"
+.TH PROCPS 3 "August 2022" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -30,7 +30,7 @@ the files they access in the /proc pseudo filesystem:
 
 .nf
 .RS +4
-#include <procps/\fBnamed_interface\fR.h>
+#include <libproc2/\fBnamed_interface\fR.h>
 
 .RI "int\fB procps_new  \fR (struct info **" info );
 .RI "int\fB procps_ref  \fR (struct info  *" info );
@@ -70,7 +70,7 @@ and `info' would really be `\fBdiskstats\fR_info', etc.
 The same \fBnamed_interface\fR is used in each header file name with
 an appended `.h' suffix.
 
-Link with \fI\-lproc-2\fP.
+Link with \fI\-lproc2\fP.
 
 .SH DESCRIPTION
 .SS Overview

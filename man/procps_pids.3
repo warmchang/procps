@@ -16,7 +16,7 @@
 .\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
 .\" %%%LICENSE_END
 .\"
-.TH PROCPS_PIDS 3 "July 2022" "libproc-2"
+.TH PROCPS_PIDS 3 "August 2022" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -25,7 +25,7 @@ procps_pids \- API to access process information in the /proc filesystem
 
 .SH SYNOPSIS
 .nf
-#include <procps/pids.h>
+#include <libproc2/pids.h>
 
 .RI "int\fB procps_pids_new  \fR (struct pids_info **" info ", enum pids_item *" items ", int " numitems );
 .RI "int\fB procps_pids_ref  \fR (struct pids_info  *" info );
@@ -64,7 +64,7 @@ procps_pids \- API to access process information in the /proc filesystem
 
 .fi
 
-Link with \fI\-lproc-2\fP.
+Link with \fI\-lproc2\fP.
 
 .SH DESCRIPTION
 .SS Overview
