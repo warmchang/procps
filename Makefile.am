@@ -97,7 +97,7 @@ EXTRA_DIST = \
 	.version \
 	autogen.sh \
 	COPYING.LIB \
-	misc/git-version-gen \
+	local/git-version-gen \
 	doc/CodingStyle.md \
 	doc/TODO \
 	src/ps/HACKING \
