@@ -96,7 +96,6 @@ endif
 EXTRA_DIST = \
 	.version \
 	autogen.sh \
-	contrib \
 	COPYING.LIB \
 	misc/git-version-gen \
 	Documentation/CodingStyle.md \
