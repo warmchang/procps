@@ -42,8 +42,8 @@
 #include "xalloc.h"
 #include "rpmatch.h"
 
-#include <proc/misc.h>
-#include <proc/pids.h>
+#include "misc.h"
+#include "pids.h"
 
 #define DEFAULT_NICE 4
 
