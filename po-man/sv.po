@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-07-18 20:48+1000\n"
+"POT-Creation-Date: 2022-08-29 18:27+1000\n"
 "PO-Revision-Date: 2021-12-23 23:25+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -34,26 +34,29 @@ msgid "2022-06-25"
 msgstr "2018-05-31"
 
 #. type: TH
-#: ../man/free.1:5 ../man/kill.1:8 ../man/pgrep.1:10 ../man/pmap.1:8 ../man/pwdx.1:6 ../man/skill.1:9
-#: ../man/slabtop.1:5 ../man/sysctl.8:9 ../man/sysctl.conf.5:9 ../man/tload.1:4 ../man/uptime.1:3
-#: ../man/vmstat.8:3 ../man/w.1:3 ../man/watch.1:1 ../man/ps.1:7 ../man/top.1:62
+#: ../man/free.1:5 ../man/kill.1:8 ../man/pgrep.1:10 ../man/pmap.1:8
+#: ../man/pwdx.1:6 ../man/skill.1:9 ../man/slabtop.1:5 ../man/sysctl.8:9
+#: ../man/sysctl.conf.5:9 ../man/tload.1:4 ../man/uptime.1:3 ../man/vmstat.8:3
+#: ../man/w.1:3 ../man/watch.1:1 ../man/ps.1:7 ../man/top.1:62
 #, no-wrap
 msgid "procps-ng"
 msgstr "procps-ng"
 
 #. type: TH
-#: ../man/free.1:5 ../man/kill.1:8 ../man/pgrep.1:10 ../man/pidof.1:18 ../man/pmap.1:8 ../man/pwdx.1:6
-#: ../man/skill.1:9 ../man/slabtop.1:5 ../man/tload.1:4 ../man/uptime.1:3 ../man/w.1:3 ../man/watch.1:1
+#: ../man/free.1:5 ../man/kill.1:8 ../man/pgrep.1:10 ../man/pidof.1:18
+#: ../man/pmap.1:8 ../man/pwdx.1:6 ../man/skill.1:9 ../man/slabtop.1:5
+#: ../man/tload.1:4 ../man/uptime.1:3 ../man/w.1:3 ../man/watch.1:1
 #: ../man/ps.1:7 ../man/top.1:62
 #, no-wrap
 msgid "User Commands"
 msgstr "Användarkommandon"
 
 #. type: SH
-#: ../man/free.1:6 ../man/kill.1:9 ../man/pgrep.1:11 ../man/pidof.1:19 ../man/pmap.1:9 ../man/pwdx.1:7
-#: ../man/skill.1:10 ../man/slabtop.1:6 ../man/sysctl.8:10 ../man/sysctl.conf.5:10 ../man/tload.1:5
-#: ../man/uptime.1:4 ../man/vmstat.8:4 ../man/w.1:4 ../man/watch.1:2 ../man/ps.1:27
-#: ../man/top.1:67 ../man/procps.3:23 ../man/procps_misc.3:24
+#: ../man/free.1:6 ../man/kill.1:9 ../man/pgrep.1:11 ../man/pidof.1:19
+#: ../man/pmap.1:9 ../man/pwdx.1:7 ../man/skill.1:10 ../man/slabtop.1:6
+#: ../man/sysctl.8:10 ../man/sysctl.conf.5:10 ../man/tload.1:5
+#: ../man/uptime.1:4 ../man/vmstat.8:4 ../man/w.1:4 ../man/watch.1:2
+#: ../man/ps.1:27 ../man/top.1:67 ../man/procps.3:23 ../man/procps_misc.3:24
 #: ../man/procps_pids.3:23
 #, no-wrap
 msgid "NAME"
@@ -65,11 +68,11 @@ msgid "free - Display amount of free and used memory in the system"
 msgstr "free — Visa mängden fritt och använt minne i systemet"
 
 #. type: SH
-#: ../man/free.1:8 ../man/kill.1:11 ../man/pgrep.1:13 ../man/pidof.1:21 ../man/pmap.1:11
-#: ../man/pwdx.1:9 ../man/skill.1:12 ../man/slabtop.1:8 ../man/sysctl.8:12 ../man/tload.1:7
-#: ../man/uptime.1:6 ../man/vmstat.8:6 ../man/w.1:6 ../man/watch.1:4 ../man/ps.1:29
-#: ../man/top.1:72 ../man/procps.3:26 ../man/procps_misc.3:26
-#: ../man/procps_pids.3:26
+#: ../man/free.1:8 ../man/kill.1:11 ../man/pgrep.1:13 ../man/pidof.1:21
+#: ../man/pmap.1:11 ../man/pwdx.1:9 ../man/skill.1:12 ../man/slabtop.1:8
+#: ../man/sysctl.8:12 ../man/tload.1:7 ../man/uptime.1:6 ../man/vmstat.8:6
+#: ../man/w.1:6 ../man/watch.1:4 ../man/ps.1:29 ../man/top.1:72
+#: ../man/procps.3:26 ../man/procps_misc.3:26 ../man/procps_pids.3:26
 #, no-wrap
 msgid "SYNOPSIS"
 msgstr "SYNOPSIS"
@@ -80,11 +83,12 @@ msgid "B<free> [I<options>]"
 msgstr "B<free> [I<flaggor>]"
 
 #. type: SH
-#: ../man/free.1:11 ../man/kill.1:14 ../man/pgrep.1:22 ../man/pidof.1:34 ../man/pmap.1:14
-#: ../man/skill.1:22 ../man/slabtop.1:11 ../man/sysctl.8:18 ../man/sysctl.conf.5:12
-#: ../man/tload.1:10 ../man/uptime.1:9 ../man/vmstat.8:10 ../man/w.1:9 ../man/watch.1:7
-#: ../man/ps.1:33 ../man/ps.1:1010 ../man/top.1:77 ../man/procps.3:75
-#: ../man/procps_misc.3:58 ../man/procps_pids.3:70
+#: ../man/free.1:11 ../man/kill.1:14 ../man/pgrep.1:22 ../man/pidof.1:34
+#: ../man/pmap.1:14 ../man/skill.1:22 ../man/slabtop.1:11 ../man/sysctl.8:18
+#: ../man/sysctl.conf.5:12 ../man/tload.1:10 ../man/uptime.1:9
+#: ../man/vmstat.8:10 ../man/w.1:9 ../man/watch.1:7 ../man/ps.1:33
+#: ../man/ps.1:1010 ../man/top.1:77 ../man/procps.3:75 ../man/procps_misc.3:58
+#: ../man/procps_pids.3:69
 #, no-wrap
 msgid "DESCRIPTION"
 msgstr "BESKRIVNING"
@@ -210,9 +214,9 @@ msgstr ""
 "emulerat i kärnor 2.6.27+, annars samma som B<fritt>)"
 
 #. type: SH
-#: ../man/free.1:47 ../man/kill.1:30 ../man/pgrep.1:50 ../man/pidof.1:38 ../man/pmap.1:18
-#: ../man/pwdx.1:12 ../man/skill.1:35 ../man/slabtop.1:16 ../man/tload.1:17 ../man/uptime.1:26
-#: ../man/vmstat.8:19 ../man/watch.1:14
+#: ../man/free.1:47 ../man/kill.1:30 ../man/pgrep.1:50 ../man/pidof.1:38
+#: ../man/pmap.1:18 ../man/pwdx.1:12 ../man/skill.1:35 ../man/slabtop.1:16
+#: ../man/tload.1:17 ../man/uptime.1:26 ../man/vmstat.8:19 ../man/watch.1:14
 #, no-wrap
 msgid "OPTIONS"
 msgstr "FLAGGOR"
@@ -490,9 +494,9 @@ msgid "Print help."
 msgstr "Skriv ut hjälp."
 
 #. type: TP
-#: ../man/free.1:134 ../man/pgrep.1:204 ../man/pmap.1:61 ../man/pwdx.1:13 ../man/skill.1:61
-#: ../man/slabtop.1:36 ../man/sysctl.8:110 ../man/tload.1:30 ../man/uptime.1:36 ../man/vmstat.8:87
-#: ../man/w.1:58
+#: ../man/free.1:134 ../man/pgrep.1:204 ../man/pmap.1:61 ../man/pwdx.1:13
+#: ../man/skill.1:61 ../man/slabtop.1:36 ../man/sysctl.8:110 ../man/tload.1:30
+#: ../man/uptime.1:36 ../man/vmstat.8:87 ../man/w.1:58
 #, no-wrap
 msgid "B<-V>, B<--version>"
 msgstr "B<-V>, B<--version>"
@@ -503,9 +507,9 @@ msgid "Display version information."
 msgstr "Visa versionsinformation."
 
 #. type: SH
-#: ../man/free.1:138 ../man/slabtop.1:78 ../man/sysctl.8:165 ../man/sysctl.conf.5:60
-#: ../man/tload.1:34 ../man/uptime.1:39 ../man/vmstat.8:205 ../man/w.1:74
-#: ../man/procps_misc.3:145
+#: ../man/free.1:138 ../man/slabtop.1:78 ../man/sysctl.8:165
+#: ../man/sysctl.conf.5:60 ../man/tload.1:34 ../man/uptime.1:39
+#: ../man/vmstat.8:205 ../man/w.1:74 ../man/procps_misc.3:145
 #, no-wrap
 msgid "FILES"
 msgstr "FILER"
@@ -522,8 +526,8 @@ msgid "memory information"
 msgstr "minnesinformation"
 
 #. type: SH
-#: ../man/free.1:143 ../man/pgrep.1:273 ../man/pidof.1:71 ../man/tload.1:42 ../man/vmstat.8:220
-#: ../man/watch.1:131
+#: ../man/free.1:143 ../man/pgrep.1:273 ../man/pidof.1:71 ../man/tload.1:42
+#: ../man/vmstat.8:220 ../man/watch.1:131
 #, no-wrap
 msgid "BUGS"
 msgstr "FEL"
@@ -553,11 +557,11 @@ msgid "E<.UR procps@freelists.org> E<.UE>"
 msgstr "E<.UR procps@freelists.org> E<.UE>"
 
 #. type: SH
-#: ../man/free.1:150 ../man/kill.1:84 ../man/pgrep.1:289 ../man/pidof.1:78 ../man/pmap.1:79
-#: ../man/pwdx.1:19 ../man/skill.1:102 ../man/slabtop.1:82 ../man/sysctl.8:179
-#: ../man/sysctl.conf.5:79 ../man/tload.1:37 ../man/uptime.1:56 ../man/vmstat.8:212 ../man/w.1:81
-#: ../man/ps.1:2060 ../man/procps.3:190 ../man/procps_misc.3:162
-#: ../man/procps_pids.3:216
+#: ../man/free.1:150 ../man/kill.1:84 ../man/pgrep.1:289 ../man/pidof.1:78
+#: ../man/pmap.1:79 ../man/pwdx.1:19 ../man/skill.1:102 ../man/slabtop.1:82
+#: ../man/sysctl.8:179 ../man/sysctl.conf.5:79 ../man/tload.1:37
+#: ../man/uptime.1:56 ../man/vmstat.8:212 ../man/w.1:81 ../man/ps.1:2060
+#: ../man/procps.3:190 ../man/procps_misc.3:162 ../man/procps_pids.3:215
 #, no-wrap
 msgid "SEE ALSO"
 msgstr "SE ÄVEN"
@@ -703,8 +707,9 @@ msgid "List signal names in a nice table."
 msgstr "Lista signalnamn i en trevlig tabell."
 
 #. type: SH
-#: ../man/kill.1:67 ../man/pgrep.1:256 ../man/slabtop.1:87 ../man/sysctl.conf.5:35
-#: ../man/vmstat.8:190 ../man/watch.1:124 ../man/ps.1:773
+#: ../man/kill.1:67 ../man/pgrep.1:256 ../man/slabtop.1:87
+#: ../man/sysctl.conf.5:35 ../man/vmstat.8:190 ../man/watch.1:124
+#: ../man/ps.1:773
 #, no-wrap
 msgid "NOTES"
 msgstr "OBSERVERA"
@@ -722,8 +727,8 @@ msgstr ""
 
 #.  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #. type: SH
-#: ../man/kill.1:71 ../man/pgrep.1:216 ../man/skill.1:92 ../man/sysctl.8:137 ../man/watch.1:167
-#: ../man/ps.1:99
+#: ../man/kill.1:71 ../man/pgrep.1:216 ../man/skill.1:92 ../man/sysctl.8:137
+#: ../man/watch.1:167 ../man/ps.1:99
 #, no-wrap
 msgid "EXAMPLES"
 msgstr "EXEMPEL"
@@ -782,7 +787,8 @@ msgstr ""
 "B<signal>(7), B<sigqueue>(3), B<skill>(1)"
 
 #. type: SH
-#: ../man/kill.1:93 ../man/pmap.1:82 ../man/pwdx.1:22 ../man/skill.1:110 ../man/ps.1:2067
+#: ../man/kill.1:93 ../man/pmap.1:82 ../man/pwdx.1:22 ../man/skill.1:110
+#: ../man/ps.1:2067
 #, no-wrap
 msgid "STANDARDS"
 msgstr "STANDARDER"
@@ -800,8 +806,9 @@ msgstr ""
 "specifik."
 
 #. type: SH
-#: ../man/kill.1:97 ../man/pgrep.1:299 ../man/pidof.1:81 ../man/pwdx.1:26 ../man/skill.1:112
-#: ../man/sysctl.8:182 ../man/sysctl.conf.5:81 ../man/ps.1:2085
+#: ../man/kill.1:97 ../man/pgrep.1:299 ../man/pidof.1:81 ../man/pwdx.1:26
+#: ../man/skill.1:112 ../man/sysctl.8:182 ../man/sysctl.conf.5:81
+#: ../man/ps.1:2085
 #, no-wrap
 msgid "AUTHOR"
 msgstr "UPPHOVSMAN"
@@ -823,17 +830,19 @@ msgstr ""
 "linux kan också fungera korrekt."
 
 #. type: SH
-#: ../man/kill.1:103 ../man/pgrep.1:303 ../man/pmap.1:86 ../man/pwdx.1:31 ../man/skill.1:118
-#: ../man/slabtop.1:105 ../man/sysctl.8:186 ../man/sysctl.conf.5:85 ../man/tload.1:58
-#: ../man/uptime.1:61 ../man/vmstat.8:232 ../man/w.1:98
+#: ../man/kill.1:103 ../man/pgrep.1:303 ../man/pmap.1:86 ../man/pwdx.1:31
+#: ../man/skill.1:118 ../man/slabtop.1:105 ../man/sysctl.8:186
+#: ../man/sysctl.conf.5:85 ../man/tload.1:58 ../man/uptime.1:61
+#: ../man/vmstat.8:232 ../man/w.1:98
 #, no-wrap
 msgid "REPORTING BUGS"
 msgstr "RAPPORTERA FEL"
 
 #. type: Plain text
-#: ../man/kill.1:106 ../man/pgrep.1:306 ../man/pmap.1:89 ../man/pwdx.1:34 ../man/skill.1:121
-#: ../man/slabtop.1:108 ../man/sysctl.8:189 ../man/sysctl.conf.5:88 ../man/tload.1:61
-#: ../man/uptime.1:64 ../man/vmstat.8:235 ../man/w.1:101
+#: ../man/kill.1:106 ../man/pgrep.1:306 ../man/pmap.1:89 ../man/pwdx.1:34
+#: ../man/skill.1:121 ../man/slabtop.1:108 ../man/sysctl.8:189
+#: ../man/sysctl.conf.5:88 ../man/tload.1:61 ../man/uptime.1:64
+#: ../man/vmstat.8:235 ../man/w.1:101
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
 msgstr ""
 "Skicka felrapporter till E<.UR procps@freelists.org> E<.UE>\n"
@@ -1364,14 +1373,15 @@ msgstr ""
 "si_value i posten siginfo_t."
 
 #. type: Plain text
-#: ../man/pgrep.1:207 ../man/pmap.1:64 ../man/slabtop.1:39 ../man/sysctl.8:113 ../man/tload.1:33
-#: ../man/vmstat.8:90 ../man/watch.1:81
+#: ../man/pgrep.1:207 ../man/pmap.1:64 ../man/slabtop.1:39 ../man/sysctl.8:113
+#: ../man/tload.1:33 ../man/vmstat.8:90 ../man/watch.1:81
 msgid "Display version information and exit."
 msgstr "Visa versionsinformation och avsluta."
 
 #. type: TP
-#: ../man/pgrep.1:207 ../man/pmap.1:58 ../man/pwdx.1:16 ../man/skill.1:58 ../man/slabtop.1:39
-#: ../man/sysctl.8:107 ../man/tload.1:27 ../man/uptime.1:30 ../man/vmstat.8:90 ../man/watch.1:75
+#: ../man/pgrep.1:207 ../man/pmap.1:58 ../man/pwdx.1:16 ../man/skill.1:58
+#: ../man/slabtop.1:39 ../man/sysctl.8:107 ../man/tload.1:27 ../man/uptime.1:30
+#: ../man/vmstat.8:90 ../man/watch.1:75
 #, no-wrap
 msgid "B<-h>, B<--help>"
 msgstr "B<-h>, B<--help>"
@@ -1767,7 +1777,8 @@ msgid "PMAP"
 msgstr "PMAP"
 
 #. type: TH
-#: ../man/pmap.1:8 ../man/pwdx.1:6 ../man/tload.1:4 ../man/vmstat.8:3 ../man/w.1:3
+#: ../man/pmap.1:8 ../man/pwdx.1:6 ../man/tload.1:4 ../man/vmstat.8:3
+#: ../man/w.1:3
 #, no-wrap
 msgid "2020-06-04"
 msgstr "2020-06-04"
@@ -1919,7 +1930,8 @@ msgid "Create new configuration to I<file>"
 msgstr "Skapa en ny konfiguration i I<fil>"
 
 #. type: Plain text
-#: ../man/pmap.1:61 ../man/skill.1:61 ../man/sysctl.8:110 ../man/w.1:55 ../man/watch.1:78
+#: ../man/pmap.1:61 ../man/skill.1:61 ../man/sysctl.8:110 ../man/w.1:55
+#: ../man/watch.1:78
 msgid "Display help text and exit."
 msgstr "Visa hjälptext och avsluta."
 
@@ -2680,7 +2692,8 @@ msgstr ""
 "följer information om skivors använda fysiska minne."
 
 #. type: SH
-#: ../man/slabtop.1:99 ../man/tload.1:50 ../man/uptime.1:46 ../man/vmstat.8:222 ../man/w.1:88
+#: ../man/slabtop.1:99 ../man/tload.1:50 ../man/uptime.1:46 ../man/vmstat.8:222
+#: ../man/w.1:88
 #, no-wrap
 msgid "AUTHORS"
 msgstr "UPPHOVSMÄN"
@@ -18050,12 +18063,12 @@ msgid "7. ENVIRONMENT VARIABLE(S)"
 msgstr "MILJÖVARIABLER"
 
 #. type: Plain text
-#: ../man/top.1:2628 ../man/procps_pids.3:210
+#: ../man/top.1:2628 ../man/procps_pids.3:209
 msgid "The value set for the following is unimportant, just its presence."
 msgstr ""
 
 #. type: IP
-#: ../man/top.1:2629 ../man/procps_pids.3:211
+#: ../man/top.1:2629 ../man/procps_pids.3:210
 #, no-wrap
 msgid "LIBPROC_HIDE_KERNEL"
 msgstr ""
@@ -18401,9 +18414,10 @@ msgstr "PROCPS_USERLEN"
 
 #. type: TH
 #: ../man/procps.3:19 ../man/procps_misc.3:20 ../man/procps_pids.3:19
-#, no-wrap
-msgid "January 2022"
-msgstr ""
+#, fuzzy, no-wrap
+#| msgid "June 2011"
+msgid "July 2022"
+msgstr "Juni 2011"
 
 #. type: TH
 #: ../man/procps.3:19 ../man/procps_misc.3:20 ../man/procps_pids.3:19
@@ -18434,53 +18448,53 @@ msgstr ""
 #: ../man/procps.3:38
 #, no-wrap
 msgid ""
-"B<int procps_new   (struct info **>I<info>B<);>\n"
-"B<int procps_ref   (struct info  *>I<info>B<);>\n"
-"B<int procps_unref (struct info **>I<info>B<);>\n"
+"intB< procps_new  > (struct info **I<info>);\n"
+"intB< procps_ref  > (struct info  *I<info>);\n"
+"intB< procps_unref> (struct info **I<info>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps.3:43
 #, no-wrap
 msgid ""
-"B<struct result *procps_get (>\n"
-"B<    struct info *>I<info>B<,>\n"
+"struct result *B<procps_get> (\n"
+"    struct info *I<info>,\n"
 "[   const char *I<name>,      ]   B<diskstats> api only\n"
-"B<    enum item >I<item>B<);>\n"
+"    enum item I<item>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps.3:49
 #, no-wrap
 msgid ""
-"B<struct stack *procps_select (>\n"
-"B<    struct info *>I<info>B<,>\n"
+"struct stack *B<procps_select> (\n"
+"    struct info *I<info>,\n"
 "[   const char *I<name>,      ]   B<diskstats> api only\n"
-"B<    enum item *>I<items>B<,>\n"
-"B<    int >I<numitems>B<);>\n"
+"    enum item *I<items>,\n"
+"    int I<numitems>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps.3:55
 #, no-wrap
 msgid ""
-"B<struct reaped *procps_reap (>\n"
-"B<    struct info *>I<info>B<,>\n"
+"struct reaped *B<procps_reap> (\n"
+"    struct info *I<info>,\n"
 "[   enum reap_type I<what>,   ]   B<stat> api only\n"
-"B<    enum item *>I<items>B<,>\n"
-"B<    int >I<numitems>B<);>\n"
+"    enum item *I<items>,\n"
+"    int I<numitems>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps.3:62
 #, no-wrap
 msgid ""
-"B<struct stack **procps_sort (>\n"
-"B<    struct info *>I<info>B<,>\n"
-"B<    struct stack *>I<stacks[]>B<,>\n"
-"B<    int >I<numstacked>B<,>\n"
-"B<    enum item >I<sortitem>B<,>\n"
-"B<    enum sort_order >I<order>B<);>\n"
+"struct stack **B<procps_sort> (\n"
+"    struct info *I<info>,\n"
+"    struct stack *I<stacks>[],\n"
+"    int I<numstacked>,\n"
+"    enum item I<sortitem>,\n"
+"    enum sort_order I<order>);\n"
 msgstr ""
 
 #. type: Plain text
@@ -18500,12 +18514,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:74 ../man/procps_pids.3:69
+#: ../man/procps.3:74 ../man/procps_pids.3:68
 msgid "Link with I<-lproc-2>."
 msgstr ""
 
 #. type: SS
-#: ../man/procps.3:76 ../man/procps_pids.3:71
+#: ../man/procps.3:76 ../man/procps_pids.3:70
 #, no-wrap
 msgid "Overview"
 msgstr ""
@@ -18520,7 +18534,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:88 ../man/procps_pids.3:83
+#: ../man/procps.3:88 ../man/procps_pids.3:82
 msgid ""
 "By specifying an array of `items', these structures can be organized as a "
 "`stack', potentially yielding many results with a single function call.  "
@@ -18546,7 +18560,7 @@ msgid ""
 msgstr ""
 
 #. type: SS
-#: ../man/procps.3:100 ../man/procps_pids.3:95
+#: ../man/procps.3:100 ../man/procps_pids.3:94
 #, no-wrap
 msgid "Usage"
 msgstr ""
@@ -18590,7 +18604,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:130 ../man/procps_pids.3:123
+#: ../man/procps.3:130 ../man/procps_pids.3:122
 msgid ""
 "To exploit any `stack', and access individual `result' structures, a "
 "I<relative_enum> is required as shown in the B<VAL> macro defined in the "
@@ -18600,7 +18614,7 @@ msgid ""
 msgstr ""
 
 #. type: SS
-#: ../man/procps.3:131 ../man/procps_pids.3:124
+#: ../man/procps.3:131 ../man/procps_pids.3:123
 #, no-wrap
 msgid "Caveats"
 msgstr ""
@@ -18613,7 +18627,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:139 ../man/procps_pids.3:136
+#: ../man/procps.3:139 ../man/procps_pids.3:135
 msgid ""
 "For the B<new> and B<unref> functions, the address of an I<info> struct "
 "pointer must be supplied.  With B<new> it must have been initialized to "
@@ -18644,39 +18658,39 @@ msgid ""
 msgstr ""
 
 #. type: SH
-#: ../man/procps.3:152 ../man/procps_misc.3:136 ../man/procps_pids.3:157
+#: ../man/procps.3:152 ../man/procps_misc.3:136 ../man/procps_pids.3:156
 #, no-wrap
 msgid "RETURN VALUE"
 msgstr ""
 
 #. type: SS
-#: ../man/procps.3:153 ../man/procps_pids.3:158
+#: ../man/procps.3:153 ../man/procps_pids.3:157
 #, no-wrap
 msgid "Functions Returning an `int'"
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:156 ../man/procps_misc.3:140 ../man/procps_pids.3:161
+#: ../man/procps.3:156 ../man/procps_misc.3:140 ../man/procps_pids.3:160
 msgid ""
 "An error will be indicated by a negative number that is always the inverse "
 "of some well known errno.h value."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:160 ../man/procps_pids.3:165
+#: ../man/procps.3:160 ../man/procps_pids.3:164
 msgid ""
 "Success is indicated by a zero return value.  However, the B<ref> and "
 "B<unref> functions return the current I<info> structure reference count."
 msgstr ""
 
 #. type: SS
-#: ../man/procps.3:161 ../man/procps_misc.3:141 ../man/procps_pids.3:166
+#: ../man/procps.3:161 ../man/procps_misc.3:141 ../man/procps_pids.3:165
 #, no-wrap
 msgid "Functions Returning an `address'"
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:164 ../man/procps_misc.3:144 ../man/procps_pids.3:169
+#: ../man/procps.3:164 ../man/procps_misc.3:144 ../man/procps_pids.3:168
 msgid ""
 "An error will be indicated by a NULL return pointer with the reason found in "
 "the formal errno value."
@@ -18688,7 +18702,7 @@ msgid "Success is indicated by a pointer to the named structure."
 msgstr ""
 
 #. type: SH
-#: ../man/procps.3:167 ../man/procps_pids.3:174
+#: ../man/procps.3:167 ../man/procps_pids.3:173
 #, no-wrap
 msgid "DEBUGGING"
 msgstr ""
@@ -18702,14 +18716,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:176 ../man/procps_pids.3:194
+#: ../man/procps.3:176 ../man/procps_pids.3:193
 msgid ""
 "This feature can be activated through either of the following methods and "
 "any discrepancies will be written to B<stderr>."
 msgstr ""
 
 #. type: IP
-#: ../man/procps.3:177 ../man/procps_pids.3:195
+#: ../man/procps.3:177 ../man/procps_pids.3:194
 #, fuzzy, no-wrap
 #| msgid "1"
 msgid "1)"
@@ -18722,7 +18736,7 @@ msgid ""
 msgstr ""
 
 #. type: IP
-#: ../man/procps.3:181 ../man/procps_pids.3:199
+#: ../man/procps.3:181 ../man/procps_pids.3:198
 #, fuzzy, no-wrap
 #| msgid "2"
 msgid "2)"
@@ -18736,7 +18750,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps.3:189 ../man/procps_pids.3:207
+#: ../man/procps.3:189 ../man/procps_pids.3:206
 msgid ""
 "This verification feature incurs substantial overhead.  Therefore, it is "
 "important that it I<not> be activated for a production/release build."
@@ -18777,10 +18791,10 @@ msgstr ""
 #: ../man/procps_misc.3:37
 #, no-wrap
 msgid ""
-"B<long         procps_cpu_count (void);>\n"
-"B<long         procps_hertz_get (void);>\n"
-"B<unsigned int procps_pid_length (void);>\n"
-"B<int          procps_linux_version (void);>\n"
+"long         B<procps_cpu_count> (void);\n"
+"long         B<procps_hertz_get> (void);\n"
+"unsigned int B<procps_pid_length> (void);\n"
+"int          B<procps_linux_version> (void);\n"
 msgstr ""
 
 #. type: Plain text
@@ -18793,10 +18807,10 @@ msgstr ""
 #: ../man/procps_misc.3:46
 #, no-wrap
 msgid ""
-"B<int    procps_loadavg (double * >I<av1>B<, double * >I<av5>B<, double * >I<av15>B<);>\n"
-"B<int    procps_uptime (double * >I<uptime_secs>B<, double * >I<idle_secs>B<);>\n"
-"B<char * procps_uptime_sprint (void);>\n"
-"B<char * procps_uptime_sprint_short (void);>\n"
+"int  B< procps_loadavg> (double *I<av1>, double *I<av5>, double *I<av15>);\n"
+"int  B< procps_uptime> (double *I<uptime_secs>, double *I<idle_secs>);\n"
+"char *B<procps_uptime_sprint> (void);\n"
+"char *B<procps_uptime_sprint_short> (void);\n"
 msgstr ""
 
 #. type: Plain text
@@ -18809,9 +18823,9 @@ msgstr ""
 #: ../man/procps_misc.3:54
 #, no-wrap
 msgid ""
-"B<int          procps_ns_get_id (const char * >I<name>B<);>\n"
-"B<const char * procps_ns_get_name (int >I<id>B<);>\n"
-"B<int          procps_ns_read_pid (int >I<pid>B<, struct procps_ns * >I<nsp>B<);>\n"
+"int       B<  procps_ns_get_id> (const char *I<name>);\n"
+"const charB< *procps_ns_get_name> (int I<id>);\n"
+"int       B<  procps_ns_read_pid> (int I<pid>, struct procps_ns *I<nsp>);\n"
 msgstr ""
 
 #. type: Plain text
@@ -19034,73 +19048,73 @@ msgstr ""
 #: ../man/procps_pids.3:33
 #, no-wrap
 msgid ""
-"B<int procps_pids_new   (struct pids_info **>I<info>B<, enum pids_item *>I<items>B<, int >I<numitems>B<);>\n"
-"B<int procps_pids_ref   (struct pids_info  *>I<info>B<);>\n"
-"B<int procps_pids_unref (struct pids_info **>I<info>B<);>\n"
+"intB< procps_pids_new  > (struct pids_info **I<info>, enum pids_item *I<items>, int I<numitems>);\n"
+"intB< procps_pids_ref  > (struct pids_info  *I<info>);\n"
+"intB< procps_pids_unref> (struct pids_info **I<info>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:38
 #, no-wrap
 msgid ""
-"B<struct pids_stack *procps_pids_get (>\n"
-"B<    struct pids_info *>I<info>B<,>\n"
-"B<    enum pids_fetch_type >I<which>B<);>\n"
+"struct pids_stack *B<procps_pids_get> (\n"
+"    struct pids_info *I<info>,\n"
+"    enum pids_fetch_type I<which>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:42
 #, no-wrap
 msgid ""
-"B<struct pids_fetch *procps_pids_reap (>\n"
-"B<    struct pids_info *>I<info>B<,>\n"
-"B<    enum pids_fetch_type >I<which>B<);>\n"
+"struct pids_fetch *B<procps_pids_reap> (\n"
+"    struct pids_info *I<info>,\n"
+"    enum pids_fetch_type I<which>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:48
 #, no-wrap
 msgid ""
-"B<struct pids_fetch *procps_pids_select (>\n"
-"B<    struct pids_info *>I<info>B<,>\n"
-"B<    unsigned *>I<these>B<,>\n"
-"B<    int >I<numthese>B<,>\n"
-"B<    enum pids_select_type >I<which>B<);>\n"
+"struct pids_fetch *B<procps_pids_select> (\n"
+"    struct pids_info *I<info>,\n"
+"    unsigned *I<these>,\n"
+"    int I<numthese>,\n"
+"    enum pids_select_type I<which>);\n"
 msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:55
 #, no-wrap
 msgid ""
-"B<struct pids_stack **procps_pids_sort (>\n"
-"B<    struct pids_info *>I<info>B<,>\n"
-"B<    struct pids_stack *>I<stacks[]>B<,>\n"
-"B<    int >I<numstacked>B<,>\n"
-"B<    enum pids_item >I<sortitem>B<,>\n"
-"B<    enum pids_sort_order >I<order>B<);>\n"
+"struct pids_stack **B<procps_pids_sort> (\n"
+"    struct pids_info *I<info>,\n"
+"    struct pids_stack *I<stacks>[],\n"
+"    int I<numstacked>,\n"
+"    enum pids_item I<sortitem>,\n"
+"    enum pids_sort_order I<order>);\n"
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:61
+#: ../man/procps_pids.3:60
 #, no-wrap
 msgid ""
-"B<int procps_pids_reset (>\n"
-"B<    struct pids_info *>I<info>B<,>\n"
-"B<    enum pids_item *>I<newitems>B<,>\n"
-"B<    int >I<newnumitems>B<);>\n"
+"int B<procps_pids_reset> (\n"
+"    struct pids_info *I<info>,\n"
+"    enum pids_item *I<newitems>,\n"
+"    int I<newnumitems>);\n"
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:65
+#: ../man/procps_pids.3:64
 #, no-wrap
 msgid ""
-"B<struct pids_stack *fatal_proc_unmounted (>\n"
-"B<    struct pids_info *>I<info>B<,>\n"
-"B<    int >I<return_self>B<);>\n"
+"struct pids_stack *B<fatal_proc_unmounted> (\n"
+"    struct pids_info *I<info>,\n"
+"    int I<return_self>);\n"
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:77
+#: ../man/procps_pids.3:76
 msgid ""
 "Central to this interface is a simple `result' structure reflecting an "
 "`item' plus its value (in a union with standard C language types as "
@@ -19109,7 +19123,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:88
+#: ../man/procps_pids.3:87
 msgid ""
 "As part of this interface there are two unique enumerators.  The `noop' and "
 "`extra' items exist to hold user values.  They are never set by the library, "
@@ -19117,7 +19131,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:94
+#: ../man/procps_pids.3:93
 msgid ""
 "The pids.h file will be an essential document during user program "
 "development.  There you will find available items, their return type (the "
@@ -19126,12 +19140,12 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:98
+#: ../man/procps_pids.3:97
 msgid "The following would be a typical sequence of calls to this interface."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:104
+#: ../man/procps_pids.3:103
 #, no-wrap
 msgid ""
 "1. B<fatal_proc_unmounted()>\n"
@@ -19141,14 +19155,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:109
+#: ../man/procps_pids.3:108
 msgid ""
 "The B<get> function is an iterator for successive PIDs/TIDs, returning those "
 "`items' previously identified via B<new> or B<reset>."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:116
+#: ../man/procps_pids.3:115
 msgid ""
 "Two functions support unpredictable variable outcomes.  The B<reap> function "
 "gathers data for all processes while the B<select> function deals with "
@@ -19158,7 +19172,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:131
+#: ../man/procps_pids.3:130
 msgid ""
 "The E<lt>pidsE<gt> API differs from others in that those items of interest "
 "must be provided at B<new> or B<reset> time, the latter being unique to this "
@@ -19167,14 +19181,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:139
+#: ../man/procps_pids.3:138
 msgid ""
 "The B<get> and B<reap> functions use the I<which> parameter to specify "
 "whether just tasks or both tasks and threads are to be fetched."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:144
+#: ../man/procps_pids.3:143
 msgid ""
 "The B<select> function requires an array of PIDs or UIDs as I<these> along "
 "with I<numthese> to identify which processes are to be fetched.  This "
@@ -19182,14 +19196,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:148
+#: ../man/procps_pids.3:147
 msgid ""
 "When using the B<sort> function, the parameters I<stacks> and I<numstacked> "
 "would normally be those returned in the `pids_fetch' structure."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:156
+#: ../man/procps_pids.3:155
 msgid ""
 "Lastly, a B<fatal_proc_unmounted> function may be called before any other "
 "function to ensure that the /proc/ directory is mounted.  As such, the "
@@ -19200,7 +19214,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:173
+#: ../man/procps_pids.3:172
 msgid ""
 "Success is indicated by a pointer to the named structure.  However, if one "
 "survives the B<fatal_proc_unmounted> call, NULL is always returned when "
@@ -19208,14 +19222,14 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:177
+#: ../man/procps_pids.3:176
 msgid ""
 "To aid in program development, there are two procps-ng provisions that can "
 "be exploited."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:182
+#: ../man/procps_pids.3:181
 msgid ""
 "The first is a supplied file named `libproc.supp' which may be useful when "
 "developing a I<multi-threaded> application.  When used with the valgrind `--"
@@ -19224,7 +19238,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:186
+#: ../man/procps_pids.3:185
 msgid ""
 "Such warnings arise because the library handles heap based allocations in a "
 "thread-safe manner.  A I<single-threaded> application will not receive those "
@@ -19232,7 +19246,7 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:191
+#: ../man/procps_pids.3:190
 msgid ""
 "The second provision can help ensure `result' member references agree with "
 "library expectations.  It assumes that a supplied macro in the header file "
@@ -19240,35 +19254,35 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:198
+#: ../man/procps_pids.3:197
 msgid ""
 "Add CFLAGS='-DXTRA_PROCPS_DEBUG' to any other ./configure options your "
 "project may employ."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:202
+#: ../man/procps_pids.3:201
 msgid ""
 "Add #include E<lt>procps/xtra-procps-debug.hE<gt> to any program I<after> "
 "the #include E<lt>procps/pids.hE<gt>."
 msgstr ""
 
 #. type: SH
-#: ../man/procps_pids.3:208
+#: ../man/procps_pids.3:207
 #, fuzzy, no-wrap
 #| msgid "ENVIRONMENT VARIABLES"
 msgid "ENVIRONMENT VARIABLE(S)"
 msgstr "MILJÖVARIABLER"
 
 #. type: Plain text
-#: ../man/procps_pids.3:215
+#: ../man/procps_pids.3:214
 msgid ""
 "This will hide kernel threads which would otherwise be returned with a "
 "B<procps_pids_get>, B<procps_pids_select> or B<procps_pids_reap> call."
 msgstr ""
 
 #. type: Plain text
-#: ../man/procps_pids.3:219
+#: ../man/procps_pids.3:218
 #, fuzzy
 #| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 msgid "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
