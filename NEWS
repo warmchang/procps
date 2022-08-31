@@ -3,6 +3,7 @@ procps-ng-NEXT
     Re-add elogind support                                 merge #151
     Used memory is Total - Available
     Renaming, it is now libproc2
+  * pgrep: Add -A to ignore ancestors                      merge #160
   * pidwait: Better warning if pidfd_open not implemented
   * pmap: Dont reuse stdin filehandle                      issue #231
   * ps: threads again display when -L is used with -q      issue #234
