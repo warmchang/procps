@@ -199,7 +199,6 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 static struct el *get_our_ancestors(void)
 {
 #define PIDS_GETINT(e) PIDS_VAL(EU_##e, s_int, stack, info)
-    struct pids_info *info = NULL;
     struct el *list = NULL;
     int i = 0;
     int size = 0;
@@ -207,27 +206,28 @@ static struct el *get_our_ancestors(void)
     pid_t search_pid = getpid();
     struct pids_stack *stack;
 
-    if (procps_pids_new(&info, Items, 15) < 0)
-        xerrx(EXIT_FATAL, _("Unable to create pid info structure"));
-
     while (!done) {
-        if (search_pid == 0)
-            break;
+        struct pids_info *info = NULL;
+
+        if (procps_pids_new(&info, Items, 15) < 0)
+            xerrx(EXIT_FATAL, _("Unable to create pid info structure"));
 
         if (i == size) {
             grow_size(size);
             list = xrealloc(list, (1 + size) * sizeof(*list));
         }
 
+        done = 1;
         while ((stack = procps_pids_get(info, PIDS_FETCH_TASKS_ONLY))) {
             if (PIDS_GETINT(PID) == search_pid) {
                 list[++i].num = PIDS_GETINT(PPID);
                 search_pid = list[i].num;
+                done = 0;
                 break;
             }
-
-            done = 1;
         }
+
+        procps_pids_unref(&info);
     }
 
     if (i == 0) {
