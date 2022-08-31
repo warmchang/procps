@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.10-rc3\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-08-29 18:27+1000\n"
+"POT-Creation-Date: 2022-08-31 17:40+1000\n"
 "PO-Revision-Date: 2015-10-30 09:26-0400\n"
 "Last-Translator: Mingye Wang (Arthur2e5) <arthur200126@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -456,7 +456,7 @@ msgid "Print help."
 msgstr ""
 
 #. type: TP
-#: ../man/free.1:134 ../man/pgrep.1:204 ../man/pmap.1:61 ../man/pwdx.1:13
+#: ../man/free.1:134 ../man/pgrep.1:214 ../man/pmap.1:61 ../man/pwdx.1:13
 #: ../man/skill.1:61 ../man/slabtop.1:36 ../man/sysctl.8:110 ../man/tload.1:30
 #: ../man/uptime.1:36 ../man/vmstat.8:87 ../man/w.1:58
 #, no-wrap
@@ -488,7 +488,7 @@ msgid "memory information"
 msgstr ""
 
 #. type: SH
-#: ../man/free.1:143 ../man/pgrep.1:273 ../man/pidof.1:71 ../man/tload.1:42
+#: ../man/free.1:143 ../man/pgrep.1:283 ../man/pidof.1:71 ../man/tload.1:42
 #: ../man/vmstat.8:220 ../man/watch.1:131
 #, no-wrap
 msgid "BUGS"
@@ -513,7 +513,7 @@ msgid "E<.UR procps@freelists.org> E<.UE>"
 msgstr ""
 
 #. type: SH
-#: ../man/free.1:150 ../man/kill.1:84 ../man/pgrep.1:289 ../man/pidof.1:78
+#: ../man/free.1:150 ../man/kill.1:84 ../man/pgrep.1:299 ../man/pidof.1:78
 #: ../man/pmap.1:79 ../man/pwdx.1:19 ../man/skill.1:102 ../man/slabtop.1:82
 #: ../man/sysctl.8:179 ../man/sysctl.conf.5:79 ../man/tload.1:37
 #: ../man/uptime.1:56 ../man/vmstat.8:212 ../man/w.1:81 ../man/ps.1:2060
@@ -598,7 +598,7 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../man/kill.1:46 ../man/pgrep.1:192
+#: ../man/kill.1:46 ../man/pgrep.1:202
 #, no-wrap
 msgid "B<-q>, B<--queue >I<value>"
 msgstr ""
@@ -638,7 +638,7 @@ msgid "List signal names in a nice table."
 msgstr ""
 
 #. type: SH
-#: ../man/kill.1:67 ../man/pgrep.1:256 ../man/slabtop.1:87
+#: ../man/kill.1:67 ../man/pgrep.1:266 ../man/slabtop.1:87
 #: ../man/sysctl.conf.5:35 ../man/vmstat.8:190 ../man/watch.1:124
 #: ../man/ps.1:773
 #, no-wrap
@@ -655,7 +655,7 @@ msgstr ""
 
 #.  """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 #. type: SH
-#: ../man/kill.1:71 ../man/pgrep.1:216 ../man/skill.1:92 ../man/sysctl.8:137
+#: ../man/kill.1:71 ../man/pgrep.1:226 ../man/skill.1:92 ../man/sysctl.8:137
 #: ../man/watch.1:167 ../man/ps.1:99
 #, no-wrap
 msgid "EXAMPLES"
@@ -726,7 +726,7 @@ msgid ""
 msgstr ""
 
 #. type: SH
-#: ../man/kill.1:97 ../man/pgrep.1:299 ../man/pidof.1:81 ../man/pwdx.1:26
+#: ../man/kill.1:97 ../man/pgrep.1:309 ../man/pidof.1:81 ../man/pwdx.1:26
 #: ../man/skill.1:112 ../man/sysctl.8:182 ../man/sysctl.conf.5:81
 #: ../man/ps.1:2085
 #, no-wrap
@@ -742,7 +742,7 @@ msgid ""
 msgstr ""
 
 #. type: SH
-#: ../man/kill.1:103 ../man/pgrep.1:303 ../man/pmap.1:86 ../man/pwdx.1:31
+#: ../man/kill.1:103 ../man/pgrep.1:313 ../man/pmap.1:86 ../man/pwdx.1:31
 #: ../man/skill.1:118 ../man/slabtop.1:105 ../man/sysctl.8:186
 #: ../man/sysctl.conf.5:85 ../man/tload.1:58 ../man/uptime.1:61
 #: ../man/vmstat.8:232 ../man/w.1:98
@@ -751,7 +751,7 @@ msgid "REPORTING BUGS"
 msgstr "报告缺陷"
 
 #. type: Plain text
-#: ../man/kill.1:106 ../man/pgrep.1:306 ../man/pmap.1:89 ../man/pwdx.1:34
+#: ../man/kill.1:106 ../man/pgrep.1:316 ../man/pmap.1:89 ../man/pwdx.1:34
 #: ../man/skill.1:121 ../man/slabtop.1:108 ../man/sysctl.8:189
 #: ../man/sysctl.conf.5:88 ../man/tload.1:61 ../man/uptime.1:64
 #: ../man/vmstat.8:235 ../man/w.1:101
@@ -1142,22 +1142,35 @@ msgstr ""
 #. type: TP
 #: ../man/pgrep.1:179
 #, no-wrap
+msgid "B<-A>, B<--ignore-ancestors>"
+msgstr ""
+
+#. type: Plain text
+#: ../man/pgrep.1:189
+msgid ""
+"Ignore all ancestors of B<pgrep>, B<pkill>, or B<pidwait>.  For example, "
+"this can be useful when elevating with B<sudo> or similar tools."
+msgstr ""
+
+#. type: TP
+#: ../man/pgrep.1:189
+#, no-wrap
 msgid "B<--cgroup >I<name>B<,...>"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:183
+#: ../man/pgrep.1:193
 msgid "Match on provided control group (cgroup) v2 name. See B<cgroups>(8)"
 msgstr ""
 
 #. type: TP
-#: ../man/pgrep.1:183 ../man/skill.1:80
+#: ../man/pgrep.1:193 ../man/skill.1:80
 #, no-wrap
 msgid "B<--ns >I<pid>"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:188
+#: ../man/pgrep.1:198
 msgid ""
 "Match processes that belong to the same namespaces. Required to run as root "
 "to match processes from other users. See B<--nslist> for how to limit which "
@@ -1165,20 +1178,20 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../man/pgrep.1:188
+#: ../man/pgrep.1:198
 #, no-wrap
 msgid "B<--nslist >I<name>B<,...>"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:192
+#: ../man/pgrep.1:202
 msgid ""
 "Match only the provided namespaces. Available namespaces: ipc, mnt, net, "
 "pid, user,uts."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:204
+#: ../man/pgrep.1:214
 msgid ""
 "Use B<sigqueue(3)> rather than B<kill(2)> and the value argument is used to "
 "specify an integer to be sent with the signal. If the receiving process has "
@@ -1188,13 +1201,13 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:207 ../man/pmap.1:64 ../man/slabtop.1:39 ../man/sysctl.8:113
+#: ../man/pgrep.1:217 ../man/pmap.1:64 ../man/slabtop.1:39 ../man/sysctl.8:113
 #: ../man/tload.1:33 ../man/vmstat.8:90 ../man/watch.1:81
 msgid "Display version information and exit."
 msgstr ""
 
 #. type: TP
-#: ../man/pgrep.1:207 ../man/pmap.1:58 ../man/pwdx.1:16 ../man/skill.1:58
+#: ../man/pgrep.1:217 ../man/pmap.1:58 ../man/pwdx.1:16 ../man/skill.1:58
 #: ../man/slabtop.1:39 ../man/sysctl.8:107 ../man/tload.1:27 ../man/uptime.1:30
 #: ../man/vmstat.8:90 ../man/watch.1:75
 #, no-wrap
@@ -1202,123 +1215,123 @@ msgid "B<-h>, B<--help>"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:210 ../man/vmstat.8:93
+#: ../man/pgrep.1:220 ../man/vmstat.8:93
 msgid "Display help and exit."
 msgstr ""
 
 #. type: SH
-#: ../man/pgrep.1:211
+#: ../man/pgrep.1:221
 #, no-wrap
 msgid "OPERANDS"
 msgstr ""
 
 #. type: TP
-#: ../man/pgrep.1:212
+#: ../man/pgrep.1:222
 #, no-wrap
 msgid "I<pattern>"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:216
+#: ../man/pgrep.1:226
 msgid ""
 "Specifies an Extended Regular Expression for matching against the process "
 "names or command lines."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:220
+#: ../man/pgrep.1:230
 msgid "Example 1: Find the process ID of the B<named> daemon:"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:222
+#: ../man/pgrep.1:232
 msgid "$ pgrep -u root named"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:226
+#: ../man/pgrep.1:236
 msgid "Example 2: Make B<syslog> reread its configuration file:"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:228
+#: ../man/pgrep.1:238
 msgid "$ pkill -HUP syslogd"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:232
+#: ../man/pgrep.1:242
 msgid "Example 3: Give detailed information on all B<xterm> processes:"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:234
+#: ../man/pgrep.1:244
 msgid "$ ps -fp $(pgrep -d, -x xterm)"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:238
+#: ../man/pgrep.1:248
 msgid "Example 4: Make all B<chrome> processes run nicer:"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:240
+#: ../man/pgrep.1:250
 msgid "$ renice +4 $(pgrep chrome)"
 msgstr ""
 
 #. type: SH
-#: ../man/pgrep.1:240 ../man/pidof.1:63 ../man/pmap.1:64 ../man/watch.1:81
+#: ../man/pgrep.1:250 ../man/pidof.1:63 ../man/pmap.1:64 ../man/watch.1:81
 #, no-wrap
 msgid "EXIT STATUS"
 msgstr "退出状态"
 
 #. type: TP
-#: ../man/pgrep.1:242
+#: ../man/pgrep.1:252
 #, no-wrap
 msgid "0"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:246
+#: ../man/pgrep.1:256
 msgid ""
 "One or more processes matched the criteria. For pkill and pidwait, one or "
 "more processes must also have been successfully signalled or waited for."
 msgstr ""
 
 #. type: IP
-#: ../man/pgrep.1:246 ../man/ps.1:45 ../man/ps.1:822 ../man/ps.1:2073
+#: ../man/pgrep.1:256 ../man/ps.1:45 ../man/ps.1:822 ../man/ps.1:2073
 #, no-wrap
 msgid "1"
 msgstr "1"
 
 #. type: Plain text
-#: ../man/pgrep.1:249
+#: ../man/pgrep.1:259
 msgid "No processes matched or none of them could be signalled."
 msgstr ""
 
 #. type: IP
-#: ../man/pgrep.1:249 ../man/ps.1:47 ../man/ps.1:2075
+#: ../man/pgrep.1:259 ../man/ps.1:47 ../man/ps.1:2075
 #, no-wrap
 msgid "2"
 msgstr "2"
 
 #. type: Plain text
-#: ../man/pgrep.1:252
+#: ../man/pgrep.1:262
 msgid "Syntax error in the command line."
 msgstr ""
 
 #. type: IP
-#: ../man/pgrep.1:252 ../man/ps.1:49 ../man/ps.1:2077
+#: ../man/pgrep.1:262 ../man/ps.1:49 ../man/ps.1:2077
 #, no-wrap
 msgid "3"
 msgstr "3"
 
 #. type: Plain text
-#: ../man/pgrep.1:255
+#: ../man/pgrep.1:265
 msgid "Fatal error: out of memory etc."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:261
+#: ../man/pgrep.1:271
 msgid ""
 "The process name used for matching is limited to the 15 characters present "
 "in the output of /proc/I<pid>/stat.  Use the B<-f> option to match against "
@@ -1327,47 +1340,47 @@ msgid ""
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:269
+#: ../man/pgrep.1:279
 msgid ""
 "The running B<pgrep>, B<pkill>, or B<pidwait> process will never report "
 "itself as a match."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:273
+#: ../man/pgrep.1:283
 msgid ""
 "The B<-O --older> option will silently fail if /proc is mounted with the "
 "I<subset=pid> option."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:282
+#: ../man/pgrep.1:292
 msgid ""
 "The options B<-n> and B<-o> and B<-v> can not be combined.  Let me know if "
 "you need to do this."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:284
+#: ../man/pgrep.1:294
 msgid "Defunct processes are reported."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:289
+#: ../man/pgrep.1:299
 msgid ""
 "B<pidwait> requires the B<pidfd_open>(2)  system call which first appeared "
 "in Linux 5.3."
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:299
+#: ../man/pgrep.1:309
 msgid ""
 "B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
 "B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)"
 msgstr ""
 
 #. type: Plain text
-#: ../man/pgrep.1:303
+#: ../man/pgrep.1:313
 msgid "E<.UR kjetilho@ifi.uio.no> Kjetil Torgrim Homme E<.UE>"
 msgstr ""
 
@@ -15147,13 +15160,13 @@ msgstr ""
 #. type: TH
 #: ../man/procps.3:19 ../man/procps_misc.3:20 ../man/procps_pids.3:19
 #, no-wrap
-msgid "July 2022"
+msgid "August 2022"
 msgstr ""
 
 #. type: TH
 #: ../man/procps.3:19 ../man/procps_misc.3:20 ../man/procps_pids.3:19
 #, no-wrap
-msgid "libproc-2"
+msgid "libproc2"
 msgstr ""
 
 #. type: Plain text
@@ -15172,7 +15185,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/procps.3:34
 #, no-wrap
-msgid "#include E<lt>procps/B<named_interface>.hE<gt>\n"
+msgid "#include E<lt>libproc2/B<named_interface>.hE<gt>\n"
 msgstr ""
 
 #. type: Plain text
@@ -15246,7 +15259,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/procps.3:74 ../man/procps_pids.3:68
-msgid "Link with I<-lproc-2>."
+msgid "Link with I<-lproc2>."
 msgstr ""
 
 #. type: SS
@@ -15506,7 +15519,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/procps_misc.3:29
 #, no-wrap
-msgid "B<#include E<lt>procps/misc.hE<gt>>\n"
+msgid "B<#include E<lt>libproc2/misc.hE<gt>>\n"
 msgstr ""
 
 #. type: Plain text
@@ -15559,7 +15572,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/procps_misc.3:57
 #, no-wrap
-msgid "Link with I<-lproc-2>.\n"
+msgid "Link with I<-lproc2>.\n"
 msgstr ""
 
 #. type: Plain text
@@ -15763,7 +15776,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/procps_pids.3:29
 #, no-wrap
-msgid "#include E<lt>procps/pids.hE<gt>\n"
+msgid "#include E<lt>libproc2/pids.hE<gt>\n"
 msgstr ""
 
 #. type: Plain text
