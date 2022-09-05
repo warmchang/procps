@@ -23,7 +23,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-08-29 20:49+1000\n"
+"POT-Creation-Date: 2022-09-05 17:45+1000\n"
 "PO-Revision-Date: 2021-01-22 12:01+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -243,7 +243,7 @@ msgstr "doit être une valeur entière passée avec le signal."
 msgid "invalid argument %c"
 msgstr "argument %c invalide"
 
-#: src/kill.c:144 src/pgrep.c:692 src/pidof.c:243 src/pidof.c:283
+#: src/kill.c:144 src/pgrep.c:740 src/pidof.c:243 src/pidof.c:283
 #: src/sysctl.c:865
 msgid "internal error"
 msgstr "erreur interne"
@@ -258,132 +258,136 @@ msgstr "échec de l'analyse de l'argument"
 msgid "integer overflow"
 msgstr "débordement d'entier"
 
-#: src/pgrep.c:146
+#: src/pgrep.c:147
 #, c-format
 msgid " %s [options] <pattern>\n"
 msgstr "%s [options] <motif>\n"
 
-#: src/pgrep.c:150
+#: src/pgrep.c:151
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr " -d, --delimiter <chaîne> désigne le délimiteur de sortie\n"
 
-#: src/pgrep.c:151
+#: src/pgrep.c:152
 msgid " -l, --list-name           list PID and process name\n"
 msgstr " -l, --list-name           liste le PID et le nom du processus\n"
 
-#: src/pgrep.c:152
+#: src/pgrep.c:153
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
 " -a, --list-full           liste le PID et la ligne de commande complète\n"
 
-#: src/pgrep.c:153
+#: src/pgrep.c:154
 msgid " -v, --inverse             negates the matching\n"
 msgstr " -v, --inverse             inverse le sens de la correspondance\n"
 
-#: src/pgrep.c:154
+#: src/pgrep.c:155
 msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         liste tous les TID\n"
 
-#: src/pgrep.c:157
+#: src/pgrep.c:158
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
 msgstr ""
 " -<sig>, --signal <sig>    signal à envoyer (<sig> est le numéro ou le nom "
 "du signal)\n"
 
-#: src/pgrep.c:158
+#: src/pgrep.c:159
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr " -q, --queue <valeur>      valeur entière à envoyer avec le signal\n"
 
-#: src/pgrep.c:159
+#: src/pgrep.c:160
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                affiche ce qui est tué\n"
 
-#: src/pgrep.c:162
+#: src/pgrep.c:163
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr " -e, --echo                affiche les PID avant l'attente\n"
 
-#: src/pgrep.c:166
+#: src/pgrep.c:167
 msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               compte les processus correspondants\n"
 
-#: src/pgrep.c:167
+#: src/pgrep.c:168
 msgid " -f, --full                use full process name to match\n"
 msgstr ""
 " -f, --full                correspondance sur le nom complet du processus\n"
 
-#: src/pgrep.c:168
+#: src/pgrep.c:169
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr ""
 " -g, --pgroup <PGID,…>     affiche les ID de groupe des processus listés\n"
 
-#: src/pgrep.c:169
+#: src/pgrep.c:170
 msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr " -G, --group <GID,…>       correspondance sur le ID de groupe réel\n"
 
-#: src/pgrep.c:170
+#: src/pgrep.c:171
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr " -i, --ignore-case         correspondance insensible à la casse\n"
 
-#: src/pgrep.c:171
+#: src/pgrep.c:172
 msgid " -n, --newest              select most recently started\n"
 msgstr " -n, --newest              sélectionne le plus récemment démarré\n"
 
-#: src/pgrep.c:172
+#: src/pgrep.c:173
 msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              sélectionne le moins récemment démarré\n"
 
-#: src/pgrep.c:173
+#: src/pgrep.c:174
 msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr " -O, --older <secondes>    sélectionne ceux plus vieux que secondes\n"
 
-#: src/pgrep.c:174
+#: src/pgrep.c:175
 msgid ""
 " -P, --parent <PPID,...>   match only child processes of the given parent\n"
 msgstr ""
 " -P, --parent <PPID,…>     correspondance parmi les processus enfants du "
 "parent donné\n"
 
-#: src/pgrep.c:175
+#: src/pgrep.c:176
 msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,…>     correspondance sur le ID de session\n"
 
-#: src/pgrep.c:176
+#: src/pgrep.c:177
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty,…>    correspondance sur le terminal contrôlant\n"
 
-#: src/pgrep.c:177
+#: src/pgrep.c:178
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr " -u, --euid <ID,…>         correspondance sur le ID effectif\n"
 
-#: src/pgrep.c:178
+#: src/pgrep.c:179
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr " -U, --uid <ID,…>          correspondance sur le ID réel\n"
 
-#: src/pgrep.c:179
+#: src/pgrep.c:180
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr ""
 " -x, --exact               correspondance exacte avec le nom de la commande\n"
 
-#: src/pgrep.c:180
+#: src/pgrep.c:181
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <fichier>   lit les PID depuis le fichier\n"
 
-#: src/pgrep.c:181
+#: src/pgrep.c:182
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 " -L, --logpidfile          échoue si le fichier PID n'est pas verrouillé\n"
 
-#: src/pgrep.c:182
+#: src/pgrep.c:183
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr ""
 " -r, --runstates <état>    correspond aux états d'exécution [D,S,Z,…]\n"
 
-#: src/pgrep.c:183
+#: src/pgrep.c:184
+msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
+msgstr ""
+
+#: src/pgrep.c:185
 #, fuzzy
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr " -G, --group <GID,…>       correspondance sur le ID de groupe réel\n"
 
-#: src/pgrep.c:184
+#: src/pgrep.c:186
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -392,7 +396,7 @@ msgstr ""
 "appartiennent\n"
 "                           au même espace de nom que <pid>\n"
 
-#: src/pgrep.c:186
+#: src/pgrep.c:188
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -405,53 +409,53 @@ msgstr ""
 "                           Espaces de noms disponibles: ipc, mnt, net, pid, "
 "user, uts\n"
 
-#: src/pgrep.c:331
+#: src/pgrep.c:213 src/pgrep.c:650 src/w.c:405
+#, fuzzy
+msgid "Unable to create pid info structure"
+msgstr "impossible de créer les tubes IPC"
+
+#: src/pgrep.c:377
 #, c-format
 msgid "invalid user name: %s"
 msgstr "nom d'utilisateur invalide: %s"
 
-#: src/pgrep.c:348
+#: src/pgrep.c:394
 #, c-format
 msgid "invalid group name: %s"
 msgstr "nom de groupe invalide: %s"
 
-#: src/pgrep.c:359
+#: src/pgrep.c:405
 #, c-format
 msgid "invalid process group: %s"
 msgstr "groupe de processus invalide: %s"
 
-#: src/pgrep.c:371
+#: src/pgrep.c:417
 #, c-format
 msgid "invalid session id: %s"
 msgstr "ID de session invalide: %s"
 
-#: src/pgrep.c:383
+#: src/pgrep.c:429
 #, c-format
 msgid "not a number: %s"
 msgstr "pas un nombre: %s"
 
-#: src/pgrep.c:450 src/skill.c:158
+#: src/pgrep.c:496 src/skill.c:158
 #, fuzzy
 msgid "Unable to read process namespace information"
 msgstr ""
 "erreur lors de la lecture de l'information de l'espace de nom de référence"
 
-#: src/pgrep.c:537
+#: src/pgrep.c:583
 #, fuzzy, c-format
 msgid "regex error: %s"
 msgstr "erreur: %s\n"
 
-#: src/pgrep.c:599
+#: src/pgrep.c:645
 msgid "Error reading reference namespace information\n"
 msgstr ""
 "Erreur lors de la lecture des informations de l'espace de nom de référence\n"
 
-#: src/pgrep.c:604 src/w.c:405
-#, fuzzy
-msgid "Unable to create pid info structure"
-msgstr "impossible de créer les tubes IPC"
-
-#: src/pgrep.c:709
+#: src/pgrep.c:757
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -463,7 +467,7 @@ msgstr ""
 "Essayez l'option « %s -f » pour obtenir une correspondance sur la ligne de "
 "commande complète."
 
-#: src/pgrep.c:973
+#: src/pgrep.c:1025
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -472,7 +476,7 @@ msgstr ""
 "-L sans -F n'a pas de sens\n"
 "Essayez « %s --help » pour plus d'informations."
 
-#: src/pgrep.c:980
+#: src/pgrep.c:1032
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -481,7 +485,7 @@ msgstr ""
 "fichier pid pas valable\n"
 "Essayez « %s --help » pour plus d'informations."
 
-#: src/pgrep.c:989
+#: src/pgrep.c:1041
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -490,7 +494,7 @@ msgstr ""
 "fournissez un seul motif à la fois\n"
 "Essayez « %s --help » pour plus d'informations."
 
-#: src/pgrep.c:993
+#: src/pgrep.c:1045
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -499,31 +503,31 @@ msgstr ""
 "aucun critère correspondant spécifié\n"
 "Essayez « %s --help » pour plus d'informations."
 
-#: src/pgrep.c:1045
+#: src/pgrep.c:1097
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s tué (pid %lu)\n"
 
-#: src/pgrep.c:1052
+#: src/pgrep.c:1104
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "le pid %ld n'a pu être tué"
 
-#: src/pgrep.c:1064
+#: src/pgrep.c:1116
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "attente de %s (pid %lu)\n"
 
-#: src/pgrep.c:1068
+#: src/pgrep.c:1120
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr ""
 
-#: src/pgrep.c:1071
+#: src/pgrep.c:1123
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "l'ouverture du pid %ld a échoué"
 
-#: src/pgrep.c:1085
+#: src/pgrep.c:1137
 msgid "epoll_wait failed"
 msgstr "epoll_wait a échoué"
 

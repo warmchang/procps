@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.16-pre2\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-08-29 20:49+1000\n"
+"POT-Creation-Date: 2022-09-05 17:45+1000\n"
 "PO-Revision-Date: 2019-12-17 13:37-0500\n"
 "Last-Translator: Boyuan Yang <073plan@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
@@ -226,7 +226,7 @@ msgstr ""
 msgid "invalid argument %c"
 msgstr "(无效的参数)"
 
-#: src/kill.c:144 src/pgrep.c:692 src/pidof.c:243 src/pidof.c:283
+#: src/kill.c:144 src/pgrep.c:740 src/pidof.c:243 src/pidof.c:283
 #: src/sysctl.c:865
 msgid "internal error"
 msgstr "内部错误"
@@ -242,130 +242,134 @@ msgstr "模板实参表语法错误"
 msgid "integer overflow"
 msgstr "整数溢出"
 
-#: src/pgrep.c:146
+#: src/pgrep.c:147
 #, fuzzy, c-format
 msgid " %s [options] <pattern>\n"
 msgstr "通配符模式用于排除"
 
-#: src/pgrep.c:150
+#: src/pgrep.c:151
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr ""
 
-#: src/pgrep.c:151
+#: src/pgrep.c:152
 msgid " -l, --list-name           list PID and process name\n"
 msgstr ""
 
-#: src/pgrep.c:152
+#: src/pgrep.c:153
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
 
-#: src/pgrep.c:153
+#: src/pgrep.c:154
 #, fuzzy
 msgid " -v, --inverse             negates the matching\n"
 msgstr "对%<%T::%s(%A)%#V%>的调用没有匹配的函数"
 
-#: src/pgrep.c:154
+#: src/pgrep.c:155
 msgid " -w, --lightweight         list all TID\n"
 msgstr ""
 
-#: src/pgrep.c:157
+#: src/pgrep.c:158
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
 msgstr ""
 
-#: src/pgrep.c:158
+#: src/pgrep.c:159
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr ""
 
-#: src/pgrep.c:159
+#: src/pgrep.c:160
 msgid " -e, --echo                display what is killed\n"
 msgstr ""
 
-#: src/pgrep.c:162
+#: src/pgrep.c:163
 #, fuzzy
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr "  -o                   没有效果\n"
 
-#: src/pgrep.c:166
+#: src/pgrep.c:167
 #, fuzzy
 msgid " -c, --count               count of matching processes\n"
 msgstr "只印出各文件匹配列的计数"
 
-#: src/pgrep.c:167
+#: src/pgrep.c:168
 msgid " -f, --full                use full process name to match\n"
 msgstr ""
 
-#: src/pgrep.c:168
+#: src/pgrep.c:169
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr ""
 
-#: src/pgrep.c:169
+#: src/pgrep.c:170
 msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr ""
 
-#: src/pgrep.c:170
+#: src/pgrep.c:171
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
 
-#: src/pgrep.c:171
+#: src/pgrep.c:172
 msgid " -n, --newest              select most recently started\n"
 msgstr ""
 
-#: src/pgrep.c:172
+#: src/pgrep.c:173
 msgid " -o, --oldest              select least recently started\n"
 msgstr ""
 
-#: src/pgrep.c:173
+#: src/pgrep.c:174
 msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr ""
 
-#: src/pgrep.c:174
+#: src/pgrep.c:175
 msgid ""
 " -P, --parent <PPID,...>   match only child processes of the given parent\n"
 msgstr ""
 
-#: src/pgrep.c:175
+#: src/pgrep.c:176
 msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr ""
 
-#: src/pgrep.c:176
+#: src/pgrep.c:177
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr ""
 
-#: src/pgrep.c:177
+#: src/pgrep.c:178
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr ""
 
-#: src/pgrep.c:178
+#: src/pgrep.c:179
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr ""
 
-#: src/pgrep.c:179
+#: src/pgrep.c:180
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr ""
 
-#: src/pgrep.c:180
+#: src/pgrep.c:181
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr ""
 
-#: src/pgrep.c:181
+#: src/pgrep.c:182
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 
-#: src/pgrep.c:182
+#: src/pgrep.c:183
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr ""
 
-#: src/pgrep.c:183
+#: src/pgrep.c:184
+msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
+msgstr ""
+
+#: src/pgrep.c:185
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr ""
 
-#: src/pgrep.c:184
+#: src/pgrep.c:186
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
 msgstr ""
 
-#: src/pgrep.c:186
+#: src/pgrep.c:188
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -373,50 +377,50 @@ msgid ""
 "uts\n"
 msgstr ""
 
-#: src/pgrep.c:331
-#, fuzzy, c-format
-msgid "invalid user name: %s"
-msgstr "无用户名: %s\n"
-
-#: src/pgrep.c:348
-#, fuzzy, c-format
-msgid "invalid group name: %s"
-msgstr "无效的组列表%s"
-
-#: src/pgrep.c:359
-#, fuzzy, c-format
-msgid "invalid process group: %s"
-msgstr "无效的组：%s"
-
-#: src/pgrep.c:371
-#, fuzzy, c-format
-msgid "invalid session id: %s"
-msgstr "%s：无效的进程号"
-
-#: src/pgrep.c:383
-#, c-format
-msgid "not a number: %s"
-msgstr "不是数字：%s"
-
-#: src/pgrep.c:450 src/skill.c:158
-msgid "Unable to read process namespace information"
-msgstr ""
-
-#: src/pgrep.c:537
-#, fuzzy, c-format
-msgid "regex error: %s"
-msgstr "错误：%s\n"
-
-#: src/pgrep.c:599
-msgid "Error reading reference namespace information\n"
-msgstr ""
-
-#: src/pgrep.c:604 src/w.c:405
+#: src/pgrep.c:213 src/pgrep.c:650 src/w.c:405
 #, fuzzy
 msgid "Unable to create pid info structure"
 msgstr "无法创建不可改变的头区。\n"
 
-#: src/pgrep.c:709
+#: src/pgrep.c:377
+#, fuzzy, c-format
+msgid "invalid user name: %s"
+msgstr "无用户名: %s\n"
+
+#: src/pgrep.c:394
+#, fuzzy, c-format
+msgid "invalid group name: %s"
+msgstr "无效的组列表%s"
+
+#: src/pgrep.c:405
+#, fuzzy, c-format
+msgid "invalid process group: %s"
+msgstr "无效的组：%s"
+
+#: src/pgrep.c:417
+#, fuzzy, c-format
+msgid "invalid session id: %s"
+msgstr "%s：无效的进程号"
+
+#: src/pgrep.c:429
+#, c-format
+msgid "not a number: %s"
+msgstr "不是数字：%s"
+
+#: src/pgrep.c:496 src/skill.c:158
+msgid "Unable to read process namespace information"
+msgstr ""
+
+#: src/pgrep.c:583
+#, fuzzy, c-format
+msgid "regex error: %s"
+msgstr "错误：%s\n"
+
+#: src/pgrep.c:645
+msgid "Error reading reference namespace information\n"
+msgstr ""
+
+#: src/pgrep.c:757
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -424,59 +428,59 @@ msgid ""
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
 
-#: src/pgrep.c:973
+#: src/pgrep.c:1025
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: src/pgrep.c:980
+#: src/pgrep.c:1032
 #, fuzzy, c-format
 msgid ""
 "pidfile not valid\n"
 "Try `%s --help' for more information."
 msgstr "尝试“%s --help”以获得更多信息。\n"
 
-#: src/pgrep.c:989
+#: src/pgrep.c:1041
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: src/pgrep.c:993
+#: src/pgrep.c:1045
 #, c-format
 msgid ""
 "no matching criteria specified\n"
 "Try `%s --help' for more information."
 msgstr ""
 
-#: src/pgrep.c:1045
+#: src/pgrep.c:1097
 #, fuzzy, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s：第%lu 次，共%lu 次 (%s)..."
 
-#: src/pgrep.c:1052
+#: src/pgrep.c:1104
 #, c-format
 msgid "killing pid %ld failed"
 msgstr ""
 
-#: src/pgrep.c:1064
+#: src/pgrep.c:1116
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr ""
 
-#: src/pgrep.c:1068
+#: src/pgrep.c:1120
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr ""
 
-#: src/pgrep.c:1071
+#: src/pgrep.c:1123
 #, c-format
 msgid "opening pid %ld failed"
 msgstr ""
 
-#: src/pgrep.c:1085
+#: src/pgrep.c:1137
 #, fuzzy
 msgid "epoll_wait failed"
 msgstr "内存分配失败"

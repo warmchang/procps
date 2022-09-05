@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.10-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-08-29 20:49+1000\n"
+"POT-Creation-Date: 2022-09-05 17:45+1000\n"
 "PO-Revision-Date: 2014-09-13 08:57+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -234,7 +234,7 @@ msgstr ""
 msgid "invalid argument %c"
 msgstr "đối số %c không hợp lệ"
 
-#: src/kill.c:144 src/pgrep.c:692 src/pidof.c:243 src/pidof.c:283
+#: src/kill.c:144 src/pgrep.c:740 src/pidof.c:243 src/pidof.c:283
 #: src/sysctl.c:865
 msgid "internal error"
 msgstr "lỗi nội bộ"
@@ -250,128 +250,132 @@ msgstr "gặp lỗi khi phân tích đối số"
 msgid "integer overflow"
 msgstr "lỗi nội bộ"
 
-#: src/pgrep.c:146
+#: src/pgrep.c:147
 #, c-format
 msgid " %s [options] <pattern>\n"
 msgstr " %s [các-tùy-chọn] <mẫu_tìm_kiếm>\n"
 
-#: src/pgrep.c:150
+#: src/pgrep.c:151
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr ""
 " -d, --delimiter <chuỗi>   chỉ định chuỗi ngăn cách dùng cho kết xuất\n"
 
-#: src/pgrep.c:151
+#: src/pgrep.c:152
 msgid " -l, --list-name           list PID and process name\n"
 msgstr " -l, --list-name           liệt kê tên và mã số tiến trình\n"
 
-#: src/pgrep.c:152
+#: src/pgrep.c:153
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
 " -l, --list-name           liệt kê mã số tiến trình và toàn bộ dòng lệnh\n"
 
-#: src/pgrep.c:153
+#: src/pgrep.c:154
 msgid " -v, --inverse             negates the matching\n"
 msgstr " -v, --inverse             đảo người những cái khớp mẫu\n"
 
-#: src/pgrep.c:154
+#: src/pgrep.c:155
 msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         liệt kê mọi TID\n"
 
-#: src/pgrep.c:157
+#: src/pgrep.c:158
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
 msgstr ""
 " -<sig>, --signal <sig>    tín hiệu để gửi đi (hoặc là số hoặc là tên)\n"
 
-#: src/pgrep.c:158
+#: src/pgrep.c:159
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr ""
 
-#: src/pgrep.c:159
+#: src/pgrep.c:160
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                hiển thị cái gì bị giết\n"
 
-#: src/pgrep.c:162
+#: src/pgrep.c:163
 #, fuzzy
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr " -e, --echo                hiển thị cái gì bị giết\n"
 
-#: src/pgrep.c:166
+#: src/pgrep.c:167
 msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               đếm số tiến trình khớp\n"
 
-#: src/pgrep.c:167
+#: src/pgrep.c:168
 msgid " -f, --full                use full process name to match\n"
 msgstr " -f, --full                dùng khớp toàn bộ tên tiến trình\n"
 
-#: src/pgrep.c:168
+#: src/pgrep.c:169
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr " -g, --pgroup <PGID,...>   khớp với mã số nhóm tiến trình\n"
 
-#: src/pgrep.c:169
+#: src/pgrep.c:170
 msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr " -G, --group <GID,...>     khớp với mã số thật của nhóm\n"
 
-#: src/pgrep.c:170
+#: src/pgrep.c:171
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
 
-#: src/pgrep.c:171
+#: src/pgrep.c:172
 msgid " -n, --newest              select most recently started\n"
 msgstr " -n, --newest              chọn cái khởi chạy gần đây nhất\n"
 
-#: src/pgrep.c:172
+#: src/pgrep.c:173
 msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              chọn cái khởi chạy xa đây nhất\n"
 
-#: src/pgrep.c:173
+#: src/pgrep.c:174
 #, fuzzy
 msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr " -d, --delay <giây>  trễ cập nhật trong số giây này\n"
 
-#: src/pgrep.c:174
+#: src/pgrep.c:175
 msgid ""
 " -P, --parent <PPID,...>   match only child processes of the given parent\n"
 msgstr " -P, --parent <PPID,...>   khớp với con của tiến trình đã cho\n"
 
-#: src/pgrep.c:175
+#: src/pgrep.c:176
 msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   khớp mã phiên\n"
 
-#: src/pgrep.c:176
+#: src/pgrep.c:177
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty,...>  khớp bằng thiết bị cuối điều khiển\n"
 
-#: src/pgrep.c:177
+#: src/pgrep.c:178
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr " -u, --euid <ID,...>       khớp với mã số chịu tác động\n"
 
-#: src/pgrep.c:178
+#: src/pgrep.c:179
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr " -U, --uid <ID,...>        khớp với mã số thật\n"
 
-#: src/pgrep.c:179
+#: src/pgrep.c:180
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr " -x, --exact               chỉ khớp chính xác tên lệnh\n"
 
-#: src/pgrep.c:180
+#: src/pgrep.c:181
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <tập-tin>   đọc mã số tiến trình từ tập tin\n"
 
-#: src/pgrep.c:181
+#: src/pgrep.c:182
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 " -L, --logpidfile          lỗi nếu tập-tin mã số tiến trình không bị khóa\n"
 
-#: src/pgrep.c:182
+#: src/pgrep.c:183
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr ""
 
-#: src/pgrep.c:183
+#: src/pgrep.c:184
+msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
+msgstr ""
+
+#: src/pgrep.c:185
 #, fuzzy
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr " -G, --group <GID,...>     khớp với mã số thật của nhóm\n"
 
-#: src/pgrep.c:184
+#: src/pgrep.c:186
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -379,7 +383,7 @@ msgstr ""
 " --ns <PID>                khớp tiến trình mà nó cùng không gian tên với\n"
 "                           tiến trình có mã số này\n"
 
-#: src/pgrep.c:186
+#: src/pgrep.c:188
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -390,51 +394,51 @@ msgstr ""
 "                           tùy chọn --ns. Không gian tên sẵn có là:\n"
 "                                      ipc, mnt, net, pid, user, uts\n"
 
-#: src/pgrep.c:331
-#, c-format
-msgid "invalid user name: %s"
-msgstr "tên người dùng không hợp lệ: %s"
-
-#: src/pgrep.c:348
-#, c-format
-msgid "invalid group name: %s"
-msgstr "tên nhóm không hợp lệ: %s"
-
-#: src/pgrep.c:359
-#, c-format
-msgid "invalid process group: %s"
-msgstr "nhóm tiến trình không hợp lệ: %s"
-
-#: src/pgrep.c:371
-#, c-format
-msgid "invalid session id: %s"
-msgstr "mã số phiên làm việc không hợp lệ: %s"
-
-#: src/pgrep.c:383
-#, c-format
-msgid "not a number: %s"
-msgstr "không phải con số: %s"
-
-#: src/pgrep.c:450 src/skill.c:158
-#, fuzzy
-msgid "Unable to read process namespace information"
-msgstr "lỗi đọc thông tin không gian tên tham chiếu"
-
-#: src/pgrep.c:537
-#, fuzzy, c-format
-msgid "regex error: %s"
-msgstr "lỗi: %s\n"
-
-#: src/pgrep.c:599
-msgid "Error reading reference namespace information\n"
-msgstr "Gặp lỗi khi đọc thông tin tham chiếu không gian tên\n"
-
-#: src/pgrep.c:604 src/w.c:405
+#: src/pgrep.c:213 src/pgrep.c:650 src/w.c:405
 #, fuzzy
 msgid "Unable to create pid info structure"
 msgstr "không thể tạo đường ống IPC"
 
-#: src/pgrep.c:709
+#: src/pgrep.c:377
+#, c-format
+msgid "invalid user name: %s"
+msgstr "tên người dùng không hợp lệ: %s"
+
+#: src/pgrep.c:394
+#, c-format
+msgid "invalid group name: %s"
+msgstr "tên nhóm không hợp lệ: %s"
+
+#: src/pgrep.c:405
+#, c-format
+msgid "invalid process group: %s"
+msgstr "nhóm tiến trình không hợp lệ: %s"
+
+#: src/pgrep.c:417
+#, c-format
+msgid "invalid session id: %s"
+msgstr "mã số phiên làm việc không hợp lệ: %s"
+
+#: src/pgrep.c:429
+#, c-format
+msgid "not a number: %s"
+msgstr "không phải con số: %s"
+
+#: src/pgrep.c:496 src/skill.c:158
+#, fuzzy
+msgid "Unable to read process namespace information"
+msgstr "lỗi đọc thông tin không gian tên tham chiếu"
+
+#: src/pgrep.c:583
+#, fuzzy, c-format
+msgid "regex error: %s"
+msgstr "lỗi: %s\n"
+
+#: src/pgrep.c:645
+msgid "Error reading reference namespace information\n"
+msgstr "Gặp lỗi khi đọc thông tin tham chiếu không gian tên\n"
+
+#: src/pgrep.c:757
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -442,7 +446,7 @@ msgid ""
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
 
-#: src/pgrep.c:973
+#: src/pgrep.c:1025
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -451,7 +455,7 @@ msgstr ""
 "-L mà không có -F là không hợp lý\n"
 "Chạy “%s --help” để biết thêm chi tiết."
 
-#: src/pgrep.c:980
+#: src/pgrep.c:1032
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -460,7 +464,7 @@ msgstr ""
 "tập tin mã số tiến trình không hợp lệ\n"
 "Chạy “%s --help” để biết thêm chi tiết."
 
-#: src/pgrep.c:989
+#: src/pgrep.c:1041
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -469,7 +473,7 @@ msgstr ""
 "chỉ được dùng một mẫu tìm kiếm\n"
 "Hãy chạy lệnh “%s --help” để có thêm thông tin."
 
-#: src/pgrep.c:993
+#: src/pgrep.c:1045
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -478,31 +482,31 @@ msgstr ""
 "chưa chỉ định tiêu chí tìm kiếm\n"
 "Hãy chạy lệnh “%s --help” để có thêm thông tin."
 
-#: src/pgrep.c:1045
+#: src/pgrep.c:1097
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "đã giết %s (mã số tiến trình %lu)\n"
 
-#: src/pgrep.c:1052
+#: src/pgrep.c:1104
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "gặp lỗi khi giết tiến trình mã số %ld"
 
-#: src/pgrep.c:1064
+#: src/pgrep.c:1116
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr ""
 
-#: src/pgrep.c:1068
+#: src/pgrep.c:1120
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr ""
 
-#: src/pgrep.c:1071
+#: src/pgrep.c:1123
 #, fuzzy, c-format
 msgid "opening pid %ld failed"
 msgstr "gặp lỗi khi giết tiến trình mã số %ld"
 
-#: src/pgrep.c:1085
+#: src/pgrep.c:1137
 #, fuzzy
 msgid "epoll_wait failed"
 msgstr "gặp lỗi cấp phát bộ nhớ"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-08-29 20:49+1000\n"
+"POT-Creation-Date: 2022-09-05 17:45+1000\n"
 "PO-Revision-Date: 2021-01-22 12:30+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -230,7 +230,7 @@ msgstr "має бути цілим значенням, яке слід пере�
 msgid "invalid argument %c"
 msgstr "некоректний аргумент, %c"
 
-#: src/kill.c:144 src/pgrep.c:692 src/pidof.c:243 src/pidof.c:283
+#: src/kill.c:144 src/pgrep.c:740 src/pidof.c:243 src/pidof.c:283
 #: src/sysctl.c:865
 msgid "internal error"
 msgstr "внутрішня помилка"
@@ -245,142 +245,146 @@ msgstr "не вдалося обробити аргумент"
 msgid "integer overflow"
 msgstr "переповнення цілочисельного типу"
 
-#: src/pgrep.c:146
+#: src/pgrep.c:147
 #, c-format
 msgid " %s [options] <pattern>\n"
 msgstr " %s [параметри] <шаблон>\n"
 
-#: src/pgrep.c:150
+#: src/pgrep.c:151
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr " -d, --delimiter <рядок>   визначити роздільник для виведення даних\n"
 
-#: src/pgrep.c:151
+#: src/pgrep.c:152
 msgid " -l, --list-name           list PID and process name\n"
 msgstr " -l, --list-name           вивести список PID і назву процесу\n"
 
-#: src/pgrep.c:152
+#: src/pgrep.c:153
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
 " -a, --list-full           вивести список PID на рядків команд повністю\n"
 
-#: src/pgrep.c:153
+#: src/pgrep.c:154
 msgid " -v, --inverse             negates the matching\n"
 msgstr " -v, --inverse             інвертувати відповідність\n"
 
-#: src/pgrep.c:154
+#: src/pgrep.c:155
 msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         вивести список усіх TID\n"
 
-#: src/pgrep.c:157
+#: src/pgrep.c:158
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
 msgstr ""
 " -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
 "назви)\n"
 
-#: src/pgrep.c:158
+#: src/pgrep.c:159
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr ""
 " -q, --queue <значення>    ціле значення, яке має бути надіслано із "
 "сигналом\n"
 
-#: src/pgrep.c:159
+#: src/pgrep.c:160
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                вивести дані щодо того, що було завершено\n"
 
-#: src/pgrep.c:162
+#: src/pgrep.c:163
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr " -e, --echo                вивести PID до очікування\n"
 
-#: src/pgrep.c:166
+#: src/pgrep.c:167
 msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               полічити відповідні процеси\n"
 
-#: src/pgrep.c:167
+#: src/pgrep.c:168
 msgid " -f, --full                use full process name to match\n"
 msgstr ""
 " -f, --full                для встановлення відповідності використати назву "
 "повністю\n"
 
-#: src/pgrep.c:168
+#: src/pgrep.c:169
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr ""
 " -g, --pgroup <PGID,...>   відповідність за ідентифікаторами груп процесів у "
 "списку\n"
 
-#: src/pgrep.c:169
+#: src/pgrep.c:170
 msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr ""
 " -G, --group <GID,...>     відповідність за справжніми ідентифікаторами\n"
 
-#: src/pgrep.c:170
+#: src/pgrep.c:171
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr " -i, --ignore-case         враховувати регістр символів\n"
 
-#: src/pgrep.c:171
+#: src/pgrep.c:172
 msgid " -n, --newest              select most recently started\n"
 msgstr " -n, --newest              вибрати останні запущені\n"
 
-#: src/pgrep.c:172
+#: src/pgrep.c:173
 msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              вибрати перші запущені\n"
 
-#: src/pgrep.c:173
+#: src/pgrep.c:174
 msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr ""
 " -O, --older <секунди>     вибрати ті, які старіші за вказане значення у "
 "секундах\n"
 
-#: src/pgrep.c:174
+#: src/pgrep.c:175
 msgid ""
 " -P, --parent <PPID,...>   match only child processes of the given parent\n"
 msgstr ""
 " -P, --parent <PPID,...>   відповідність лише за дочірніми процесами "
 "вказаного процесу\n"
 
-#: src/pgrep.c:175
+#: src/pgrep.c:176
 msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   відповідність за ідентифікаторами сеансу\n"
 
-#: src/pgrep.c:176
+#: src/pgrep.c:177
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty,...>  відповідність за терміналом керування\n"
 
-#: src/pgrep.c:177
+#: src/pgrep.c:178
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr ""
 " -u, --euid <ID,...>       відповідність за ефективними ідентифікаторами\n"
 
-#: src/pgrep.c:178
+#: src/pgrep.c:179
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr ""
 " -U, --uid <ID,...>        відповідність за справжніми ідентифікаторами\n"
 
-#: src/pgrep.c:179
+#: src/pgrep.c:180
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr ""
 " -x, --exact               встановити точну відповідність з назвою команди\n"
 
-#: src/pgrep.c:180
+#: src/pgrep.c:181
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <файл>      прочитати PID з файла\n"
 
-#: src/pgrep.c:181
+#: src/pgrep.c:182
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 " -L, --logpidfile          завершити з помилкою, якщо файл PID не "
 "заблоковано\n"
 
-#: src/pgrep.c:182
+#: src/pgrep.c:183
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr " -r, --runstates <стан>    пошук за станами запуску [D,S,Z,...]\n"
 
-#: src/pgrep.c:183
+#: src/pgrep.c:184
+msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
+msgstr ""
+
+#: src/pgrep.c:185
 #, fuzzy
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr ""
 " -G, --group <GID,...>     відповідність за справжніми ідентифікаторами\n"
 
-#: src/pgrep.c:184
+#: src/pgrep.c:186
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -388,7 +392,7 @@ msgstr ""
 " --ns <PID>                відповідність процесам, що належать тому самому\n"
 "                           простору назв, що і <PID>\n"
 
-#: src/pgrep.c:186
+#: src/pgrep.c:188
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -401,51 +405,51 @@ msgstr ""
 "                           Можливі простори назв: ipc, mnt, net, pid, user, "
 "uts\n"
 
-#: src/pgrep.c:331
-#, c-format
-msgid "invalid user name: %s"
-msgstr "некоректна назва облікового запису користувача: %s"
-
-#: src/pgrep.c:348
-#, c-format
-msgid "invalid group name: %s"
-msgstr "некоректна назва групи: %s"
-
-#: src/pgrep.c:359
-#, c-format
-msgid "invalid process group: %s"
-msgstr "некоректна група процесу: %s"
-
-#: src/pgrep.c:371
-#, c-format
-msgid "invalid session id: %s"
-msgstr "некоректний ідентифікатор сеансу: %s"
-
-#: src/pgrep.c:383
-#, c-format
-msgid "not a number: %s"
-msgstr "не є числом: %s"
-
-#: src/pgrep.c:450 src/skill.c:158
-#, fuzzy
-msgid "Unable to read process namespace information"
-msgstr "помилка під час спроби читання даних щодо еталонного простору назв"
-
-#: src/pgrep.c:537
-#, fuzzy, c-format
-msgid "regex error: %s"
-msgstr "помилка: %s\n"
-
-#: src/pgrep.c:599
-msgid "Error reading reference namespace information\n"
-msgstr "Помилка під час спроби читання даних щодо еталонного простору назв\n"
-
-#: src/pgrep.c:604 src/w.c:405
+#: src/pgrep.c:213 src/pgrep.c:650 src/w.c:405
 #, fuzzy
 msgid "Unable to create pid info structure"
 msgstr "не вдалося створити канали IPC"
 
-#: src/pgrep.c:709
+#: src/pgrep.c:377
+#, c-format
+msgid "invalid user name: %s"
+msgstr "некоректна назва облікового запису користувача: %s"
+
+#: src/pgrep.c:394
+#, c-format
+msgid "invalid group name: %s"
+msgstr "некоректна назва групи: %s"
+
+#: src/pgrep.c:405
+#, c-format
+msgid "invalid process group: %s"
+msgstr "некоректна група процесу: %s"
+
+#: src/pgrep.c:417
+#, c-format
+msgid "invalid session id: %s"
+msgstr "некоректний ідентифікатор сеансу: %s"
+
+#: src/pgrep.c:429
+#, c-format
+msgid "not a number: %s"
+msgstr "не є числом: %s"
+
+#: src/pgrep.c:496 src/skill.c:158
+#, fuzzy
+msgid "Unable to read process namespace information"
+msgstr "помилка під час спроби читання даних щодо еталонного простору назв"
+
+#: src/pgrep.c:583
+#, fuzzy, c-format
+msgid "regex error: %s"
+msgstr "помилка: %s\n"
+
+#: src/pgrep.c:645
+msgid "Error reading reference namespace information\n"
+msgstr "Помилка під час спроби читання даних щодо еталонного простору назв\n"
+
+#: src/pgrep.c:757
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -456,7 +460,7 @@ msgstr ""
 "того, що нічого не буде знайдено\n"
 "Спробуйте параметр «%s -f», щоб виконати пошук за повним рядком команди."
 
-#: src/pgrep.c:973
+#: src/pgrep.c:1025
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -465,7 +469,7 @@ msgstr ""
 "-L без -F позбавлений сенсу\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:980
+#: src/pgrep.c:1032
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -474,7 +478,7 @@ msgstr ""
 "некоректний pidfile\n"
 "Спробуйте команду «%s --help», щоб дізнатися більше."
 
-#: src/pgrep.c:989
+#: src/pgrep.c:1041
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -483,7 +487,7 @@ msgstr ""
 "можна вказувати лише один шаблон\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:993
+#: src/pgrep.c:1045
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -492,31 +496,31 @@ msgstr ""
 "не вказано критеріїв відповідності\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:1045
+#: src/pgrep.c:1097
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "роботу %s завершено (pid %lu)\n"
 
-#: src/pgrep.c:1052
+#: src/pgrep.c:1104
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "не вдалося завершити роботу pid %ld"
 
-#: src/pgrep.c:1064
+#: src/pgrep.c:1116
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "очікуємо на %s (pid %lu)\n"
 
-#: src/pgrep.c:1068
+#: src/pgrep.c:1120
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr ""
 
-#: src/pgrep.c:1071
+#: src/pgrep.c:1123
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "не вдалося відкрити pid %ld"
 
-#: src/pgrep.c:1085
+#: src/pgrep.c:1137
 msgid "epoll_wait failed"
 msgstr "помилка epoll_wait"
 
