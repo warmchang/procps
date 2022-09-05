@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2022-08-31 17:40+1000\n"
+"POT-Creation-Date: 2022-09-05 17:49+1000\n"
 "PO-Revision-Date: 2021-08-20 00:10+0200\n"
 "Last-Translator: Stéphane Aulery <lkppo@free.fr>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -578,7 +578,7 @@ msgstr "E<.UR procps@freelists.org> E<.UE>"
 #: ../man/free.1:150 ../man/kill.1:84 ../man/pgrep.1:299 ../man/pidof.1:78
 #: ../man/pmap.1:79 ../man/pwdx.1:19 ../man/skill.1:102 ../man/slabtop.1:82
 #: ../man/sysctl.8:179 ../man/sysctl.conf.5:79 ../man/tload.1:37
-#: ../man/uptime.1:56 ../man/vmstat.8:212 ../man/w.1:81 ../man/ps.1:2060
+#: ../man/uptime.1:56 ../man/vmstat.8:212 ../man/w.1:81 ../man/ps.1:2062
 #: ../man/procps.3:190 ../man/procps_misc.3:162 ../man/procps_pids.3:215
 #, no-wrap
 msgid "SEE ALSO"
@@ -796,7 +796,7 @@ msgstr ""
 
 #. type: SH
 #: ../man/kill.1:93 ../man/pmap.1:82 ../man/pwdx.1:22 ../man/skill.1:110
-#: ../man/ps.1:2067
+#: ../man/ps.1:2069
 #, no-wrap
 msgid "STANDARDS"
 msgstr "STANDARDS"
@@ -816,7 +816,7 @@ msgstr ""
 #. type: SH
 #: ../man/kill.1:97 ../man/pgrep.1:309 ../man/pidof.1:81 ../man/pwdx.1:26
 #: ../man/skill.1:112 ../man/sysctl.8:182 ../man/sysctl.conf.5:81
-#: ../man/ps.1:2085
+#: ../man/ps.1:2087
 #, no-wrap
 msgid "AUTHOR"
 msgstr "AUTEUR"
@@ -864,7 +864,7 @@ msgstr "PGREP"
 #: ../man/pgrep.1:10
 #, fuzzy, no-wrap
 #| msgid "2018-05-31"
-msgid "2022-07-18"
+msgid "2022-08-31"
 msgstr "31-05-2018"
 
 #. type: Plain text
@@ -1502,7 +1502,7 @@ msgstr ""
 "processus doit avoir aussi été bien signalé."
 
 #. type: IP
-#: ../man/pgrep.1:256 ../man/ps.1:45 ../man/ps.1:822 ../man/ps.1:2073
+#: ../man/pgrep.1:256 ../man/ps.1:45 ../man/ps.1:822 ../man/ps.1:2075
 #, no-wrap
 msgid "1"
 msgstr "1"
@@ -1513,7 +1513,7 @@ msgid "No processes matched or none of them could be signalled."
 msgstr "Aucun processus correspondant ou aucun signalé."
 
 #. type: IP
-#: ../man/pgrep.1:259 ../man/ps.1:47 ../man/ps.1:2075
+#: ../man/pgrep.1:259 ../man/ps.1:47 ../man/ps.1:2077
 #, no-wrap
 msgid "2"
 msgstr "2"
@@ -1524,7 +1524,7 @@ msgid "Syntax error in the command line."
 msgstr "Erreur de syntaxe dans la ligne de commande."
 
 #. type: IP
-#: ../man/pgrep.1:262 ../man/ps.1:49 ../man/ps.1:2077
+#: ../man/pgrep.1:262 ../man/ps.1:49 ../man/ps.1:2079
 #, no-wrap
 msgid "3"
 msgstr "3"
@@ -2604,7 +2604,7 @@ msgid "pages per slab"
 msgstr "nombre de pages par slab"
 
 #. type: tbl table
-#: ../man/slabtop.1:61 ../man/ps.1:884 ../man/ps.1:932 ../man/ps.1:1625
+#: ../man/slabtop.1:61 ../man/ps.1:884 ../man/ps.1:932 ../man/ps.1:1627
 #, no-wrap
 msgid "s"
 msgstr "s"
@@ -6560,7 +6560,7 @@ msgid "forked but didn't exec"
 msgstr "engendré mais pas exécuté ;"
 
 #. type: IP
-#: ../man/ps.1:825 ../man/ps.1:2079
+#: ../man/ps.1:825 ../man/ps.1:2081
 #, no-wrap
 msgid "4"
 msgstr "4"
@@ -6621,7 +6621,7 @@ msgid "running or runnable (on run queue)"
 msgstr "s'exécutant ou pouvant s'exécuter (dans la file d'exécution) ;"
 
 #. type: tbl table
-#: ../man/ps.1:848 ../man/ps.1:933 ../man/ps.1:1625 ../man/ps.1:1747
+#: ../man/ps.1:848 ../man/ps.1:933 ../man/ps.1:1627 ../man/ps.1:1749
 #, no-wrap
 msgid "S"
 msgstr "S"
@@ -6814,7 +6814,7 @@ msgid "C"
 msgstr "C"
 
 #. type: tbl table
-#: ../man/ps.1:916 ../man/ps.1:960 ../man/ps.1:1478
+#: ../man/ps.1:916 ../man/ps.1:960 ../man/ps.1:1480
 #, no-wrap
 msgid "pcpu"
 msgstr "pcpu"
@@ -6826,13 +6826,13 @@ msgid "cpu utilization"
 msgstr "utilisation du CPU"
 
 #. type: tbl table
-#: ../man/ps.1:917 ../man/ps.1:1297
+#: ../man/ps.1:917 ../man/ps.1:1299
 #, no-wrap
 msgid "f"
 msgstr "f"
 
 #. type: tbl table
-#: ../man/ps.1:917 ../man/ps.1:1323
+#: ../man/ps.1:917 ../man/ps.1:1325
 #, no-wrap
 msgid "flags"
 msgstr "attributs"
@@ -6850,7 +6850,7 @@ msgid "g"
 msgstr "g"
 
 #. type: tbl table
-#: ../man/ps.1:918 ../man/ps.1:1504
+#: ../man/ps.1:918 ../man/ps.1:1506
 #, no-wrap
 msgid "pgrp"
 msgstr "pgrp"
@@ -6868,7 +6868,7 @@ msgid "G"
 msgstr "G"
 
 #. type: tbl table
-#: ../man/ps.1:919 ../man/ps.1:1842
+#: ../man/ps.1:919 ../man/ps.1:1844
 #, no-wrap
 msgid "tpgid"
 msgstr "tpgid"
@@ -6940,7 +6940,7 @@ msgid "m"
 msgstr "m"
 
 #. type: tbl table
-#: ../man/ps.1:923 ../man/ps.1:1416
+#: ../man/ps.1:923 ../man/ps.1:1418
 #, no-wrap
 msgid "min_flt"
 msgstr "min_flt"
@@ -6958,7 +6958,7 @@ msgid "M"
 msgstr "M"
 
 #. type: tbl table
-#: ../man/ps.1:924 ../man/ps.1:1412
+#: ../man/ps.1:924 ../man/ps.1:1414
 #, no-wrap
 msgid "maj_flt"
 msgstr "maj_flt"
@@ -7006,7 +7006,7 @@ msgid "session ID"
 msgstr "identifiant de session"
 
 #. type: tbl table
-#: ../man/ps.1:928 ../man/ps.1:968 ../man/ps.1:1511
+#: ../man/ps.1:928 ../man/ps.1:968 ../man/ps.1:1513
 #, no-wrap
 msgid "pid"
 msgstr "pid"
@@ -7018,13 +7018,13 @@ msgid "process ID"
 msgstr "identifiant de processus (PID)"
 
 #. type: tbl table
-#: ../man/ps.1:929 ../man/ps.1:1651
+#: ../man/ps.1:929 ../man/ps.1:1653
 #, no-wrap
 msgid "P"
 msgstr "P"
 
 #. type: tbl table
-#: ../man/ps.1:929 ../man/ps.1:962 ../man/ps.1:1553
+#: ../man/ps.1:929 ../man/ps.1:962 ../man/ps.1:1555
 #, no-wrap
 msgid "ppid"
 msgstr "ppid"
@@ -7042,7 +7042,7 @@ msgid "r"
 msgstr "r"
 
 #. type: tbl table
-#: ../man/ps.1:930 ../man/ps.1:1592
+#: ../man/ps.1:930 ../man/ps.1:1594
 #, no-wrap
 msgid "rss"
 msgstr "rss"
@@ -7066,7 +7066,7 @@ msgid "resident pages"
 msgstr "pages résidentes"
 
 #. type: tbl table
-#: ../man/ps.1:932 ../man/ps.1:1701
+#: ../man/ps.1:932 ../man/ps.1:1703
 #, no-wrap
 msgid "size"
 msgstr "size"
@@ -7090,7 +7090,7 @@ msgid "amount of shared pages"
 msgstr "nombre de pages partagées"
 
 #. type: tbl table
-#: ../man/ps.1:934 ../man/ps.1:973 ../man/ps.1:1856
+#: ../man/ps.1:934 ../man/ps.1:973 ../man/ps.1:1858
 #, no-wrap
 msgid "tty"
 msgstr "tty"
@@ -7102,7 +7102,7 @@ msgid "the device number of the controlling tty"
 msgstr "numéro de périphérique du tty contrôlant "
 
 #. type: tbl table
-#: ../man/ps.1:935 ../man/ps.1:1730
+#: ../man/ps.1:935 ../man/ps.1:1732
 #, no-wrap
 msgid "start_time"
 msgstr "start_time"
@@ -7120,7 +7120,7 @@ msgid "U"
 msgstr "U"
 
 #. type: tbl table
-#: ../man/ps.1:936 ../man/ps.1:1875
+#: ../man/ps.1:936 ../man/ps.1:1877
 #, no-wrap
 msgid "uid"
 msgstr "uid"
@@ -7132,7 +7132,7 @@ msgid "user ID number"
 msgstr "identifiant utilisateur (UID)"
 
 #. type: tbl table
-#: ../man/ps.1:937 ../man/ps.1:963 ../man/ps.1:1894
+#: ../man/ps.1:937 ../man/ps.1:963 ../man/ps.1:1896
 #, no-wrap
 msgid "user"
 msgstr "user"
@@ -7144,7 +7144,7 @@ msgid "user name"
 msgstr "nom d'utilisateur"
 
 #. type: tbl table
-#: ../man/ps.1:938 ../man/ps.1:1923
+#: ../man/ps.1:938 ../man/ps.1:1925
 #, no-wrap
 msgid "vsize"
 msgstr "vsize"
@@ -7218,7 +7218,7 @@ msgid "%C"
 msgstr "%C"
 
 #. type: tbl table
-#: ../man/ps.1:960 ../man/ps.1:1012 ../man/ps.1:1478
+#: ../man/ps.1:960 ../man/ps.1:1012 ../man/ps.1:1480
 #, no-wrap
 msgid "%CPU"
 msgstr "%CPU"
@@ -7230,13 +7230,13 @@ msgid "%G"
 msgstr "%G"
 
 #. type: tbl table
-#: ../man/ps.1:961 ../man/ps.1:1352
+#: ../man/ps.1:961 ../man/ps.1:1354
 #, no-wrap
 msgid "group"
 msgstr "group"
 
 #. type: tbl table
-#: ../man/ps.1:961 ../man/ps.1:1352
+#: ../man/ps.1:961 ../man/ps.1:1354
 #, no-wrap
 msgid "GROUP"
 msgstr "GROUP"
@@ -7248,7 +7248,7 @@ msgid "%P"
 msgstr "%P"
 
 #. type: tbl table
-#: ../man/ps.1:962 ../man/ps.1:1553
+#: ../man/ps.1:962 ../man/ps.1:1555
 #, no-wrap
 msgid "PPID"
 msgstr "PPID"
@@ -7260,7 +7260,7 @@ msgid "%U"
 msgstr "%U"
 
 #. type: tbl table
-#: ../man/ps.1:963 ../man/ps.1:1882 ../man/ps.1:1894
+#: ../man/ps.1:963 ../man/ps.1:1884 ../man/ps.1:1896
 #, no-wrap
 msgid "USER"
 msgstr "USER"
@@ -7279,7 +7279,7 @@ msgstr "args"
 
 #. type: tbl table
 #: ../man/ps.1:964 ../man/ps.1:965 ../man/ps.1:1035 ../man/ps.1:1172
-#: ../man/ps.1:1201 ../man/ps.1:1330 ../man/ps.1:1868
+#: ../man/ps.1:1201 ../man/ps.1:1332 ../man/ps.1:1870
 #, no-wrap
 msgid "COMMAND"
 msgstr "COMMAND"
@@ -7303,13 +7303,13 @@ msgid "%g"
 msgstr "%g"
 
 #. type: tbl table
-#: ../man/ps.1:966 ../man/ps.1:1582
+#: ../man/ps.1:966 ../man/ps.1:1584
 #, no-wrap
 msgid "rgroup"
 msgstr "rgroup"
 
 #. type: tbl table
-#: ../man/ps.1:966 ../man/ps.1:1582
+#: ../man/ps.1:966 ../man/ps.1:1584
 #, no-wrap
 msgid "RGROUP"
 msgstr "RGROUP"
@@ -7321,13 +7321,13 @@ msgid "%n"
 msgstr "%n"
 
 #. type: tbl table
-#: ../man/ps.1:967 ../man/ps.1:1440
+#: ../man/ps.1:967 ../man/ps.1:1442
 #, no-wrap
 msgid "nice"
 msgstr "nice"
 
 #. type: tbl table
-#: ../man/ps.1:967 ../man/ps.1:1432 ../man/ps.1:1440
+#: ../man/ps.1:967 ../man/ps.1:1434 ../man/ps.1:1442
 #, no-wrap
 msgid "NI"
 msgstr "NI"
@@ -7339,7 +7339,7 @@ msgid "%p"
 msgstr "%p"
 
 #. type: tbl table
-#: ../man/ps.1:968 ../man/ps.1:1511
+#: ../man/ps.1:968 ../man/ps.1:1513
 #, no-wrap
 msgid "PID"
 msgstr "PID"
@@ -7351,13 +7351,13 @@ msgid "%r"
 msgstr "%r"
 
 #. type: tbl table
-#: ../man/ps.1:969 ../man/ps.1:1498
+#: ../man/ps.1:969 ../man/ps.1:1500
 #, no-wrap
 msgid "pgid"
 msgstr "pgid"
 
 #. type: tbl table
-#: ../man/ps.1:969 ../man/ps.1:1498
+#: ../man/ps.1:969 ../man/ps.1:1500
 #, no-wrap
 msgid "PGID"
 msgstr "PGID"
@@ -7369,13 +7369,13 @@ msgid "%t"
 msgstr "%t"
 
 #. type: tbl table
-#: ../man/ps.1:970 ../man/ps.1:1268
+#: ../man/ps.1:970 ../man/ps.1:1270
 #, no-wrap
 msgid "etime"
 msgstr "etime"
 
 #. type: tbl table
-#: ../man/ps.1:970 ../man/ps.1:1268 ../man/ps.1:1272
+#: ../man/ps.1:970 ../man/ps.1:1270 ../man/ps.1:1274
 #, no-wrap
 msgid "ELAPSED"
 msgstr "ELAPSED"
@@ -7387,13 +7387,13 @@ msgid "%u"
 msgstr "%u"
 
 #. type: tbl table
-#: ../man/ps.1:971 ../man/ps.1:1620
+#: ../man/ps.1:971 ../man/ps.1:1622
 #, no-wrap
 msgid "ruser"
 msgstr "ruser"
 
 #. type: tbl table
-#: ../man/ps.1:971 ../man/ps.1:1620
+#: ../man/ps.1:971 ../man/ps.1:1622
 #, no-wrap
 msgid "RUSER"
 msgstr "RUSER"
@@ -7405,7 +7405,7 @@ msgid "%x"
 msgstr "%x"
 
 #. type: tbl table
-#: ../man/ps.1:972 ../man/ps.1:1821
+#: ../man/ps.1:972 ../man/ps.1:1823
 #, no-wrap
 msgid "time"
 msgstr "time"
@@ -7413,7 +7413,7 @@ msgstr "time"
 # Nom de la commande time.2
 #. type: tbl table
 #: ../man/ps.1:972 ../man/ps.1:1083 ../man/ps.1:1213 ../man/ps.1:1218
-#: ../man/ps.1:1821 ../man/ps.1:1832
+#: ../man/ps.1:1823 ../man/ps.1:1834
 #, no-wrap
 msgid "TIME"
 msgstr "TIME"
@@ -7425,7 +7425,7 @@ msgid "%y"
 msgstr "%y"
 
 #. type: tbl table
-#: ../man/ps.1:973 ../man/ps.1:1837
+#: ../man/ps.1:973 ../man/ps.1:1839
 #, no-wrap
 msgid "TTY"
 msgstr "TTY"
@@ -7437,13 +7437,13 @@ msgid "%z"
 msgstr "%z"
 
 #. type: tbl table
-#: ../man/ps.1:974 ../man/ps.1:1930
+#: ../man/ps.1:974 ../man/ps.1:1932
 #, no-wrap
 msgid "vsz"
 msgstr "vsz"
 
 #. type: tbl table
-#: ../man/ps.1:974 ../man/ps.1:1923 ../man/ps.1:1930
+#: ../man/ps.1:974 ../man/ps.1:1925 ../man/ps.1:1932
 #, no-wrap
 msgid "VSZ"
 msgstr "VSZ"
@@ -7536,7 +7536,7 @@ msgid "%mem"
 msgstr "%mem"
 
 #. type: tbl table
-#: ../man/ps.1:1020 ../man/ps.1:1522
+#: ../man/ps.1:1020 ../man/ps.1:1524
 #, no-wrap
 msgid "%MEM"
 msgstr "%MEM"
@@ -7630,9 +7630,9 @@ msgstr ""
 #: ../man/ps.1:1129 ../man/ps.1:1131 ../man/ps.1:1133 ../man/ps.1:1135
 #: ../man/ps.1:1137 ../man/ps.1:1147 ../man/ps.1:1149 ../man/ps.1:1151
 #: ../man/ps.1:1153 ../man/ps.1:1155 ../man/ps.1:1157 ../man/ps.1:1159
-#: ../man/ps.1:1161 ../man/ps.1:1185 ../man/ps.1:1535 ../man/ps.1:1537
-#: ../man/ps.1:1539 ../man/ps.1:1541 ../man/ps.1:1543 ../man/ps.1:1545
-#: ../man/ps.1:1547 ../man/ps.1:1549
+#: ../man/ps.1:1161 ../man/ps.1:1185 ../man/ps.1:1537 ../man/ps.1:1539
+#: ../man/ps.1:1541 ../man/ps.1:1543 ../man/ps.1:1545 ../man/ps.1:1547
+#: ../man/ps.1:1549 ../man/ps.1:1551
 #, no-wrap
 msgid ".br\n"
 msgstr ".br\n"
@@ -7683,7 +7683,7 @@ msgid "blocked"
 msgstr "blocked"
 
 #. type: tbl table
-#: ../man/ps.1:1068 ../man/ps.1:1694
+#: ../man/ps.1:1068 ../man/ps.1:1696
 #, no-wrap
 msgid "BLOCKED"
 msgstr "BLOCKED"
@@ -7711,7 +7711,7 @@ msgid "bsdstart"
 msgstr "bsdstart"
 
 #. type: tbl table
-#: ../man/ps.1:1076 ../man/ps.1:1730
+#: ../man/ps.1:1076 ../man/ps.1:1732
 #, no-wrap
 msgid "START"
 msgstr "START"
@@ -7769,7 +7769,7 @@ msgid "caught"
 msgstr "caught"
 
 #. type: tbl table
-#: ../man/ps.1:1095 ../man/ps.1:1680
+#: ../man/ps.1:1095 ../man/ps.1:1682
 #, no-wrap
 msgid "CAUGHT"
 msgstr "CAUGHT"
@@ -7841,8 +7841,8 @@ msgid "CGROUPNS"
 msgstr "CGROUP"
 
 #. type: tbl table
-#: ../man/ps.1:1115 ../man/ps.1:1371 ../man/ps.1:1424 ../man/ps.1:1430
-#: ../man/ps.1:1520 ../man/ps.1:1830 ../man/ps.1:1905 ../man/ps.1:1916
+#: ../man/ps.1:1115 ../man/ps.1:1373 ../man/ps.1:1426 ../man/ps.1:1432
+#: ../man/ps.1:1522 ../man/ps.1:1832 ../man/ps.1:1907 ../man/ps.1:1918
 #, no-wrap
 msgid ""
 "Unique inode number describing the namespace the process belongs to.\n"
@@ -7875,61 +7875,61 @@ msgstr ""
 "Les valeurs possibles du champ sont\\ :\n"
 
 #. type: tbl table
-#: ../man/ps.1:1121 ../man/ps.1:1145 ../man/ps.1:1533
+#: ../man/ps.1:1121 ../man/ps.1:1145 ../man/ps.1:1535
 #, no-wrap
 msgid ".IP \"\" 2\n"
 msgstr ".IP \"\" 2\n"
 
 #. type: tbl table
-#: ../man/ps.1:1123 ../man/ps.1:1147 ../man/ps.1:1535
+#: ../man/ps.1:1123 ../man/ps.1:1147 ../man/ps.1:1537
 #, no-wrap
 msgid "-\tnot reported\n"
 msgstr "-\tnon signalé\n"
 
 #. type: tbl table
-#: ../man/ps.1:1125 ../man/ps.1:1149 ../man/ps.1:1537
+#: ../man/ps.1:1125 ../man/ps.1:1149 ../man/ps.1:1539
 #, no-wrap
 msgid "TS\tSCHED_OTHER\n"
 msgstr "TS\tSCHED_OTHER\n"
 
 #. type: tbl table
-#: ../man/ps.1:1127 ../man/ps.1:1151 ../man/ps.1:1539
+#: ../man/ps.1:1127 ../man/ps.1:1151 ../man/ps.1:1541
 #, no-wrap
 msgid "FF\tSCHED_FIFO\n"
 msgstr "FF\tSCHED_FIFO\n"
 
 #. type: tbl table
-#: ../man/ps.1:1129 ../man/ps.1:1153 ../man/ps.1:1541
+#: ../man/ps.1:1129 ../man/ps.1:1153 ../man/ps.1:1543
 #, no-wrap
 msgid "RR\tSCHED_RR\n"
 msgstr "RR\tSCHED_RR\n"
 
 #. type: tbl table
-#: ../man/ps.1:1131 ../man/ps.1:1155 ../man/ps.1:1543
+#: ../man/ps.1:1131 ../man/ps.1:1155 ../man/ps.1:1545
 #, no-wrap
 msgid "B\tSCHED_BATCH\n"
 msgstr "B\tSCHED_BATCH\n"
 
 #. type: tbl table
-#: ../man/ps.1:1133 ../man/ps.1:1157 ../man/ps.1:1545
+#: ../man/ps.1:1133 ../man/ps.1:1157 ../man/ps.1:1547
 #, no-wrap
 msgid "ISO\tSCHED_ISO\n"
 msgstr "ISO\tSCHED_ISO\n"
 
 #. type: tbl table
-#: ../man/ps.1:1135 ../man/ps.1:1159 ../man/ps.1:1547
+#: ../man/ps.1:1135 ../man/ps.1:1159 ../man/ps.1:1549
 #, no-wrap
 msgid "IDL\tSCHED_IDLE\n"
 msgstr "IDL\tSCHED_IDLE\n"
 
 #. type: tbl table
-#: ../man/ps.1:1137 ../man/ps.1:1161 ../man/ps.1:1549
+#: ../man/ps.1:1137 ../man/ps.1:1161 ../man/ps.1:1551
 #, no-wrap
 msgid "DLN\tSCHED_DEADLINE\n"
 msgstr "DLN\tSCHED_DEADLINE\n"
 
 #. type: tbl table
-#: ../man/ps.1:1139 ../man/ps.1:1163 ../man/ps.1:1551
+#: ../man/ps.1:1139 ../man/ps.1:1163 ../man/ps.1:1553
 #, no-wrap
 msgid "?\tunknown value"
 msgstr "?\tvaleur inconnue"
@@ -7941,7 +7941,7 @@ msgid "cls"
 msgstr "cls"
 
 #. type: tbl table
-#: ../man/ps.1:1165 ../man/ps.1:1861
+#: ../man/ps.1:1165 ../man/ps.1:1863
 #, no-wrap
 msgid "CMD"
 msgstr "CMD"
@@ -8249,31 +8249,35 @@ msgid "EIP"
 msgstr "EIP"
 
 #. type: tbl table
-#: ../man/ps.1:1262
+#: ../man/ps.1:1263
 #, no-wrap
-msgid "instruction pointer."
-msgstr "Pointeur d'instruction."
+msgid ""
+"instruction pointer. As of kernel 4.9.xx will be zeroed out unless task is \n"
+"exiting or being core dumped."
+msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1264
+#: ../man/ps.1:1265
 #, no-wrap
 msgid "esp"
 msgstr "esp"
 
 #. type: tbl table
-#: ../man/ps.1:1264
+#: ../man/ps.1:1265
 #, no-wrap
 msgid "ESP"
 msgstr "ESP"
 
 #. type: tbl table
-#: ../man/ps.1:1266
+#: ../man/ps.1:1268
 #, no-wrap
-msgid "stack pointer."
-msgstr "Pointeur de pile."
+msgid ""
+"stack pointer. As of kernel 4.9.xx will be zeroed out unless task is \n"
+"exiting or being core dumped."
+msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1270
+#: ../man/ps.1:1272
 #, no-wrap
 msgid "elapsed time since the process was started, in the form [[DD-]hh:]mm:ss."
 msgstr ""
@@ -8281,31 +8285,31 @@ msgstr ""
 "au format «\\ [[JJ-]HH:]MM:SS\\ »."
 
 #. type: tbl table
-#: ../man/ps.1:1272
+#: ../man/ps.1:1274
 #, no-wrap
 msgid "etimes"
 msgstr "etimes"
 
 #. type: tbl table
-#: ../man/ps.1:1274
+#: ../man/ps.1:1276
 #, no-wrap
 msgid "elapsed time since the process was started, in seconds."
 msgstr "Temps écoulé depuis que le processus a été démarré, en seconde."
 
 #. type: tbl table
-#: ../man/ps.1:1276
+#: ../man/ps.1:1278
 #, no-wrap
 msgid "euid"
 msgstr "euid"
 
 #. type: tbl table
-#: ../man/ps.1:1276
+#: ../man/ps.1:1278
 #, no-wrap
 msgid "EUID"
 msgstr "EUID"
 
 #. type: tbl table
-#: ../man/ps.1:1279
+#: ../man/ps.1:1281
 #, no-wrap
 msgid ""
 "effective user ID (alias\n"
@@ -8315,19 +8319,19 @@ msgstr ""
 "B<uid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1281
+#: ../man/ps.1:1283
 #, no-wrap
 msgid "euser"
 msgstr "euser"
 
 #. type: tbl table
-#: ../man/ps.1:1281
+#: ../man/ps.1:1283
 #, no-wrap
 msgid "EUSER"
 msgstr "EUSER"
 
 #. type: tbl table
-#: ../man/ps.1:1287
+#: ../man/ps.1:1289
 #, no-wrap
 msgid ""
 "effective user name.  This will be the textual user ID, if it can be obtained\n"
@@ -8346,19 +8350,19 @@ msgstr ""
 "B<uname>, B<user>)."
 
 #. type: tbl table
-#: ../man/ps.1:1289
+#: ../man/ps.1:1291
 #, no-wrap
 msgid "exe"
 msgstr "exe"
 
 #. type: tbl table
-#: ../man/ps.1:1289
+#: ../man/ps.1:1291
 #, no-wrap
 msgid "EXE"
 msgstr "EXE"
 
 #. type: tbl table
-#: ../man/ps.1:1295
+#: ../man/ps.1:1297
 #, no-wrap
 msgid ""
 "path to the executable. Useful if path cannot be printed via\n"
@@ -8369,13 +8373,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1297 ../man/ps.1:1316 ../man/ps.1:1323
+#: ../man/ps.1:1299 ../man/ps.1:1318 ../man/ps.1:1325
 #, no-wrap
 msgid "F"
 msgstr "F"
 
 #. type: tbl table
-#: ../man/ps.1:1302
+#: ../man/ps.1:1304
 #, no-wrap
 msgid ""
 "flags associated with the process, see the\n"
@@ -8389,19 +8393,19 @@ msgstr ""
 "B<flag>,B<\\ flags>)."
 
 #. type: tbl table
-#: ../man/ps.1:1304
+#: ../man/ps.1:1306
 #, no-wrap
 msgid "fgid"
 msgstr "fgid"
 
 #. type: tbl table
-#: ../man/ps.1:1304
+#: ../man/ps.1:1306
 #, no-wrap
 msgid "FGID"
 msgstr "FGID"
 
 #. type: tbl table
-#: ../man/ps.1:1307
+#: ../man/ps.1:1309
 #, no-wrap
 msgid ""
 "filesystem access group\\ ID.  (alias\n"
@@ -8411,19 +8415,19 @@ msgstr ""
 "B<fsgid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1309
+#: ../man/ps.1:1311
 #, no-wrap
 msgid "fgroup"
 msgstr "fgroup"
 
 #. type: tbl table
-#: ../man/ps.1:1309
+#: ../man/ps.1:1311
 #, no-wrap
 msgid "FGROUP"
 msgstr "FGROUP"
 
 #. type: tbl table
-#: ../man/ps.1:1314
+#: ../man/ps.1:1316
 #, no-wrap
 msgid ""
 "filesystem access group ID.  This will be the textual group ID, if it can\n"
@@ -8438,13 +8442,13 @@ msgstr ""
 "B<fsgroup>)."
 
 #. type: tbl table
-#: ../man/ps.1:1316
+#: ../man/ps.1:1318
 #, no-wrap
 msgid "flag"
 msgstr "flag"
 
 #. type: tbl table
-#: ../man/ps.1:1321
+#: ../man/ps.1:1323
 #, no-wrap
 msgid ""
 "see\n"
@@ -8456,29 +8460,29 @@ msgstr ""
 "B<f>\n"
 "(alias\n"
 "B<f>,B<\\ flags>)."
-
-#. type: tbl table
-#: ../man/ps.1:1328
-#, no-wrap
-msgid ""
-"see\n"
-"B<f>.\n"
-"(alias\n"
-"B<f>,B<\\ flag>)."
-msgstr ""
-"Consultez\n"
-"B<f>\n"
-"(alias\n"
-"B<f>,B<\\ flag>)."
 
 #. type: tbl table
 #: ../man/ps.1:1330
+#, no-wrap
+msgid ""
+"see\n"
+"B<f>.\n"
+"(alias\n"
+"B<f>,B<\\ flag>)."
+msgstr ""
+"Consultez\n"
+"B<f>\n"
+"(alias\n"
+"B<f>,B<\\ flag>)."
+
+#. type: tbl table
+#: ../man/ps.1:1332
 #, no-wrap
 msgid "fname"
 msgstr "fname"
 
 #. type: tbl table
-#: ../man/ps.1:1333
+#: ../man/ps.1:1335
 #, no-wrap
 msgid ""
 "first 8 bytes of the base name of the process's executable file.  The output\n"
@@ -8488,19 +8492,19 @@ msgstr ""
 "Les éléments de cette colonne peuvent contenir des espaces."
 
 #. type: tbl table
-#: ../man/ps.1:1335
+#: ../man/ps.1:1337
 #, no-wrap
 msgid "fuid"
 msgstr "fuid"
 
 #. type: tbl table
-#: ../man/ps.1:1335
+#: ../man/ps.1:1337
 #, no-wrap
 msgid "FUID"
 msgstr "FUID"
 
 #. type: tbl table
-#: ../man/ps.1:1338
+#: ../man/ps.1:1340
 #, no-wrap
 msgid ""
 "filesystem access user ID.  (alias\n"
@@ -8510,19 +8514,19 @@ msgstr ""
 "B<fsuid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1340
+#: ../man/ps.1:1342
 #, no-wrap
 msgid "fuser"
 msgstr "fuser"
 
 #. type: tbl table
-#: ../man/ps.1:1340
+#: ../man/ps.1:1342
 #, no-wrap
 msgid "FUSER"
 msgstr "FUSER"
 
 #. type: tbl table
-#: ../man/ps.1:1343
+#: ../man/ps.1:1345
 #, no-wrap
 msgid ""
 "filesystem access user ID.  This will be the textual user ID, if it can be\n"
@@ -8533,19 +8537,19 @@ msgstr ""
 "sous forme d'entier décimal sinon."
 
 #. type: tbl table
-#: ../man/ps.1:1345
+#: ../man/ps.1:1347
 #, no-wrap
 msgid "gid"
 msgstr "gid"
 
 #. type: tbl table
-#: ../man/ps.1:1345
+#: ../man/ps.1:1347
 #, no-wrap
 msgid "GID"
 msgstr "GID"
 
 #. type: tbl table
-#: ../man/ps.1:1350
+#: ../man/ps.1:1352
 #, no-wrap
 msgid ""
 "see\n"
@@ -8559,7 +8563,7 @@ msgstr ""
 "B<egid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1357
+#: ../man/ps.1:1359
 #, no-wrap
 msgid ""
 "see\n"
@@ -8573,19 +8577,19 @@ msgstr ""
 "B<egroup>)."
 
 #. type: tbl table
-#: ../man/ps.1:1359
+#: ../man/ps.1:1361
 #, no-wrap
 msgid "ignored"
 msgstr "ignored"
 
 #. type: tbl table
-#: ../man/ps.1:1359 ../man/ps.1:1687
+#: ../man/ps.1:1361 ../man/ps.1:1689
 #, no-wrap
 msgid "IGNORED"
 msgstr "IGNORED"
 
 #. type: tbl table
-#: ../man/ps.1:1365
+#: ../man/ps.1:1367
 #, no-wrap
 msgid ""
 "mask of the ignored signals, see\n"
@@ -8601,31 +8605,31 @@ msgstr ""
 "B<sig_ignore>,B<\\ sigignore>)."
 
 #. type: tbl table
-#: ../man/ps.1:1367
+#: ../man/ps.1:1369
 #, no-wrap
 msgid "ipcns"
 msgstr "ipcns"
 
 #. type: tbl table
-#: ../man/ps.1:1367
+#: ../man/ps.1:1369
 #, no-wrap
 msgid "IPCNS"
 msgstr "IPCNS"
 
 #. type: tbl table
-#: ../man/ps.1:1373
+#: ../man/ps.1:1375
 #, no-wrap
 msgid "label"
 msgstr "label"
 
 #. type: tbl table
-#: ../man/ps.1:1373
+#: ../man/ps.1:1375
 #, no-wrap
 msgid "LABEL"
 msgstr "LABEL"
 
 #. type: tbl table
-#: ../man/ps.1:1378
+#: ../man/ps.1:1380
 #, no-wrap
 msgid ""
 "security label, most commonly used for SELinux context data.  This is for\n"
@@ -8640,19 +8644,19 @@ msgstr ""
 "trouvé sur les systèmes de haute sécurité."
 
 #. type: tbl table
-#: ../man/ps.1:1380
+#: ../man/ps.1:1382
 #, no-wrap
 msgid "lstart"
 msgstr "lstart"
 
 #. type: tbl table
-#: ../man/ps.1:1380 ../man/ps.1:1723
+#: ../man/ps.1:1382 ../man/ps.1:1725
 #, no-wrap
 msgid "STARTED"
 msgstr "STARTED"
 
 #. type: tbl table
-#: ../man/ps.1:1383
+#: ../man/ps.1:1385
 #, no-wrap
 msgid ""
 "time the command started.  See also\n"
@@ -8663,19 +8667,19 @@ msgstr ""
 "B<bsdstart>,B<\\ start>,B<\\ start_time> etB<\\ stime>."
 
 #. type: tbl table
-#: ../man/ps.1:1385
+#: ../man/ps.1:1387
 #, no-wrap
 msgid "lsession"
 msgstr "lsession"
 
 #. type: tbl table
-#: ../man/ps.1:1385
+#: ../man/ps.1:1387
 #, no-wrap
 msgid "SESSION"
 msgstr "SESSION"
 
 #. type: tbl table
-#: ../man/ps.1:1388
+#: ../man/ps.1:1390
 #, no-wrap
 msgid ""
 "displays the login session identifier of a process,\n"
@@ -8685,37 +8689,37 @@ msgstr ""
 "si la prise en charge de systemd a été incluse."
 
 #. type: tbl table
-#: ../man/ps.1:1390
+#: ../man/ps.1:1392
 #, no-wrap
 msgid "luid"
 msgstr "luid"
 
 #. type: tbl table
-#: ../man/ps.1:1390
+#: ../man/ps.1:1392
 #, no-wrap
 msgid "LUID"
 msgstr "LUID"
 
 #. type: tbl table
-#: ../man/ps.1:1392
+#: ../man/ps.1:1394
 #, no-wrap
 msgid "displays Login ID associated with a process."
 msgstr "Afficher l’identifiant de session d'un processus."
 
 #. type: tbl table
-#: ../man/ps.1:1394
+#: ../man/ps.1:1396
 #, no-wrap
 msgid "lwp"
 msgstr "lwp"
 
 #. type: tbl table
-#: ../man/ps.1:1394
+#: ../man/ps.1:1396
 #, no-wrap
 msgid "LWP"
 msgstr "LWP"
 
 #. type: tbl table
-#: ../man/ps.1:1400
+#: ../man/ps.1:1402
 #, no-wrap
 msgid ""
 "light weight process (thread) ID of the dispatchable entity (alias\n"
@@ -8732,19 +8736,19 @@ msgstr ""
 "pour plus de renseignements."
 
 #. type: tbl table
-#: ../man/ps.1:1402
+#: ../man/ps.1:1404
 #, no-wrap
 msgid "lxc"
 msgstr "lxc"
 
 #. type: tbl table
-#: ../man/ps.1:1402
+#: ../man/ps.1:1404
 #, no-wrap
 msgid "LXC"
 msgstr "LXC"
 
 #. type: tbl table
-#: ../man/ps.1:1405
+#: ../man/ps.1:1407
 #, no-wrap
 msgid ""
 "The name of the lxc container within which a task is running.\n"
@@ -8754,19 +8758,19 @@ msgstr ""
 "Si un processus n'est pas en cours dans un conteneur, un tiret (« - ») sera affiché."
 
 #. type: tbl table
-#: ../man/ps.1:1407
+#: ../man/ps.1:1409
 #, no-wrap
 msgid "machine"
 msgstr "machine"
 
 #. type: tbl table
-#: ../man/ps.1:1407
+#: ../man/ps.1:1409
 #, no-wrap
 msgid "MACHINE"
 msgstr "MACHINE"
 
 #. type: tbl table
-#: ../man/ps.1:1410
+#: ../man/ps.1:1412
 #, no-wrap
 msgid ""
 "displays the machine name for processes assigned to VM or container,\n"
@@ -8776,61 +8780,61 @@ msgstr ""
 "si la prise en charge de systemd a été incluse."
 
 #. type: tbl table
-#: ../man/ps.1:1412
+#: ../man/ps.1:1414
 #, no-wrap
 msgid "MAJFLT"
 msgstr "MAJFLT"
 
 #. type: tbl table
-#: ../man/ps.1:1414
+#: ../man/ps.1:1416
 #, no-wrap
 msgid "The number of major page faults that have occurred with this process."
 msgstr "Nombre de défauts de page majeurs survenus avec ce processus."
 
 #. type: tbl table
-#: ../man/ps.1:1416
+#: ../man/ps.1:1418
 #, no-wrap
 msgid "MINFLT"
 msgstr "MINFLT"
 
 #. type: tbl table
-#: ../man/ps.1:1418
+#: ../man/ps.1:1420
 #, no-wrap
 msgid "The number of minor page faults that have occurred with this process."
 msgstr "Nombre de défauts de page mineurs survenus avec ce processus."
 
 #. type: tbl table
-#: ../man/ps.1:1420
+#: ../man/ps.1:1422
 #, no-wrap
 msgid "mntns"
 msgstr "mntns"
 
 #. type: tbl table
-#: ../man/ps.1:1420
+#: ../man/ps.1:1422
 #, no-wrap
 msgid "MNTNS"
 msgstr "MNTNS"
 
 #. type: tbl table
-#: ../man/ps.1:1426
+#: ../man/ps.1:1428
 #, no-wrap
 msgid "netns"
 msgstr "netns"
 
 #. type: tbl table
-#: ../man/ps.1:1426
+#: ../man/ps.1:1428
 #, no-wrap
 msgid "NETNS"
 msgstr "NETNS"
 
 #. type: tbl table
-#: ../man/ps.1:1432
+#: ../man/ps.1:1434
 #, no-wrap
 msgid "ni"
 msgstr "ni"
 
 #. type: tbl table
-#: ../man/ps.1:1438
+#: ../man/ps.1:1440
 #, no-wrap
 msgid ""
 "nice value. This ranges from 19 (nicest) to -20 (not nice to others),\n"
@@ -8846,7 +8850,7 @@ msgstr ""
 "B<nice>)."
 
 #. type: tbl table
-#: ../man/ps.1:1444
+#: ../man/ps.1:1446
 #, no-wrap
 msgid ""
 "see\n"
@@ -8858,19 +8862,19 @@ msgstr ""
 "B<ni>)."
 
 #. type: tbl table
-#: ../man/ps.1:1446
+#: ../man/ps.1:1448
 #, no-wrap
 msgid "nlwp"
 msgstr "nlwp"
 
 #. type: tbl table
-#: ../man/ps.1:1446
+#: ../man/ps.1:1448
 #, no-wrap
 msgid "NLWP"
 msgstr "NLWP"
 
 #. type: tbl table
-#: ../man/ps.1:1449
+#: ../man/ps.1:1451
 #, no-wrap
 msgid ""
 "number of lwps (threads) in the process.  (alias\n"
@@ -8880,19 +8884,19 @@ msgstr ""
 "B<thcount>)."
 
 #. type: tbl table
-#: ../man/ps.1:1451
+#: ../man/ps.1:1453
 #, no-wrap
 msgid "numa"
 msgstr "numa"
 
 #. type: tbl table
-#: ../man/ps.1:1451
+#: ../man/ps.1:1453
 #, no-wrap
 msgid "NUMA"
 msgstr "NUMA"
 
 #. type: tbl table
-#: ../man/ps.1:1454
+#: ../man/ps.1:1456
 #, no-wrap
 msgid ""
 "The node associated with the most recently used processor.\n"
@@ -8900,19 +8904,19 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1456
+#: ../man/ps.1:1458
 #, no-wrap
 msgid "nwchan"
 msgstr "nwchan"
 
 #. type: tbl table
-#: ../man/ps.1:1456 ../man/ps.1:1944
+#: ../man/ps.1:1458 ../man/ps.1:1946
 #, no-wrap
 msgid "WCHAN"
 msgstr "WCHAN"
 
 #. type: tbl table
-#: ../man/ps.1:1460
+#: ../man/ps.1:1462
 #, fuzzy, no-wrap
 #| msgid ""
 #| "address of the kernel function where the process is sleeping (use\n"
@@ -8930,19 +8934,19 @@ msgstr ""
 "Un tiret («\\ -\\ ») sera affiché dans cette colonne pour les tâches en cours d'exécution."
 
 #. type: tbl table
-#: ../man/ps.1:1462
+#: ../man/ps.1:1464
 #, no-wrap
 msgid "oom"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1462
+#: ../man/ps.1:1464
 #, no-wrap
 msgid "OOM"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1465
+#: ../man/ps.1:1467
 #, fuzzy, no-wrap
 #| msgid "The value, ranging from 0 to +1000, used to select task(s) to kill when memory is exhausted.  Zero translates to `never kill' whereas 1000 means `always kill'."
 msgid ""
@@ -8951,19 +8955,19 @@ msgid ""
 msgstr "La valeur, entre 0 et +1000, utilisée pour sélectionner la ou les tâches à tuer quand la mémoire est épuisée. Zéro se traduit par « ne jamais tuer » tandis que 1000 signifie « toujours tuer »."
 
 #. type: tbl table
-#: ../man/ps.1:1467
+#: ../man/ps.1:1469
 #, no-wrap
 msgid "oomadj"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1467
+#: ../man/ps.1:1469
 #, no-wrap
 msgid "OOMADJ"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1471
+#: ../man/ps.1:1473
 #, fuzzy, no-wrap
 #| msgid "The value, ranging from -1000 to +1000, added to the current out of memory score (OOMs) which is then used to determine which task to kill when memory is exhausted."
 msgid ""
@@ -8973,19 +8977,19 @@ msgid ""
 msgstr "La valeur, entre -1000 et +1000, ajoutée au score actuel d'insuffisance de mémoire (OOMs) qui est ensuite utilisé pour déterminer quelle tâche tuer quand la mémoire est épuisée."
 
 #. type: tbl table
-#: ../man/ps.1:1473
+#: ../man/ps.1:1475
 #, no-wrap
 msgid "ouid"
 msgstr "ouid"
 
 #. type: tbl table
-#: ../man/ps.1:1473
+#: ../man/ps.1:1475
 #, no-wrap
 msgid "OWNER"
 msgstr "OWNER"
 
 #. type: tbl table
-#: ../man/ps.1:1476
+#: ../man/ps.1:1478
 #, no-wrap
 msgid ""
 "displays the Unix user identifier of the owner of the session of a process,\n"
@@ -8995,7 +8999,7 @@ msgstr ""
 "si la prise en charge de systemd a été incluse."
 
 #. type: tbl table
-#: ../man/ps.1:1483
+#: ../man/ps.1:1485
 #, no-wrap
 msgid ""
 "see\n"
@@ -9009,19 +9013,19 @@ msgstr ""
 "B<%cpu>)."
 
 #. type: tbl table
-#: ../man/ps.1:1485
+#: ../man/ps.1:1487
 #, no-wrap
 msgid "pending"
 msgstr "pending"
 
 #. type: tbl table
-#: ../man/ps.1:1485 ../man/ps.1:1673
+#: ../man/ps.1:1487 ../man/ps.1:1675
 #, no-wrap
 msgid "PENDING"
 msgstr "PENDING"
 
 #. type: tbl table
-#: ../man/ps.1:1496
+#: ../man/ps.1:1498
 #, no-wrap
 msgid ""
 "mask of the pending signals. See\n"
@@ -9048,7 +9052,7 @@ msgstr ""
 "B<sig>)."
 
 #. type: tbl table
-#: ../man/ps.1:1502
+#: ../man/ps.1:1504
 #, no-wrap
 msgid ""
 "process group ID or, equivalently, the process ID of the process group\n"
@@ -9061,13 +9065,13 @@ msgstr ""
 "B<pgrp>)."
 
 #. type: tbl table
-#: ../man/ps.1:1504
+#: ../man/ps.1:1506
 #, no-wrap
 msgid "PGRP"
 msgstr "PGRP"
 
 #. type: tbl table
-#: ../man/ps.1:1509
+#: ../man/ps.1:1511
 #, no-wrap
 msgid ""
 "see\n"
@@ -9081,7 +9085,7 @@ msgstr ""
 "B<pgid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1514
+#: ../man/ps.1:1516
 #, no-wrap
 msgid ""
 "a number representing the process ID (alias\n"
@@ -9091,25 +9095,25 @@ msgstr ""
 "B<tgid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1516
+#: ../man/ps.1:1518
 #, no-wrap
 msgid "pidns"
 msgstr "pidns"
 
 #. type: tbl table
-#: ../man/ps.1:1516
+#: ../man/ps.1:1518
 #, no-wrap
 msgid "PIDNS"
 msgstr "PIDNS"
 
 #. type: tbl table
-#: ../man/ps.1:1522
+#: ../man/ps.1:1524
 #, no-wrap
 msgid "pmem"
 msgstr "pmem"
 
 #. type: tbl table
-#: ../man/ps.1:1527
+#: ../man/ps.1:1529
 #, no-wrap
 msgid ""
 "see\n"
@@ -9123,19 +9127,19 @@ msgstr ""
 "B<%mem>)."
 
 #. type: tbl table
-#: ../man/ps.1:1529
+#: ../man/ps.1:1531
 #, no-wrap
 msgid "policy"
 msgstr "policy"
 
 #. type: tbl table
-#: ../man/ps.1:1529
+#: ../man/ps.1:1531
 #, no-wrap
 msgid "POL"
 msgstr "POL"
 
 #. type: tbl table
-#: ../man/ps.1:1533
+#: ../man/ps.1:1535
 #, no-wrap
 msgid ""
 "scheduling class of the process.  (alias\n"
@@ -9147,65 +9151,65 @@ msgstr ""
 "Les valeurs possibles sont\\ :\n"
 
 #. type: tbl table
-#: ../man/ps.1:1555
+#: ../man/ps.1:1557
 #, no-wrap
 msgid "parent process ID."
 msgstr "PID du processus parent."
 
 #. type: tbl table
-#: ../man/ps.1:1557
+#: ../man/ps.1:1559
 #, no-wrap
 msgid "pri"
 msgstr "pri"
 
 #. type: tbl table
-#: ../man/ps.1:1557
+#: ../man/ps.1:1559
 #, no-wrap
 msgid "PRI"
 msgstr "PRI"
 
 #. type: tbl table
-#: ../man/ps.1:1559
+#: ../man/ps.1:1561
 #, fuzzy, no-wrap
 #| msgid "priority of the process.  Higher number means lower priority."
 msgid "priority of the process.  Higher number means higher priority."
 msgstr "Priorité du processus. Plus le nombre est grand, plus la priorité est basse."
 
 #. type: tbl table
-#: ../man/ps.1:1561
+#: ../man/ps.1:1563
 #, no-wrap
 msgid "psr"
 msgstr "psr"
 
 #. type: tbl table
-#: ../man/ps.1:1561
+#: ../man/ps.1:1563
 #, no-wrap
 msgid "PSR"
 msgstr "PSR"
 
 #. type: tbl table
-#: ../man/ps.1:1563
+#: ../man/ps.1:1565
 #, fuzzy, no-wrap
 #| msgid "processor that process is currently assigned to."
 msgid "processor that process last executed on."
 msgstr "Processeur auquel ce processus est actuellement assigné."
 
 #. type: tbl table
-#: ../man/ps.1:1565
+#: ../man/ps.1:1567
 #, fuzzy, no-wrap
 #| msgid "rss"
 msgid "pss"
 msgstr "rss"
 
 #. type: tbl table
-#: ../man/ps.1:1565
+#: ../man/ps.1:1567
 #, fuzzy, no-wrap
 #| msgid "PS"
 msgid "PSS"
 msgstr "PS"
 
 #. type: tbl table
-#: ../man/ps.1:1568
+#: ../man/ps.1:1570
 #, no-wrap
 msgid ""
 "Proportional share size, the non-swapped physical memory, with shared memory\n"
@@ -9213,61 +9217,61 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1570
+#: ../man/ps.1:1572
 #, no-wrap
 msgid "rbytes"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1570
+#: ../man/ps.1:1572
 #, no-wrap
 msgid "RBYTES"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1572
+#: ../man/ps.1:1574
 #, no-wrap
 msgid "Number of bytes which this process really did cause to be fetched from the storage layer."
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1574
+#: ../man/ps.1:1576
 #, no-wrap
 msgid "rchars"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1574
+#: ../man/ps.1:1576
 #, no-wrap
 msgid "RCHARS"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1576
+#: ../man/ps.1:1578
 #, no-wrap
 msgid "Number of bytes which this task has caused to be read from storage."
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1578
+#: ../man/ps.1:1580
 #, no-wrap
 msgid "rgid"
 msgstr "rgid"
 
 #. type: tbl table
-#: ../man/ps.1:1578
+#: ../man/ps.1:1580
 #, no-wrap
 msgid "RGID"
 msgstr "RGID"
 
 #. type: tbl table
-#: ../man/ps.1:1580
+#: ../man/ps.1:1582
 #, no-wrap
 msgid "real group ID."
 msgstr "Identifiant de groupe réel (RGID)."
 
 #. type: tbl table
-#: ../man/ps.1:1585
+#: ../man/ps.1:1587
 #, no-wrap
 msgid ""
 "real group name.  This will be the textual group ID, if it can be obtained\n"
@@ -9277,19 +9281,19 @@ msgstr ""
 "que la largeur du champ le permet, sous forme d'entier décimal sinon."
 
 #. type: tbl table
-#: ../man/ps.1:1587
+#: ../man/ps.1:1589
 #, no-wrap
 msgid "rops"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1587
+#: ../man/ps.1:1589
 #, no-wrap
 msgid "ROPS"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1590
+#: ../man/ps.1:1592
 #, no-wrap
 msgid ""
 "Number of read I/O operationsâthat is, system calls such as\n"
@@ -9297,13 +9301,13 @@ msgid ""
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1592 ../man/ps.1:1598
+#: ../man/ps.1:1594 ../man/ps.1:1600
 #, no-wrap
 msgid "RSS"
 msgstr "RSS"
 
 #. type: tbl table
-#: ../man/ps.1:1596
+#: ../man/ps.1:1598
 #, no-wrap
 msgid ""
 "resident set size, the non-swapped physical memory that a task has used (in\n"
@@ -9316,13 +9320,13 @@ msgstr ""
 "B<rssize>,B<\\ rsz>)."
 
 #. type: tbl table
-#: ../man/ps.1:1598
+#: ../man/ps.1:1600
 #, no-wrap
 msgid "rssize"
 msgstr "rssize"
 
 #. type: tbl table
-#: ../man/ps.1:1603
+#: ../man/ps.1:1605
 #, no-wrap
 msgid ""
 "see\n"
@@ -9336,19 +9340,19 @@ msgstr ""
 "B<rss>,B<\\ rsz>)."
 
 #. type: tbl table
-#: ../man/ps.1:1605
+#: ../man/ps.1:1607
 #, no-wrap
 msgid "rsz"
 msgstr "rsz"
 
 #. type: tbl table
-#: ../man/ps.1:1605
+#: ../man/ps.1:1607
 #, no-wrap
 msgid "RSZ"
 msgstr "RSZ"
 
 #. type: tbl table
-#: ../man/ps.1:1610
+#: ../man/ps.1:1612
 #, no-wrap
 msgid ""
 "see\n"
@@ -9362,43 +9366,43 @@ msgstr ""
 "B<rss>,B<\\ rssize>)."
 
 #. type: tbl table
-#: ../man/ps.1:1612
+#: ../man/ps.1:1614
 #, no-wrap
 msgid "rtprio"
 msgstr "rtprio"
 
 #. type: tbl table
-#: ../man/ps.1:1612
+#: ../man/ps.1:1614
 #, no-wrap
 msgid "RTPRIO"
 msgstr "RTPRIO"
 
 #. type: tbl table
-#: ../man/ps.1:1614
+#: ../man/ps.1:1616
 #, no-wrap
 msgid "realtime priority."
 msgstr "Priorité temps réel («\\ realtime\\ »)."
 
 #. type: tbl table
-#: ../man/ps.1:1616
+#: ../man/ps.1:1618
 #, no-wrap
 msgid "ruid"
 msgstr "ruid"
 
 #. type: tbl table
-#: ../man/ps.1:1616
+#: ../man/ps.1:1618
 #, no-wrap
 msgid "RUID"
 msgstr "RUID"
 
 #. type: tbl table
-#: ../man/ps.1:1618
+#: ../man/ps.1:1620
 #, no-wrap
 msgid "real user ID."
 msgstr "Identifiant d'utilisateur réel (RUID)."
 
 #. type: tbl table
-#: ../man/ps.1:1623
+#: ../man/ps.1:1625
 #, no-wrap
 msgid ""
 "real user ID.  This will be the textual user ID, if it can be obtained and\n"
@@ -9409,7 +9413,7 @@ msgstr ""
 "sous forme d'entier décimal sinon."
 
 #. type: tbl table
-#: ../man/ps.1:1632
+#: ../man/ps.1:1634
 #, no-wrap
 msgid ""
 "minimal state display (one character).  See section\n"
@@ -9430,19 +9434,19 @@ msgstr ""
 "B<state>)."
 
 #. type: tbl table
-#: ../man/ps.1:1634
+#: ../man/ps.1:1636
 #, no-wrap
 msgid "sched"
 msgstr "sched"
 
 #. type: tbl table
-#: ../man/ps.1:1634
+#: ../man/ps.1:1636
 #, no-wrap
 msgid "SCH"
 msgstr "SCH"
 
 #. type: tbl table
-#: ../man/ps.1:1638
+#: ../man/ps.1:1640
 #, no-wrap
 msgid ""
 "scheduling policy of the process.  The policies SCHED_OTHER (SCHED_NORMAL),\n"
@@ -9454,19 +9458,19 @@ msgstr ""
 "affichées comme 0, 1, 2, 3, 4 et 5."
 
 #. type: tbl table
-#: ../man/ps.1:1640
+#: ../man/ps.1:1642
 #, no-wrap
 msgid "seat"
 msgstr "seat"
 
 #. type: tbl table
-#: ../man/ps.1:1640
+#: ../man/ps.1:1642
 #, no-wrap
 msgid "SEAT"
 msgstr "SEAT"
 
 #. type: tbl table
-#: ../man/ps.1:1644
+#: ../man/ps.1:1646
 #, no-wrap
 msgid ""
 "displays the identifier associated with all hardware devices assigned\n"
@@ -9478,19 +9482,19 @@ msgstr ""
 "si la prise en charge de systemd a été incluse."
 
 #. type: tbl table
-#: ../man/ps.1:1646
+#: ../man/ps.1:1648
 #, no-wrap
 msgid "sess"
 msgstr "sess"
 
 #. type: tbl table
-#: ../man/ps.1:1646
+#: ../man/ps.1:1648
 #, no-wrap
 msgid "SESS"
 msgstr "SESS"
 
 #. type: tbl table
-#: ../man/ps.1:1649
+#: ../man/ps.1:1651
 #, no-wrap
 msgid ""
 "session ID or, equivalently, the process ID of the session leader.  (alias\n"
@@ -9501,13 +9505,13 @@ msgstr ""
 "B<session>,B<\\ sid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1651
+#: ../man/ps.1:1653
 #, no-wrap
 msgid "sgi_p"
 msgstr "sgi_p"
 
 #. type: tbl table
-#: ../man/ps.1:1654
+#: ../man/ps.1:1656
 #, no-wrap
 msgid ""
 "processor that the process is currently executing on.  Displays \"*\" if the\n"
@@ -9517,19 +9521,19 @@ msgstr ""
 "Afficher «\\ *\\ » si le processus ne s'exécute pas ou ne peut pas s'exécuter."
 
 #. type: tbl table
-#: ../man/ps.1:1656
+#: ../man/ps.1:1658
 #, no-wrap
 msgid "sgid"
 msgstr "sgid"
 
 #. type: tbl table
-#: ../man/ps.1:1656
+#: ../man/ps.1:1658
 #, no-wrap
 msgid "SGID"
 msgstr "SGID"
 
 #. type: tbl table
-#: ../man/ps.1:1659
+#: ../man/ps.1:1661
 #, no-wrap
 msgid ""
 "saved group ID.  (alias\n"
@@ -9540,19 +9544,19 @@ msgstr ""
 "B<svgid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1661
+#: ../man/ps.1:1663
 #, no-wrap
 msgid "sgroup"
 msgstr "sgroup"
 
 #. type: tbl table
-#: ../man/ps.1:1661
+#: ../man/ps.1:1663
 #, no-wrap
 msgid "SGROUP"
 msgstr "SGROUP"
 
 #. type: tbl table
-#: ../man/ps.1:1664
+#: ../man/ps.1:1666
 #, no-wrap
 msgid ""
 "saved group name.  This will be the textual group ID, if it can be obtained\n"
@@ -9564,19 +9568,19 @@ msgstr ""
 "sous forme d'entier décimal sinon."
 
 #. type: tbl table
-#: ../man/ps.1:1666
+#: ../man/ps.1:1668
 #, no-wrap
 msgid "sid"
 msgstr "sid"
 
 #. type: tbl table
-#: ../man/ps.1:1666
+#: ../man/ps.1:1668
 #, no-wrap
 msgid "SID"
 msgstr "SID"
 
 #. type: tbl table
-#: ../man/ps.1:1671
+#: ../man/ps.1:1673
 #, no-wrap
 msgid ""
 "see\n"
@@ -9590,13 +9594,13 @@ msgstr ""
 "B<sess>,B<\\ session>)."
 
 #. type: tbl table
-#: ../man/ps.1:1673
+#: ../man/ps.1:1675
 #, no-wrap
 msgid "sig"
 msgstr "sig"
 
 #. type: tbl table
-#: ../man/ps.1:1678
+#: ../man/ps.1:1680
 #, no-wrap
 msgid ""
 "see\n"
@@ -9610,13 +9614,13 @@ msgstr ""
 "B<pending>,B<\\ sig_pend>)."
 
 #. type: tbl table
-#: ../man/ps.1:1680
+#: ../man/ps.1:1682
 #, no-wrap
 msgid "sigcatch"
 msgstr "sigcatch"
 
 #. type: tbl table
-#: ../man/ps.1:1685
+#: ../man/ps.1:1687
 #, no-wrap
 msgid ""
 "see\n"
@@ -9630,13 +9634,13 @@ msgstr ""
 "B<caught>,B<\\ sig_catch>)."
 
 #. type: tbl table
-#: ../man/ps.1:1687
+#: ../man/ps.1:1689
 #, no-wrap
 msgid "sigignore"
 msgstr "sigignore"
 
 #. type: tbl table
-#: ../man/ps.1:1692
+#: ../man/ps.1:1694
 #, no-wrap
 msgid ""
 "see\n"
@@ -9650,13 +9654,13 @@ msgstr ""
 "B<ignored>,B<\\ sig_ignore>)."
 
 #. type: tbl table
-#: ../man/ps.1:1694
+#: ../man/ps.1:1696
 #, no-wrap
 msgid "sigmask"
 msgstr "sigmask"
 
 #. type: tbl table
-#: ../man/ps.1:1699
+#: ../man/ps.1:1701
 #, no-wrap
 msgid ""
 "see\n"
@@ -9670,13 +9674,13 @@ msgstr ""
 "B<blocked>,B<\\ sig_block>)."
 
 #. type: tbl table
-#: ../man/ps.1:1701
+#: ../man/ps.1:1703
 #, no-wrap
 msgid "SIZE"
 msgstr "SIZE"
 
 #. type: tbl table
-#: ../man/ps.1:1705
+#: ../man/ps.1:1707
 #, no-wrap
 msgid ""
 "approximate amount of swap space that would be required if the process were\n"
@@ -9689,19 +9693,19 @@ msgstr ""
 "d'échange («\\ swap\\ »). Ce nombre est très approximatif\\ !"
 
 #. type: tbl table
-#: ../man/ps.1:1707
+#: ../man/ps.1:1709
 #, no-wrap
 msgid "slice"
 msgstr "slice"
 
 #. type: tbl table
-#: ../man/ps.1:1707
+#: ../man/ps.1:1709
 #, no-wrap
 msgid "SLICE"
 msgstr "SLICE"
 
 #. type: tbl table
-#: ../man/ps.1:1710
+#: ../man/ps.1:1712
 #, no-wrap
 msgid ""
 "displays the slice unit which a process belongs to,\n"
@@ -9711,19 +9715,19 @@ msgstr ""
 "si la prise en charge de systemd a été incluse."
 
 #. type: tbl table
-#: ../man/ps.1:1712
+#: ../man/ps.1:1714
 #, no-wrap
 msgid "spid"
 msgstr "spid"
 
 #. type: tbl table
-#: ../man/ps.1:1712
+#: ../man/ps.1:1714
 #, no-wrap
 msgid "SPID"
 msgstr "SPID"
 
 #. type: tbl table
-#: ../man/ps.1:1717
+#: ../man/ps.1:1719
 #, no-wrap
 msgid ""
 "see\n"
@@ -9737,31 +9741,31 @@ msgstr ""
 "B<lwp>,B<\\ tid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1719
+#: ../man/ps.1:1721
 #, no-wrap
 msgid "stackp"
 msgstr "stackp"
 
 #. type: tbl table
-#: ../man/ps.1:1719
+#: ../man/ps.1:1721
 #, no-wrap
 msgid "STACKP"
 msgstr "STACKP"
 
 #. type: tbl table
-#: ../man/ps.1:1721
+#: ../man/ps.1:1723
 #, no-wrap
 msgid "address of the bottom (start) of stack for the process."
 msgstr "Adresse du bas (début) de la pile pour le processus."
 
 #. type: tbl table
-#: ../man/ps.1:1723
+#: ../man/ps.1:1725
 #, no-wrap
 msgid "start"
 msgstr "start"
 
 #. type: tbl table
-#: ../man/ps.1:1728
+#: ../man/ps.1:1730
 #, no-wrap
 msgid ""
 "time the command started.  If the process was started less than 24 hours ago,\n"
@@ -9777,7 +9781,7 @@ msgstr ""
 "B<lstart>,B<\\ bsdstart>,B<\\ start_time> etB<\\ stime>."
 
 #. type: tbl table
-#: ../man/ps.1:1737
+#: ../man/ps.1:1739
 #, no-wrap
 msgid ""
 "starting time or date of the process.  Only the year will be displayed if the\n"
@@ -9798,19 +9802,19 @@ msgstr ""
 "B<bsdstart>,B<\\ start>,B<\\ lstart> etB<\\ stime>."
 
 #. type: tbl table
-#: ../man/ps.1:1739
+#: ../man/ps.1:1741
 #, no-wrap
 msgid "stat"
 msgstr "stat"
 
 #. type: tbl table
-#: ../man/ps.1:1739
+#: ../man/ps.1:1741
 #, no-wrap
 msgid "STAT"
 msgstr "STAT"
 
 #. type: tbl table
-#: ../man/ps.1:1745
+#: ../man/ps.1:1747
 #, no-wrap
 msgid ""
 "multi-character process state.  See section\n"
@@ -9828,13 +9832,13 @@ msgstr ""
 "pour l'affichage du premier caractère seulement."
 
 #. type: tbl table
-#: ../man/ps.1:1747
+#: ../man/ps.1:1749
 #, no-wrap
 msgid "state"
 msgstr "state"
 
 #. type: tbl table
-#: ../man/ps.1:1750
+#: ../man/ps.1:1752
 #, no-wrap
 msgid ""
 "see\n"
@@ -9844,37 +9848,37 @@ msgstr ""
 "B<s> (aliasB<\\ s>)."
 
 #. type: tbl table
-#: ../man/ps.1:1752
+#: ../man/ps.1:1754
 #, no-wrap
 msgid "stime"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1752
+#: ../man/ps.1:1754
 #, no-wrap
 msgid "STIME"
 msgstr "STIME"
 
 #. type: tbl table
-#: ../man/ps.1:1754
+#: ../man/ps.1:1756
 #, no-wrap
 msgid "see B<start_time>. (alias B<start_time>)."
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1756
+#: ../man/ps.1:1758
 #, no-wrap
 msgid "suid"
 msgstr "suid"
 
 #. type: tbl table
-#: ../man/ps.1:1756
+#: ../man/ps.1:1758
 #, no-wrap
 msgid "SUID"
 msgstr "SUID"
 
 #. type: tbl table
-#: ../man/ps.1:1759
+#: ../man/ps.1:1761
 #, no-wrap
 msgid ""
 "saved user ID.  (alias\n"
@@ -9884,19 +9888,19 @@ msgstr ""
 "B<svuid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1761
+#: ../man/ps.1:1763
 #, no-wrap
 msgid "supgid"
 msgstr "supgid"
 
 #. type: tbl table
-#: ../man/ps.1:1761
+#: ../man/ps.1:1763
 #, no-wrap
 msgid "SUPGID"
 msgstr "SUPGID"
 
 #. type: tbl table
-#: ../man/ps.1:1764
+#: ../man/ps.1:1766
 #, no-wrap
 msgid ""
 "group ids of supplementary groups, if any.  See\n"
@@ -9907,19 +9911,19 @@ msgstr ""
 "B<getgroups>(2)."
 
 #. type: tbl table
-#: ../man/ps.1:1766
+#: ../man/ps.1:1768
 #, no-wrap
 msgid "supgrp"
 msgstr "supgrp"
 
 #. type: tbl table
-#: ../man/ps.1:1766
+#: ../man/ps.1:1768
 #, no-wrap
 msgid "SUPGRP"
 msgstr "SUPGRP"
 
 #. type: tbl table
-#: ../man/ps.1:1769
+#: ../man/ps.1:1771
 #, no-wrap
 msgid ""
 "group names of supplementary groups, if any.  See\n"
@@ -9930,19 +9934,19 @@ msgstr ""
 "B<getgroups>(2)."
 
 #. type: tbl table
-#: ../man/ps.1:1771
+#: ../man/ps.1:1773
 #, no-wrap
 msgid "suser"
 msgstr "suser"
 
 #. type: tbl table
-#: ../man/ps.1:1771
+#: ../man/ps.1:1773
 #, no-wrap
 msgid "SUSER"
 msgstr "SUSER"
 
 #. type: tbl table
-#: ../man/ps.1:1775
+#: ../man/ps.1:1777
 #, no-wrap
 msgid ""
 "saved user name.  This will be the textual user ID, if it can be obtained and\n"
@@ -9955,19 +9959,19 @@ msgstr ""
 "B<svuser>)."
 
 #. type: tbl table
-#: ../man/ps.1:1777
+#: ../man/ps.1:1779
 #, no-wrap
 msgid "svgid"
 msgstr "svgid"
 
 #. type: tbl table
-#: ../man/ps.1:1777
+#: ../man/ps.1:1779
 #, no-wrap
 msgid "SVGID"
 msgstr "SVGID"
 
 #. type: tbl table
-#: ../man/ps.1:1782
+#: ../man/ps.1:1784
 #, no-wrap
 msgid ""
 "see\n"
@@ -9981,19 +9985,19 @@ msgstr ""
 "B<sgid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1784
+#: ../man/ps.1:1786
 #, no-wrap
 msgid "svuid"
 msgstr "svuid"
 
 #. type: tbl table
-#: ../man/ps.1:1784
+#: ../man/ps.1:1786
 #, no-wrap
 msgid "SVUID"
 msgstr "SVUID"
 
 #. type: tbl table
-#: ../man/ps.1:1789
+#: ../man/ps.1:1791
 #, no-wrap
 msgid ""
 "see\n"
@@ -10007,19 +10011,19 @@ msgstr ""
 "B<suid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1791
+#: ../man/ps.1:1793
 #, no-wrap
 msgid "sz"
 msgstr "sz"
 
 #. type: tbl table
-#: ../man/ps.1:1791
+#: ../man/ps.1:1793
 #, no-wrap
 msgid "SZ"
 msgstr "SZ"
 
 #. type: tbl table
-#: ../man/ps.1:1796
+#: ../man/ps.1:1798
 #, no-wrap
 msgid ""
 "size in physical pages of the core image of the process.  This includes text,\n"
@@ -10035,19 +10039,19 @@ msgstr ""
 "B<vsz> etB<\\ rss>."
 
 #. type: tbl table
-#: ../man/ps.1:1798
+#: ../man/ps.1:1800
 #, no-wrap
 msgid "tgid"
 msgstr "tgid"
 
 #. type: tbl table
-#: ../man/ps.1:1798
+#: ../man/ps.1:1800
 #, no-wrap
 msgid "TGID"
 msgstr "TGID"
 
 #. type: tbl table
-#: ../man/ps.1:1802
+#: ../man/ps.1:1804
 #, no-wrap
 msgid ""
 "a number representing the thread group to which a task belongs (alias\n"
@@ -10060,19 +10064,19 @@ msgstr ""
 "C'est l'identifiant de processus du meneur de groupe de processus légers."
 
 #. type: tbl table
-#: ../man/ps.1:1804
+#: ../man/ps.1:1806
 #, no-wrap
 msgid "thcount"
 msgstr "thcount"
 
 #. type: tbl table
-#: ../man/ps.1:1804
+#: ../man/ps.1:1806
 #, no-wrap
 msgid "THCNT"
 msgstr "THCNT"
 
 #. type: tbl table
-#: ../man/ps.1:1810
+#: ../man/ps.1:1812
 #, no-wrap
 msgid ""
 "see\n"
@@ -10088,19 +10092,19 @@ msgstr ""
 "Nombre de processus légers du noyau (thread) appartenant au processus."
 
 #. type: tbl table
-#: ../man/ps.1:1812
+#: ../man/ps.1:1814
 #, no-wrap
 msgid "tid"
 msgstr "tid"
 
 #. type: tbl table
-#: ../man/ps.1:1812
+#: ../man/ps.1:1814
 #, no-wrap
 msgid "TID"
 msgstr "TID"
 
 #. type: tbl table
-#: ../man/ps.1:1819
+#: ../man/ps.1:1821
 #, no-wrap
 msgid ""
 "the unique number representing a dispatchable entity (alias\n"
@@ -10121,7 +10125,7 @@ msgstr ""
 "(tpgid)."
 
 #. type: tbl table
-#: ../man/ps.1:1824
+#: ../man/ps.1:1826
 #, no-wrap
 msgid ""
 "cumulative CPU\\ time, \"[DD-]HH:MM:SS\" format.  (alias\n"
@@ -10131,7 +10135,7 @@ msgstr ""
 "B<cputime>)."
 
 #. type: tbl table
-#: ../man/ps.1:1826
+#: ../man/ps.1:1828
 #, fuzzy, no-wrap
 #| msgid "times"
 msgid "timens"
@@ -10139,20 +10143,20 @@ msgstr "times"
 
 # Nom de la commande time.2
 #. type: tbl table
-#: ../man/ps.1:1826
+#: ../man/ps.1:1828
 #, fuzzy, no-wrap
 #| msgid "TIME"
 msgid "TIMENS"
 msgstr "TIME"
 
 #. type: tbl table
-#: ../man/ps.1:1832
+#: ../man/ps.1:1834
 #, no-wrap
 msgid "times"
 msgstr "times"
 
 #. type: tbl table
-#: ../man/ps.1:1835
+#: ../man/ps.1:1837
 #, no-wrap
 msgid ""
 "cumulative CPU\\ time in seconds (alias\n"
@@ -10162,13 +10166,13 @@ msgstr ""
 "B<cputime>)."
 
 #. type: tbl table
-#: ../man/ps.1:1837
+#: ../man/ps.1:1839
 #, no-wrap
 msgid "tname"
 msgstr "tname"
 
 #. type: tbl table
-#: ../man/ps.1:1840
+#: ../man/ps.1:1842
 #, no-wrap
 msgid ""
 "controlling tty (terminal).  (alias\n"
@@ -10179,13 +10183,13 @@ msgstr ""
 "B<tt>,B<\\ tty>)."
 
 #. type: tbl table
-#: ../man/ps.1:1842
+#: ../man/ps.1:1844
 #, no-wrap
 msgid "TPGID"
 msgstr "TPGID"
 
 #. type: tbl table
-#: ../man/ps.1:1845
+#: ../man/ps.1:1847
 #, no-wrap
 msgid ""
 "ID of the foreground process group on the tty (terminal) that the process is\n"
@@ -10196,37 +10200,37 @@ msgstr ""
 "à un tty."
 
 #. type: tbl table
-#: ../man/ps.1:1847
+#: ../man/ps.1:1849
 #, no-wrap
 msgid "trs"
 msgstr "trs"
 
 #. type: tbl table
-#: ../man/ps.1:1847
+#: ../man/ps.1:1849
 #, no-wrap
 msgid "TRS"
 msgstr "TRS"
 
 #. type: tbl table
-#: ../man/ps.1:1849
+#: ../man/ps.1:1851
 #, no-wrap
 msgid "text resident set size, the amount of physical memory devoted to executable code."
 msgstr "Taille du texte en mémoire résidente, la quantité de mémoire physique consacrée au code exécutable."
 
 #. type: tbl table
-#: ../man/ps.1:1851
+#: ../man/ps.1:1853
 #, no-wrap
 msgid "tt"
 msgstr "tt"
 
 #. type: tbl table
-#: ../man/ps.1:1851 ../man/ps.1:1856
+#: ../man/ps.1:1853 ../man/ps.1:1858
 #, no-wrap
 msgid "TT"
 msgstr "TT"
 
 #. type: tbl table
-#: ../man/ps.1:1854
+#: ../man/ps.1:1856
 #, no-wrap
 msgid ""
 "controlling tty (terminal).  (alias\n"
@@ -10235,26 +10239,26 @@ msgstr ""
 "tty (terminal) de contrôle\n"
 "(alias\n"
 "B<tname>,B<\\ tty>)."
-
-#. type: tbl table
-#: ../man/ps.1:1859
-#, no-wrap
-msgid ""
-"controlling tty (terminal).  (alias\n"
-"B<tname>,B<\\ tt>)."
-msgstr ""
-"tty (terminal) de contrôle\n"
-"(alias\n"
-"B<tname>,B<\\ tt>)."
 
 #. type: tbl table
 #: ../man/ps.1:1861
+#, no-wrap
+msgid ""
+"controlling tty (terminal).  (alias\n"
+"B<tname>,B<\\ tt>)."
+msgstr ""
+"tty (terminal) de contrôle\n"
+"(alias\n"
+"B<tname>,B<\\ tt>)."
+
+#. type: tbl table
+#: ../man/ps.1:1863
 #, no-wrap
 msgid "ucmd"
 msgstr "ucmd"
 
 #. type: tbl table
-#: ../man/ps.1:1866
+#: ../man/ps.1:1868
 #, no-wrap
 msgid ""
 "see\n"
@@ -10268,13 +10272,13 @@ msgstr ""
 "B<comm>,B<\\ ucomm>)."
 
 #. type: tbl table
-#: ../man/ps.1:1868
+#: ../man/ps.1:1870
 #, no-wrap
 msgid "ucomm"
 msgstr "ucomm"
 
 #. type: tbl table
-#: ../man/ps.1:1873
+#: ../man/ps.1:1875
 #, no-wrap
 msgid ""
 "see\n"
@@ -10288,13 +10292,13 @@ msgstr ""
 "B<comm>,B<\\ ucmd>)."
 
 #. type: tbl table
-#: ../man/ps.1:1875
+#: ../man/ps.1:1877
 #, no-wrap
 msgid "UID"
 msgstr "UID"
 
 #. type: tbl table
-#: ../man/ps.1:1880
+#: ../man/ps.1:1882
 #, no-wrap
 msgid ""
 "see\n"
@@ -10308,13 +10312,13 @@ msgstr ""
 "B<euid>)."
 
 #. type: tbl table
-#: ../man/ps.1:1882
+#: ../man/ps.1:1884
 #, no-wrap
 msgid "uname"
 msgstr "uname"
 
 #. type: tbl table
-#: ../man/ps.1:1887
+#: ../man/ps.1:1889
 #, no-wrap
 msgid ""
 "see\n"
@@ -10328,19 +10332,19 @@ msgstr ""
 "B<euser>,B<\\ user>)."
 
 #. type: tbl table
-#: ../man/ps.1:1889
+#: ../man/ps.1:1891
 #, no-wrap
 msgid "unit"
 msgstr "unit"
 
 #. type: tbl table
-#: ../man/ps.1:1889
+#: ../man/ps.1:1891
 #, no-wrap
 msgid "UNIT"
 msgstr "UNIT"
 
 #. type: tbl table
-#: ../man/ps.1:1892
+#: ../man/ps.1:1894
 #, no-wrap
 msgid ""
 "displays unit which a process belongs to,\n"
@@ -10350,7 +10354,7 @@ msgstr ""
 "si la prise en charge de systemd est incluse."
 
 #. type: tbl table
-#: ../man/ps.1:1899
+#: ../man/ps.1:1901
 #, no-wrap
 msgid ""
 "see\n"
@@ -10364,33 +10368,33 @@ msgstr ""
 "B<euser>,B<\\ uname>)."
 
 #. type: tbl table
-#: ../man/ps.1:1901
+#: ../man/ps.1:1903
 #, no-wrap
 msgid "userns"
 msgstr "userns"
 
 #. type: tbl table
-#: ../man/ps.1:1901
+#: ../man/ps.1:1903
 #, no-wrap
 msgid "USERNS"
 msgstr "USERNS"
 
 #. type: tbl table
-#: ../man/ps.1:1907
+#: ../man/ps.1:1909
 #, fuzzy, no-wrap
 #| msgid "utsns"
 msgid "uss"
 msgstr "utsns"
 
 #. type: tbl table
-#: ../man/ps.1:1907
+#: ../man/ps.1:1909
 #, fuzzy, no-wrap
 #| msgid "UTSNS"
 msgid "USS"
 msgstr "UTSNS"
 
 #. type: tbl table
-#: ../man/ps.1:1910
+#: ../man/ps.1:1912
 #, fuzzy, no-wrap
 #| msgid ""
 #| "resident set size, the non-swapped physical memory that a task has used (in\n"
@@ -10406,31 +10410,31 @@ msgstr ""
 "B<rssize>, B<rsz>)."
 
 #. type: tbl table
-#: ../man/ps.1:1912
+#: ../man/ps.1:1914
 #, no-wrap
 msgid "utsns"
 msgstr "utsns"
 
 #. type: tbl table
-#: ../man/ps.1:1912
+#: ../man/ps.1:1914
 #, no-wrap
 msgid "UTSNS"
 msgstr "UTSNS"
 
 #. type: tbl table
-#: ../man/ps.1:1918
+#: ../man/ps.1:1920
 #, no-wrap
 msgid "uunit"
 msgstr "uunit"
 
 #. type: tbl table
-#: ../man/ps.1:1918
+#: ../man/ps.1:1920
 #, no-wrap
 msgid "UUNIT"
 msgstr "UUNIT"
 
 #. type: tbl table
-#: ../man/ps.1:1921
+#: ../man/ps.1:1923
 #, no-wrap
 msgid ""
 "displays user unit which a process belongs to,\n"
@@ -10440,7 +10444,7 @@ msgstr ""
 "si la prise en charge de systemd est incluse."
 
 #. type: tbl table
-#: ../man/ps.1:1928
+#: ../man/ps.1:1930
 #, no-wrap
 msgid ""
 "see\n"
@@ -10454,7 +10458,7 @@ msgstr ""
 "B<vsz>)."
 
 #. type: tbl table
-#: ../man/ps.1:1934
+#: ../man/ps.1:1936
 #, no-wrap
 msgid ""
 "virtual memory size of the process in KiB (1024-byte units).  Device\n"
@@ -10468,89 +10472,89 @@ msgstr ""
 "B<vsize>)."
 
 #. type: tbl table
-#: ../man/ps.1:1936
+#: ../man/ps.1:1938
 #, no-wrap
 msgid "wbytes"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1936
+#: ../man/ps.1:1938
 #, no-wrap
 msgid "WBYTES"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1938
+#: ../man/ps.1:1940
 #, no-wrap
 msgid "Number of bytes which this process caused to be sent to the storage layer."
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1940
+#: ../man/ps.1:1942
 #, no-wrap
 msgid "wcbytes"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1940
+#: ../man/ps.1:1942
 #, no-wrap
 msgid "WCBYTES"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1942
+#: ../man/ps.1:1944
 #, fuzzy, no-wrap
 #| msgid "number of active objects"
 msgid "Number of cancelled write bytes."
 msgstr "nombre d'objets actifs"
 
 #. type: tbl table
-#: ../man/ps.1:1944
+#: ../man/ps.1:1946
 #, no-wrap
 msgid "wchan"
 msgstr "wchan"
 
 #. type: tbl table
-#: ../man/ps.1:1946
+#: ../man/ps.1:1948
 #, fuzzy, no-wrap
 #| msgid "display name of control groups to which the process belongs."
 msgid "name of the kernel function in which the process is sleeping."
 msgstr "Afficher les groupes de contrôle auxquels appartient le processus."
 
 #. type: tbl table
-#: ../man/ps.1:1948
+#: ../man/ps.1:1950
 #, fuzzy, no-wrap
 #| msgid "wchan"
 msgid "wchars"
 msgstr "wchan"
 
 #. type: tbl table
-#: ../man/ps.1:1948
+#: ../man/ps.1:1950
 #, fuzzy, no-wrap
 #| msgid "WCHAN"
 msgid "WCHARS"
 msgstr "WCHAN"
 
 #. type: tbl table
-#: ../man/ps.1:1950
+#: ../man/ps.1:1952
 #, no-wrap
 msgid "Number of bytes which this task has caused, or shall cause to be written to disk."
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1952
+#: ../man/ps.1:1954
 #, no-wrap
 msgid "wops"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1952
+#: ../man/ps.1:1954
 #, no-wrap
 msgid "WOPS"
 msgstr ""
 
 #. type: tbl table
-#: ../man/ps.1:1955
+#: ../man/ps.1:1957
 #, no-wrap
 msgid ""
 "Number of write I/O operationsâthat is, system calls such as\n"
@@ -10558,46 +10562,46 @@ msgid ""
 msgstr ""
 
 #. type: SH
-#: ../man/ps.1:1961
+#: ../man/ps.1:1963
 #, no-wrap
 msgid "ENVIRONMENT VARIABLES"
 msgstr "VARIABLES D'ENVIRONNEMENT"
 
 #. type: Plain text
-#: ../man/ps.1:1964
+#: ../man/ps.1:1966
 msgid "The following environment variables could affect B<ps>:"
 msgstr "Les variables d'environnement suivantes peuvent affecter B<ps> :"
 
 #. type: TP
-#: ../man/ps.1:1964
+#: ../man/ps.1:1966
 #, no-wrap
 msgid "B<COLUMNS>"
 msgstr "B<COLUMNS>"
 
 #. type: Plain text
-#: ../man/ps.1:1967
+#: ../man/ps.1:1969
 msgid "Override default display width."
 msgstr "Remplacer la largeur par défaut de l'affichage."
 
 #. type: TP
-#: ../man/ps.1:1967
+#: ../man/ps.1:1969
 #, no-wrap
 msgid "B<LINES>"
 msgstr "B<LINES>"
 
 #. type: Plain text
-#: ../man/ps.1:1970
+#: ../man/ps.1:1972
 msgid "Override default display height."
 msgstr "Remplacer la hauteur par défaut de l'affichage."
 
 #. type: TP
-#: ../man/ps.1:1970
+#: ../man/ps.1:1972
 #, no-wrap
 msgid "B<PS_PERSONALITY>"
 msgstr "B<PS_PERSONALITY>"
 
 #. type: Plain text
-#: ../man/ps.1:1975 ../man/ps.1:1980
+#: ../man/ps.1:1977 ../man/ps.1:1982
 msgid ""
 "Set to one of posix, old, linux, bsd, sun, digital...  (see section "
 "B<PERSONALITY> below)."
@@ -10606,41 +10610,41 @@ msgstr ""
 "dessous la section B<PERSONNALITÉ>)."
 
 #. type: TP
-#: ../man/ps.1:1975
+#: ../man/ps.1:1977
 #, no-wrap
 msgid "B<CMD_ENV>"
 msgstr "B<CMD_ENV>"
 
 #. type: TP
-#: ../man/ps.1:1980
+#: ../man/ps.1:1982
 #, no-wrap
 msgid "B<I_WANT_A_BROKEN_PS>"
 msgstr "B<I_WANT_A_BROKEN_PS>"
 
 #. type: Plain text
-#: ../man/ps.1:1983
+#: ../man/ps.1:1985
 msgid "Force obsolete command line interpretation."
 msgstr "Forcer l'interprétation obsolète de la ligne de commande."
 
 #. type: TP
-#: ../man/ps.1:1983
+#: ../man/ps.1:1985
 #, no-wrap
 msgid "B<LC_TIME>"
 msgstr "B<LC_TIME>"
 
 #. type: Plain text
-#: ../man/ps.1:1986
+#: ../man/ps.1:1988
 msgid "Date format."
 msgstr "Format de date."
 
 #. type: TP
-#: ../man/ps.1:1986
+#: ../man/ps.1:1988
 #, no-wrap
 msgid "B<LIBPROC_HIDE_KERNEL>"
 msgstr ""
 
 #. type: Plain text
-#: ../man/ps.1:1993
+#: ../man/ps.1:1995
 msgid ""
 "Set this to any value to hide kernel threads normally displayed with the B<-"
 "e> option. This is equivalent to selecting B<--ppid 2 -p 2 --deselect> "
@@ -10648,24 +10652,24 @@ msgid ""
 msgstr ""
 
 #. type: TP
-#: ../man/ps.1:1993
+#: ../man/ps.1:1995
 #, no-wrap
 msgid "B<PS_COLORS>"
 msgstr "B<PS_COLORS>"
 
 #. type: Plain text
-#: ../man/ps.1:1996
+#: ../man/ps.1:1998
 msgid "Not currently supported."
 msgstr "Non pris en charge pour le moment."
 
 #. type: TP
-#: ../man/ps.1:1996
+#: ../man/ps.1:1998
 #, no-wrap
 msgid "B<PS_FORMAT>"
 msgstr "B<PS_FORMAT>"
 
 #. type: Plain text
-#: ../man/ps.1:2007
+#: ../man/ps.1:2009
 msgid ""
 "Default output format override. You may set this to a format string of the "
 "type used for the B<-o> option.  The B<DefSysV> and B<DefBSD> values are "
@@ -10676,47 +10680,47 @@ msgstr ""
 "B<DefSysV> et B<DefBSD> sont particulièrement utiles."
 
 #. type: TP
-#: ../man/ps.1:2007
+#: ../man/ps.1:2009
 #, no-wrap
 msgid "B<POSIXLY_CORRECT>"
 msgstr "B<POSIXLY_CORRECT>"
 
 #. type: Plain text
-#: ../man/ps.1:2010 ../man/ps.1:2017
+#: ../man/ps.1:2012 ../man/ps.1:2019
 msgid "Don't find excuses to ignore bad \"features\"."
 msgstr ""
 "Ne pas chercher d'excuse pour ignorer les mauvaises « fonctionnalités »."
 
 #. type: TP
-#: ../man/ps.1:2010
+#: ../man/ps.1:2012
 #, no-wrap
 msgid "B<POSIX2>"
 msgstr "B<POSIX2>"
 
 #. type: Plain text
-#: ../man/ps.1:2014
+#: ../man/ps.1:2016
 msgid "When set to \"on\", acts as B<POSIXLY_CORRECT>."
 msgstr "Agir comme B<POSIXLY_CORRECT> une fois configuré à « on »."
 
 #. type: TP
-#: ../man/ps.1:2014
+#: ../man/ps.1:2016
 #, no-wrap
 msgid "B<UNIX95>"
 msgstr "B<UNIX95>"
 
 #. type: TP
-#: ../man/ps.1:2017
+#: ../man/ps.1:2019
 #, no-wrap
 msgid "B<_XPG>"
 msgstr "B<_XPG>"
 
 #. type: Plain text
-#: ../man/ps.1:2020
+#: ../man/ps.1:2022
 msgid "Cancel B<CMD_ENV>=I<irix> non-standard behavior."
 msgstr "Annuler le comportement non standard B<CMD_ENV>=I<irix>."
 
 #. type: Plain text
-#: ../man/ps.1:2028
+#: ../man/ps.1:2030
 msgid ""
 "In general, it is a bad idea to set these variables.  The one exception is "
 "B<CMD_ENV> or B<PS_PERSONALITY>, which could be set to Linux for normal "
@@ -10729,301 +10733,301 @@ msgstr ""
 "aspects inutiles et mauvais de la norme Unix98."
 
 #. type: SH
-#: ../man/ps.1:2029
+#: ../man/ps.1:2031
 #, no-wrap
 msgid "PERSONALITY"
 msgstr "PERSONNALITÉ"
 
 #. type: tbl table
-#: ../man/ps.1:2032
+#: ../man/ps.1:2034
 #, no-wrap
 msgid "390"
 msgstr "390"
 
 #. type: tbl table
-#: ../man/ps.1:2032
+#: ../man/ps.1:2034
 #, no-wrap
 msgid "like the OS/390 OpenEdition B<ps>"
 msgstr "comme le B<ps> d'0S/390 Open Edition"
 
 #. type: tbl table
-#: ../man/ps.1:2033
+#: ../man/ps.1:2035
 #, no-wrap
 msgid "aix"
 msgstr "aix"
 
 #. type: tbl table
-#: ../man/ps.1:2033
+#: ../man/ps.1:2035
 #, no-wrap
 msgid "like AIX B<ps>"
 msgstr "comme le B<ps> d'AIX"
 
 #. type: tbl table
-#: ../man/ps.1:2034
+#: ../man/ps.1:2036
 #, no-wrap
 msgid "bsd"
 msgstr "bsd"
 
 #. type: tbl table
-#: ../man/ps.1:2034
+#: ../man/ps.1:2036
 #, no-wrap
 msgid "like FreeBSD B<ps> (totally non-standard)"
 msgstr "comme le B<ps> de FreeBSD (complètement non standard)"
 
 #. type: tbl table
-#: ../man/ps.1:2035
+#: ../man/ps.1:2037
 #, no-wrap
 msgid "compaq"
 msgstr "compaq"
 
 #. type: tbl table
-#: ../man/ps.1:2035
+#: ../man/ps.1:2037
 #, no-wrap
 msgid "like Digital Unix B<ps>"
 msgstr "comme le B<ps> de Digital Unix B"
 
 #. type: tbl table
-#: ../man/ps.1:2036
+#: ../man/ps.1:2038
 #, no-wrap
 msgid "debian"
 msgstr "debian"
 
 #. type: tbl table
-#: ../man/ps.1:2036 ../man/ps.1:2038
+#: ../man/ps.1:2038 ../man/ps.1:2040
 #, no-wrap
 msgid "like the old Debian B<ps>"
 msgstr "comme l'ancien B<ps> de Debian"
 
 #. type: tbl table
-#: ../man/ps.1:2037
+#: ../man/ps.1:2039
 #, no-wrap
 msgid "digital"
 msgstr "digital"
 
 #. type: tbl table
-#: ../man/ps.1:2037
+#: ../man/ps.1:2039
 #, no-wrap
 msgid "like Tru64 (was Digital\\ Unix, was OSF/1) B<ps>"
 msgstr "comme le B<ps> de Tru64 (ex. Digital Unix, ex. OSF/1)"
 
 #. type: tbl table
-#: ../man/ps.1:2038
+#: ../man/ps.1:2040
 #, no-wrap
 msgid "gnu"
 msgstr "gnu"
 
 #. type: tbl table
-#: ../man/ps.1:2039
+#: ../man/ps.1:2041
 #, no-wrap
 msgid "hp"
 msgstr "hp"
 
 #. type: tbl table
-#: ../man/ps.1:2039 ../man/ps.1:2040
+#: ../man/ps.1:2041 ../man/ps.1:2042
 #, no-wrap
 msgid "like HP-UX B<ps>"
 msgstr "comme le B<ps> de HP-UX"
 
 #. type: tbl table
-#: ../man/ps.1:2040
+#: ../man/ps.1:2042
 #, no-wrap
 msgid "hpux"
 msgstr "hpux"
 
 #. type: tbl table
-#: ../man/ps.1:2041
+#: ../man/ps.1:2043
 #, no-wrap
 msgid "irix"
 msgstr "irix"
 
 #. type: tbl table
-#: ../man/ps.1:2041 ../man/ps.1:2048
+#: ../man/ps.1:2043 ../man/ps.1:2050
 #, no-wrap
 msgid "like Irix B<ps>"
 msgstr "comme le B<ps> d'Irix"
 
 #. type: tbl table
-#: ../man/ps.1:2042
+#: ../man/ps.1:2044
 #, no-wrap
 msgid "linux"
 msgstr "linux"
 
 #. type: tbl table
-#: ../man/ps.1:2042
+#: ../man/ps.1:2044
 #, no-wrap
 msgid "***** B<recommended> *****"
 msgstr "***** B<recommandé> *****"
 
 #. type: tbl table
-#: ../man/ps.1:2043
+#: ../man/ps.1:2045
 #, no-wrap
 msgid "old"
 msgstr "old"
 
 #. type: tbl table
-#: ../man/ps.1:2043
+#: ../man/ps.1:2045
 #, no-wrap
 msgid "like the original Linux B<ps> (totally non-standard)"
 msgstr "comme le B<ps> d'origine de Linux (entièrement non standard)"
 
 #. type: tbl table
-#: ../man/ps.1:2044
+#: ../man/ps.1:2046
 #, no-wrap
 msgid "os390"
 msgstr "os390"
 
 #. type: tbl table
-#: ../man/ps.1:2044 ../man/ps.1:2046
+#: ../man/ps.1:2046 ../man/ps.1:2048
 #, no-wrap
 msgid "like OS/390 Open Edition B<ps>"
 msgstr "comme le B<ps> d'OS/390 Open Edition"
 
 #. type: tbl table
-#: ../man/ps.1:2045
+#: ../man/ps.1:2047
 #, no-wrap
 msgid "posix"
 msgstr "posix"
 
 #. type: tbl table
-#: ../man/ps.1:2045 ../man/ps.1:2051 ../man/ps.1:2052 ../man/ps.1:2054
-#: ../man/ps.1:2055 ../man/ps.1:2056
+#: ../man/ps.1:2047 ../man/ps.1:2053 ../man/ps.1:2054 ../man/ps.1:2056
+#: ../man/ps.1:2057 ../man/ps.1:2058
 #, no-wrap
 msgid "standard"
 msgstr "standard"
 
 #. type: tbl table
-#: ../man/ps.1:2046
+#: ../man/ps.1:2048
 #, no-wrap
 msgid "s390"
 msgstr "s390"
 
 #. type: tbl table
-#: ../man/ps.1:2047
+#: ../man/ps.1:2049
 #, no-wrap
 msgid "sco"
 msgstr "sco"
 
 #. type: tbl table
-#: ../man/ps.1:2047
+#: ../man/ps.1:2049
 #, no-wrap
 msgid "like SCO B<ps>"
 msgstr "comme le B<ps> de SCO"
 
 #. type: tbl table
-#: ../man/ps.1:2048
+#: ../man/ps.1:2050
 #, no-wrap
 msgid "sgi"
 msgstr "sgi"
 
 #. type: tbl table
-#: ../man/ps.1:2049
+#: ../man/ps.1:2051
 #, no-wrap
 msgid "solaris2"
 msgstr "solaris2"
 
 #. type: tbl table
-#: ../man/ps.1:2049
+#: ../man/ps.1:2051
 #, no-wrap
 msgid "like Solaris 2+ (SunOS 5) B<ps>"
 msgstr "comme le B<ps> de Solaris 2+ (SunOS 5)"
 
 #. type: tbl table
-#: ../man/ps.1:2050
+#: ../man/ps.1:2052
 #, no-wrap
 msgid "sunos4"
 msgstr "sunos4"
 
 #. type: tbl table
-#: ../man/ps.1:2050
+#: ../man/ps.1:2052
 #, no-wrap
 msgid "like SunOS 4 (Solaris 1) B<ps> (totally non-standard)"
 msgstr "comme le B<ps> de SunOS 4 (Solaris 1) (non standard)"
 
 #. type: tbl table
-#: ../man/ps.1:2051
+#: ../man/ps.1:2053
 #, no-wrap
 msgid "svr4"
 msgstr "svr4"
 
 #. type: tbl table
-#: ../man/ps.1:2052
+#: ../man/ps.1:2054
 #, no-wrap
 msgid "sysv"
 msgstr "sysv"
 
 #. type: tbl table
-#: ../man/ps.1:2053
+#: ../man/ps.1:2055
 #, no-wrap
 msgid "tru64"
 msgstr "tru64"
 
 #. type: tbl table
-#: ../man/ps.1:2053
+#: ../man/ps.1:2055
 #, no-wrap
 msgid "like Tru64 (was Digital Unix, was OSF/1) B<ps>"
 msgstr "comme le B<ps> de Tru64 (ex. Digital Unix, ex. OSF/1)"
 
 #. type: tbl table
-#: ../man/ps.1:2054
+#: ../man/ps.1:2056
 #, no-wrap
 msgid "unix"
 msgstr "unix"
 
 #. type: tbl table
-#: ../man/ps.1:2055
+#: ../man/ps.1:2057
 #, no-wrap
 msgid "unix95"
 msgstr "unix95"
 
 #. type: tbl table
-#: ../man/ps.1:2056
+#: ../man/ps.1:2058
 #, no-wrap
 msgid "unix98"
 msgstr "unix98"
 
 #. type: Plain text
-#: ../man/ps.1:2065
+#: ../man/ps.1:2067
 msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 
 #. type: Plain text
-#: ../man/ps.1:2071
+#: ../man/ps.1:2073
 msgid "This B<ps> conforms to:"
 msgstr "Ce B<ps> est conforme à :"
 
 #. type: Plain text
-#: ../man/ps.1:2075
+#: ../man/ps.1:2077
 msgid "Version 2 of the Single Unix Specification"
 msgstr "la Single UNIX Specification version 2 ;"
 
 #. type: Plain text
-#: ../man/ps.1:2077
+#: ../man/ps.1:2079
 msgid "The Open Group Technical Standard Base Specifications, Issue\\ 6"
 msgstr "les Open Group Technical Standard Base Specifications, version 6 ;"
 
 #. type: Plain text
-#: ../man/ps.1:2079
+#: ../man/ps.1:2081
 msgid "IEEE Std 1003.1, 2004\\ Edition"
 msgstr "l'IEEE Std 1003.1, édition 2004 ;"
 
 #. type: Plain text
-#: ../man/ps.1:2081
+#: ../man/ps.1:2083
 msgid "X/Open System Interfaces Extension [UP\\ XSI]"
 msgstr "la X/Open System Interfaces Extension [UP XSI] ;"
 
 #. type: IP
-#: ../man/ps.1:2081
+#: ../man/ps.1:2083
 #, no-wrap
 msgid "5"
 msgstr "5"
 
 #. type: Plain text
-#: ../man/ps.1:2083
+#: ../man/ps.1:2085
 msgid "ISO/IEC 9945:2003"
 msgstr "l'ISO/IEC 9945:2003."
 
 #. type: Plain text
-#: ../man/ps.1:2112
+#: ../man/ps.1:2114
 msgid ""
 "B<ps> was originally written by E<.UR lankeste@\\:fwi.\\:uva.\\:nl> Branko "
 "Lankester E<.UE .> E<.UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<."
@@ -11051,7 +11055,7 @@ msgstr ""
 "ainsi que certains bidouillages pour les syntaxes obsolètes et externes."
 
 #. type: Plain text
-#: ../man/ps.1:2116
+#: ../man/ps.1:2118
 msgid ""
 "Please send bug reports to E<.UR procps@\\:freelists.\\:org> E<.UE .> No "
 "subscription is required or suggested."
@@ -19252,6 +19256,14 @@ msgstr ""
 #| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
 msgid "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
+
+#, no-wrap
+#~ msgid "instruction pointer."
+#~ msgstr "Pointeur d'instruction."
+
+#, no-wrap
+#~ msgid "stack pointer."
+#~ msgstr "Pointeur de pile."
 
 #, fuzzy, no-wrap
 #~| msgid "June 2011"
