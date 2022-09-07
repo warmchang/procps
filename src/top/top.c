@@ -7176,7 +7176,7 @@ int main (int argc, char *argv[]) {
 
       if (0 < Loops) --Loops;
       if (!Loops) bye_bye(NULL);
-      if (Frames_signal) { Frames_signal = BREAK_off; continue; }
+      if (Frames_signal) { Frames_signal = BREAK_off; zap_fieldstab(); continue; }
 
       ts.tv_sec = Rc.delay_time;
       ts.tv_nsec = (Rc.delay_time - (int)Rc.delay_time) * 1000000000;
