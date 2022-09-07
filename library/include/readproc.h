@@ -281,7 +281,7 @@ PROCTAB *openproc(unsigned flags, ... /* pid_t *| uid_t *| dev_t *| char *[, int
 //       with the previous process or thread.
 proc_t *readproc(PROCTAB *__restrict const PT, proc_t *__restrict p);
 proc_t *readeither(PROCTAB *__restrict const PT, proc_t *__restrict x);
-int look_up_our_self(proc_t *p);
+int look_up_our_self(void);
 void closeproc(PROCTAB *PT);
 char **vectorize_this_str(const char *src);
 

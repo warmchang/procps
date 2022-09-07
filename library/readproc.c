@@ -1602,15 +1602,18 @@ void closeproc(PROCTAB *PT) {
 
 
 //////////////////////////////////////////////////////////////////////////////////
-int look_up_our_self(proc_t *p) {
+int look_up_our_self(void) {
     struct utlbuf_s ub = { NULL, 0 };
     int rc = 0;
+    proc_t p;
 
+    memset(&p, 0, sizeof(proc_t));
     if(file2str("/proc/self", "stat", &ub) == -1){
         fprintf(stderr, "Error, do this: mount -t proc proc /proc\n");
         _exit(47);
     }
-    rc = stat2proc(ub.buf, p);  // parse /proc/self/stat
+    rc = stat2proc(ub.buf, &p); // parse /proc/self/stat
+    free_acquired(&p);
     free(ub.buf);
     return !rc;
 }

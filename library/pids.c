@@ -1381,11 +1381,10 @@ PROCPS_EXPORT struct pids_stack *fatal_proc_unmounted (
 {
     struct pids_fetch *fetched;
     unsigned tid;
-    proc_t self;
 
     /* this is very likely the *only* newlib function where the
        context (pids_info) of NULL will ever be permitted */
-    if (!look_up_our_self(&self)
+    if (!look_up_our_self()
     || (!return_self))
         return NULL;
 
