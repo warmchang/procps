@@ -248,11 +248,7 @@ static char Double_sp[] =  "   ";
 static char Double_sp[] =  " ~1 ~6 ";
 #define DOUBLE_space  (sizeof(Double_sp) - 5)    // 1 for null, 4 unprintable
 #endif
-#ifdef TOG4_NOTRUNC
- #define DOUBLE_limit  (int)( 160 + DOUBLE_space )
-#else
- #define DOUBLE_limit  (int)( 80 )
-#endif
+#define DOUBLE_limit  (int)( 80 )
 
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime. */
@@ -5708,11 +5704,8 @@ static void keys_summary (int ch) {
          break;
       case '4':
          w->rc.double_up = !w->rc.double_up;
-         if (w->rc.double_up && Screen_cols < DOUBLE_limit) {
-            show_msg(N_txt(XTRA_size2up_txt));
+         if (w->rc.double_up && Screen_cols < DOUBLE_limit)
             w->rc.double_up = 0;
-            break;
-         }
          if (w->rc.double_up)
             OFFw(w, (View_CPUSUM | View_CPUNOD));
          break;

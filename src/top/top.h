@@ -61,7 +61,6 @@
 //#define THREADED_CPU            /* separate background thread for cpu updt */
 //#define THREADED_MEM            /* separate background thread for mem updt */
 //#define THREADED_TSK            /* separate background thread for tsk updt */
-//#define TOG4_NOTRUNC            /* ensure no truncation for 2 abreast mode */
 //#define TOG4_OFF_MEM            /* don't show two abreast memory statistic */
 //#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
 //#define TREE_NORESET            /* sort keys should not force 'V' view off */
