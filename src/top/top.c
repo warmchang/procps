@@ -224,8 +224,10 @@ static int Numa_node_sel = -1;
 
         /* Support for Graphing of the View_STATES ('t') and View_MEMORY ('m')
            commands -- which are now both 4-way toggles */
+
 #define GRAPH_prefix  25     // beginning text + opening '['
 #define GRAPH_actual  100    // the actual bars or blocks
+#define GRAPH_minlen  10     // the actual bars or blocks
 #define GRAPH_suffix  2      // ending ']' + trailing space
 static float Graph_adj;      // bars/blocks scaling factor
 static int   Graph_len;      // scaled length (<= GRAPH_actual)
@@ -2068,16 +2070,16 @@ static void adj_geometry (void) {
    PSU_CLREOS(0);
 
    // prepare to customize potential cpu/memory graphs
-   Graph_len = Screen_cols - GRAPH_prefix - GRAPH_actual - GRAPH_suffix;
-   if (Graph_len >= 0) Graph_len = GRAPH_actual;
-   else if (Screen_cols > 80) Graph_len = Screen_cols - GRAPH_prefix - GRAPH_suffix;
-   else Graph_len = 80 - GRAPH_prefix - GRAPH_suffix;
-   if (Screen_cols < DOUBLE_limit) Curwin->rc.double_up = 0;
    if (Curwin->rc.double_up) {
       Graph_len = (Screen_cols - DOUBLE_space - (2 * (GRAPH_prefix + GRAPH_suffix))) / 2;
       Graph_len += (Screen_cols % 2) ? 0 : 1;
-      if (Graph_len > GRAPH_actual) Graph_len = GRAPH_actual;
+   } else {
+      Graph_len = Screen_cols - (GRAPH_prefix + GRAPH_actual + GRAPH_suffix);
+      if (Graph_len >= 0) Graph_len = GRAPH_actual;
+      else Graph_len = Screen_cols - GRAPH_prefix - GRAPH_suffix;
    }
+   if (Graph_len < GRAPH_minlen) Graph_len = GRAPH_minlen;
+   if (Graph_len > GRAPH_actual) Graph_len = GRAPH_actual;
    Graph_adj = (float)Graph_len / 100.0;
 
    fflush(stdout);
@@ -5704,10 +5706,7 @@ static void keys_summary (int ch) {
          break;
       case '4':
          w->rc.double_up = !w->rc.double_up;
-         if (w->rc.double_up && Screen_cols < DOUBLE_limit)
-            w->rc.double_up = 0;
-         if (w->rc.double_up)
-            OFFw(w, (View_CPUSUM | View_CPUNOD));
+         OFFw(w, (View_CPUSUM | View_CPUNOD));
          break;
       case 'C':
          VIZTOGw(w, View_SCROLL);
