@@ -48,7 +48,6 @@
 //#define PRETEND0NUMA            /* pretend that there ain't any numa nodes */
 //#define PRETEND48CPU            /* pretend we're smp with 48 ticsers (sic) */
 //#define PRETENDNOCAP            /* pretend terminal missing essential caps */
-//#define QUICK_GRAPHS            /* use fast algorithm & accept +2% distort */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
 //#define RMAN_IGNORED            /* don't consider auto right margin glitch */
@@ -761,6 +760,7 @@ typedef struct WIN_t {
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
 /*------  Tertiary summary display support (summary_show helpers)  -------*/
+//atic struct rx_st *sum_rx (long total, long part1, long part2, int style);
 //atic inline int    sum_see (const char *str, int nobuf);
 //atic int           sum_tics (struct stat_stack *this, const char *pfx, int nobuf);
 //atic int           sum_unify (struct stat_stack *this, int nobuf);
