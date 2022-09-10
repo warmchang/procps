@@ -224,13 +224,12 @@ static int Numa_node_sel = -1;
 
         /* Support for Graphing of the View_STATES ('t') and View_MEMORY ('m')
            commands -- which are now both 4-way toggles */
-
-#define GRAPH_prefix  25     // beginning text + opening '['
-#define GRAPH_actual  100    // the actual bars or blocks
-#define GRAPH_minlen  10     // the actual bars or blocks
-#define GRAPH_suffix  2      // ending ']' + trailing space
-static float Graph_adj;      // bars/blocks scaling factor
-static int   Graph_len;      // scaled length (<= GRAPH_actual)
+#define GRAPH_length_max  100  // the actual bars or blocks
+#define GRAPH_length_min   10  // the actual bars or blocks
+#define GRAPH_prefix_std   25  // '%Cpunnn: 100.0/100.0 100[' or 'nnn-nnn: 100.0/100.0 100['
+#define GRAPH_suffix        2  // ending ] + trailing space
+static float Graph_adj;        // bars/blocks scaling factor
+static int   Graph_len;        // scaled length (<= GRAPH_length_max)
 static const char Graph_blks[] = "                                                                                                    ";
 static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
 
@@ -242,15 +241,15 @@ static const char Osel_window_fmts[] = "window #%d, osel_tot=%d\n";
 static const char Osel_filterO_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%s\n";
 static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 
-        /* Support for 2 abreast display (if terminal is wide enough) */
+        /* Support for adjoining display (if terminal is wide enough) */
 #ifdef TOG4_OFF_SEP
-static char Double_sp[] =  "   ";
-#define DOUBLE_space  (sizeof(Double_sp) - 1)
+static char Adjoin_sp[] =  "   ";
+#define ADJOIN_space  (sizeof(Adjoin_sp) - 1)    // 1 for null
 #else
-static char Double_sp[] =  " ~1 ~6 ";
-#define DOUBLE_space  (sizeof(Double_sp) - 5)    // 1 for null, 4 unprintable
+static char Adjoin_sp[] =  " ~1 ~6 ";
+#define ADJOIN_space  (sizeof(Adjoin_sp) - 5)    // 1 for null + 4 unprintable
 #endif
-#define DOUBLE_limit  (int)( 80 )
+#define ADJOIN_limit  1
 
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime. */
@@ -2071,15 +2070,15 @@ static void adj_geometry (void) {
 
    // prepare to customize potential cpu/memory graphs
    if (Curwin->rc.double_up) {
-      Graph_len = (Screen_cols - DOUBLE_space - (2 * (GRAPH_prefix + GRAPH_suffix))) / 2;
+      Graph_len = (Screen_cols - ADJOIN_space - (2 * (GRAPH_prefix_std + GRAPH_suffix))) / 2;
       Graph_len += (Screen_cols % 2) ? 0 : 1;
    } else {
-      Graph_len = Screen_cols - (GRAPH_prefix + GRAPH_actual + GRAPH_suffix);
-      if (Graph_len >= 0) Graph_len = GRAPH_actual;
-      else Graph_len = Screen_cols - GRAPH_prefix - GRAPH_suffix;
+      Graph_len = Screen_cols - (GRAPH_prefix_std + GRAPH_length_max + GRAPH_suffix);
+      if (Graph_len >= 0) Graph_len = GRAPH_length_max;
+      else Graph_len = Screen_cols - GRAPH_prefix_std - GRAPH_suffix;
    }
-   if (Graph_len < GRAPH_minlen) Graph_len = GRAPH_minlen;
-   if (Graph_len > GRAPH_actual) Graph_len = GRAPH_actual;
+   if (Graph_len < GRAPH_length_min) Graph_len = GRAPH_length_min;
+   if (Graph_len > GRAPH_length_max) Graph_len = GRAPH_length_max;
    Graph_adj = (float)Graph_len / 100.0;
 
    fflush(stdout);
@@ -3948,7 +3947,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
          return p;
       if (w->rc.graph_mems < 0 || w->rc.graph_mems > 2)
          return p;
-      if (w->rc.double_up < 0 || w->rc.double_up > 1)
+      if (w->rc.double_up < 0 || w->rc.double_up > ADJOIN_limit)
          return p;
       // can't check upper bounds until Cpu_cnt is known
       if (w->rc.combine_cpus < 0)
@@ -6172,7 +6171,7 @@ static struct rx_st *sum_rx (long total, long part1, long part2, int style) {
 
 
         /*
-         * A *Helper* function to show summary information for up to 2 lines |
+         * A *Helper* function to show multiple lines of summary information |
          * as a single line. We return the number of lines actually printed. | */
 static inline int sum_see (const char *str, int nobuf) {
    static char row[ROWMINSIZ];
@@ -6183,7 +6182,7 @@ static inline int sum_see (const char *str, int nobuf) {
    if (Curwin->rc.double_up
    && (!nobuf)
    && (!tog)) {
-      scat(p, Double_sp);
+      scat(p, Adjoin_sp);
       tog = 1;
       return 0;
    }
