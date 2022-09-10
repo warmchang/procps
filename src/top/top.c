@@ -227,7 +227,8 @@ static int Numa_node_sel = -1;
 #define GRAPH_length_max  100  // the actual bars or blocks
 #define GRAPH_length_min   10  // the actual bars or blocks
 #define GRAPH_prefix_std   25  // '%Cpunnn: 100.0/100.0 100[' or 'nnn-nnn: 100.0/100.0 100['
-#define GRAPH_suffix        2  // ending ] + trailing space
+#define GRAPH_prefix_abv   12  // '%Cpunnn:100[' or 'nnn-nnn:100[' or 'GiB Mem 100[' or 'GiB Swap 99['
+#define GRAPH_suffix        2  // '] ' (bracket + trailing space)
 static float Graph_adj;        // bars/blocks scaling factor
 static int   Graph_len;        // scaled length (<= GRAPH_length_max)
 static const char Graph_blks[] = "                                                                                                    ";
@@ -249,7 +250,7 @@ static char Adjoin_sp[] =  "   ";
 static char Adjoin_sp[] =  " ~1 ~6 ";
 #define ADJOIN_space  (sizeof(Adjoin_sp) - 5)    // 1 for null + 4 unprintable
 #endif
-#define ADJOIN_limit  1
+#define ADJOIN_limit  8
 
         /* Support for the new library API -- acquired (if necessary)
            at program startup and referenced throughout our lifetime. */
@@ -2070,8 +2071,10 @@ static void adj_geometry (void) {
 
    // prepare to customize potential cpu/memory graphs
    if (Curwin->rc.double_up) {
-      Graph_len = (Screen_cols - ADJOIN_space - (2 * (GRAPH_prefix_std + GRAPH_suffix))) / 2;
-      Graph_len += (Screen_cols % 2) ? 0 : 1;
+      int num = (Curwin->rc.double_up + 1);
+      int pfx = (Curwin->rc.double_up < 2) ? GRAPH_prefix_std : GRAPH_prefix_abv;
+      Graph_len =  (Screen_cols - (ADJOIN_space * Curwin->rc.double_up) - (num * (pfx + GRAPH_suffix))) / num;
+      Graph_len += (Screen_cols % num) ? 0 : 1;
    } else {
       Graph_len = Screen_cols - (GRAPH_prefix_std + GRAPH_length_max + GRAPH_suffix);
       if (Graph_len >= 0) Graph_len = GRAPH_length_max;
@@ -3947,7 +3950,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
          return p;
       if (w->rc.graph_mems < 0 || w->rc.graph_mems > 2)
          return p;
-      if (w->rc.double_up < 0 || w->rc.double_up > ADJOIN_limit)
+      if (w->rc.double_up < 0 || w->rc.double_up >= ADJOIN_limit)
          return p;
       // can't check upper bounds until Cpu_cnt is known
       if (w->rc.combine_cpus < 0)
@@ -5704,7 +5707,8 @@ static void keys_summary (int ch) {
          }
          break;
       case '4':
-         w->rc.double_up = !w->rc.double_up;
+         w->rc.double_up += 1;
+         if (w->rc.double_up >= ADJOIN_limit) w->rc.double_up = 0;
          OFFw(w, (View_CPUSUM | View_CPUNOD));
          break;
       case 'C':
@@ -6174,17 +6178,17 @@ static struct rx_st *sum_rx (long total, long part1, long part2, int style) {
          * A *Helper* function to show multiple lines of summary information |
          * as a single line. We return the number of lines actually printed. | */
 static inline int sum_see (const char *str, int nobuf) {
-   static char row[ROWMINSIZ];
+   static char row[ROWMAXSIZ];
    static int tog;
    char *p;
 
    p = scat(row, str);
    if (Curwin->rc.double_up
-   && (!nobuf)
-   && (!tog)) {
-      scat(p, Adjoin_sp);
-      tog = 1;
-      return 0;
+   && (!nobuf)) {
+      if (++tog <= Curwin->rc.double_up) {
+         scat(p, Adjoin_sp);
+         return 0;
+      }
    }
    scat(p, "\n");
    show_special(0, row);
@@ -6219,10 +6223,14 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
       (who or what is explained by the passed prefix) */
    if (Curwin->rc.graph_cpus) {
       rx = sum_rx(tot_frme, rSv(stat_SUM_USR), rSv(stat_SUM_SYS), Curwin->rc.graph_cpus);
-      return sum_see(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f%s"
-         , pfx, rx->pcnt_one, rx->pcnt_two, rx->pcnt_tot
-         , rx->graph)
-         , nobuf);
+      if (Curwin->rc.double_up > 1)
+         return sum_see(fmtmk("%s~3%3.0f%s", pfx, rx->pcnt_tot, rx->graph), nobuf);
+      else {
+         return sum_see(fmtmk("%s ~3%#5.1f~2/%-#5.1f~3 %3.0f%s"
+            , pfx, rx->pcnt_one, rx->pcnt_two, rx->pcnt_tot
+            , rx->graph)
+            , nobuf);
+      }
    } else {
       return sum_see(fmtmk(Cpu_States_fmts, pfx
          , (float)rSv(stat_US) * scale, (float)rSv(stat_SY) * scale
@@ -6425,18 +6433,26 @@ static void do_memory (void) {
       my_misc = MEM_VAL(mem_TOT) - MEM_VAL(mem_FRE) - my_qued;
       my_used = MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - my_misc;
 
-      prT(bfT(0), mkM(MEM_VAL(mem_TOT)));
       rx = sum_rx(MEM_VAL(mem_TOT), my_misc, my_used, Curwin->rc.graph_mems);
-      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
-         , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0)
-         , rx->graph);
+      if (Curwin->rc.double_up > 1)
+         snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
+            , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, rx->graph);
+      else {
+         prT(bfT(0), mkM(MEM_VAL(mem_TOT)));
+         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
+            , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0)
+            , rx->graph);
+      }
       Msg_row += sum_see(row, mem2UP);
-
-      prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
       rx = sum_rx(MEM_VAL(swp_TOT), 0, MEM_VAL(swp_USE), Curwin->rc.graph_mems);
-      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
-         , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1)
-         , rx->graph);
+      if (Curwin->rc.double_up > 1)
+         snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
+            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_tot, rx->graph);
+      else {
+         prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
+         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
+            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
+      }
       Msg_row += sum_see(row, 1);
 
    } else {
