@@ -391,7 +391,7 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
           maxtasks,               // user requested maximum, 0 equals all
           graph_cpus,             // 't' - View_STATES supplementary vals
           graph_mems,             // 'm' - View_MEMORY supplememtary vals
-          double_up,              // '4' - show individual cpus 2 abreast
+          double_up,              // '4' - show multiple cpus on one line
           combine_cpus,           // '!' - keep combining additional cpus
           summclr,                // a colors 'number' used for summ info
           msgsclr,                //             "           in msgs/pmts
