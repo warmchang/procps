@@ -5846,13 +5846,8 @@ static void keys_summary (int ch) {
             w->rc.double_up = 0;
             break;
          }
-#ifdef TOG4_NOFORCE
-         if (CHKw(w, (View_CPUSUM | View_CPUNOD)))
-            w->rc.double_up = 0;
-#else
          if (w->rc.double_up)
             OFFw(w, (View_CPUSUM | View_CPUNOD));
-#endif
          break;
       case 'C':
          VIZTOGw(w, View_SCROLL);

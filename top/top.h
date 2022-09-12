@@ -65,7 +65,6 @@
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
-//#define TOG4_NOFORCE            /* no force 2 abreast mode with '4' toggle */
 //#define TOG4_NOTRUNC            /* ensure no truncation for 2 abreast mode */
 //#define TOG4_OFF_MEM            /* don't show two abreast memory statistic */
 //#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
