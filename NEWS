@@ -16,6 +16,7 @@ procps-ng-NEXT
   * top: adds a 'message log' recall capability
   * top: will accept utf8 multi-byte input with support
          for full line editing and previous line recall
+  * top: can show more than 2 abreast in summary display
 
 procps-ng-3.3.17
 ---------------

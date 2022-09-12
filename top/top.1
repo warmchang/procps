@@ -525,19 +525,27 @@ are shown first.
     \fBst\fR : time stolen from this vm by the hypervisor
 .fi
 
-In the alternate cpu states display modes, beyond the first tasks/threads line,
-an abbreviated summary is shown consisting of these elements:
+Beyond the first tasks/threads line, there are alternate \*(PU display
+modes available via the 4-way `t' \*(CT.
+They show an abbreviated summary consisting of these elements:
 .nf
               \fR a  \fR  b    \fR c \fR   d
-    %Cpu(s):  \fB75.0\fR/25.0  \fB100\fR[ ...
+    %Cpu(s):  \fB75.0\fR/25.0  \fB100\fR[ ... ]
 
 .fi
 
 Where: a) is the `user' (us + ni) percentage; b) is the `system'
-(sy + hi + si) percentage; c) is the total; and d) is one of two
-visual graphs of those representations.
-\*(XT 4b. SUMMARY AREA Commands and the `t' command for additional information
-on that special 4-way toggle.
+(sy + hi + si) percentage; c) is the total percentage; and d) is
+one of two visual graphs of those representations.
+Such graphs also reflect separate `user' and `system' portions.
+
+If the `4' \*(CT is used to yield more than two cpus per line,
+results will be further abridged eliminating the a) and b) elements.
+However, that information is still reflected in the graph itself
+assuming color is active or, if not, bars vs. blocks are being shown.
+
+\*(XT 4b. SUMMARY AREA Commands for additional information on the `t'
+and `4' \*(CTs.
 
 .\" ......................................................................
 .SS 2c. MEMORY Usage
@@ -567,8 +575,8 @@ In the alternate memory display modes, two abbreviated summary lines
 are shown consisting of these elements:
 .nf
               \fR a  \fR  b          c
-    GiB Mem : \fB18.7\fR/15.738   [ ...
-    GiB Swap: \fB 0.0\fR/7.999    [ ...
+    GiB Mem : \fB18.7\fR/15.738   [ ... ]
+    GiB Swap: \fB 0.0\fR/7.999    [ ... ]
 .fi
 
 Where: a) is the percentage used; b) is the total available; and c) is one of two
@@ -1527,17 +1535,20 @@ node will be shown until the `1', `2' or `4' \*(CT is pressed.
 This \*(CI is only available if a system has the requisite NUMA support.
 
 .TP 7
-\ \ \ \fB4\fR\ \ :\fIDisplay-Two-Abreast \fR
-This command turns the `1' toggle \*F, thus showing individual
-processors, and prints \*(PU and Memory results two abreast.
-It requires a terminal with a minimum width of 80 columns.
-If a terminal's width is decreased below the minimum while \*(We
-is running, \*(We reverts to showing \*(PU and Memory results
-on separate lines.
+\ \ \ \fB4\fR\ \ :\fIDisplay-Multiple-Elements-Adjacent\fR toggle \fR
+This \*(CT turns the `1' toggle \*F and shows multiple \*(PU and
+Memory results on each line.
+Each successive `4' key adds another \*(PU until again reverting
+to separate lines for \*(PU and Memory results.
 
-To avoid truncation when displaying detailed statistics,
-as opposed to the graphic representations, a minimum width
-of 165 columns would be required when the `4' toggle is \*O.
+A maximum of 8 \*(PUs per line can be displayed in this manner.
+However, data truncation may occur before reaching the maximum.
+That is definitely true when displaying detailed statistics via
+the `t' \*(CT since such data cannot be scaled like the graphic
+representations.
+
+If one wished to quickly exit adjacent mode without cycling all the
+way to 8, simply use the `1' \*(CT.
 
 .TP 7
 \ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode \fR
