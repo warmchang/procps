@@ -229,8 +229,14 @@ static int Numa_node_sel = -1;
 #define GRAPH_prefix_std   25  // '%Cpunnn: 100.0/100.0 100[' or 'nnn-nnn: 100.0/100.0 100['
 #define GRAPH_prefix_abv   12  // '%Cpunnn:100[' or 'nnn-nnn:100[' or 'GiB Mem 100[' or 'GiB Swap 99['
 #define GRAPH_suffix        2  // '] ' (bracket + trailing space)
-static float Graph_adj;        // bars/blocks scaling factor
-static int   Graph_len;        // scaled length (<= GRAPH_length_max)
+        // first 3 more static (adj_geometry), last 3 volatile (sum_tics/do_memory)
+struct graph_parms {
+   float adjust;               // bars/blocks scaling factor
+   int   length;               // scaled length (<= GRAPH_length_max)
+   int   style;                // rc.graph_cpus or rc.graph_mems
+   long  total, part1, part2;  // elements to be graphed
+};
+static struct graph_parms *Graph_cpus, *Graph_mems;
 static const char Graph_blks[] = "                                                                                                    ";
 static const char Graph_bars[] = "||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||";
 
@@ -2073,15 +2079,23 @@ static void adj_geometry (void) {
    if (Curwin->rc.double_up) {
       int num = (Curwin->rc.double_up + 1);
       int pfx = (Curwin->rc.double_up < 2) ? GRAPH_prefix_std : GRAPH_prefix_abv;
-      Graph_len =  (Screen_cols - (ADJOIN_space * Curwin->rc.double_up) - (num * (pfx + GRAPH_suffix))) / num;
+      Graph_cpus->length = (Screen_cols - (ADJOIN_space * Curwin->rc.double_up) - (num * (pfx + GRAPH_suffix))) / num;
+      Graph_mems->length = (Screen_cols - ADJOIN_space - (2 * (GRAPH_prefix_std + GRAPH_suffix))) / 2;
    } else {
-      Graph_len = Screen_cols - (GRAPH_prefix_std + GRAPH_length_max + GRAPH_suffix);
-      if (Graph_len >= 0) Graph_len = GRAPH_length_max;
-      else Graph_len = Screen_cols - GRAPH_prefix_std - GRAPH_suffix;
+      Graph_cpus->length = Screen_cols - (GRAPH_prefix_std + GRAPH_length_max + GRAPH_suffix);
+      if (Graph_cpus->length >= 0) Graph_cpus->length = GRAPH_length_max;
+      else Graph_cpus->length = Screen_cols - GRAPH_prefix_std - GRAPH_suffix;
+      Graph_mems->length = Graph_cpus->length;
    }
-   if (Graph_len < GRAPH_length_min) Graph_len = GRAPH_length_min;
-   if (Graph_len > GRAPH_length_max) Graph_len = GRAPH_length_max;
-   Graph_adj = (float)Graph_len / 100.0;
+   if (Graph_cpus->length < GRAPH_length_min) Graph_cpus->length = GRAPH_length_min;
+   if (Graph_cpus->length > GRAPH_length_max) Graph_cpus->length = GRAPH_length_max;
+   Graph_cpus->adjust = (float)Graph_cpus->length / 100.0;
+   Graph_cpus->style  = Curwin->rc.graph_cpus;
+
+   if (Graph_mems->length < GRAPH_length_min) Graph_mems->length = GRAPH_length_min;
+   if (Graph_mems->length > GRAPH_length_max) Graph_mems->length = GRAPH_length_max;
+   Graph_mems->adjust = (float)Graph_mems->length / 100.0;
+   Graph_mems->style  = Curwin->rc.graph_mems;
 
    fflush(stdout);
 } // end: adj_geometry
@@ -3658,6 +3672,9 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(X_THREADINGS_fmt), __LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_tasks, "update tasks");
 #endif
+   // lastly, establish support for graphing cpus & memory
+   Graph_cpus = alloc_c(sizeof(struct graph_parms));
+   Graph_mems = alloc_c(sizeof(struct graph_parms));
  #undef doALL
 } // end: before
 
@@ -6132,7 +6149,7 @@ struct rx_st {
          * A *Helper* function to produce the actual cpu & memory graphs for |
          * these functions -- sum_tics (tertiary) and do_memory (secondary). |
          * (sorry about the name, but it keeps the above comment commitment) | */
-static struct rx_st *sum_rx (long total, long part1, long part2, int style) {
+static struct rx_st *sum_rx (struct graph_parms *these) {
    static struct {
       const char *part1, *part2, *style;
    } gtab[] = {
@@ -6141,30 +6158,30 @@ static struct rx_st *sum_rx (long total, long part1, long part2, int style) {
    };
    static __thread struct rx_st rx;
    char buf1[SMLBUFSIZ], buf2[SMLBUFSIZ], buf3[MEDBUFSIZ];
-   int num1, num2, width;
+   int ix, num1, num2, width;
    float scale;
 
-   scale = 100.0 / total;
-   rx.pcnt_one = scale * part1;
-   rx.pcnt_two = scale * part2;
+   scale = 100.0 / these->total;
+   rx.pcnt_one = scale * these->part1;
+   rx.pcnt_two = scale * these->part2;
    if (rx.pcnt_one + rx.pcnt_two > 100.0 || rx.pcnt_two < 0)
       rx.pcnt_two = 0;
    rx.pcnt_tot = rx.pcnt_one + rx.pcnt_two;
 
-   num1 = (int)((rx.pcnt_one * Graph_adj) + .5),
-   num2 = (int)((rx.pcnt_two * Graph_adj) + .5);
-   if (num1 + num2 > Graph_len)
-      num2 = Graph_len - num1;
+   num1 = (int)((rx.pcnt_one * these->adjust) + .5),
+   num2 = (int)((rx.pcnt_two * these->adjust) + .5);
+   if (num1 + num2 > these->length)
+      num2 = these->length - num1;
 
-   width = Graph_len;
+   width = these->length;
    buf1[0] = buf2[0] = buf3[0] = '\0';
-   --style;    // now relative to zero
+   ix = these->style - 1;     // now relative to zero
    if (num1) {
-      snprintf(buf1, sizeof(buf1), gtab[style].part1, num1, gtab[style].style);
+      snprintf(buf1, sizeof(buf1), gtab[ix].part1, num1, gtab[ix].style);
       width += 2;
    }
    if (num2) {
-      snprintf(buf2, sizeof(buf2), gtab[style].part2, num2, gtab[style].style);
+      snprintf(buf2, sizeof(buf2), gtab[ix].part2, num2, gtab[ix].style);
       width += 2;
    }
    snprintf(buf3, sizeof(buf3), "%s%s", buf1, buf2);
@@ -6223,7 +6240,10 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
    /* display some kinda' cpu state percentages
       (who or what is explained by the passed prefix) */
    if (Curwin->rc.graph_cpus) {
-      rx = sum_rx(tot_frme, rSv(stat_SUM_USR), rSv(stat_SUM_SYS), Curwin->rc.graph_cpus);
+      Graph_cpus->total = tot_frme;
+      Graph_cpus->part1 = rSv(stat_SUM_USR);
+      Graph_cpus->part2 = rSv(stat_SUM_SYS);
+      rx = sum_rx(Graph_cpus);
       if (Curwin->rc.double_up > 1)
          return sum_see(fmtmk("%s~3%3.0f%s", pfx, rx->pcnt_tot, rx->graph), nobuf);
       else {
@@ -6434,27 +6454,23 @@ static void do_memory (void) {
       my_misc = MEM_VAL(mem_TOT) - MEM_VAL(mem_FRE) - my_qued;
       my_used = MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - my_misc;
 
-      rx = sum_rx(MEM_VAL(mem_TOT), my_misc, my_used, Curwin->rc.graph_mems);
-      if (Curwin->rc.double_up > 1)
-         snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
-            , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, rx->graph);
-      else {
-         prT(bfT(0), mkM(MEM_VAL(mem_TOT)));
-         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
-            , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0)
-            , rx->graph);
-      }
+      Graph_mems->total = MEM_VAL(mem_TOT);
+      Graph_mems->part1 = my_misc;
+      Graph_mems->part2 = my_used;
+      rx = sum_rx(Graph_mems);
+      prT(bfT(0), mkM(MEM_VAL(mem_TOT)));
+      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
+         , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0)
+         , rx->graph);
       Msg_row += sum_see(row, mem2UP);
 
-      rx = sum_rx(MEM_VAL(swp_TOT), 0, MEM_VAL(swp_USE), Curwin->rc.graph_mems);
-      if (Curwin->rc.double_up > 1)
-         snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
-            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_tot, rx->graph);
-      else {
-         prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
-         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
-            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
-      }
+      Graph_mems->total = MEM_VAL(swp_TOT);
+      Graph_mems->part1 = 0;
+      Graph_mems->part2 = MEM_VAL(swp_USE);
+      rx = sum_rx(Graph_mems);
+      prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
+      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
+         , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
       Msg_row += sum_see(row, 1);
 
    } else {

@@ -760,7 +760,7 @@ typedef struct WIN_t {
 //atic void          keys_window (int ch);
 //atic void          keys_xtra (int ch);
 /*------  Tertiary summary display support (summary_show helpers)  -------*/
-//atic struct rx_st *sum_rx (long total, long part1, long part2, int style);
+//atic struct rx_st *sum_rx (struct graph_parms *these);
 //atic inline int    sum_see (const char *str, int nobuf);
 //atic int           sum_tics (struct stat_stack *this, const char *pfx, int nobuf);
 //atic int           sum_unify (struct stat_stack *this, int nobuf);
