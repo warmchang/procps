@@ -2088,7 +2088,11 @@ static void adj_geometry (void) {
       if (Graph_cpus->length > GRAPH_length_max) Graph_cpus->length = GRAPH_length_max;
       if (Graph_cpus->length < GRAPH_length_min) Graph_cpus->length = GRAPH_length_min;
 
+#ifdef TOG4_MEM_1UP
+      Graph_mems->length = (Screen_cols - (GRAPH_prefix_std + GRAPH_suffix));
+#else
       Graph_mems->length = (Screen_cols - ADJOIN_space - (2 * (pfx + GRAPH_suffix))) / 2;
+#endif
       if (Graph_mems->length > GRAPH_length_max) Graph_mems->length = GRAPH_length_max;
       if (Graph_mems->length < GRAPH_length_min) Graph_mems->length = GRAPH_length_min;
 
@@ -6520,7 +6524,7 @@ static void do_memory (void) {
 #else
       if (Curwin->rc.double_up > 1)
          snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
-            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_tot, rx->graph);
+            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, rx->graph);
       else {
          prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
          snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
