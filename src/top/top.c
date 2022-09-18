@@ -5727,6 +5727,9 @@ static void keys_summary (int ch) {
          if ((w->rc.double_up >= ADJOIN_limit)
          || ((w->rc.double_up >= Cpu_cnt)))
             w->rc.double_up = 0;
+         if ((w->rc.double_up > 1)
+         && (!w->rc.graph_cpus))
+            w->rc.double_up = 0;
          OFFw(w, (View_CPUSUM | View_CPUNOD));
          break;
       case 'C':
@@ -5750,6 +5753,9 @@ static void keys_summary (int ch) {
             w->rc.graph_cpus = 0;
             OFFw(w, View_STATES);
          }
+         if ((w->rc.double_up > 1)
+         && (!w->rc.graph_cpus))
+            w->rc.double_up = 0;
          break;
       default:                    // keep gcc happy
          break;
