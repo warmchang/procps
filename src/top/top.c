@@ -2464,6 +2464,7 @@ static void fields_utility (void) {
 
    spewFI
 signify_that:
+   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -3285,6 +3286,7 @@ static int insp_view_choice (struct pids_stack *p) {
    int key, curlin = 0, curcol = 0;
 
 signify_that:
+   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -3407,6 +3409,7 @@ static void inspection_utility (int pid) {
    // must re-hide cursor since the prompt for a pid made it huge
    putp((Cursor_state = Cap_curs_hide));
 signify_that:
+   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -4586,6 +4589,7 @@ static void wins_colors (void) {
    wins_clrhlp(w, 1);
    putp((Cursor_state = Cap_curs_huge));
 signify_that:
+   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -5335,6 +5339,7 @@ static void help_view (void) {
 
    putp((Cursor_state = Cap_curs_huge));
 signify_that:
+   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -5353,22 +5358,26 @@ signify_that:
    if (key < 1) goto signify_that;
 
    switch (key) {
+      // these keys serve the primary help screen
       case kbd_ESC: case 'q':
          break;
       case '?': case 'h': case 'H':
          do {
-            putp(Cap_home);
+signify_this:
+            Frames_signal = BREAK_off;
+            putp(Cap_clr_scr);
+            adj_geometry();
             show_special(1, fmtmk(N_unq(WINDOWS_help_fmt)
                , w->grpname
                , Winstk[0].rc.winname, Winstk[1].rc.winname
                , Winstk[2].rc.winname, Winstk[3].rc.winname));
             putp(Cap_clr_eos);
             fflush(stdout);
-            if (Frames_signal || (key = iokey(IOKEY_ONCE)) < 1) {
-               adj_geometry();
-               putp(Cap_clr_scr);
-            } else w = win_select(key);
-         } while (key != kbd_ENTER && key != kbd_ESC);
+            if (Frames_signal || (key = iokey(IOKEY_ONCE)) < 1)
+               goto signify_this;
+            else w = win_select(key);
+         // these keys serve the secondary help screen
+         } while (key != kbd_ENTER && key != kbd_ESC && key != 'q');
          break;
       default:
          goto signify_that;
