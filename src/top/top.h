@@ -62,6 +62,7 @@
 //#define THREADED_TSK            /* separate background thread for tsk updt */
 //#define TOG4_OFF_MEM            /* don't show two abreast memory statistic */
 //#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
+//#define TOG4_STD_SEP            /* normal mem sep if 2 abreast & no graphs */
 //#define TREE_NORESET            /* sort keys should not force 'V' view off */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
@@ -624,6 +625,9 @@ typedef struct WIN_t {
 #endif
 #if defined(USE_X_COLHDR)
 # warning 'USE_X_COLHDR' makes parts of man page misleading (4e, 5d & 5e)
+#endif
+#if defined(TOG4_STD_SEP) && defined(TOG4_OFF_SEP)
+# warning 'TOG4_STD_SEP' has no effect when 'TOG4_OFF_SEP' is active
 #endif
 
 /*######  Some Prototypes (ha!)  #########################################*/
