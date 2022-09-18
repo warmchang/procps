@@ -61,6 +61,7 @@
 //#define THREADED_MEM            /* separate background thread for mem updt */
 //#define THREADED_TSK            /* separate background thread for tsk updt */
 //#define TOG4_MEM_1UP            /* don't show two abreast memory statistic */
+//#define TOG4_MEM_FIX            /* no variable mem graphs, thus misaligned */
 //#define TOG4_SEP_OFF            /* don't show two abreast visual separator */
 //#define TOG4_SEP_STD            /* normal mem sep if 2 abreast & no graphs */
 //#define TREE_NORESET            /* sort keys should not force 'V' view off */
