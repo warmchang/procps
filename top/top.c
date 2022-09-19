@@ -273,10 +273,10 @@ static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 
         /* Support for adjoining display (if terminal is wide enough) */
 #ifdef TOG4_OFF_SEP
-static char Adjoin_sp[] =  "   ";
+static char Adjoin_sp[] =  "  ";
 #define ADJOIN_space  (sizeof(Adjoin_sp) - 1)
 #else
-static char Adjoin_sp[] =  " ~1 ~6 ";
+static char Adjoin_sp[] =  " ~6 ~1";
 #define ADJOIN_space  (sizeof(Adjoin_sp) - 5)    // 1 for null, 4 unprintable
 #endif
 #define ADJOIN_limit  8
@@ -2143,7 +2143,6 @@ static void adj_geometry (void) {
       int num = (Curwin->rc.double_up + 1);
       int pfx = (Curwin->rc.double_up < 2) ? GRAPH_prefix_std : GRAPH_prefix_abv;
       Graph_len =  (Screen_cols - (ADJOIN_space * Curwin->rc.double_up) - (num * (pfx + GRAPH_suffix))) / num;
-      Graph_len += (Screen_cols % num) ? 0 : 1;
    } else {
       Graph_len = Screen_cols - (GRAPH_prefix_std + GRAPH_length_max + GRAPH_suffix);
       if (Graph_len >= 0) Graph_len = GRAPH_length_max;
@@ -5841,7 +5840,9 @@ static void keys_summary (int ch) {
          break;
       case '4':
          w->rc.double_up += 1;
-         if (w->rc.double_up >= ADJOIN_limit) w->rc.double_up = 0;
+         if ((w->rc.double_up >= ADJOIN_limit)
+         || ((w->rc.double_up >= smp_num_cpus)))
+            w->rc.double_up = 0;
          OFFw(w, (View_CPUSUM | View_CPUNOD));
          break;
       case 'C':
@@ -6301,7 +6302,7 @@ static struct rx_st *sum_rx (long total, long part1, long part2, int style) {
    }
    snprintf(buf3, sizeof(buf3), "%s%s", buf1, buf2);
    // 'width' has accounted for any show_special directives embedded above
-   snprintf(rx.graph, sizeof(rx.graph), "[~1%-*.*s]~1", width, width, buf3);
+   snprintf(rx.graph, sizeof(rx.graph), "[~1%-*.*s] ~1", width, width, buf3);
 
    return &rx;
 } // end: sum_rx
