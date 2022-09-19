@@ -6331,19 +6331,22 @@ static struct rx_st *sum_rx (struct graph_parms *these) {
    static __thread struct rx_st rx;
    char buf1[SMLBUFSIZ], buf2[SMLBUFSIZ], buf3[MEDBUFSIZ];
    int ix, num1, num2, width;
-   float scale;
+   float scale = 0.0;
 
-   scale = 100.0 / these->total;
+   if (these->total > 0)
+      scale = 100.0 / these->total;
    rx.pcnt_one = scale * these->part1;
    rx.pcnt_two = scale * these->part2;
    if (rx.pcnt_one + rx.pcnt_two > 100.0 || rx.pcnt_two < 0)
       rx.pcnt_two = 0;
    rx.pcnt_tot = rx.pcnt_one + rx.pcnt_two;
 
-   num1 = (int)((rx.pcnt_one * these->adjust) + .5),
+   num1 = (int)((rx.pcnt_one * these->adjust) + .5);
    num2 = (int)((rx.pcnt_two * these->adjust) + .5);
-   if (num1 + num2 > these->length)
+   if (num1 + num2 > these->length) {
+      if (num1 > these->length) num1 = these->length;
       num2 = these->length - num1;
+   }
 
    width = these->length;
    buf1[0] = buf2[0] = buf3[0] = '\0';
