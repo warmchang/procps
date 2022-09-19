@@ -255,8 +255,8 @@ static int Numa_node_sel = -1;
            commands -- which are now both 4-way toggles */
 #define GRAPH_length_max  100  // the actual bars or blocks
 #define GRAPH_length_min   10  // the actual bars or blocks
-#define GRAPH_prefix_std   25  // '%Cpunnn: 100.0/100.0 100[' or 'nnn-nnn: 100.0/100.0 100['
-#define GRAPH_prefix_abv   12  // '%Cpunnn:100[' or 'nnn-nnn:100[' or 'GiB Mem 100[' or 'GiB Swap 99['
+#define GRAPH_prefix_std   25  // '.......: 100.0/100.0 100['
+#define GRAPH_prefix_abv   12  // '.......:100['
 #define GRAPH_suffix        2  // '] ' (bracket + trailing space)
         // first 3 more static (adj_geometry), last 3 volatile (sum_tics/do_memory)
 struct graph_parms {
@@ -278,11 +278,11 @@ static const char Osel_filterO_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%s\n";
 static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 
         /* Support for adjoining display (if terminal is wide enough) */
-#ifdef TOG4_OFF_SEP
+#ifdef TOG4_SEP_OFF
 static char Adjoin_sp[] =  "  ";
 #define ADJOIN_space  (sizeof(Adjoin_sp) - 1)
 #else
-#ifdef TOG4_STD_SEP
+#ifdef TOG4_SEP_STD
 static char Adjoin_sp[] =  "~1 ~6 ";
 #else
 static char Adjoin_sp[] =  " ~6 ~1";
@@ -6530,7 +6530,7 @@ static void do_memory (void) {
  #define mkM(x) (float)kb_main_ ## x / scT(div)
  #define mkS(x) (float)kb_swap_ ## x / scT(div)
  #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
-#ifdef TOG4_OFF_MEM
+#ifdef TOG4_MEM_1UP
  #define mem2UP 1
 #else
  #define mem2UP 0
@@ -6584,8 +6584,7 @@ static void do_memory (void) {
       rx = sum_rx(Graph_mems);
       prT(bfT(0), mkM(total));
       snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
-         , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0)
-         , rx->graph);
+         , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0), rx->graph);
       Msg_row += sum_see(row, mem2UP);
 
       Graph_mems->total = kb_swap_total;

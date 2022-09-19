@@ -64,9 +64,9 @@
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
-//#define TOG4_OFF_MEM            /* don't show two abreast memory statistic */
-//#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
-//#define TOG4_STD_SEP            /* normal mem sep if 2 abreast & no graphs */
+//#define TOG4_MEM_1UP            /* don't show two abreast memory statistic */
+//#define TOG4_SEP_OFF            /* don't show two abreast visual separator */
+//#define TOG4_SEP_STD            /* normal mem sep if 2 abreast & no graphs */
 //#define TREE_NORESET            /* sort keys should not force 'V' view off */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
@@ -700,8 +700,8 @@ typedef struct WIN_t {
 #if defined(SCALE_FORMER) && defined(SCALE_POSTFX)
 # warning 'SCALE_POSTFX' is ignored when 'SCALE_FORMER' is active
 #endif
-#if defined(TOG4_STD_SEP) && defined(TOG4_OFF_SEP)
-# warning 'TOG4_STD_SEP' has no effect when 'TOG4_OFF_SEP' is active
+#if defined(TOG4_SEP_STD) && defined(TOG4_SEP_OFF)
+# warning 'TOG4_SEP_STD' has no effect when 'TOG4_SEP_OFF' is active
 #endif
 
 /*######  Some Prototypes (ha!)  #########################################*/
