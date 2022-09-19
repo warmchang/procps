@@ -2152,21 +2152,46 @@ static void adj_geometry (void) {
    if (Curwin->rc.double_up) {
       int num = (Curwin->rc.double_up + 1);
       int pfx = (Curwin->rc.double_up < 2) ? GRAPH_prefix_std : GRAPH_prefix_abv;
+
       Graph_cpus->length = (Screen_cols - (ADJOIN_space * Curwin->rc.double_up) - (num * (pfx + GRAPH_suffix))) / num;
-      Graph_mems->length = (Screen_cols - ADJOIN_space - (2 * (GRAPH_prefix_std + GRAPH_suffix))) / 2;
+      if (Graph_cpus->length > GRAPH_length_max) Graph_cpus->length = GRAPH_length_max;
+      if (Graph_cpus->length < GRAPH_length_min) Graph_cpus->length = GRAPH_length_min;
+
+      Graph_mems->length = (Screen_cols - ADJOIN_space - (2 * (pfx + GRAPH_suffix))) / 2;
+      if (Graph_mems->length > GRAPH_length_max) Graph_mems->length = GRAPH_length_max;
+      if (Graph_mems->length < GRAPH_length_min) Graph_mems->length = GRAPH_length_min;
+
+#if !defined(TOG4_MEM_FIX) && !defined(TOG4_MEM_1UP)
+      if (num > 2) {
+        #define cpuGRAPH  ( GRAPH_prefix_abv + Graph_cpus->length + GRAPH_suffix )
+        #define nxtGRAPH  ( cpuGRAPH + ADJOIN_space )
+         int len = cpuGRAPH;
+         for (;;) {
+            if (len + nxtGRAPH > GRAPH_length_max) break;
+            len += nxtGRAPH;
+         }
+         len -= (GRAPH_prefix_abv + ADJOIN_space);
+         Graph_mems->length = len;
+        #undef cpuGRAPH
+        #undef nxtGRAPH
+      }
+#endif
    } else {
       Graph_cpus->length = Screen_cols - (GRAPH_prefix_std + GRAPH_length_max + GRAPH_suffix);
       if (Graph_cpus->length >= 0) Graph_cpus->length = GRAPH_length_max;
       else Graph_cpus->length = Screen_cols - GRAPH_prefix_std - GRAPH_suffix;
+      if (Graph_cpus->length < GRAPH_length_min) Graph_cpus->length = GRAPH_length_min;
+#ifdef TOG4_MEM_1UP
+      Graph_mems->length = (Screen_cols - (GRAPH_prefix_std + GRAPH_suffix));
+      if (Graph_mems->length > GRAPH_length_max) Graph_mems->length = GRAPH_length_max;
+      if (Graph_mems->length < GRAPH_length_min) Graph_mems->length = GRAPH_length_min;
+#else
       Graph_mems->length = Graph_cpus->length;
+#endif
    }
-   if (Graph_cpus->length < GRAPH_length_min) Graph_cpus->length = GRAPH_length_min;
-   if (Graph_cpus->length > GRAPH_length_max) Graph_cpus->length = GRAPH_length_max;
    Graph_cpus->adjust = (float)Graph_cpus->length / 100.0;
    Graph_cpus->style  = Curwin->rc.graph_cpus;
 
-   if (Graph_mems->length < GRAPH_length_min) Graph_mems->length = GRAPH_length_min;
-   if (Graph_mems->length > GRAPH_length_max) Graph_mems->length = GRAPH_length_max;
    Graph_mems->adjust = (float)Graph_mems->length / 100.0;
    Graph_mems->style  = Curwin->rc.graph_mems;
 
@@ -6582,18 +6607,40 @@ static void do_memory (void) {
       Graph_mems->part1 = kb_main_used;
       Graph_mems->part2 = kb_main_my_misc;
       rx = sum_rx(Graph_mems);
+#ifdef TOG4_MEM_1UP
       prT(bfT(0), mkM(total));
       snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
          , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0), rx->graph);
+#else
+      if (Curwin->rc.double_up > 1)
+         snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
+            , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, rx->graph);
+      else {
+         prT(bfT(0), mkM(total));
+         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
+            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_tot, bfT(0), rx->graph);
+      }
+#endif
       Msg_row += sum_see(row, mem2UP);
 
       Graph_mems->total = kb_swap_total;
       Graph_mems->part1 = 0;
-      Graph_mems->part2 = kb_main_used;
+      Graph_mems->part2 = kb_swap_used;
       rx = sum_rx(Graph_mems);
+#ifdef TOG4_MEM_1UP
       prT(bfT(1), mkS(total));
       snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
          , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
+#else
+      if (Curwin->rc.double_up > 1)
+         snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
+            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, rx->graph);
+      else {
+         prT(bfT(1), mkS(total));
+         snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
+            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
+      }
+#endif
       Msg_row += sum_see(row, 1);
 
    } else {

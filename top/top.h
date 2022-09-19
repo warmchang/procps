@@ -65,6 +65,7 @@
 //#define STRINGCASENO            /* case insenstive compare/locate versions */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define TOG4_MEM_1UP            /* don't show two abreast memory statistic */
+//#define TOG4_MEM_FIX            /* no variable mem graphs, thus misaligned */
 //#define TOG4_SEP_OFF            /* don't show two abreast visual separator */
 //#define TOG4_SEP_STD            /* normal mem sep if 2 abreast & no graphs */
 //#define TREE_NORESET            /* sort keys should not force 'V' view off */
