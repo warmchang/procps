@@ -693,17 +693,17 @@ static void build_uniq_nlstab (void) {
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt */
    Uniq_nlstab[STATE_lin2x6_fmt] = _("%s~3"
-      " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3");
+      " %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1");
 
 /* Translation Hint: Only the following abbreviations need be translated
    .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
    .                 hi hardware interrupt, si = software interrupt, st = steal time */
    Uniq_nlstab[STATE_lin2x7_fmt] = _("%s~3"
-      "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3");
+      "%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1");
 
 /* Translation Hint: next 2 must be treated together, with WORDS above & below aligned */
    Uniq_nlstab[MEMORY_line1_fmt] = _(""
-      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3    ");
+      "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 ~1    ");
    Uniq_nlstab[MEMORY_line2_fmt] = _(""
       "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3");
 

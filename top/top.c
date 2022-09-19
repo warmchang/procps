@@ -282,7 +282,11 @@ static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
 static char Adjoin_sp[] =  "  ";
 #define ADJOIN_space  (sizeof(Adjoin_sp) - 1)
 #else
+#ifdef TOG4_STD_SEP
+static char Adjoin_sp[] =  "~1 ~6 ";
+#else
 static char Adjoin_sp[] =  " ~6 ~1";
+#endif
 #define ADJOIN_space  (sizeof(Adjoin_sp) - 5)    // 1 for null, 4 unprintable
 #endif
 #define ADJOIN_limit  8

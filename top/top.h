@@ -66,6 +66,7 @@
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define TOG4_OFF_MEM            /* don't show two abreast memory statistic */
 //#define TOG4_OFF_SEP            /* don't show two abreast visual separator */
+//#define TOG4_STD_SEP            /* normal mem sep if 2 abreast & no graphs */
 //#define TREE_NORESET            /* sort keys should not force 'V' view off */
 //#define TREE_SCANALL            /* rescan array w/ forest view, avoid sort */
 //#define TREE_VALTMRK            /* use an indented '+' with collapsed pids */
@@ -698,6 +699,9 @@ typedef struct WIN_t {
 #endif
 #if defined(SCALE_FORMER) && defined(SCALE_POSTFX)
 # warning 'SCALE_POSTFX' is ignored when 'SCALE_FORMER' is active
+#endif
+#if defined(TOG4_STD_SEP) && defined(TOG4_OFF_SEP)
+# warning 'TOG4_STD_SEP' has no effect when 'TOG4_OFF_SEP' is active
 #endif
 
 /*######  Some Prototypes (ha!)  #########################################*/
