@@ -2157,7 +2157,11 @@ static void adj_geometry (void) {
       if (Graph_cpus->length > GRAPH_length_max) Graph_cpus->length = GRAPH_length_max;
       if (Graph_cpus->length < GRAPH_length_min) Graph_cpus->length = GRAPH_length_min;
 
+#ifdef TOG4_MEM_1UP
+      Graph_mems->length = (Screen_cols - (GRAPH_prefix_std + GRAPH_suffix));
+#else
       Graph_mems->length = (Screen_cols - ADJOIN_space - (2 * (pfx + GRAPH_suffix))) / 2;
+#endif
       if (Graph_mems->length > GRAPH_length_max) Graph_mems->length = GRAPH_length_max;
       if (Graph_mems->length < GRAPH_length_min) Graph_mems->length = GRAPH_length_min;
 
