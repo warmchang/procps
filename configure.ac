@@ -219,13 +219,13 @@ AC_SUBST([HARDEN_LDFLAGS])
 # Optional packages - AC_ARG_WITH
 AC_ARG_WITH([ncurses],
   AS_HELP_STRING([--without-ncurses], [build only applications not needing ncurses]),
-  [AS_IF([test "x$enable_watch8bit" = "xyes"],
-    [AC_MSG_ERROR([Cannot have both --enable-watch8bit and --without-ncurses])]
-  )],
+  [],
   [with_ncurses=yes]
 )
 if test "x$with_ncurses" = xno; then
   AM_CONDITIONAL(WITH_NCURSES, false)
+  AS_IF([test "x$enable_watch8bit" = "xyes"],
+    [AC_MSG_ERROR([Cannot have both --enable-watch8bit and --without-ncurses])])
 else
   AM_CONDITIONAL(WITH_NCURSES, true)
   PKG_CHECK_MODULES([NCURSES], [ncursesw],
