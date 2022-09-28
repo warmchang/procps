@@ -123,7 +123,7 @@ static const char *scale_size(unsigned long size, int flags, struct commandline_
 		switch (args.exponent) {
 		case 0:
 			/* default output */
-			snprintf(buf, sizeof(buf), "%ld", size);
+			snprintf(buf, sizeof(buf), "%ld", (long int)(bytes / (long long int)base));
 			return buf;
 		case 1:
 			/* in bytes, which can not be in SI */
