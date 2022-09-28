@@ -1283,7 +1283,7 @@ depending on the context in which they are issued.
         A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z,
         ^G, ^K, ^N, ^P, ^U, ^L, ^R
   4b.\fI Summary-Area-Commands \fR
-        C, l, t, m, 1, 2, 3, 4, !
+        C, l, t, m, 1, 2, 3, 4, 5, !
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
         Content:     c, F, f, O, o, S, U, u, V, v, ^E
@@ -1702,7 +1702,28 @@ If one wished to quickly exit adjacent mode without cycling all the
 way to 8, simply use the `1' \*(CT.
 
 .TP 7
-\ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode \fR
+\ \ \ \fB5\fR\ \ :\fIDisplay-P-Cores-and-E-Cores\fR toggle \fR
+This \*(CT is only active when the `t' toggle is \*O and the `1', `2',
+`3' and `!' toggles are \*F, thus showing individual \*(PU results.
+It assumes a platform has multiple cores of two distinct types,
+either multi-threaded (P-Core) or single-threaded (E-Core).
+
+While normally each \*(Pu is displayed as `%Cpu0, %Cpu1, ...', this
+toggle can be used to identify and/or filter those \*(Pus by their
+core type, either P-Core (performance) or E-Core (efficient).
+
+The 1st time `5' is struck, each \*(PU is displayed as `%Cp\fBP\fR'
+or `%Cp\fBE\fR' representing the two core types.
+The 2nd time, only P-Cores (%Cp\fBP\fR) will be shown.
+The 3rd time, only E-Cores (%Cp\fBE\fR) are displayed.
+When this \*(CT is struck for the 4th time, the \*(PU display
+returns to the normal `%Cpu' convention.
+
+If separate\fI performance\fR and\fI efficient\fR categories are
+not present, this \*(CT will have no effect.
+
+.TP 7
+\ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode\fR toggle \fR
 This \*(CT is intended for massively parallel SMP environments where,
 even with the `4' \*(CT, not all processors can be displayed.
 With each press of `!' the number of additional \*(Pus combined is
@@ -1717,7 +1738,7 @@ Then the third '!' press, combining four additional \*(Pus, shows
 as `0-4, 5-9, ...', etc.
 
 Such progression continues until individual \*(Pus are again displayed
-and impacts both the `1' and `4' toggles (one or two columns).
+and impacts both the `1' and `4' toggles (one or muliple columns).
 Use the `=' command to exit \fBCombine Cpus\fR mode.
 
 .PP

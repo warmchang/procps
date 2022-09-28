@@ -19,6 +19,8 @@ procps-ng-NEXT
   * top: will accept utf8 multi-byte input with support
          for full line editing and previous line recall
   * top: can show more than 2 abreast in summary display
+  * top: can distinguish P-Core and E-core cpus
+  * top: can filter both P-Core and E-core cpus
   * watch: Add equexit no-change and exit option           merge #153
 
 procps-ng-4.0.0
