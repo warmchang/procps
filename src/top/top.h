@@ -30,6 +30,8 @@
 //#define BOT_STRV_OFF            /* don't emphasize strv w/ focus if spaces */
 //#define CASEUP_HEXES            /* show all those hex values in upper case */
 //#define CASEUP_SUFIX            /* show time/mem/cnts suffix in upper case */
+//#define CORE_TYPE_LO            /* show the type of cpu core in lower case */
+//#define CORE_TYPE_NO            /* don't distinguish the types of cpu core */
 //#define EQUCOLHDRYES            /* yes, equalize the column header lengths */
 //#define FOCUS_HARD_Y            /* 'F' will avoid topmost task distortions */
 //#define FOCUS_TREE_X            /* 'F' resets forest view indentation to 0 */
@@ -47,6 +49,7 @@
 //#define OVERTYPE_SEE            /* display a visual hint for overtype mode */
 //#define PRETEND0NUMA            /* pretend that there ain't any numa nodes */
 //#define PRETEND48CPU            /* pretend we're smp with 48 ticsers (sic) */
+//#define PRETENDECORE            /* pretend we've got some e-core type cpus */
 //#define PRETENDNOCAP            /* pretend terminal missing essential caps */
 //#define RCFILE_NOERR            /* rcfile errs silently default, vs. fatal */
 //#define RECALL_FIXED            /* don't reorder saved strings if recalled */
@@ -324,6 +327,7 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
           graph_mems,             // 'm' - View_MEMORY supplememtary vals
           double_up,              // '4' - show multiple cpus on one line
           combine_cpus,           // '!' - keep combining additional cpus
+          core_types,             // '5' - show/filter P-core/E-core cpus
           summclr,                // a colors 'number' used for summ info
           msgsclr,                //             "           in msgs/pmts
           headclr,                //             "           in cols head
@@ -587,16 +591,16 @@ typedef struct WIN_t {
         /* The default values for the local config file */
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
-   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, 1, 0, \
+   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, 1, 0, 0, \
       COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
       "Def", DEF_FIELDS }, \
-   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
+   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, 0, \
       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN, \
       "Job", JOB_FIELDS }, \
-   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
+   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, 0, \
       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, \
+   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, 0, \
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
    }, 0, DEF_SCALES2, 0, 0 }

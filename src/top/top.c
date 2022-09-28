@@ -286,7 +286,11 @@ static enum stat_item Stat_items[] = {
    STAT_TIC_DELTA_IOWAIT,   STAT_TIC_DELTA_IRQ,
    STAT_TIC_DELTA_SOFTIRQ,  STAT_TIC_DELTA_STOLEN,
    STAT_TIC_SUM_DELTA_USER, STAT_TIC_SUM_DELTA_SYSTEM,
+#ifdef CORE_TYPE_NO
    STAT_TIC_SUM_DELTA_TOTAL };
+#else
+   STAT_TIC_SUM_DELTA_TOTAL, STAT_TIC_TYPE_CORE };
+#endif
 enum Rel_statitems {
    stat_ID, stat_NU,
    stat_US, stat_SY,
@@ -294,11 +298,19 @@ enum Rel_statitems {
    stat_IO, stat_IR,
    stat_SI, stat_ST,
    stat_SUM_USR, stat_SUM_SYS,
+#ifdef CORE_TYPE_NO
    stat_SUM_TOT };
+#else
+   stat_SUM_TOT, stat_COR_TYP };
+#endif
         // cpu/node stack results extractor macros, where e=rel enum, x=index
 #define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x], Stat_ctx)
 #define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->numa->stacks[x], Stat_ctx)
 #define TIC_VAL(e,s) STAT_VAL(e, sl_int, s, Stat_ctx)
+#define E_CORE  1            // values for stat_COR_TYP itself
+#define P_CORE  2            // ( 0 = unsure/unknown )
+#define P_CORES_ONLY  2      // values of rc.core_types toggle, for filtering
+#define E_CORES_ONLY  3      // ( 0 = Cpu shown, 1 = both CpP & CpE shown )
         /*
          * --- <proc/meminfo.h> ----------------------------------------------- */
 static struct meminfo_info *Mem_ctx;
@@ -2721,6 +2733,12 @@ static void *cpus_refresh (void *unused) {
          Cpu_cnt = 48;
 #endif
       }
+#ifdef PRETENDECORE
+{  int i;
+   for (i = Cpu_cnt - (Cpu_cnt / 4); i < Cpu_cnt; i++)
+      Stat_reap->cpus->stacks[i]->head[stat_COR_TYP].result.s_int = E_CORE;
+}
+#endif
 #ifdef THREADED_CPU
       sem_post(&Semaphore_cpus_end);
    } while (1);
@@ -3990,9 +4008,9 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
 
       // be tolerant of missing release 3.3.10 graph modes additions
       if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
-                         ", double_up=%d, combine_cpus=%d\n"
+                         ", double_up=%d, combine_cpus=%d, core_types=%d\n"
          , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems
-         , &w->rc.double_up, &w->rc.combine_cpus))
+         , &w->rc.double_up, &w->rc.combine_cpus, &w->rc.core_types))
             return p;
       if (w->rc.sortindx < 0 || w->rc.sortindx >= EU_MAXPFLGS)
          return p;
@@ -4006,6 +4024,8 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
          return p;
       // can't check upper bounds until Cpu_cnt is known
       if (w->rc.combine_cpus < 0)
+         return p;
+      if (w->rc.core_types < 0 || w->rc.core_types > E_CORES_ONLY)
          return p;
 
       if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
@@ -4498,6 +4518,7 @@ static void win_reset (WIN_t *q) {
          osel_clear(q);
          q->findstr[0] = '\0';
          q->rc.combine_cpus = 0;
+         q->rc.core_types = 0;
 
          // these next guys are global, not really windows based
          Monpidsidx = 0;
@@ -5471,10 +5492,10 @@ static void write_rcfile (void) {
       }
       fprintf(fp, "\n");
       fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
-                  ", double_up=%d, combine_cpus=%d\n"
+                  ", double_up=%d, combine_cpus=%d, core_types=%d\n"
          , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks
-         , Winstk[i].rc.graph_cpus,  Winstk[i].rc.graph_mems
-         , Winstk[i].rc.double_up,  Winstk[i].rc.combine_cpus);
+         , Winstk[i].rc.graph_cpus, Winstk[i].rc.graph_mems, Winstk[i].rc.double_up
+         , Winstk[i].rc.combine_cpus, Winstk[i].rc.core_types);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
@@ -5728,6 +5749,7 @@ static void keys_summary (int ch) {
             if (!w->rc.combine_cpus) w->rc.combine_cpus = 1;
             else w->rc.combine_cpus *= 2;
             if (w->rc.combine_cpus >= Cpu_cnt) w->rc.combine_cpus = 0;
+            w->rc.core_types = 0;
          }
          break;
       case '1':
@@ -5736,6 +5758,7 @@ static void keys_summary (int ch) {
          OFFw(w, View_CPUNOD);
          SETw(w, View_STATES);
          w->rc.double_up = 0;
+         w->rc.core_types = 0;
          break;
       case '2':
          if (!Numa_node_tot)
@@ -5746,6 +5769,7 @@ static void keys_summary (int ch) {
             SETw(w, View_STATES);
             Numa_node_sel = -1;
             w->rc.double_up = 0;
+            w->rc.core_types = 0;
          }
          break;
       case '3':
@@ -5759,6 +5783,7 @@ static void keys_summary (int ch) {
                   SETw(w, View_CPUNOD | View_STATES);
                   OFFw(w, View_CPUSUM);
                   w->rc.double_up = 0;
+                  w->rc.core_types = 0;
                } else
                   show_msg(N_txt(NUMA_nodebad_txt));
             }
@@ -5774,6 +5799,27 @@ static void keys_summary (int ch) {
             w->rc.double_up = 0;
          OFFw(w, (View_CPUSUM | View_CPUNOD));
          break;
+#ifndef CORE_TYPE_NO
+      case '5':
+         if (!CHKw(w, View_STATES)
+         || ((CHKw(w, View_CPUSUM | View_CPUNOD))
+         || ((w->rc.combine_cpus))))
+            show_msg(N_txt(XTRA_modebad_txt));
+         else {
+            static int scanned;
+            if (!scanned) {
+               for (; scanned < Cpu_cnt; scanned++)
+                  if (CPU_VAL(stat_COR_TYP, scanned) == E_CORE)
+                     break;
+            }
+            if (scanned < Cpu_cnt) {
+               w->rc.core_types += 1;
+               if (w->rc.core_types > E_CORES_ONLY)
+                  w->rc.core_types = 0;
+           } else w->rc.core_types = 0;
+         }
+         break;
+#endif
       case 'C':
          VIZTOGw(w, View_SCROLL);
          break;
@@ -6252,6 +6298,7 @@ static inline int sum_see (const char *str, int nobuf) {
    char *p;
 
    p = scat(row, str);
+   if (!str[0]) goto flush_it;
    if (Curwin->rc.double_up
    && (!nobuf)) {
       if (++tog <= Curwin->rc.double_up) {
@@ -6259,6 +6306,8 @@ static inline int sum_see (const char *str, int nobuf) {
          return 0;
       }
    }
+flush_it:
+   if (!row[0]) return 0;
    scat(p, "\n");
    show_special(0, row);
    row[0] = '\0';
@@ -6277,12 +6326,17 @@ static inline int sum_see (const char *str, int nobuf) {
          *       display and thus requiring the '1', '4', or '!' cpu toggles |
          * ( we return the number of lines printed, as reported by sum_see ) | */
 static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
-  // a tailored 'results stack value' extractor macro
+  // tailored 'results stack value' extractor macros
+ #define qSv(E)  STAT_VAL(E, s_int, this, Stat_ctx)
  #define rSv(E)  TIC_VAL(E, this)
    SIC_t idl_frme, tot_frme;
    struct rx_st *rx;
    float scale;
 
+#ifndef CORE_TYPE_NO
+   if (Curwin->rc.core_types == P_CORES_ONLY && qSv(stat_COR_TYP) != P_CORE) return 0;
+   if (Curwin->rc.core_types == E_CORES_ONLY && qSv(stat_COR_TYP) != E_CORE) return 0;
+#endif
    idl_frme = rSv(stat_IL);
    tot_frme = rSv(stat_SUM_TOT);
    if (1 > tot_frme) idl_frme = tot_frme = 1;
@@ -6310,6 +6364,7 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
          , (float)rSv(stat_IO) * scale, (float)rSv(stat_IR) * scale
          , (float)rSv(stat_SI) * scale, (float)rSv(stat_ST) * scale), nobuf);
    }
+ #undef qSv
  #undef rSv
 } // end: sum_tics
 
@@ -6360,6 +6415,7 @@ static int sum_unify (struct stat_stack *this, int nobuf) {
          * ( so as to keep the 'summary_show' guy a reasonable size ) | */
 static void do_cpus (void) {
  #define noMAS (Msg_row + 1 >= SCREEN_ROWS - 1)
+ #define eachCPU(x)  N_fmt(WORD_eachcpu_fmt), 'u', x
    char tmp[MEDBUFSIZ];
    int i;
 
@@ -6398,7 +6454,7 @@ numa_oops:
          for (i = 0; i < deLIMIT; i++) {
             if (Numa_node_sel == CPU_VAL(stat_NU, i)) {
                if (noMAS) break;
-               snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
+               snprintf(tmp, sizeof(tmp), eachCPU(CPU_VAL(stat_ID, i)));
                Msg_row += sum_tics(Stat_reap->cpus->stacks[i], tmp, 1);
             }
          }
@@ -6419,7 +6475,7 @@ numa_oops:
          }
       } else {
          for (i = 0, j = 0; i < Cpu_cnt; i++) {
-            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), i);
+            snprintf(tmp, sizeof(tmp), eachCPU(i));
             Msg_row += sum_tics(Stat_reap->cpus->stacks[j], tmp, (i+1 >= Cpu_cnt));
             if (++j >= Stat_reap->cpus->total) j = 0;
             if (noMAS) break;
@@ -6433,7 +6489,18 @@ numa_oops:
          }
       } else {
          for (i = 0; i < Cpu_cnt; i++) {
-            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), CPU_VAL(stat_ID, i));
+#ifndef CORE_TYPE_NO
+ #ifdef CORE_TYPE_LO
+            char ctab[] = { 'u', 'e', 'p' };
+ #else
+            char ctab[] = { 'u', 'E', 'P' };
+ #endif
+            int cid = CPU_VAL(stat_ID, i), typ = CPU_VAL(stat_COR_TYP, i);
+            char chr = Curwin->rc.core_types ? ctab[typ] : 'u' ;
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), chr, cid);
+#else
+            snprintf(tmp, sizeof(tmp), eachCPU(CPU_VAL(stat_ID, i)));
+#endif
             Msg_row += sum_tics(Stat_reap->cpus->stacks[i], tmp, (i+1 >= Cpu_cnt));
             if (noMAS) break;
          }
@@ -6445,7 +6512,11 @@ numa_oops:
        * display just the 1st /proc/stat line ... */
       Msg_row += sum_tics(Stat_reap->summary, N_txt(WORD_allcpus_txt), 1);
    }
+
+   // coax this guy into flushing any pending cpu stuff ...
+   Msg_row += sum_see("", 1);
  #undef noMAS
+ #undef eachCPU
 } // end: do_cpus
 
 
@@ -6583,7 +6654,11 @@ static void do_key (int ch) {
          , kbd_CtrlN, kbd_CtrlP, kbd_CtrlR, kbd_CtrlU
          , kbd_ENTER, kbd_SPACE, kbd_BTAB, '\0' } },
       { keys_summary,
+ #ifdef CORE_TYPE_NO
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
+ #else
+         { '!', '1', '2', '3', '4', '5', 'C', 'l', 'm', 't', '\0' } },
+ #endif
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'F', 'i', 'J', 'j', 'n', 'O', 'o'
          , 'R', 'S', 'U', 'u', 'V', 'v', 'x', 'y', 'z'

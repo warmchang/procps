@@ -496,8 +496,9 @@ static void build_norm_nlstab (void) {
    .                 (should be exactly 6 characters, excluding leading % & colon) */
    Norm_nlstab[WORD_allcpus_txt] = _("%Cpu(s):");
 /* Translation Hint: The following "word" is meant to represent a single processor
-   .                 (should be exactly 3 characters, excluding leading %%, fmt chars & colon) */
-   Norm_nlstab[WORD_eachcpu_fmt] = _("%%Cpu%-3d:");
+                     and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
+   .                 (if 'Cp' is translated, it must be exactly 2 characters long) */
+   Norm_nlstab[WORD_eachcpu_fmt] = _("%%Cp%c%-3d:");
 /* Translation Hint: The following word "another" must have 1 trailing space */
    Norm_nlstab[WORD_another_txt] = _("another ");
    Norm_nlstab[FIND_no_next_txt] = _("Locate next inactive, use \"L\"");
