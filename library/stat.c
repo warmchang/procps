@@ -37,10 +37,20 @@
 
 
 #define STAT_FILE "/proc/stat"
+#define CORE_FILE "/proc/cpuinfo"
 
+#define CORE_BUFSIZ   1024             // buf size for line of /proc/cpuinfo
 #define BUFFER_INCR   8192             // amount i/p buffer allocations grow
 #define STACKS_INCR   64               // amount reap stack allocations grow
 #define NEWOLD_INCR   64               // amount jiffs hist allocations grow
+
+#define ECORE_BEGIN   10               // PRETEND_E_CORES begin at this cpu#
+
+/* ------------------------------------------------------------------------- +
+   this provision just does what its name sugggests - it will create several |
+   E-Core cpus for testing that STAT_TIC_ID_CORE & STAT_TIC_TYPE_CORE stuff! |*/
+// #define PRETEND_E_CORES //----------------------------------------------- |
+// ------------------------------------------------------------------------- +
 
 /* ------------------------------------------------------------------------- +
    this provision can be used to ensure that our Item_table was synchronized |
@@ -73,6 +83,14 @@ struct stat_jifs {
     unsigned long long xusr, xsys, xidl, xbsy, xtot;
 };
 
+struct stat_core {
+    int id;
+    int type;                          // 2 = p-core, 1 = e-core, 0 = unsure
+    int thread_1;
+    int thread_2;
+    struct stat_core *next;
+};
+
 struct stat_data {
     unsigned long intr;
     unsigned long ctxt;
@@ -94,8 +112,10 @@ struct hist_tic {
     struct stat_jifs new;
     struct stat_jifs old;
 #ifdef CPU_IDLE_FORCED
-    unsigned long edge;                // only valued/valid with cpu summary |
+    unsigned long edge;                // only valued/valid with cpu summary
 #endif
+    struct stat_core *core;
+    int saved_id;
 };
 
 struct stacks_extent {
@@ -135,6 +155,7 @@ struct stat_info {
     FILE *stat_fp;
     char *stat_buf;                    // grows to accommodate all /proc/stat
     int stat_buf_size;                 // current size for the above stat_buf
+    int cpu_count_hwm;                 // if changed, triggers new cores scan
     struct hist_sys sys_hist;          // SYS type management
     struct hist_tic cpu_hist;          // TIC type management for cpu summary
     struct reap_support cpus;          // TIC type management for real cpus
@@ -146,8 +167,8 @@ struct stat_info {
     struct item_support reap_items;    // items used for reap (shared among 3)
     struct item_support select_items;  // items unique to select
     time_t sav_secs;                   // used by procps_stat_get to limit i/o
+    struct stat_core *cores;           // linked list, also linked from hist_tic
 };
-
 
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
@@ -171,8 +192,10 @@ setDECL(noop)  { (void)R; (void)S; (void)T; }
 setDECL(extra) { (void)S; (void)T; R->result.ull_int = 0; }
 
 setDECL(TIC_ID)                 { (void)S; R->result.s_int = T->id;  }
+setDECL(TIC_ID_CORE)            { (void)S; R->result.s_int = (T->core) ? T->core->id : -1; }
 setDECL(TIC_NUMA_NODE)          { (void)S; R->result.s_int = T->numa_node; }
 setDECL(TIC_NUM_CONTRIBUTORS)   { (void)S; R->result.s_int = T->count; }
+setDECL(TIC_TYPE_CORE)          { (void)S; R->result.s_int = (T->core) ? T->core->type : 0; }
 
 TIC_set(TIC_USER,                 ull_int,  user)
 TIC_set(TIC_NICE,                 ull_int,  nice)
@@ -309,8 +332,10 @@ static struct {
   { RS(extra),                   QS(ull_int),  TS_noop     },
 
   { RS(TIC_ID),                  QS(s_int),    TS(s_int)   },
+  { RS(TIC_ID_CORE),             QS(s_int),    TS(s_int)   },
   { RS(TIC_NUMA_NODE),           QS(s_int),    TS(s_int)   },
   { RS(TIC_NUM_CONTRIBUTORS),    QS(s_int),    TS(s_int)   },
+  { RS(TIC_TYPE_CORE),           QS(s_int),    TS(s_int)   },
   { RS(TIC_USER),                QS(ull_int),  TS(ull_int) },
   { RS(TIC_NICE),                QS(ull_int),  TS(ull_int) },
   { RS(TIC_SYSTEM),              QS(ull_int),  TS(ull_int) },
@@ -391,6 +416,132 @@ static inline void stat_assign_results (
     }
     return;
 } // end: stat_assign_results
+
+
+#define E_CORE  1
+#define P_CORE  2
+#define VACANT -1
+
+static int stat_core_add (
+        struct stat_info *info,
+        int a_core,
+        int a_cpu)
+{
+    struct stat_core *last = NULL, *core = info->cores;
+
+    while (core) {
+        if (core->id == a_core) {
+            if (a_cpu == core->thread_1
+            || (a_cpu == core->thread_2))
+                return 1;
+            core->thread_2 = a_cpu;
+            core->type = P_CORE;
+            return 1;
+        }
+        last = core;
+        core = core->next;
+    }
+    if (!(core = calloc(1, sizeof(struct stat_core))))
+        return 0;
+    if (last) last->next = core;
+    else info->cores = core;
+    core->id = a_core;
+    core->thread_1 = a_cpu;
+    core->thread_2 = VACANT;
+    return 1;
+} // end: stat_core_add
+
+
+static void stat_cores_check (
+    struct stat_info *info)
+{
+    struct stat_core *core = info->cores;
+    int p_core = 0;
+
+    core = info->cores;
+    while (core) {
+        if (core->type == P_CORE) {
+            p_core = 1;
+            break;
+        }
+        core = core->next;
+    }
+    if (p_core) {
+        core = info->cores;
+        while (core) {
+            if (core->thread_2 == VACANT)
+                core->type = E_CORE;
+            core = core->next;
+        }
+    }
+} // end: stat_cores_check
+
+#undef E_CORE
+#undef P_CORE
+#undef VACANT
+
+
+static void stat_cores_link (
+        struct stat_info *info,
+        struct hist_tic *this)
+{
+    struct stat_core *core = info->cores;
+
+    while (core) {
+        if (this->id == core->thread_1
+        || (this->id == core->thread_2)) {
+            this->core = core;
+            break;
+        }
+        core = core->next;
+    }
+} // end: stat_cores_link
+
+
+static int stat_cores_verify (
+        struct stat_info *info)
+{
+    char buf[CORE_BUFSIZ];
+    int a_cpu, a_core;
+    FILE *fp;
+
+    if (!(fp = fopen(CORE_FILE, "r")))
+        return 0;
+    for (;;) {
+        if (NULL == fgets(buf, sizeof(buf), fp))
+            break;
+        if (buf[0] != 'p') continue;
+        if (!strstr(buf, "processor"))
+            continue;
+        sscanf(buf, "processor : %d", &a_cpu);
+        for (;;) {
+            if (NULL == fgets(buf, sizeof(buf), fp)) {
+                fclose(fp);
+                errno = EIO;
+                return 0;
+            }
+            if (buf[0] != 'c') continue;
+            if (!strstr(buf, "core id"))
+                continue;
+            sscanf(buf, "core id : %d", &a_core);
+            break;
+        }
+#ifdef PRETEND_E_CORES
+      { static int fake_core;
+        if (a_cpu > ECORE_BEGIN) {
+            if (!fake_core) fake_core = a_core + 1;
+             a_core = fake_core++;
+      } }
+#endif
+        if (!stat_core_add(info, a_core, a_cpu)) {
+            fclose(fp);
+            return 0;
+        }
+    }
+    fclose(fp);
+    stat_cores_check(info);
+    return 1;
+} // end: stat_cores_verify
 
 
 static inline void stat_derive_unique (
@@ -570,7 +721,7 @@ static int stat_read_failed (
  #define curSIZ  ( maxSIZ - tot_read )
  #define curPOS  ( info->stat_buf + tot_read )
     /* we slurp in the entire directory thus avoiding repeated calls to fread, |
-       especially in a massively parallel environment.  additionally, each cpu |
+       especially for a massively parallel environment. additionally, each cpu |
        line is then frozen in time rather than changing until we get around to |
        accessing it.  this helps to minimize (not eliminate) some distortions. | */
     tot_read = 0;
@@ -647,6 +798,16 @@ reap_em_again:
                 break;                   // we must tolerate cpus taken offline
         }
         stat_derive_unique(cpu_ptr);
+
+        /* this happens if cpus are taken offline/brought back online
+           so we better force the proper current core association ... */
+        if (cpu_ptr->saved_id != cpu_ptr->id) {
+           cpu_ptr->saved_id = cpu_ptr->id;
+           cpu_ptr->core = NULL;
+        }
+        if (!cpu_ptr->core)
+            stat_cores_link(info, cpu_ptr);
+
 #ifdef CPU_IDLE_FORCED
         // first time through (that priming read) sum_ptr->edge will be zero |
         if (cpu_ptr->new.xtot < sum_ptr->edge) {
@@ -668,6 +829,13 @@ reap_em_again:
     }
 
     info->cpus.total = info->cpus.hist.n_inuse = sum_ptr->count = i;
+    /* whoa, if a new cpu was brought online, we better
+       ensure that no new cores have now become visible */
+    if (info->cpu_count_hwm < info->cpus.total) {
+        if (!stat_cores_verify(info))
+            return 1;
+        info->cpu_count_hwm = info->cpus.total;
+    }
 
     // remember sys_hist stuff from last time around
     memcpy(&info->sys_hist.old, &info->sys_hist.new, sizeof(struct stat_data));
@@ -911,6 +1079,12 @@ PROCPS_EXPORT int procps_stat_new (
 
     numa_init();
 
+    // identify the current P-cores and E-cores, if any
+    if (!stat_cores_verify(p)) {
+        procps_stat_unref(&p);
+        return -errno;
+    }
+
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
          2) make delta results potentially useful, even if 1st time |
@@ -980,6 +1154,15 @@ PROCPS_EXPORT int procps_stat_unref (
             free((*info)->reap_items.enums);
         if ((*info)->select_items.enums)
             free((*info)->select_items.enums);
+
+        if ((*info)->cores) {
+            struct stat_core *next, *this = (*info)->cores;
+            while (this) {
+                next = this->next;
+                free(this);
+                this = next;
+           };
+        }
 
         numa_uninit();
 

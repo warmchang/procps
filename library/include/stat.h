@@ -32,8 +32,10 @@ enum stat_item {
                                   //  returns        origin, see proc(5)
                                   //  -------        -------------------
     STAT_TIC_ID,                  //    s_int        /proc/stat, cpu or numa node id
+    STAT_TIC_ID_CORE,             //    s_int        /proc/cpuinfo: 'core id', -1 = n/a
     STAT_TIC_NUMA_NODE,           //    s_int      [ CPU ID based, see: numa(3) ]
     STAT_TIC_NUM_CONTRIBUTORS,    //    s_int      [ total CPUs contributing to TIC counts ]
+    STAT_TIC_TYPE_CORE,           //    s_int      [ 2 = P-core, 1 = E-core, 0 = n/a ]
 
     STAT_TIC_USER,                //  ull_int        /proc/stat
     STAT_TIC_NICE,                //  ull_int         "
