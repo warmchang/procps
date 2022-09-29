@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-09-05 17:45+1000\n"
+"POT-Creation-Date: 2022-09-30 08:26+1000\n"
 "PO-Revision-Date: 2021-01-23 20:56+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -3330,72 +3330,73 @@ msgid "%Cpu(s):"
 msgstr "%CPU:   "
 
 #. Translation Hint: The following "word" is meant to represent a single processor
-#. .                 (should be exactly 3 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:500
+#. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
+#. .                 (if 'Cp' is translated, it must be exactly 2 characters long)
+#: src/top/top_nls.c:501
 #, fuzzy, c-format
-msgid "%%Cpu%-3d:"
+msgid "%%Cp%c%-3d:"
 msgstr "%%CPU%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: src/top/top_nls.c:502
+#: src/top/top_nls.c:503
 msgid "another "
 msgstr "kolejnego "
 
-#: src/top/top_nls.c:503
+#: src/top/top_nls.c:504
 msgid "Locate next inactive, use \"L\""
 msgstr "Odnalezienie następnego nieaktywnego, klawisz \"L\""
 
-#: src/top/top_nls.c:504
+#: src/top/top_nls.c:505
 msgid "Locate string"
 msgstr "Odnalezienie łańcucha"
 
-#: src/top/top_nls.c:505
+#: src/top/top_nls.c:506
 #, c-format
 msgid "%s\"%s\" not found"
 msgstr "nie znaleziono %s\"%s\""
 
-#: src/top/top_nls.c:506
+#: src/top/top_nls.c:507
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr "zw. szerokości %d, zmiana na (0=domyślne, -1=auto)"
 
-#: src/top/top_nls.c:507
+#: src/top/top_nls.c:508
 #, fuzzy
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
 msgstr "plik rc ma błędne wpisy inspect/other-filter, zapisać mimo to?"
 
-#: src/top/top_nls.c:508
+#: src/top/top_nls.c:509
 #, c-format
 msgid "unrecognized field name '%s'"
 msgstr "nierozpoznana nazwa pola '%s'"
 
-#: src/top/top_nls.c:509
+#: src/top/top_nls.c:510
 msgid "even using field names only, window is now too small"
 msgstr "nawet przy użyciu tylko nazw pól, okno jest teraz za małe"
 
-#: src/top/top_nls.c:510
+#: src/top/top_nls.c:511
 msgid "Open Files"
 msgstr "Otwarte pliki"
 
-#: src/top/top_nls.c:511
+#: src/top/top_nls.c:512
 msgid "NUMA Info"
 msgstr "Informacje NUMA"
 
-#: src/top/top_nls.c:512
+#: src/top/top_nls.c:513
 msgid "Log"
 msgstr "Log"
 
-#: src/top/top_nls.c:513
+#: src/top/top_nls.c:514
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
 msgstr "klawisz '=' może pokazać czytany plik lub wykonywane polecenia..."
 
-#: src/top/top_nls.c:514
+#: src/top/top_nls.c:515
 msgid "demo"
 msgstr "demo"
 
-#: src/top/top_nls.c:515
+#: src/top/top_nls.c:516
 #, fuzzy, c-format
 msgid ""
 "This is simulated output representing the contents of some file or the "
@@ -3484,110 +3485,110 @@ msgstr ""
 "\n"
 "Miłej zabawy!\n"
 
-#: src/top/top_nls.c:547
+#: src/top/top_nls.c:548
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
 msgstr ""
 "aby włączyć 'Y', należy wcisnąć <Enter>, następnie 'W' i zrestartować topa"
 
-#: src/top/top_nls.c:548
+#: src/top/top_nls.c:549
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr ""
 "aby włączyć 'Y', należy przeczytać stronę man programu top (teraz wcisnąć "
 "Enter)"
 
-#: src/top/top_nls.c:549
+#: src/top/top_nls.c:550
 #, c-format
 msgid "Selection failed with: %s\n"
 msgstr "Wybór nie powiódł się, błąd: %s\n"
 
-#: src/top/top_nls.c:550
+#: src/top/top_nls.c:551
 #, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "nie można zbadać, nie znaleziono pidu %d"
 
-#: src/top/top_nls.c:551
+#: src/top/top_nls.c:552
 #, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr "podgląd PID-u [domyślny = %d]"
 
-#: src/top/top_nls.c:552
+#: src/top/top_nls.c:553
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: odczytano linie: %*d-%-*d, kolumny %*d-%*d, bajtów: %lu"
 
-#: src/top/top_nls.c:553
+#: src/top/top_nls.c:554
 #, fuzzy
 msgid "patience please, working ..."
 msgstr "proszę czekać, przetwarzanie..."
 
-#: src/top/top_nls.c:554
+#: src/top/top_nls.c:555
 msgid "working, use Ctrl-C to end ..."
 msgstr "przetwarzanie, można przerwać Ctrl-C..."
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: src/top/top_nls.c:557
+#: src/top/top_nls.c:558
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr "dodanie filtra #%d (%s) jako: [!]POLE?WARTOŚĆ"
 
-#: src/top/top_nls.c:558
+#: src/top/top_nls.c:559
 msgid "ignoring case"
 msgstr "ignorowanie wielkości liter"
 
-#: src/top/top_nls.c:559
+#: src/top/top_nls.c:560
 msgid "case sensitive"
 msgstr "rozróżnianie wielkości liter"
 
-#: src/top/top_nls.c:560
+#: src/top/top_nls.c:561
 msgid "duplicate filter was ignored"
 msgstr "zignorowano powtórzony filtr"
 
-#: src/top/top_nls.c:561
+#: src/top/top_nls.c:562
 #, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "brak ogranicznika filtra '%s'"
 
-#: src/top/top_nls.c:562
+#: src/top/top_nls.c:563
 #, c-format
 msgid "'%s' filter value is missing"
 msgstr "brak wartości filtra '%s'"
 
-#: src/top/top_nls.c:563
+#: src/top/top_nls.c:564
 msgid "include"
 msgstr "dodanie"
 
-#: src/top/top_nls.c:564
+#: src/top/top_nls.c:565
 msgid "exclude"
 msgstr "wykluczenie"
 
-#: src/top/top_nls.c:565
+#: src/top/top_nls.c:566
 #, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "<Enter> wznawia, filtry: %s"
 
-#: src/top/top_nls.c:566
+#: src/top/top_nls.c:567
 msgid "none"
 msgstr "brak"
 
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:569
+#: src/top/top_nls.c:570
 #, fuzzy, c-format
 msgid "%%Node%-2d:"
 msgstr "%%Węz.%-2d:"
 
-#: src/top/top_nls.c:570
+#: src/top/top_nls.c:571
 #, fuzzy, c-format
 msgid "expand which numa node (0-%d)"
 msgstr "który węzeł rozwinąć (0-%d)"
 
-#: src/top/top_nls.c:571
+#: src/top/top_nls.c:572
 #, fuzzy
 msgid "invalid numa node"
 msgstr "błędny węzeł"
 
-#: src/top/top_nls.c:572
+#: src/top/top_nls.c:573
 msgid "sorry, NUMA extensions unavailable"
 msgstr "niestety rozszerzenia NUMA nie są dostępne"
 
@@ -3595,42 +3596,38 @@ msgstr "niestety rozszerzenia NUMA nie są dostępne"
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: src/top/top_nls.c:577
+#: src/top/top_nls.c:578
 msgid "Mem "
 msgstr "RAM "
 
-#: src/top/top_nls.c:578
+#: src/top/top_nls.c:579
 msgid "Swap"
 msgstr "Swap"
 
-#: src/top/top_nls.c:579
+#: src/top/top_nls.c:580
 #, c-format
 msgid "library failed memory statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:580
+#: src/top/top_nls.c:581
 #, c-format
 msgid "library failed cpu statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:581
+#: src/top/top_nls.c:582
 #, c-format
 msgid "library failed pids statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:582
+#: src/top/top_nls.c:583
 #, fuzzy, c-format
 msgid "bad memory scaling arg '%s'"
 msgstr "błędny argument skalowania pamięci '%c'"
 
-#: src/top/top_nls.c:583
+#: src/top/top_nls.c:584
 #, c-format
 msgid "PID to collapse/expand [default pid = %d]"
 msgstr "PID do zwinięcia/rozwinięcia [domyślny pid = %d]"
-
-#: src/top/top_nls.c:584
-msgid "terminal is not wide enough"
-msgstr "terminal nie jest wystarczająco szeroki"
 
 #: src/top/top_nls.c:585
 msgid "wrong mode, command inactive"
@@ -4027,7 +4024,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
-"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 msgstr ""
 "%s~3 %#5.1f ~2uż,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2be,~3 %#5.1f ~2io,"
 "~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
@@ -4039,7 +4036,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 msgstr ""
 "%s~3%#5.1f ~2uż,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2be,~3%#5.1f ~2io,"
 "~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2sk~3"
@@ -4048,8 +4045,8 @@ msgstr ""
 #: src/top/top_nls.c:767
 #, fuzzy, c-format
 msgid ""
-"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/"
-"cache~3    "
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
+"~1    "
 msgstr ""
 "%s %s:~3 %9.9s~2razem,~3 %9.9s~2wolne,~3 %9.9s~2użyte,~3 %9.9s~2buf/cache~3\n"
 "%s %s:~3 %9.9s~2razem,~3 %9.9s~2wolne,~3 %9.9s~2użyte.~3 %9.9s~2dost. %s~3\n"
@@ -4867,6 +4864,9 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s z pakietu %s\n"
+
+#~ msgid "terminal is not wide enough"
+#~ msgstr "terminal nie jest wystarczająco szeroki"
 
 #~ msgid ""
 #~ "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-09-05 17:45+1000\n"
+"POT-Creation-Date: 2022-09-30 08:26+1000\n"
 "PO-Revision-Date: 2021-01-24 13:12+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -3357,61 +3357,62 @@ msgid "%Cpu(s):"
 msgstr "%CPU(s):"
 
 #. Translation Hint: The following "word" is meant to represent a single processor
-#. .                 (should be exactly 3 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:500
+#. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
+#. .                 (if 'Cp' is translated, it must be exactly 2 characters long)
+#: src/top/top_nls.c:501
 #, fuzzy, c-format
-msgid "%%Cpu%-3d:"
+msgid "%%Cp%c%-3d:"
 msgstr "%%CPU%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: src/top/top_nls.c:502
+#: src/top/top_nls.c:503
 msgid "another "
 msgstr "andere "
 
-#: src/top/top_nls.c:503
+#: src/top/top_nls.c:504
 msgid "Locate next inactive, use \"L\""
 msgstr ""
 
-#: src/top/top_nls.c:504
+#: src/top/top_nls.c:505
 msgid "Locate string"
 msgstr ""
 
-#: src/top/top_nls.c:505
+#: src/top/top_nls.c:506
 #, c-format
 msgid "%s\"%s\" not found"
 msgstr "%s»%s« nicht gefunden"
 
-#: src/top/top_nls.c:506
+#: src/top/top_nls.c:507
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr ""
 
-#: src/top/top_nls.c:507
+#: src/top/top_nls.c:508
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
 msgstr ""
 
-#: src/top/top_nls.c:508
+#: src/top/top_nls.c:509
 #, c-format
 msgid "unrecognized field name '%s'"
 msgstr "nicht erkannter Feldname »%s«"
 
-#: src/top/top_nls.c:509
+#: src/top/top_nls.c:510
 msgid "even using field names only, window is now too small"
 msgstr "selbst nur mit Feldnamen ist das Fenster jetzt zu klein"
 
-#: src/top/top_nls.c:510
+#: src/top/top_nls.c:511
 msgid "Open Files"
 msgstr "Offene Dateien"
 
-#: src/top/top_nls.c:511
+#: src/top/top_nls.c:512
 msgid "NUMA Info"
 msgstr "NUMA-Info"
 
-#: src/top/top_nls.c:512
+#: src/top/top_nls.c:513
 msgid "Log"
 msgstr "Protokoll"
 
-#: src/top/top_nls.c:513
+#: src/top/top_nls.c:514
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
@@ -3419,11 +3420,11 @@ msgstr ""
 "Die Taste »=« zeigt eventuell die tatsächlich gelesene Datei oder den/die "
 "ausgeführte(n) Befehl(e) …"
 
-#: src/top/top_nls.c:514
+#: src/top/top_nls.c:515
 msgid "demo"
 msgstr "Demo"
 
-#: src/top/top_nls.c:515
+#: src/top/top_nls.c:516
 #, fuzzy, c-format
 msgid ""
 "This is simulated output representing the contents of some file or the "
@@ -3520,111 +3521,111 @@ msgstr ""
 "\n"
 "Viel Spaß!\n"
 
-#: src/top/top_nls.c:547
+#: src/top/top_nls.c:548
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
 msgstr ""
 "Um »Y« zu aktivieren, drücken Sie die Eingabetaste, geben »W« ein und "
 "starten top neu"
 
-#: src/top/top_nls.c:548
+#: src/top/top_nls.c:549
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr ""
 "Lesen Sie in der Handbuchseite zu top(1), wie Sie die Option »Y« aktivieren "
 "können (Eingabetaste drücken)"
 
-#: src/top/top_nls.c:549
+#: src/top/top_nls.c:550
 #, c-format
 msgid "Selection failed with: %s\n"
 msgstr "Auswahl fehlgeschlagen mit: %s\n"
 
-#: src/top/top_nls.c:550
+#: src/top/top_nls.c:551
 #, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "Untersuchung nicht möglich, PID %d nicht gefunden"
 
-#: src/top/top_nls.c:551
+#: src/top/top_nls.c:552
 #, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr ""
 
-#: src/top/top_nls.c:552
+#: src/top/top_nls.c:553
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: %*d-%-*d Zeilen, %*d-%*d Spalten, %lu Bytes gelesen"
 
-#: src/top/top_nls.c:553
+#: src/top/top_nls.c:554
 #, fuzzy
 msgid "patience please, working ..."
 msgstr "Bitte warten Sie, wird ausgeführt …"
 
-#: src/top/top_nls.c:554
+#: src/top/top_nls.c:555
 msgid "working, use Ctrl-C to end ..."
 msgstr "Wird ausgeführt, Strg-C zum Beenden …"
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: src/top/top_nls.c:557
+#: src/top/top_nls.c:558
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr "Filter #%d (%s) hinzufügen als: [!]FELD?WERT"
 
-#: src/top/top_nls.c:558
+#: src/top/top_nls.c:559
 msgid "ignoring case"
 msgstr "Groß-/Kleinschreibung ignorieren"
 
-#: src/top/top_nls.c:559
+#: src/top/top_nls.c:560
 msgid "case sensitive"
 msgstr "Groß-/Kleinschreibung"
 
-#: src/top/top_nls.c:560
+#: src/top/top_nls.c:561
 msgid "duplicate filter was ignored"
 msgstr "Filterduplikat wurde ignoriert"
 
-#: src/top/top_nls.c:561
+#: src/top/top_nls.c:562
 #, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "Filter-Trennzeichen »%s« fehlt"
 
-#: src/top/top_nls.c:562
+#: src/top/top_nls.c:563
 #, c-format
 msgid "'%s' filter value is missing"
 msgstr "Filterwert »%s« fehlt"
 
-#: src/top/top_nls.c:563
+#: src/top/top_nls.c:564
 msgid "include"
 msgstr "einschließen"
 
-#: src/top/top_nls.c:564
+#: src/top/top_nls.c:565
 msgid "exclude"
 msgstr "ausschließen"
 
-#: src/top/top_nls.c:565
+#: src/top/top_nls.c:566
 #, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "<Eingabe> zum Fortsetzen, Filter: %s"
 
-#: src/top/top_nls.c:566
+#: src/top/top_nls.c:567
 msgid "none"
 msgstr "keine"
 
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:569
+#: src/top/top_nls.c:570
 #, fuzzy, c-format
 msgid "%%Node%-2d:"
 msgstr "%%Node%-2d:"
 
-#: src/top/top_nls.c:570
+#: src/top/top_nls.c:571
 #, c-format
 msgid "expand which numa node (0-%d)"
 msgstr ""
 
-#: src/top/top_nls.c:571
+#: src/top/top_nls.c:572
 #, fuzzy
 msgid "invalid numa node"
 msgstr "ungültiger Knoten"
 
-#: src/top/top_nls.c:572
+#: src/top/top_nls.c:573
 msgid "sorry, NUMA extensions unavailable"
 msgstr "Entschuldigung, NUMA-Erweiterungen sind nicht verfügbar"
 
@@ -3632,42 +3633,38 @@ msgstr "Entschuldigung, NUMA-Erweiterungen sind nicht verfügbar"
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: src/top/top_nls.c:577
+#: src/top/top_nls.c:578
 msgid "Mem "
 msgstr "Spch"
 
-#: src/top/top_nls.c:578
+#: src/top/top_nls.c:579
 msgid "Swap"
 msgstr "Swap"
 
-#: src/top/top_nls.c:579
+#: src/top/top_nls.c:580
 #, c-format
 msgid "library failed memory statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:580
+#: src/top/top_nls.c:581
 #, c-format
 msgid "library failed cpu statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:581
+#: src/top/top_nls.c:582
 #, c-format
 msgid "library failed pids statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:582
+#: src/top/top_nls.c:583
 #, fuzzy, c-format
 msgid "bad memory scaling arg '%s'"
 msgstr "Falsches Argument »%s« für Iterationen"
 
-#: src/top/top_nls.c:583
+#: src/top/top_nls.c:584
 #, c-format
 msgid "PID to collapse/expand [default pid = %d]"
 msgstr ""
-
-#: src/top/top_nls.c:584
-msgid "terminal is not wide enough"
-msgstr "Terminal ist nicht breit genug"
 
 #: src/top/top_nls.c:585
 msgid "wrong mode, command inactive"
@@ -3949,7 +3946,7 @@ msgstr ""
 #, c-format
 msgid ""
 "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
-"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 msgstr ""
 
 #. Translation Hint: Only the following abbreviations need be translated
@@ -3959,15 +3956,15 @@ msgstr ""
 #, c-format
 msgid ""
 "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 msgstr ""
 
 #. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
 #: src/top/top_nls.c:767
 #, c-format
 msgid ""
-"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/"
-"cache~3    "
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
+"~1    "
 msgstr ""
 
 #: src/top/top_nls.c:769
@@ -4781,6 +4778,9 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s von %s\n"
+
+#~ msgid "terminal is not wide enough"
+#~ msgstr "Terminal ist nicht breit genug"
 
 #, c-format
 #~ msgid "error: not enough memory\n"

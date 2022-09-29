@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.10-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-09-05 17:45+1000\n"
+"POT-Creation-Date: 2022-09-30 08:26+1000\n"
 "PO-Revision-Date: 2014-09-13 08:57+0700\n"
 "Last-Translator: Trần Ngọc Quân <vnwildman@gmail.com>\n"
 "Language-Team: Vietnamese <translation-team-vi@lists.sourceforge.net>\n"
@@ -3330,72 +3330,73 @@ msgid "%Cpu(s):"
 msgstr "Cpu(s):"
 
 #. Translation Hint: The following "word" is meant to represent a single processor
-#. .                 (should be exactly 3 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:500
+#. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
+#. .                 (if 'Cp' is translated, it must be exactly 2 characters long)
+#: src/top/top_nls.c:501
 #, fuzzy, c-format
-msgid "%%Cpu%-3d:"
+msgid "%%Cp%c%-3d:"
 msgstr "Cpu%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: src/top/top_nls.c:502
+#: src/top/top_nls.c:503
 msgid "another "
 msgstr "cái khác"
 
-#: src/top/top_nls.c:503
+#: src/top/top_nls.c:504
 msgid "Locate next inactive, use \"L\""
 msgstr "Vị trí không hoạt động tiếp theo, dùng \"L\""
 
-#: src/top/top_nls.c:504
+#: src/top/top_nls.c:505
 msgid "Locate string"
 msgstr "Chuỗi định vị"
 
-#: src/top/top_nls.c:505
+#: src/top/top_nls.c:506
 #, c-format
 msgid "%s\"%s\" not found"
 msgstr "không tìm thấy %s\"%s\""
 
-#: src/top/top_nls.c:506
+#: src/top/top_nls.c:507
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr "độ rộng của incr là %d, thay đổi thành (mặc định là 0, -1 là tự động)"
 
-#: src/top/top_nls.c:507
+#: src/top/top_nls.c:508
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
 msgstr ""
 
-#: src/top/top_nls.c:508
+#: src/top/top_nls.c:509
 #, c-format
 msgid "unrecognized field name '%s'"
 msgstr "không thừa nhận tên trường “%s”"
 
-#: src/top/top_nls.c:509
+#: src/top/top_nls.c:510
 msgid "even using field names only, window is now too small"
 msgstr "ngay cả khi chỉ dùng tên trường, cửa sổ bây giờ cũng quá nhỏ"
 
-#: src/top/top_nls.c:510
+#: src/top/top_nls.c:511
 msgid "Open Files"
 msgstr "Tập tin đang mở"
 
-#: src/top/top_nls.c:511
+#: src/top/top_nls.c:512
 msgid "NUMA Info"
 msgstr "Thông tin NUMA"
 
-#: src/top/top_nls.c:512
+#: src/top/top_nls.c:513
 msgid "Log"
 msgstr "Nhật ký"
 
-#: src/top/top_nls.c:513
+#: src/top/top_nls.c:514
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
 msgstr ""
 "phím “=” sẽ đưa ra tập tin thực đọc cuối cùng hoặc lệnh đã thực hiện ..."
 
-#: src/top/top_nls.c:514
+#: src/top/top_nls.c:515
 msgid "demo"
 msgstr "thử"
 
-#: src/top/top_nls.c:515
+#: src/top/top_nls.c:516
 #, fuzzy, c-format
 msgid ""
 "This is simulated output representing the contents of some file or the "
@@ -3490,107 +3491,107 @@ msgstr ""
 "\n"
 "Chúc vui!\n"
 
-#: src/top/top_nls.c:547
+#: src/top/top_nls.c:548
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
 msgstr "để bật “Y” nhấn <Enter> sau đó gõ “W” và khởi động lại top"
 
-#: src/top/top_nls.c:548
+#: src/top/top_nls.c:549
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr "để bật “Y” hãy xem trang hướng dẫn lệnh top (nhấn Enter)"
 
-#: src/top/top_nls.c:549
+#: src/top/top_nls.c:550
 #, c-format
 msgid "Selection failed with: %s\n"
 msgstr "Việc chọn gặp lỗi với: %s\n"
 
-#: src/top/top_nls.c:550
+#: src/top/top_nls.c:551
 #, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "không thể điều tra, không tìm thấy mã số tiến trình %d"
 
-#: src/top/top_nls.c:551
+#: src/top/top_nls.c:552
 #, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr "điều tra tại PID [mặc định mã số tiến trình = %d]"
 
-#: src/top/top_nls.c:552
+#: src/top/top_nls.c:553
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: %*d-%-*d dòng, %*d-%*d cột, đọc %lu byte"
 
-#: src/top/top_nls.c:553
+#: src/top/top_nls.c:554
 #, fuzzy
 msgid "patience please, working ..."
 msgstr "hãy nhẫn nại, đang chạy..."
 
-#: src/top/top_nls.c:554
+#: src/top/top_nls.c:555
 msgid "working, use Ctrl-C to end ..."
 msgstr ""
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: src/top/top_nls.c:557
+#: src/top/top_nls.c:558
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr "thêm bộ lọc #%d (%s) như: [!]FLD?VAL"
 
-#: src/top/top_nls.c:558
+#: src/top/top_nls.c:559
 msgid "ignoring case"
 msgstr "không phân biệt HOA/thường"
 
-#: src/top/top_nls.c:559
+#: src/top/top_nls.c:560
 msgid "case sensitive"
 msgstr "phân biệt HOA/thường"
 
-#: src/top/top_nls.c:560
+#: src/top/top_nls.c:561
 msgid "duplicate filter was ignored"
 msgstr "bộ lọc bị trùng sẽ bỏ qua"
 
-#: src/top/top_nls.c:561
+#: src/top/top_nls.c:562
 #, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "“%s” thiếu bộ phân cách bộ lọc"
 
-#: src/top/top_nls.c:562
+#: src/top/top_nls.c:563
 #, c-format
 msgid "'%s' filter value is missing"
 msgstr "“%s” thiếu giá trị lọc"
 
-#: src/top/top_nls.c:563
+#: src/top/top_nls.c:564
 msgid "include"
 msgstr "bao gồm"
 
-#: src/top/top_nls.c:564
+#: src/top/top_nls.c:565
 msgid "exclude"
 msgstr "loại trừ"
 
-#: src/top/top_nls.c:565
+#: src/top/top_nls.c:566
 #, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "Bấm <Enter> để phục hồi, các bộ lọc: %s"
 
-#: src/top/top_nls.c:566
+#: src/top/top_nls.c:567
 msgid "none"
 msgstr "không"
 
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:569
+#: src/top/top_nls.c:570
 #, fuzzy, c-format
 msgid "%%Node%-2d:"
 msgstr "Nút %-2d:"
 
-#: src/top/top_nls.c:570
+#: src/top/top_nls.c:571
 #, fuzzy, c-format
 msgid "expand which numa node (0-%d)"
 msgstr "mở rộng nút nào (0-%d)"
 
-#: src/top/top_nls.c:571
+#: src/top/top_nls.c:572
 #, fuzzy
 msgid "invalid numa node"
 msgstr "nút không hợp lệ"
 
-#: src/top/top_nls.c:572
+#: src/top/top_nls.c:573
 msgid "sorry, NUMA extensions unavailable"
 msgstr "rất tiếc, phần mở rộng NUMA không sẵn có"
 
@@ -3598,42 +3599,38 @@ msgstr "rất tiếc, phần mở rộng NUMA không sẵn có"
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: src/top/top_nls.c:577
+#: src/top/top_nls.c:578
 msgid "Mem "
 msgstr "BNhớ"
 
-#: src/top/top_nls.c:578
+#: src/top/top_nls.c:579
 msgid "Swap"
 msgstr "TĐổi"
 
-#: src/top/top_nls.c:579
+#: src/top/top_nls.c:580
 #, c-format
 msgid "library failed memory statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:580
+#: src/top/top_nls.c:581
 #, c-format
 msgid "library failed cpu statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:581
+#: src/top/top_nls.c:582
 #, c-format
 msgid "library failed pids statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:582
+#: src/top/top_nls.c:583
 #, fuzzy, c-format
 msgid "bad memory scaling arg '%s'"
 msgstr "đối số lặp lại sai “%s”"
 
-#: src/top/top_nls.c:583
+#: src/top/top_nls.c:584
 #, fuzzy, c-format
 msgid "PID to collapse/expand [default pid = %d]"
 msgstr "mã số tiến trình cần renice [mặc định pid = %d]"
-
-#: src/top/top_nls.c:584
-msgid "terminal is not wide enough"
-msgstr ""
 
 #: src/top/top_nls.c:585
 msgid "wrong mode, command inactive"
@@ -4026,7 +4023,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
-"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 msgstr ""
 "%%%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
 "~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3\n"
@@ -4038,7 +4035,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 msgstr ""
 "%%%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
 "~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3\n"
@@ -4047,8 +4044,8 @@ msgstr ""
 #: src/top/top_nls.c:767
 #, fuzzy, c-format
 msgid ""
-"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/"
-"cache~3    "
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
+"~1    "
 msgstr ""
 "%s %s:~3 %9.9s~2tổng,~3 %9.9s~2trống,~3 %9.9s~2dùng,~3 %9.9s~2bộđệm/tạm~3\n"
 "%s %s:~3 %9.9s~2tổng,~3 %9.9s~2trống,~3 %9.9s~2dùng.~3 %9.9s~2%s sẵnsàng~3\n"
