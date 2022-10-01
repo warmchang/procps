@@ -5806,12 +5806,10 @@ static void keys_summary (int ch) {
          || ((w->rc.combine_cpus))))
             show_msg(N_txt(XTRA_modebad_txt));
          else {
-            static int scanned;
-            if (!scanned) {
-               for (; scanned < Cpu_cnt; scanned++)
-                  if (CPU_VAL(stat_COR_TYP, scanned) == E_CORE)
-                     break;
-            }
+            int scanned;
+            for (scanned = 0; scanned < Cpu_cnt; scanned++)
+               if (CPU_VAL(stat_COR_TYP, scanned) == E_CORE)
+                  break;
             if (scanned < Cpu_cnt) {
                w->rc.core_types += 1;
                if (w->rc.core_types > E_CORES_ONLY)
