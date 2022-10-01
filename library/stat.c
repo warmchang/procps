@@ -468,11 +468,10 @@ static void stat_cores_check (
     }
     if (p_core) {
         core = info->cores;
-        while (core) {
+        do {
             if (core->thread_2 == VACANT)
                 core->type = E_CORE;
-            core = core->next;
-        }
+        } while ((core = core->next));
     }
 } // end: stat_cores_check
 
@@ -530,7 +529,7 @@ static int stat_cores_verify (
       { static int fake_core;
         if (a_cpu > ECORE_BEGIN) {
             if (!fake_core) fake_core = a_core + 1;
-             a_core = fake_core++;
+            a_core = fake_core++;
       } }
 #endif
         if (!stat_core_add(info, a_core, a_cpu)) {
