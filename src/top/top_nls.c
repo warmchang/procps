@@ -24,8 +24,20 @@
 #include "top.h"
 #include "top_nls.h"
 
-#ifdef VALIDATE_NLS
+#ifdef NLS_VALIDATE
 #include <stdlib.h>
+#endif
+
+        /*
+         * The provision excluding some strings is intended to be
+         * used very sparingly. It exists in case we collide with
+         * some translation project person in a position to delay
+         * a future release over his or her personal preferences.
+         * (it's currently used only on v4.0.1 command line help) */
+#ifdef NLS_INCLUDED
+# define _X(str) _(str)
+#else
+# define _X(str)  (str)
 #endif
 
         // Programmer Note(s):
@@ -393,7 +405,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[WRONG_switch_fmt] = _(""
       "inappropriate '%s'\n"
       "Usage:\n  %s%s");
-   Norm_nlstab[HELP_cmdline_fmt] = _("\n"
+   Norm_nlstab[HELP_cmdline_fmt] = _X("\n"
       "Usage:\n"
       " %s [options]\n"
       "\n"
@@ -787,7 +799,7 @@ static void build_uniq_nlstab (void) {
         /*
          * This function must be called very early at startup, before
          * any other function call, and especially before any changes
-         * have been made to the terminal if VALIDATE_NLS is defined!
+         * have been made to the terminal if NLS_VALIDATE is defined!
          *
          * The gettext documentation suggests that alone among locale
          * variables LANGUAGE=ll_CC may be abbreviated as LANGUAGE=ll
@@ -804,7 +816,7 @@ static void build_uniq_nlstab (void) {
          * enable any translations.
          */
 void initialize_nls (void) {
-#ifdef VALIDATE_NLS
+#ifdef NLS_VALIDATE
    static const char *nls_err ="\t%s_nlstab[%d] == NULL\n";
    int i;
 

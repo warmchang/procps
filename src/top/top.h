@@ -42,6 +42,8 @@
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents via a file */
 //#define INSP_SLIDE_1            /* when scrolling left/right, don't move 8 */
 //#define MEMGRAPH_OLD            /* don't use 'available' when graphing Mem */
+//#define NLS_INCLUDED            /* provides for excluding from translation */
+//#define NLS_VALIDATE            /* ensure the integrity of four nls tables */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */
 //#define OFF_STDIOLBF            /* disable our own stdout 'IOFBF' override */
@@ -74,7 +76,6 @@
 //#define TREE_VPROMPT            /* pid collapse/expand prompt, vs. top row */
 //#define TREE_VWINALL            /* pid collapse/expand impacts all windows */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
-//#define VALIDATE_NLS            /* ensure the integrity of four nls tables */
 //#define WIDEN_COLUMN            /* base column widths on translated header */
 
 
