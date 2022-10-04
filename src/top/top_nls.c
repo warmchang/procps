@@ -28,16 +28,23 @@
 #include <stdlib.h>
 #endif
 
+
         /*
          * The provision excluding some strings is intended to be
          * used very sparingly. It exists in case we collide with
          * some translation project person in a position to delay
          * a future release over his or her personal preferences.
-         * (it's currently used only on v4.0.1 command line help) */
-#ifdef NLS_INCLUDED
-# define _X(str) _(str)
-#else
+         *
+         * If it's ever enabled, it will produce a fatal compiler
+         * error as our only option since those gettext tools are
+         * far too primitive to be influenced with a conditional.
+         * They always ignore a '_X()' macro no matter its state. */
+
+#ifndef NLS_INCLUDED
 # define _X(str)  (str)
+#else
+# define _X(str)
+# error instead of this #define, restore the true gettext macro(s)
 #endif
 
         // Programmer Note(s):
