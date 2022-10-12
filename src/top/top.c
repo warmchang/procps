@@ -6571,12 +6571,15 @@ static void do_memory (void) {
    my_qued = MEM_VAL(mem_BUF) + MEM_VAL(mem_QUE);
 
    if (Curwin->rc.graph_mems) {
-      my_misc = MEM_VAL(mem_TOT) - MEM_VAL(mem_FRE) - my_qued;
-      my_used = MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - my_misc;
-
+      my_used = MEM_VAL(mem_TOT) - MEM_VAL(mem_FRE) - my_qued;
+#ifdef MEMGRAPH_OLD
+      my_misc = my_qued;
+#else
+      my_misc = MEM_VAL(mem_TOT) - MEM_VAL(mem_AVL) - my_used;
+#endif
       Graph_mems->total = MEM_VAL(mem_TOT);
-      Graph_mems->part1 = my_misc;
-      Graph_mems->part2 = my_used;
+      Graph_mems->part1 = my_used;
+      Graph_mems->part2 = my_misc;
       rx = sum_rx(Graph_mems);
 #ifdef TOG4_MEM_1UP
       prT(bfT(0), mkM(MEM_VAL(mem_TOT)));
