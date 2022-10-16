@@ -2,13 +2,13 @@
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019, 2021.
+# Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019, 2021, 2022.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-3.3.17rc1\n"
+"Project-Id-Version: procps-ng-4.0.1rc3\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-10-04 10:57+1100\n"
-"PO-Revision-Date: 2021-01-22 12:30+0200\n"
+"POT-Creation-Date: 2022-10-16 19:57+1100\n"
+"PO-Revision-Date: 2022-10-05 17:11+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 20.11.70\n"
+"X-Generator: Lokalize 20.12.0\n"
 
 #: local/fileutils.c:38
 msgid "write error"
@@ -94,7 +94,7 @@ msgstr " -t, --total         вивести загальні дані для RAM
 
 #: src/free.c:93
 msgid " -v, --committed     show committed memory and commit limit\n"
-msgstr ""
+msgstr " -v, --committed     показати внесену пам'ять та обмеження внесення\n"
 
 #: src/free.c:94
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
@@ -114,7 +114,6 @@ msgid "     --help     display this help and exit\n"
 msgstr "     --help     показати цю довідку та вийти\n"
 
 #: src/free.c:173
-#, fuzzy
 msgid "Multiple unit options don't make sense."
 msgstr "Зазначення декількох параметрів одиниць не має сенсу."
 
@@ -134,15 +133,14 @@ msgstr "не вдалося обробити аргумент кількості
 
 #: src/free.c:367
 msgid "Memory information file /proc/meminfo does not exist"
-msgstr ""
+msgstr "Файла даних щодо пам'яті /proc/meminfo не існує"
 
 #: src/free.c:370 src/vmstat.c:382 src/vmstat.c:869
-#, fuzzy
 msgid "Unable to create meminfo structure"
-msgstr "не вдалося створити канали IPC"
+msgstr "Не вдалося створити структуру meminfo"
 
 #: src/free.c:377
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "               total        used        free      shared     buffers       "
 "cache   available"
@@ -151,7 +149,7 @@ msgstr ""
 "кеш     дост."
 
 #: src/free.c:379
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "               total        used        free      shared  buff/cache   "
 "available"
@@ -180,7 +178,7 @@ msgstr "Загалом:"
 
 #: src/free.c:438
 msgid "Comm:"
-msgstr ""
+msgstr "Comm:"
 
 #: src/kill.c:38
 #, c-format
@@ -377,12 +375,13 @@ msgstr " -r, --runstates <стан>    пошук за станами запус
 #: src/pgrep.c:184
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
 msgstr ""
+" -A, --ignore-ancestors    виключити наших попередників з результатів\n"
 
 #: src/pgrep.c:185
-#, fuzzy
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr ""
-" -G, --group <GID,...>     відповідність за справжніми ідентифікаторами\n"
+" --cgroup <група,...>      встановити відповідність за назвами cgroup версії "
+"2\n"
 
 #: src/pgrep.c:186
 msgid ""
@@ -406,9 +405,8 @@ msgstr ""
 "uts\n"
 
 #: src/pgrep.c:213 src/pgrep.c:650 src/w.c:405
-#, fuzzy
 msgid "Unable to create pid info structure"
-msgstr "не вдалося створити канали IPC"
+msgstr "Не вдалося створити структуру відомостей щодо pid"
 
 #: src/pgrep.c:377
 #, c-format
@@ -436,14 +434,13 @@ msgid "not a number: %s"
 msgstr "не є числом: %s"
 
 #: src/pgrep.c:496 src/skill.c:158
-#, fuzzy
 msgid "Unable to read process namespace information"
-msgstr "помилка під час спроби читання даних щодо еталонного простору назв"
+msgstr "Не вдалося прочитати дані щодо простору назв процесу"
 
 #: src/pgrep.c:583
-#, fuzzy, c-format
+#, c-format
 msgid "regex error: %s"
-msgstr "помилка: %s\n"
+msgstr "помилка у формальному виразі: %s"
 
 #: src/pgrep.c:645
 msgid "Error reading reference namespace information\n"
@@ -513,7 +510,7 @@ msgstr "очікуємо на %s (pid %lu)\n"
 
 #: src/pgrep.c:1120
 msgid "pidfd_open() not implemented in Linux < 5.3"
-msgstr ""
+msgstr "pidfd_open() не реалізовано у Linux < 5.3"
 
 #: src/pgrep.c:1123
 #, c-format
@@ -605,7 +602,7 @@ msgstr "Режим"
 #. has been added ahead of one 'KiB' so that they all
 #. align. You need not preserve such alignment.
 #. Translation Hint: maximum 'RSS' = 6
-#: src/pmap.c:81 src/top/top_nls.c:330
+#: src/pmap.c:81 src/top/top_nls.c:337
 msgid "RSS"
 msgstr "RSS"
 
@@ -694,9 +691,8 @@ msgid "Unknown format in smaps file!"
 msgstr "Невідомий формат у файлі smaps!"
 
 #: src/pmap.c:361
-#, fuzzy
 msgid "ERROR: memory allocation failed"
-msgstr "не вдалося отримати місце у пам'яті"
+msgstr "ПОМИЛКА: не вдалося отримати місце у пам'яті"
 
 #: src/pmap.c:378
 msgid "inconsistent detail field in smaps file, line:\n"
@@ -802,7 +798,7 @@ msgstr "не вдалося прочитати ~/.%src"
 
 #: src/pmap.c:1155 src/pmap.c:1180
 msgid "library failed pids statistics"
-msgstr ""
+msgstr "статистика щодо помилкових pid бібліотеки"
 
 #: src/ps/display.c:57
 #, c-format
@@ -819,7 +815,7 @@ msgstr "будь ласка, повідомте про цю ваду"
 #: src/ps/display.c:311 src/ps/display.c:480
 #, c-format
 msgid "fatal library error, reap\n"
-msgstr ""
+msgstr "критична помилка бібліотеки, reap\n"
 
 #: src/ps/display.c:361
 #, c-format
@@ -849,12 +845,12 @@ msgstr "не вдалося обробити текст запису особи�
 #: src/ps/global.c:489
 #, c-format
 msgid "fatal library error, context\n"
-msgstr ""
+msgstr "критична помилка бібліотеки, контекст\n"
 
 #: src/ps/global.c:497
 #, c-format
 msgid "fatal library error, lookup self\n"
-msgstr ""
+msgstr "критична помилка бібліотеки, самопошук\n"
 
 #. Translation Note:
 #. . The following translatable word will be used to recognize the
@@ -1117,9 +1113,8 @@ msgstr ""
 "                      визначений користувачем формат\n"
 
 #: src/ps/help.c:142
-#, fuzzy
 msgid "  -P                  add psr column\n"
-msgstr "  -o                   фіктивний параметр\n"
+msgstr "  -P                  додати стовпчик psr\n"
 
 #: src/ps/help.c:143
 msgid "  s                   signal format\n"
@@ -1296,12 +1291,11 @@ msgstr ""
 
 #: src/ps/output.c:99
 msgid "Unable to get system boot time"
-msgstr ""
+msgstr "Не вдалося отримати час завантаження системи"
 
 #: src/ps/output.c:114
-#, fuzzy
 msgid "Unable to get total memory"
-msgstr "%13lu %s пам’яті загалом\n"
+msgstr "Не вдалося отримати загальні дані щодо пам'яті"
 
 #: src/ps/output.c:2169
 #, c-format
@@ -1599,9 +1593,8 @@ msgid "seriously crashing: goodbye cruel world"
 msgstr "серйозна аварія: прощавай, жорстокий світе"
 
 #: src/ps/sortformat.c:146 src/ps/sortformat.c:165
-#, fuzzy
 msgid "missing AIX field descriptor"
-msgstr "невідомий дескриптор поля AIX"
+msgstr "пропущено дескриптор поля AIX"
 
 #: src/ps/sortformat.c:148
 msgid "improper AIX field descriptor"
@@ -1745,12 +1738,11 @@ msgstr "некоректний ідентифікатор процесу: %s"
 
 #: src/skill.c:281
 msgid "Unable to create pid Pids_info structure"
-msgstr ""
+msgstr "Unable to create pid Pids_info structure"
 
 #: src/skill.c:284 src/w.c:408
-#, fuzzy
 msgid "Unable to load process information"
-msgstr "не вдалося розгалузити процес"
+msgstr "Не вдалося завантажити дані щодо процесу"
 
 #: src/skill.c:313
 #, c-format
@@ -1948,9 +1940,8 @@ msgid " l: sort by number of slabs\n"
 msgstr " l: упорядкувати за кількістю частин\n"
 
 #: src/slabtop.c:118
-#, fuzzy
 msgid " v: sort by (non display) number of active slabs\n"
-msgstr " v: упорядкувати за кількістю активних частин\n"
+msgstr " v: упорядкувати (непоказані) за кількістю активних частин\n"
 
 #: src/slabtop.c:119
 msgid " n: sort by name\n"
@@ -1961,9 +1952,8 @@ msgid " o: sort by number of objects (the default)\n"
 msgstr " o: упорядкувати за кількістю об’єктів (типовий варіант)\n"
 
 #: src/slabtop.c:121
-#, fuzzy
 msgid " p: sort by (non display) pages per slab\n"
-msgstr " p: упорядкувати за кількістю сторінок на частину\n"
+msgstr " p: упорядкувати (непоказані) за кількістю сторінок на частину\n"
 
 #: src/slabtop.c:122
 msgid " s: sort by object size\n"
@@ -1975,7 +1965,7 @@ msgstr " u: упорядкувати за використанням кешу\n"
 
 #: src/slabtop.c:186 src/slabtop.c:197
 msgid "Cannot combine -d and -o options"
-msgstr ""
+msgstr "Не можна поєднувати параметри -d і -o"
 
 #: src/slabtop.c:188
 msgid "illegal delay"
@@ -1987,7 +1977,7 @@ msgstr "затримку слід вказувати як додатне чис�
 
 #: src/slabtop.c:234
 msgid "Error getting slab summary results"
-msgstr ""
+msgstr "Помилка під час отримання результатів резюме частини"
 
 #. Translation Hint: Next five strings must not
 #. * exceed a length of 35 characters.
@@ -2023,7 +2013,7 @@ msgstr "  ОБ’Є АКТИВН  ВИК РОЗМ ОБ.  ЧАСТ  ОБ./ЧАС�
 
 #: src/slabtop.c:311 src/vmstat.c:764
 msgid "Unable to create slabinfo structure"
-msgstr ""
+msgstr "Не вдалося отримати структуру slabinfo"
 
 #: src/slabtop.c:316
 msgid "terminal setting retrieval"
@@ -2031,17 +2021,16 @@ msgstr "отримання параметра термінала"
 
 #: src/slabtop.c:332 src/vmstat.c:771
 msgid "Unable to get slabinfo node data"
-msgstr ""
+msgstr "Не вдалося отримати дані вузла slabinfo"
 
 #: src/slabtop.c:338 src/vmstat.c:773
-#, fuzzy
 msgid "Unable to sort slab nodes"
-msgstr "не вдалося розгалузити процес"
+msgstr "Не вдалося упорядкувати вузли частини"
 
 #: src/sysctl.c:113
 #, c-format
 msgid "Path is not under %s: %s"
-msgstr ""
+msgstr "Шлях не є вкладеним щодо %s: %s"
 
 #: src/sysctl.c:131
 #, c-format
@@ -2071,7 +2060,7 @@ msgstr "      --deprecated     включити до списку застарі
 
 #: src/sysctl.c:234
 msgid "      --dry-run        Print the key and values but do not write\n"
-msgstr ""
+msgstr "      --dry-run        вивести ключ і значення, але не записувати\n"
 
 #: src/sysctl.c:235
 msgid "  -b, --binary         print value without new line\n"
@@ -2160,7 +2149,7 @@ msgstr "не вдалося відкрити каталог «%s»"
 
 #: src/sysctl.c:557
 msgid "strdup key"
-msgstr ""
+msgstr "ключ strdup"
 
 #: src/sysctl.c:563 src/sysctl.c:569 src/sysctl.c:602
 #, c-format
@@ -2267,12 +2256,11 @@ msgstr "не вдалося відкрити tty"
 
 #: src/tload.c:182
 msgid "Load average file /proc/loadavg does not exist"
-msgstr ""
+msgstr "Файла середніх значень навантаження /proc/loadavg не існує"
 
 #: src/tload.c:185
-#, fuzzy
 msgid "Unable to get load average"
-msgstr "%13lu %s пам’яті загалом\n"
+msgstr "Не вдалося отримати середнє навантаження"
 
 #: src/tload.c:227 src/tload.c:229
 msgid "writing to tty failed"
@@ -2303,714 +2291,706 @@ msgstr "спроба виконати запис до tty зазнала нев�
 #. .  In all cases, fewer characters are just fine.
 #. .
 #. Translation Hint: maximum 'PID' = 5
-#: src/top/top_nls.c:145
+#: src/top/top_nls.c:152
 msgid "PID"
 msgstr "PID"
 
-#: src/top/top_nls.c:146
+#: src/top/top_nls.c:153
 msgid "Process Id"
 msgstr "Ідентифікатор процесу"
 
 #. Translation Hint: maximum 'PPID' = 5
-#: src/top/top_nls.c:148
+#: src/top/top_nls.c:155
 msgid "PPID"
 msgstr "PPID"
 
-#: src/top/top_nls.c:149
+#: src/top/top_nls.c:156
 msgid "Parent Process pid"
 msgstr "Ідентифікатор батьківського процесу"
 
 #. Translation Hint: maximum 'UID' = 5 +
-#: src/top/top_nls.c:151
+#: src/top/top_nls.c:158
 msgid "UID"
 msgstr "UID"
 
-#: src/top/top_nls.c:152
+#: src/top/top_nls.c:159
 msgid "Effective User Id"
 msgstr "Ідентифікатор ефективного користувача"
 
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:154 src/w.c:661
+#: src/top/top_nls.c:161 src/w.c:661
 msgid "USER"
 msgstr "КОР."
 
-#: src/top/top_nls.c:155
+#: src/top/top_nls.c:162
 msgid "Effective User Name"
 msgstr "Ефективне ім’я користувача"
 
 #. Translation Hint: maximum 'RUID' = 5 +
-#: src/top/top_nls.c:157
+#: src/top/top_nls.c:164
 msgid "RUID"
 msgstr "RUID"
 
-#: src/top/top_nls.c:158
+#: src/top/top_nls.c:165
 msgid "Real User Id"
 msgstr "Справжній ідентифікатор користувача"
 
 #. Translation Hint: maximum 'RUSER' = 8 +
-#: src/top/top_nls.c:160
+#: src/top/top_nls.c:167
 msgid "RUSER"
 msgstr "RUSER"
 
-#: src/top/top_nls.c:161
+#: src/top/top_nls.c:168
 msgid "Real User Name"
 msgstr "Справжнє ім’я користувача"
 
 #. Translation Hint: maximum 'SUID' = 5 +
-#: src/top/top_nls.c:163
+#: src/top/top_nls.c:170
 msgid "SUID"
 msgstr "SUID"
 
-#: src/top/top_nls.c:164
+#: src/top/top_nls.c:171
 msgid "Saved User Id"
 msgstr "Збережений ідентифікатор користувача"
 
 #. Translation Hint: maximum 'SUSER' = 8 +
-#: src/top/top_nls.c:166
+#: src/top/top_nls.c:173
 msgid "SUSER"
 msgstr "SUSER"
 
-#: src/top/top_nls.c:167
+#: src/top/top_nls.c:174
 msgid "Saved User Name"
 msgstr "Збережене ім’я користувача"
 
 #. Translation Hint: maximum 'GID' = 5 +
-#: src/top/top_nls.c:169
+#: src/top/top_nls.c:176
 msgid "GID"
 msgstr "GID"
 
-#: src/top/top_nls.c:170
+#: src/top/top_nls.c:177
 msgid "Group Id"
 msgstr "Ідентифікатор групи"
 
 #. Translation Hint: maximum 'GROUP' = 8 +
-#: src/top/top_nls.c:172
+#: src/top/top_nls.c:179
 msgid "GROUP"
 msgstr "GROUP"
 
-#: src/top/top_nls.c:173
+#: src/top/top_nls.c:180
 msgid "Group Name"
 msgstr "Назва групи"
 
 #. Translation Hint: maximum 'PGRP' = 5
-#: src/top/top_nls.c:175
+#: src/top/top_nls.c:182
 msgid "PGRP"
 msgstr "PGRP"
 
-#: src/top/top_nls.c:176
+#: src/top/top_nls.c:183
 msgid "Process Group Id"
 msgstr "Ідентифікатор групи процесу"
 
 #. Translation Hint: maximum 'TTY' = 8 +
-#: src/top/top_nls.c:178
+#: src/top/top_nls.c:185
 msgid "TTY"
 msgstr "TTY"
 
-#: src/top/top_nls.c:179
+#: src/top/top_nls.c:186
 msgid "Controlling Tty"
 msgstr "Tty керування"
 
 #. Translation Hint: maximum 'TPGID' = 5
-#: src/top/top_nls.c:181
+#: src/top/top_nls.c:188
 msgid "TPGID"
 msgstr "TPGID"
 
-#: src/top/top_nls.c:182
+#: src/top/top_nls.c:189
 msgid "Tty Process Grp Id"
 msgstr "Tty Процес  Гру Ід"
 
 #. Translation Hint: maximum 'SID' = 5
-#: src/top/top_nls.c:184
+#: src/top/top_nls.c:191
 msgid "SID"
 msgstr "SID"
 
-#: src/top/top_nls.c:185
+#: src/top/top_nls.c:192
 msgid "Session Id"
 msgstr "Ідентифікатор сеансу"
 
 #. Translation Hint: maximum 'PR' = 3
-#: src/top/top_nls.c:187
+#: src/top/top_nls.c:194
 msgid "PR"
 msgstr "PR"
 
-#: src/top/top_nls.c:188
+#: src/top/top_nls.c:195
 msgid "Priority"
 msgstr "Пріоритет"
 
 #. Translation Hint: maximum 'NI' = 3
-#: src/top/top_nls.c:190
+#: src/top/top_nls.c:197
 msgid "NI"
 msgstr "NI"
 
-#: src/top/top_nls.c:191
+#: src/top/top_nls.c:198
 msgid "Nice Value"
 msgstr "Значення Nice"
 
 #. Translation Hint: maximum 'nTH' = 3
-#: src/top/top_nls.c:193
+#: src/top/top_nls.c:200
 msgid "nTH"
 msgstr "nTH"
 
-#: src/top/top_nls.c:194
+#: src/top/top_nls.c:201
 msgid "Number of Threads"
 msgstr "Кількість потоків"
 
 #. Translation Hint: maximum 'P' = 1
-#: src/top/top_nls.c:196
+#: src/top/top_nls.c:203
 msgid "P"
 msgstr "P"
 
-#: src/top/top_nls.c:197
+#: src/top/top_nls.c:204
 msgid "Last Used Cpu (SMP)"
 msgstr "Останній використаний процесор (SMP)"
 
 #. Translation Hint: maximum '%CPU' = 4
-#: src/top/top_nls.c:199
+#: src/top/top_nls.c:206
 #, c-format
 msgid "%CPU"
 msgstr "%CPU"
 
-#: src/top/top_nls.c:200
+#: src/top/top_nls.c:207
 msgid "CPU Usage"
 msgstr "Використання процесора"
 
 #. Translation Hint: maximum '' = 6
-#: src/top/top_nls.c:202
+#: src/top/top_nls.c:209
 msgid "TIME"
 msgstr "TIME"
 
-#: src/top/top_nls.c:203
+#: src/top/top_nls.c:210
 msgid "CPU Time"
 msgstr "Час процесора"
 
 #. Translation Hint: maximum 'TIME+' = 9
-#: src/top/top_nls.c:205
+#: src/top/top_nls.c:212
 msgid "TIME+"
 msgstr "TIME+"
 
-#: src/top/top_nls.c:206
+#: src/top/top_nls.c:213
 msgid "CPU Time, hundredths"
 msgstr "Час процесора з сотими"
 
 #. Translation Hint: maximum '%MEM' = 4
-#: src/top/top_nls.c:208
+#: src/top/top_nls.c:215
 msgid "%MEM"
 msgstr "%MEM"
 
-#: src/top/top_nls.c:209
+#: src/top/top_nls.c:216
 msgid "Memory Usage (RES)"
 msgstr "Використання пам’яті (RES)"
 
 #. Translation Hint: maximum 'VIRT' = 7
-#: src/top/top_nls.c:211
+#: src/top/top_nls.c:218
 msgid "VIRT"
 msgstr "VIRT"
 
-#: src/top/top_nls.c:212
+#: src/top/top_nls.c:219
 msgid "Virtual Image (KiB)"
 msgstr "Віртуальний образ (КіБ)"
 
 #. Translation Hint: maximum 'SWAP' = 6
-#: src/top/top_nls.c:214
+#: src/top/top_nls.c:221
 msgid "SWAP"
 msgstr "SWAP"
 
-#: src/top/top_nls.c:215
+#: src/top/top_nls.c:222
 msgid "Swapped Size (KiB)"
 msgstr "Зарезервований розмір (КіБ)"
 
 #. Translation Hint: maximum 'RES' = 6
-#: src/top/top_nls.c:217
+#: src/top/top_nls.c:224
 msgid "RES"
 msgstr "RES"
 
-#: src/top/top_nls.c:218
+#: src/top/top_nls.c:225
 msgid "Resident Size (KiB)"
 msgstr "Резидентний розмір (КіБ)"
 
 #. Translation Hint: maximum 'CODE' = 4
-#: src/top/top_nls.c:220
+#: src/top/top_nls.c:227
 msgid "CODE"
 msgstr "CODE"
 
-#: src/top/top_nls.c:221
+#: src/top/top_nls.c:228
 msgid "Code Size (KiB)"
 msgstr "Розмір коду (КіБ)"
 
 #. Translation Hint: maximum 'DATA' = 7
-#: src/top/top_nls.c:223
+#: src/top/top_nls.c:230
 msgid "DATA"
 msgstr "DATA"
 
-#: src/top/top_nls.c:224
+#: src/top/top_nls.c:231
 msgid "Data+Stack (KiB)"
 msgstr "Дані+Стек (КіБ)"
 
 #. Translation Hint: maximum 'SHR' = 6
-#: src/top/top_nls.c:226
+#: src/top/top_nls.c:233
 msgid "SHR"
 msgstr "SHR"
 
-#: src/top/top_nls.c:227
+#: src/top/top_nls.c:234
 msgid "Shared Memory (KiB)"
 msgstr "Спільна пам’ять (КіБ)"
 
 #. Translation Hint: maximum 'nMaj' = 4
-#: src/top/top_nls.c:229
+#: src/top/top_nls.c:236
 msgid "nMaj"
 msgstr "nMaj"
 
-#: src/top/top_nls.c:230
+#: src/top/top_nls.c:237
 msgid "Major Page Faults"
 msgstr "Основні помилки сторінок"
 
 #. Translation Hint: maximum 'nMin' = 4
-#: src/top/top_nls.c:232
+#: src/top/top_nls.c:239
 msgid "nMin"
 msgstr "nMin"
 
-#: src/top/top_nls.c:233
+#: src/top/top_nls.c:240
 msgid "Minor Page Faults"
 msgstr "Вторинні помилки сторінок"
 
 #. Translation Hint: maximum 'nDRT' = 4
-#: src/top/top_nls.c:235
+#: src/top/top_nls.c:242
 msgid "nDRT"
 msgstr "nDRT"
 
-#: src/top/top_nls.c:236
+#: src/top/top_nls.c:243
 msgid "Dirty Pages Count"
 msgstr "Кількість брудних сторінок"
 
 #. Translation Hint: maximum 'S' = 1
-#: src/top/top_nls.c:238
+#: src/top/top_nls.c:245
 msgid "S"
 msgstr "S"
 
-#: src/top/top_nls.c:239
+#: src/top/top_nls.c:246
 msgid "Process Status"
 msgstr "Стан процесу"
 
 #. Translation Hint: maximum 'COMMAND' = variable
-#: src/top/top_nls.c:241
+#: src/top/top_nls.c:248
 msgid "COMMAND"
 msgstr "COMMAND"
 
-#: src/top/top_nls.c:242
+#: src/top/top_nls.c:249
 msgid "Command Name/Line"
 msgstr "Назва або рядок команди"
 
 #. Translation Hint: maximum 'WCHAN' = 10 +
-#: src/top/top_nls.c:244
+#: src/top/top_nls.c:251
 msgid "WCHAN"
 msgstr "WCHAN"
 
-#: src/top/top_nls.c:245
+#: src/top/top_nls.c:252
 msgid "Sleeping in Function"
 msgstr "Сон у функції"
 
 #. Translation Hint: maximum 'Flags' = 8
-#: src/top/top_nls.c:247
+#: src/top/top_nls.c:254
 msgid "Flags"
 msgstr "Прапорці"
 
-#: src/top/top_nls.c:248
+#: src/top/top_nls.c:255
 msgid "Task Flags <sched.h>"
 msgstr "Прапорці завдання <sched.h>"
 
 #. Translation Hint: maximum 'CGROUPS' = variable
-#: src/top/top_nls.c:250
+#: src/top/top_nls.c:257
 msgid "CGROUPS"
 msgstr "CGROUPS"
 
-#: src/top/top_nls.c:251
+#: src/top/top_nls.c:258
 msgid "Control Groups"
 msgstr "Групи керування"
 
 #. Translation Hint: maximum 'SUPGIDS' = variable
-#: src/top/top_nls.c:253
+#: src/top/top_nls.c:260
 msgid "SUPGIDS"
 msgstr "SUPGIDS"
 
-#: src/top/top_nls.c:254
+#: src/top/top_nls.c:261
 msgid "Supp Groups IDs"
 msgstr "Ідентифікатори допоміжних груп"
 
 #. Translation Hint: maximum 'SUPGRPS' = variable
-#: src/top/top_nls.c:256
+#: src/top/top_nls.c:263
 msgid "SUPGRPS"
 msgstr "SUPGRPS"
 
-#: src/top/top_nls.c:257
+#: src/top/top_nls.c:264
 msgid "Supp Groups Names"
 msgstr "Назви допоміжних груп"
 
 #. Translation Hint: maximum 'TGID' = 5
-#: src/top/top_nls.c:259
+#: src/top/top_nls.c:266
 msgid "TGID"
 msgstr "TGID"
 
-#: src/top/top_nls.c:260
+#: src/top/top_nls.c:267
 msgid "Thread Group Id"
 msgstr "Ідентифікатор групи потоку"
 
 #. Translation Hint: maximum 'OOMa' = 5
-#: src/top/top_nls.c:262
+#: src/top/top_nls.c:269
 msgid "OOMa"
 msgstr "OOMa"
 
-#: src/top/top_nls.c:263
+#: src/top/top_nls.c:270
 msgid "OOMEM Adjustment"
 msgstr "Коригування OOMEM"
 
 #. Translation Hint: maximum 'OOMs' = 4
-#: src/top/top_nls.c:265
+#: src/top/top_nls.c:272
 msgid "OOMs"
 msgstr "OOMs"
 
-#: src/top/top_nls.c:266
+#: src/top/top_nls.c:273
 msgid "OOMEM Score current"
 msgstr "Поточна оцінка OOMEM"
 
 #. Translation Hint: maximum 'ENVIRON' = variable
-#: src/top/top_nls.c:268
+#: src/top/top_nls.c:275
 msgid "ENVIRON"
 msgstr "ENVIRON"
 
 #. Translation Hint: the abbreviation 'vars' below is shorthand for
 #. 'variables'
-#: src/top/top_nls.c:271
+#: src/top/top_nls.c:278
 msgid "Environment vars"
 msgstr "Змінні середовища"
 
 #. Translation Hint: maximum 'vMj' = 3
-#: src/top/top_nls.c:273
+#: src/top/top_nls.c:280
 msgid "vMj"
 msgstr "vMj"
 
-#: src/top/top_nls.c:274
+#: src/top/top_nls.c:281
 msgid "Major Faults delta"
 msgstr "Приріст основних помилок"
 
 #. Translation Hint: maximum 'vMn' = 3
-#: src/top/top_nls.c:276
+#: src/top/top_nls.c:283
 msgid "vMn"
 msgstr "vMn"
 
-#: src/top/top_nls.c:277
+#: src/top/top_nls.c:284
 msgid "Minor Faults delta"
 msgstr "Приріст вторинних помилок"
 
 #. Translation Hint: maximum 'USED' = 6
-#: src/top/top_nls.c:279
+#: src/top/top_nls.c:286
 msgid "USED"
 msgstr "USED"
 
-#: src/top/top_nls.c:280
+#: src/top/top_nls.c:287
 msgid "Res+Swap Size (KiB)"
 msgstr "Розмір Res+Swap (у КіБ)"
 
 #. Translation Hint: maximum 'nsIPC' = 10 +
-#: src/top/top_nls.c:282
+#: src/top/top_nls.c:289
 msgid "nsIPC"
 msgstr "nsIPC"
 
-#: src/top/top_nls.c:283
+#: src/top/top_nls.c:290
 msgid "IPC namespace Inode"
 msgstr "Inode простору назв IPC"
 
 #. Translation Hint: maximum 'nsMNT' = 10 +
-#: src/top/top_nls.c:285
+#: src/top/top_nls.c:292
 msgid "nsMNT"
 msgstr "nsMNT"
 
-#: src/top/top_nls.c:286
+#: src/top/top_nls.c:293
 msgid "MNT namespace Inode"
 msgstr "Inode простору назв MNT"
 
 #. Translation Hint: maximum 'nsNET' = 10 +
-#: src/top/top_nls.c:288
+#: src/top/top_nls.c:295
 msgid "nsNET"
 msgstr "nsNET"
 
-#: src/top/top_nls.c:289
+#: src/top/top_nls.c:296
 msgid "NET namespace Inode"
 msgstr "Inode простору назв NET"
 
 #. Translation Hint: maximum 'nsPID' = 10 +
-#: src/top/top_nls.c:291
+#: src/top/top_nls.c:298
 msgid "nsPID"
 msgstr "nsPID"
 
-#: src/top/top_nls.c:292
+#: src/top/top_nls.c:299
 msgid "PID namespace Inode"
 msgstr "Inode простору назв PID"
 
 #. Translation Hint: maximum 'nsUSER' = 10 +
-#: src/top/top_nls.c:294
+#: src/top/top_nls.c:301
 msgid "nsUSER"
 msgstr "nsUSER"
 
-#: src/top/top_nls.c:295
+#: src/top/top_nls.c:302
 msgid "USER namespace Inode"
 msgstr "Inode простору назв USER"
 
 #. Translation Hint: maximum 'nsUTS' = 10 +
-#: src/top/top_nls.c:297
+#: src/top/top_nls.c:304
 msgid "nsUTS"
 msgstr "nsUTS"
 
-#: src/top/top_nls.c:298
+#: src/top/top_nls.c:305
 msgid "UTS namespace Inode"
 msgstr "Inode простору назв UTS"
 
 #. Translation Hint: maximum 'LXC' = 8 +
-#: src/top/top_nls.c:300
+#: src/top/top_nls.c:307
 msgid "LXC"
 msgstr "LXC"
 
-#: src/top/top_nls.c:301
+#: src/top/top_nls.c:308
 msgid "LXC container name"
 msgstr "Назва контейнера LXC"
 
 #. Translation Hint: maximum 'RSan' = 6
-#: src/top/top_nls.c:303
+#: src/top/top_nls.c:310
 msgid "RSan"
 msgstr "RSan"
 
-#: src/top/top_nls.c:304
+#: src/top/top_nls.c:311
 msgid "RES Anonymous (KiB)"
 msgstr "Анонімна RES (КіБ)"
 
 #. Translation Hint: maximum 'RSfd' = 6
-#: src/top/top_nls.c:306
+#: src/top/top_nls.c:313
 msgid "RSfd"
 msgstr "RSfd"
 
-#: src/top/top_nls.c:307
+#: src/top/top_nls.c:314
 msgid "RES File-based (KiB)"
 msgstr "RES на основі файлів (КіБ)"
 
 #. Translation Hint: maximum 'RSlk' = 6
-#: src/top/top_nls.c:309
+#: src/top/top_nls.c:316
 msgid "RSlk"
 msgstr "RSlk"
 
-#: src/top/top_nls.c:310
+#: src/top/top_nls.c:317
 msgid "RES Locked (KiB)"
 msgstr "Заблокована RES (КіБ)"
 
 #. Translation Hint: maximum 'RSsh' = 6
-#: src/top/top_nls.c:312
+#: src/top/top_nls.c:319
 msgid "RSsh"
 msgstr "RSsh"
 
-#: src/top/top_nls.c:313
+#: src/top/top_nls.c:320
 msgid "RES Shared (KiB)"
 msgstr "Спільна RES (КіБ)"
 
 #. Translation Hint: maximum 'CGNAME' = variable
-#: src/top/top_nls.c:315
+#: src/top/top_nls.c:322
 msgid "CGNAME"
 msgstr "CGNAME"
 
-#: src/top/top_nls.c:316
+#: src/top/top_nls.c:323
 msgid "Control Group name"
 msgstr "Назва групи керування"
 
 #. Translation Hint: maximum 'NU' = 2
-#: src/top/top_nls.c:318
+#: src/top/top_nls.c:325
 msgid "NU"
 msgstr "NU"
 
-#: src/top/top_nls.c:319
+#: src/top/top_nls.c:326
 msgid "Last Used NUMA node"
 msgstr "Останній використаний вузол NUMA"
 
 #. Translation Hint: maximum 'LOGID' = 5 +
-#: src/top/top_nls.c:321
+#: src/top/top_nls.c:328
 msgid "LOGID"
-msgstr ""
+msgstr "LOGID"
 
-#: src/top/top_nls.c:322
-#, fuzzy
+#: src/top/top_nls.c:329
 msgid "Login User Id"
-msgstr "Справжній ідентифікатор користувача"
+msgstr "Ідентифікатор користувача для входу"
 
 #. Translation Hint: maximum 'EXE' = variable
-#: src/top/top_nls.c:324
-msgid "EXE"
-msgstr ""
-
-#: src/top/top_nls.c:325
-msgid "Executable Path"
-msgstr ""
-
 #: src/top/top_nls.c:331
+msgid "EXE"
+msgstr "EXE"
+
+#: src/top/top_nls.c:332
+msgid "Executable Path"
+msgstr "Шлях до виконуваного файла"
+
+#: src/top/top_nls.c:338
 msgid "Res Mem (smaps), KiB"
-msgstr ""
+msgstr "Рез пам (smaps), КіБ"
 
 #. Translation Hint: maximum 'PSS' = 6
-#: src/top/top_nls.c:333
-#, fuzzy
+#: src/top/top_nls.c:340
 msgid "PSS"
-msgstr "RSS"
+msgstr "PSS"
 
-#: src/top/top_nls.c:334
+#: src/top/top_nls.c:341
 msgid "Proportion RSS,  KiB"
-msgstr ""
+msgstr "Пропорційне RSS,  КіБ"
 
 #. Translation Hint: maximum 'PSan' = 6
-#: src/top/top_nls.c:336
+#: src/top/top_nls.c:343
 msgid "PSan"
-msgstr ""
+msgstr "PSan"
 
-#: src/top/top_nls.c:337
+#: src/top/top_nls.c:344
 msgid "Proportion Anon, KiB"
-msgstr ""
+msgstr "Пропорційне анон, КіБ"
 
 #. Translation Hint: maximum 'PSfd' = 6
-#: src/top/top_nls.c:339
+#: src/top/top_nls.c:346
 msgid "PSfd"
-msgstr ""
+msgstr "PSfd"
 
-#: src/top/top_nls.c:340
+#: src/top/top_nls.c:347
 msgid "Proportion File, KiB"
-msgstr ""
+msgstr "Пропорційне файлове, КіБ"
 
 #. Translation Hint: maximum 'PSsh' = 6
-#: src/top/top_nls.c:342
+#: src/top/top_nls.c:349
 msgid "PSsh"
-msgstr ""
+msgstr "PSsh"
 
-#: src/top/top_nls.c:343
+#: src/top/top_nls.c:350
 msgid "Proportion Shrd, KiB"
-msgstr ""
+msgstr "Пропорційне Shrd, КіБ"
 
 #. Translation Hint: maximum 'USS' = 6
-#: src/top/top_nls.c:345
-#, fuzzy
+#: src/top/top_nls.c:352
 msgid "USS"
-msgstr "RSS"
+msgstr "USS"
 
-#: src/top/top_nls.c:346
+#: src/top/top_nls.c:353
 msgid "Unique RSS, KiB"
-msgstr ""
+msgstr "Унікальне RSS, КіБ"
 
 #. Translation Hint: maximum 'ioR' = 6
-#: src/top/top_nls.c:348
+#: src/top/top_nls.c:355
 msgid "ioR"
-msgstr ""
+msgstr "ioR"
 
-#: src/top/top_nls.c:349
+#: src/top/top_nls.c:356
 msgid "I/O Bytes Read"
-msgstr ""
+msgstr "Прочитано байтів ВВ"
 
 #. Translation Hint: maximum 'ioRop' = 5
-#: src/top/top_nls.c:351
+#: src/top/top_nls.c:358
 msgid "ioRop"
-msgstr ""
+msgstr "ioRop"
 
-#: src/top/top_nls.c:352
+#: src/top/top_nls.c:359
 msgid "I/O Read Operations"
-msgstr ""
+msgstr "Операцій читання ВВ"
 
 #. Translation Hint: maximum 'ioW' = 6
-#: src/top/top_nls.c:354
+#: src/top/top_nls.c:361
 msgid "ioW"
-msgstr ""
+msgstr "ioW"
 
-#: src/top/top_nls.c:355
+#: src/top/top_nls.c:362
 msgid "I/O Bytes Written"
-msgstr ""
+msgstr "Записано байтів ВВ"
 
 #. Translation Hint: maximum 'ioWop' = 5
-#: src/top/top_nls.c:357
+#: src/top/top_nls.c:364
 msgid "ioWop"
-msgstr ""
+msgstr "ioWop"
 
-#: src/top/top_nls.c:358
+#: src/top/top_nls.c:365
 msgid "I/O Write Operations"
-msgstr ""
+msgstr "Операцій запис ВВ"
 
 #. Translation Hint: maximum 'AGID' = 5
-#: src/top/top_nls.c:360
+#: src/top/top_nls.c:367
 msgid "AGID"
-msgstr ""
+msgstr "AGID"
 
-#: src/top/top_nls.c:361
+#: src/top/top_nls.c:368
 msgid "Autogroup Identifier"
-msgstr ""
+msgstr "Ідентифікатор автогрупи"
 
 #. Translation Hint: maximum 'AGNI' = 4
-#: src/top/top_nls.c:363
+#: src/top/top_nls.c:370
 msgid "AGNI"
-msgstr ""
+msgstr "AGNI"
 
-#: src/top/top_nls.c:364
-#, fuzzy
+#: src/top/top_nls.c:371
 msgid "Autogroup Nice Value"
-msgstr "Значення Nice"
+msgstr "Значення пріоритетності автогрупи"
 
 #. Translation Hint: maximum 'STARTED' = 7
-#: src/top/top_nls.c:366
+#: src/top/top_nls.c:373
 msgid "STARTED"
-msgstr ""
+msgstr "РОЗПОЧАТО"
 
-#: src/top/top_nls.c:367
+#: src/top/top_nls.c:374
 msgid "Start Time from boot"
-msgstr ""
+msgstr "Час початку від завантаження"
 
 #. Translation Hint: maximum 'ELAPSED' = 7
-#: src/top/top_nls.c:369
+#: src/top/top_nls.c:376
 msgid "ELAPSED"
-msgstr ""
+msgstr "ELAPSED"
 
-#: src/top/top_nls.c:370
+#: src/top/top_nls.c:377
 msgid "Elapsed Running Time"
-msgstr ""
+msgstr "Час виконання, що минув"
 
 #. Translation Hint: maximum '%CUU' = 6
-#: src/top/top_nls.c:372
+#: src/top/top_nls.c:379
 #, c-format
 msgid "%CUU"
-msgstr ""
+msgstr "%CUU"
 
-#: src/top/top_nls.c:373
+#: src/top/top_nls.c:380
 msgid "CPU Utilization"
-msgstr ""
+msgstr "Використання процесора"
 
 #. Translation Hint: maximum '%CUC' = 7
-#: src/top/top_nls.c:375
+#: src/top/top_nls.c:382
 #, c-format
 msgid "%CUC"
-msgstr ""
+msgstr "%CUC"
 
-#: src/top/top_nls.c:376
+#: src/top/top_nls.c:383
 msgid "Utilization + child"
-msgstr ""
+msgstr "Використання + дочірні"
 
 #. Translation Hint: maximum 'nsCGROUP' = 10 +
-#: src/top/top_nls.c:378
-#, fuzzy
+#: src/top/top_nls.c:385
 msgid "nsCGROUP"
-msgstr "CGROUPS"
+msgstr "nsCGROUP"
 
-#: src/top/top_nls.c:379
-#, fuzzy
+#: src/top/top_nls.c:386
 msgid "CGRP namespace Inode"
-msgstr "Inode простору назв IPC"
+msgstr "Inode простору назв CGRP"
 
 #. Translation Hint: maximum 'nsTIME' = 10 +
-#: src/top/top_nls.c:381
-#, fuzzy
+#: src/top/top_nls.c:388
 msgid "nsTIME"
-msgstr "TIME"
+msgstr "nsTIME"
 
-#: src/top/top_nls.c:382
-#, fuzzy
+#: src/top/top_nls.c:389
 msgid "TIME namespace Inode"
-msgstr "Inode простору назв IPC"
+msgstr "Inode простору назв TIME"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3022,7 +3002,7 @@ msgstr "Inode простору назв IPC"
 #. .  and should not be translated without also making corresponding
 #. .  c-code logic changes.
 #. .
-#: src/top/top_nls.c:402
+#: src/top/top_nls.c:409
 #, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
@@ -3031,364 +3011,349 @@ msgstr ""
 "\t%3$s отримано сигнал %1$d (%2$s). Будь ласка,\n"
 "\tнадішліть звіт щодо вади до див. <procps@freelists.org>\n"
 
-#: src/top/top_nls.c:405
-#, c-format
-msgid ""
-"inappropriate '%s'\n"
-"Usage:\n"
-"  %s%s"
-msgstr ""
-"неналежне «%s»\n"
-"Користування:\n"
-"  %s%s"
-
-#: src/top/top_nls.c:435
+#: src/top/top_nls.c:439
 #, c-format
 msgid "bad delay interval '%s'"
 msgstr "помилковий інтервал затримки, «%s»"
 
-#: src/top/top_nls.c:436
+#: src/top/top_nls.c:440
 #, c-format
 msgid "bad iterations argument '%s'"
 msgstr "помилковий аргумент ітерацій, «%s»"
 
-#: src/top/top_nls.c:437
+#: src/top/top_nls.c:441
 #, c-format
 msgid "pid limit (%d) exceeded"
 msgstr "перевищено обмеження pid (%d)"
 
-#: src/top/top_nls.c:438
+#: src/top/top_nls.c:442
 #, c-format
 msgid "bad pid '%s'"
 msgstr "помилковий pid, «%s»"
 
-#: src/top/top_nls.c:439
-#, fuzzy, c-format
+#: src/top/top_nls.c:443
+#, c-format
 msgid "-%c argument missing"
-msgstr "не вистачає аргументу"
+msgstr "не вистачає аргументу -%c"
 
-#: src/top/top_nls.c:440
+#: src/top/top_nls.c:444
 #, c-format
 msgid "bad width arg '%s'"
 msgstr "помилковий аргумент ширини, «%s»"
 
-#: src/top/top_nls.c:441
-#, fuzzy, c-format
+#: src/top/top_nls.c:445
+#, c-format
 msgid "unknown option '%s'"
-msgstr ""
-"невідомий параметр, «%c»\n"
-"Користування:\n"
-"  %s%s"
+msgstr "невідомий параметр «%s»"
 
-#: src/top/top_nls.c:442
+#: src/top/top_nls.c:446
 msgid "-d disallowed in \"secure\" mode"
 msgstr "-d заборонено використовувати у режимі «secure»"
 
-#: src/top/top_nls.c:443
+#: src/top/top_nls.c:447
 msgid "-d requires positive argument"
 msgstr "-d потребує додатного аргументу"
 
-#: src/top/top_nls.c:444
+#: src/top/top_nls.c:448
 msgid "On"
 msgstr "Увімкнено"
 
-#: src/top/top_nls.c:445
+#: src/top/top_nls.c:449
 msgid "Off"
 msgstr "Вимкнено"
 
-#: src/top/top_nls.c:446
-#, fuzzy, c-format
+#: src/top/top_nls.c:450
+#, c-format
 msgid "%s from %s"
-msgstr "%s з %s\n"
+msgstr "%s з %s"
 
-#: src/top/top_nls.c:447
+#: src/top/top_nls.c:451
 #, c-format
 msgid "Forest mode %s"
 msgstr "Режим лісу %s"
 
-#: src/top/top_nls.c:448
+#: src/top/top_nls.c:452
 msgid "failed tty get"
 msgstr "помилка отримання tty"
 
-#: src/top/top_nls.c:449
+#: src/top/top_nls.c:453
 #, c-format
 msgid "failed tty set: %s"
 msgstr "помилка встановлення tty: %s"
 
-#: src/top/top_nls.c:450
+#: src/top/top_nls.c:454
 msgid "Choose field group (1 - 4)"
 msgstr "Вибір групи поля (1 - 4)"
 
-#: src/top/top_nls.c:451
+#: src/top/top_nls.c:455
 msgid "Command disabled, 'A' mode required"
 msgstr "Команду вимкнено, потрібен режим «A»"
 
-#: src/top/top_nls.c:452
+#: src/top/top_nls.c:456
 #, c-format
 msgid "Command disabled, activate %s with '-' or '_'"
 msgstr "Команду вимкнено, задійте %s за допомогою «-» або «_»"
 
-#: src/top/top_nls.c:453
+#: src/top/top_nls.c:457
 msgid "No colors to map!"
 msgstr "Немає кольорів для прив’язки!"
 
-#: src/top/top_nls.c:454
+#: src/top/top_nls.c:458
 #, c-format
 msgid "Failed '%s' open: %s"
 msgstr "Не вдалося виконати відкриття «%s»: %s"
 
-#: src/top/top_nls.c:455
+#: src/top/top_nls.c:459
 #, c-format
 msgid "Wrote configuration to '%s'"
 msgstr "Записано налаштування до «%s»"
 
-#: src/top/top_nls.c:456
+#: src/top/top_nls.c:460
 #, c-format
 msgid "Change delay from %.1f to"
 msgstr "Змінити затримку з %.1f на"
 
-#: src/top/top_nls.c:457
+#: src/top/top_nls.c:461
 #, c-format
 msgid "Show threads %s"
 msgstr "Вивести потоки %s"
 
-#: src/top/top_nls.c:458
+#: src/top/top_nls.c:462
 #, c-format
 msgid "Irix mode %s"
 msgstr "Режим Irix %s"
 
-#: src/top/top_nls.c:459
+#: src/top/top_nls.c:463
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
 msgstr "PID для надсилання сигналу або завершення [типовий pid = %d]"
 
-#: src/top/top_nls.c:460
+#: src/top/top_nls.c:464
 #, c-format
 msgid "Send pid %d signal [%d/sigterm]"
 msgstr "Надіслати сигнал pid %d [%d/sigterm]"
 
-#: src/top/top_nls.c:461
+#: src/top/top_nls.c:465
 #, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
 msgstr "Помилка сигналу pid «%d» з «%d»: %s"
 
-#: src/top/top_nls.c:462
+#: src/top/top_nls.c:466
 msgid "Invalid signal"
 msgstr "Некоректний сигнал"
 
-#: src/top/top_nls.c:463
+#: src/top/top_nls.c:467
 #, c-format
 msgid "PID to renice [default pid = %d]"
 msgstr "PID для зміни уподобаності [типовий pid = %d]"
 
-#: src/top/top_nls.c:464
+#: src/top/top_nls.c:468
 #, c-format
 msgid "Renice PID %d to value"
 msgstr "Змінити уподобаність PID %d до значення"
 
-#: src/top/top_nls.c:465
+#: src/top/top_nls.c:469
 #, c-format
 msgid "Failed renice of PID %d to %d: %s"
 msgstr "Не вдалося змінити уподобаність PID %d на %d: %s"
 
-#: src/top/top_nls.c:466
+#: src/top/top_nls.c:470
 #, c-format
 msgid "Rename window '%s' to (1-3 chars)"
 msgstr "Перейменувати вікно «%s» (1-3 символи)"
 
-#: src/top/top_nls.c:467
+#: src/top/top_nls.c:471
 #, c-format
 msgid "Cumulative time %s"
 msgstr "Накопичений час %s"
 
-#: src/top/top_nls.c:468
+#: src/top/top_nls.c:472
 #, c-format
 msgid "Maximum tasks = %d, change to (0 is unlimited)"
 msgstr "Максимальна кількість завдань = %d, змінити (0 — не обмежувати)"
 
-#: src/top/top_nls.c:469
+#: src/top/top_nls.c:473
 msgid "Invalid maximum"
 msgstr "Некоректний максимум"
 
-#: src/top/top_nls.c:470
+#: src/top/top_nls.c:474
 msgid "Which user (blank for all)"
 msgstr "Користувач (порожнє значення — усі)"
 
-#: src/top/top_nls.c:471
+#: src/top/top_nls.c:475
 msgid "Unknown command - try 'h' for help"
 msgstr "Невідома команда. Скористайтеся «h» для отримання довідки."
 
-#: src/top/top_nls.c:472
-#, fuzzy, c-format
+#: src/top/top_nls.c:476
+#, c-format
 msgid "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
 msgstr "координати гортання: y = %d/%d (завдання), x = %d/%d (поля)"
 
-#: src/top/top_nls.c:473
+#: src/top/top_nls.c:477
 msgid "failed memory allocate"
 msgstr "не вдалося розмістити у пам’яті"
 
-#: src/top/top_nls.c:474
+#: src/top/top_nls.c:478
 msgid "failed memory re-allocate"
 msgstr "не вдалося повторно розмістити у пам’яті"
 
-#: src/top/top_nls.c:475
+#: src/top/top_nls.c:479
 msgid "Unacceptable floating point"
 msgstr "Неприйнятна рухома крапка"
 
-#: src/top/top_nls.c:476
+#: src/top/top_nls.c:480
 msgid "Invalid user"
 msgstr "Некоректний користувач"
 
-#: src/top/top_nls.c:477
+#: src/top/top_nls.c:481
 msgid "forest view"
 msgstr "перегляд лісу"
 
-#: src/top/top_nls.c:478
+#: src/top/top_nls.c:482
 msgid "failed pid maximum size test"
 msgstr "не вдалося пройти перевірку на максимальний розмір pid"
 
-#: src/top/top_nls.c:479
+#: src/top/top_nls.c:483
 msgid "failed number of cpus test"
 msgstr "не вдалося пройти перевірку на кількість процесорів"
 
-#: src/top/top_nls.c:480
+#: src/top/top_nls.c:484
 #, c-format
 msgid "incompatible rcfile, you should delete '%s'"
 msgstr "несумісний файл rc, вам слід вилучити «%s»"
 
-#: src/top/top_nls.c:481
+#: src/top/top_nls.c:485
 #, c-format
 msgid "window entry #%d corrupt, please delete '%s'"
 msgstr "запис вікна %d пошкоджено, будь ласка, вилучіть «%s»"
 
-#: src/top/top_nls.c:482
+#: src/top/top_nls.c:486
 msgid "Unavailable in secure mode"
 msgstr "Недоступне у захищеному режимі"
 
-#: src/top/top_nls.c:483
+#: src/top/top_nls.c:487
 msgid "Only 1 cpu detected"
 msgstr "Виявлено лише 1 процесор"
 
-#: src/top/top_nls.c:484
+#: src/top/top_nls.c:488
 msgid "Unacceptable integer"
 msgstr "Неприйнятне ціле число"
 
-#: src/top/top_nls.c:485
+#: src/top/top_nls.c:489
 msgid "conflicting process selections (U/p/u)"
 msgstr "конфлікт вибору процесів (U/p/u)"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 kibibytes (1024 bytes)
-#: src/top/top_nls.c:488
+#: src/top/top_nls.c:492
 msgid "KiB"
 msgstr "КіБ"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 mebibytes (1,048,576 bytes)
-#: src/top/top_nls.c:491
+#: src/top/top_nls.c:495
 msgid "MiB"
 msgstr "МіБ"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 gibibytes (1,073,741,824 bytes)
-#: src/top/top_nls.c:494
+#: src/top/top_nls.c:498
 msgid "GiB"
 msgstr "ГіБ"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 tebibytes (1,099,511,627,776 bytes)
-#: src/top/top_nls.c:497
+#: src/top/top_nls.c:501
 msgid "TiB"
 msgstr "ТіБ"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 pebibytes (1,024 tebibytes)
-#: src/top/top_nls.c:500
+#: src/top/top_nls.c:504
 msgid "PiB"
 msgstr "ПіБ"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 exbibytes (1,024 pebibytes)
-#: src/top/top_nls.c:503
+#: src/top/top_nls.c:507
 msgid "EiB"
 msgstr "ЕіБ"
 
-#: src/top/top_nls.c:504
+#: src/top/top_nls.c:508
 msgid "Threads"
 msgstr "Потоки"
 
-#: src/top/top_nls.c:505
+#: src/top/top_nls.c:509
 msgid "Tasks"
 msgstr "Завдання"
 
 #. Translation Hint: The following "word" is meant to represent either a single
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, excluding leading % & colon)
-#: src/top/top_nls.c:509
-#, fuzzy, c-format
+#: src/top/top_nls.c:513
+#, c-format
 msgid "%Cpu(s):"
 msgstr "%CПроц.:"
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
 #. .                 (if 'Cp' is translated, it must be exactly 2 characters long)
-#: src/top/top_nls.c:513
-#, fuzzy, c-format
+#: src/top/top_nls.c:517
+#, c-format
 msgid "%%Cp%c%-3d:"
-msgstr "%%Прц%-3d:"
+msgstr "%%Cp%c%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: src/top/top_nls.c:515
+#: src/top/top_nls.c:519
 msgid "another "
 msgstr "інші "
 
-#: src/top/top_nls.c:516
+#: src/top/top_nls.c:520
 msgid "Locate next inactive, use \"L\""
 msgstr "Знайти наступний неактивний, скористайтеся «L»"
 
-#: src/top/top_nls.c:517
+#: src/top/top_nls.c:521
 msgid "Locate string"
 msgstr "Знайти рядок"
 
-#: src/top/top_nls.c:518
+#: src/top/top_nls.c:522
 #, c-format
 msgid "%s\"%s\" not found"
 msgstr "%s«%s» не знайдено"
 
-#: src/top/top_nls.c:519
+#: src/top/top_nls.c:523
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr "крок збільшення ширини, %d, змінити (0 — типовий, -1 — автоматичний)"
 
-#: src/top/top_nls.c:520
-#, fuzzy
+#: src/top/top_nls.c:524
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
 msgstr ""
 "У rcfile виявлено помилки за допомогою інспектування або іншого "
 "фільтрування. Зберегти його попри це?"
 
-#: src/top/top_nls.c:521
+#: src/top/top_nls.c:525
 #, c-format
 msgid "unrecognized field name '%s'"
 msgstr "нерозпізнана назва поля, «%s»"
 
-#: src/top/top_nls.c:522
+#: src/top/top_nls.c:526
 msgid "even using field names only, window is now too small"
 msgstr "навіть за використання лише назв полів, вікно є зараз надто малим"
 
-#: src/top/top_nls.c:523
+#: src/top/top_nls.c:527
 msgid "Open Files"
 msgstr "Відкрити файли"
 
-#: src/top/top_nls.c:524
+#: src/top/top_nls.c:528
 msgid "NUMA Info"
 msgstr "Дані щодо NUMA"
 
-#: src/top/top_nls.c:525
+#: src/top/top_nls.c:529
 msgid "Log"
 msgstr "Журнал"
 
-#: src/top/top_nls.c:526
+#: src/top/top_nls.c:530
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
@@ -3396,12 +3361,12 @@ msgstr ""
 "нарешті, ключ «=» покаже справжнє читання даних з файла або виконану "
 "команду..."
 
-#: src/top/top_nls.c:527
+#: src/top/top_nls.c:531
 msgid "demo"
 msgstr "демо"
 
-#: src/top/top_nls.c:528
-#, fuzzy, c-format
+#: src/top/top_nls.c:532
+#, c-format
 msgid ""
 "This is simulated output representing the contents of some file or the "
 "output\n"
@@ -3492,115 +3457,113 @@ msgstr ""
 "можна включати до скриптів оболонки!\n"
 "\n"
 "Щоб отримати додаткову корисну інформацію, будь ласка, зверніться до\n"
-"документації з top. Таким чином, ви можете розширити можливості top\n"
+"документації з top(1). Таким чином, ви можете розширити можливості top\n"
 "вашими власними, корисними для вас записами «file» і «pipe».\n"
 "\n"
 "Приємного користування!\n"
 
-#: src/top/top_nls.c:560
+#: src/top/top_nls.c:564
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
 msgstr ""
 "щоб увімкнути «Y», натисніть <Enter>, потім введіть «W» і перезапустіть top"
 
-#: src/top/top_nls.c:561
+#: src/top/top_nls.c:565
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr ""
 "щоб увімкнути «Y», будь ласка, ознайомтеся зі сторінкою підручника з top "
 "(натисніть Enter)"
 
-#: src/top/top_nls.c:562
+#: src/top/top_nls.c:566
 #, c-format
 msgid "Selection failed with: %s\n"
 msgstr "Помилка вибору: %s\n"
 
-#: src/top/top_nls.c:563
+#: src/top/top_nls.c:567
 #, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "не вдалося виконати інспекцію, pid %d не знайдено"
 
-#: src/top/top_nls.c:564
+#: src/top/top_nls.c:568
 #, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr "виконати інспекцію PID [типовий pid = %d]"
 
-#: src/top/top_nls.c:565
+#: src/top/top_nls.c:569
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: %*d-%-*d рядків, %*d-%*d стовпчиків, прочитано %lu байтів"
 
-#: src/top/top_nls.c:566
-#, fuzzy
+#: src/top/top_nls.c:570
 msgid "patience please, working ..."
 msgstr "зачекайте, будь ласка, виконуємо обробку..."
 
-#: src/top/top_nls.c:567
+#: src/top/top_nls.c:571
 msgid "working, use Ctrl-C to end ..."
 msgstr "працюємо, скористайтеся Ctrl-C, щоб перервати обробку..."
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: src/top/top_nls.c:570
+#: src/top/top_nls.c:574
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr "додати фільтрування %d (%s) у форматі: [!]ПОЛЕ?ЗНАЧЕННЯ"
 
-#: src/top/top_nls.c:571
+#: src/top/top_nls.c:575
 msgid "ignoring case"
 msgstr "не враховувати регістр"
 
-#: src/top/top_nls.c:572
+#: src/top/top_nls.c:576
 msgid "case sensitive"
 msgstr "з врахуванням регістру"
 
-#: src/top/top_nls.c:573
+#: src/top/top_nls.c:577
 msgid "duplicate filter was ignored"
 msgstr "дублікат фільтра проігноровано"
 
-#: src/top/top_nls.c:574
+#: src/top/top_nls.c:578
 #, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "не вистачає роздільника фільтрування «%s»"
 
-#: src/top/top_nls.c:575
+#: src/top/top_nls.c:579
 #, c-format
 msgid "'%s' filter value is missing"
 msgstr "не вистачає значення фільтрування «%s»"
 
-#: src/top/top_nls.c:576
+#: src/top/top_nls.c:580
 msgid "include"
 msgstr "включити"
 
-#: src/top/top_nls.c:577
+#: src/top/top_nls.c:581
 msgid "exclude"
 msgstr "виключити"
 
-#: src/top/top_nls.c:578
+#: src/top/top_nls.c:582
 #, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "<Enter>, щоб поновити, фільтри: %s"
 
-#: src/top/top_nls.c:579
+#: src/top/top_nls.c:583
 msgid "none"
 msgstr "немає"
 
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:582
-#, fuzzy, c-format
+#: src/top/top_nls.c:586
+#, c-format
 msgid "%%Node%-2d:"
 msgstr "%%Вузол%-2d:"
 
-#: src/top/top_nls.c:583
-#, fuzzy, c-format
+#: src/top/top_nls.c:587
+#, c-format
 msgid "expand which numa node (0-%d)"
-msgstr "вузол для розгортання (0-%d)"
+msgstr "вузол numa для розгортання (0-%d)"
 
-#: src/top/top_nls.c:584
-#, fuzzy
+#: src/top/top_nls.c:588
 msgid "invalid numa node"
-msgstr "некоректний вузол"
+msgstr "некоректний вузол numa"
 
-#: src/top/top_nls.c:585
+#: src/top/top_nls.c:589
 msgid "sorry, NUMA extensions unavailable"
 msgstr "вибачте, немає доступу до розширень NUMA"
 
@@ -3608,114 +3571,115 @@ msgstr "вибачте, немає доступу до розширень NUMA"
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: src/top/top_nls.c:590
+#: src/top/top_nls.c:594
 msgid "Mem "
 msgstr "Пам "
 
-#: src/top/top_nls.c:591
+#: src/top/top_nls.c:595
 msgid "Swap"
 msgstr "Своп"
 
-#: src/top/top_nls.c:592
+#: src/top/top_nls.c:596
 #, c-format
 msgid "library failed memory statistics, at %d: %s"
-msgstr ""
+msgstr "статистика помилок у пам'яті бібліотеки, на %d: %s"
 
-#: src/top/top_nls.c:593
+#: src/top/top_nls.c:597
 #, c-format
 msgid "library failed cpu statistics, at %d: %s"
-msgstr ""
+msgstr "статистика помилок процесора бібліотеки, на %d: %s"
 
-#: src/top/top_nls.c:594
+#: src/top/top_nls.c:598
 #, c-format
 msgid "library failed pids statistics, at %d: %s"
-msgstr ""
+msgstr "статистика щодо помилкових pid бібліотеки, на %d: %s"
 
-#: src/top/top_nls.c:595
-#, fuzzy, c-format
+#: src/top/top_nls.c:599
+#, c-format
 msgid "bad memory scaling arg '%s'"
-msgstr "помилкове аргумент масштабування пам'яті «%c»"
+msgstr "помилкове аргумент масштабування пам'яті «%s»"
 
-#: src/top/top_nls.c:596
+#: src/top/top_nls.c:600
 #, c-format
 msgid "PID to collapse/expand [default pid = %d]"
 msgstr "PID для зміни згортання або розгортання [типовий pid = %d]"
 
-#: src/top/top_nls.c:597
+#: src/top/top_nls.c:601
 msgid "wrong mode, command inactive"
 msgstr "помилковий режим, команда є неактивною"
 
-#: src/top/top_nls.c:598
+#: src/top/top_nls.c:602
 msgid "saving prevents older top from reading, save anyway?"
 msgstr ""
 "після збереження зникне можливість читати застарілі повідомлення на початку "
 "списку. Зберегти попри це?"
 
-#: src/top/top_nls.c:599
-#, fuzzy, c-format
-msgid "failed sem_init() at %d: %s"
-msgstr "помилка встановлення tty: %s"
-
-#: src/top/top_nls.c:600
-#, fuzzy, c-format
-msgid "failed pthread_create() at %d: %s"
-msgstr "не вдалося відкрити /proc/stat: %s"
-
-#: src/top/top_nls.c:601
-msgid "sorry, restricted namespace with reduced functionality"
-msgstr ""
-
-#: src/top/top_nls.c:602
-#, c-format
-msgid "set pid %d AGNI value to"
-msgstr ""
-
 #: src/top/top_nls.c:603
-msgid "valid AGNI range is -20 to +19"
-msgstr ""
+#, c-format
+msgid "failed sem_init() at %d: %s"
+msgstr "не вдалося виконати sem_init() на %d: %s"
 
 #: src/top/top_nls.c:604
-#, fuzzy, c-format
-msgid "autogroup open failed, %s"
-msgstr "не вдалося відкрити файл %s"
+#, c-format
+msgid "failed pthread_create() at %d: %s"
+msgstr "не вдалося виконати pthread_create() на %d: %s"
 
 #: src/top/top_nls.c:605
-#, fuzzy, c-format
-msgid "autogroup write failed, %s"
-msgstr "Значення Nice"
+msgid "sorry, restricted namespace with reduced functionality"
+msgstr ""
+"вибачте, обмежений простір назв із скороченими функціональними можливостями"
 
 #: src/top/top_nls.c:606
 #, c-format
-msgid "command line for pid %d, %s"
-msgstr ""
+msgid "set pid %d AGNI value to"
+msgstr "встановити значення AGNI pid %d"
 
 #: src/top/top_nls.c:607
-#, c-format
-msgid "control groups for pid %d, %s"
-msgstr ""
+msgid "valid AGNI range is -20 to +19"
+msgstr "коректним діапазоном AGNI є значення від -20 до +19"
 
 #: src/top/top_nls.c:608
-#, fuzzy, c-format
-msgid "environment for pid %d, %s"
-msgstr "Змінні середовища"
+#, c-format
+msgid "autogroup open failed, %s"
+msgstr "не вдалося відкрити автогрупу, %s"
 
 #: src/top/top_nls.c:609
 #, c-format
-msgid "namespaces for pid %d, %s"
-msgstr ""
+msgid "autogroup write failed, %s"
+msgstr "помилка запису автогрупи, %s"
 
 #: src/top/top_nls.c:610
-msgid "n/a"
-msgstr ""
+#, c-format
+msgid "command line for pid %d, %s"
+msgstr "рядок команди для pid %d, %s"
 
 #: src/top/top_nls.c:611
 #, c-format
-msgid "supplementary groups for pid %d, %s"
-msgstr ""
+msgid "control groups for pid %d, %s"
+msgstr "групи керування для pid %d, %s"
 
 #: src/top/top_nls.c:612
+#, c-format
+msgid "environment for pid %d, %s"
+msgstr "середовище для pid %d, %s"
+
+#: src/top/top_nls.c:613
+#, c-format
+msgid "namespaces for pid %d, %s"
+msgstr "простір назв для pid %d, %s"
+
+#: src/top/top_nls.c:614
+msgid "n/a"
+msgstr "н/д"
+
+#: src/top/top_nls.c:615
+#, c-format
+msgid "supplementary groups for pid %d, %s"
+msgstr "допоміжні групи для pid %d, %s"
+
+#: src/top/top_nls.c:616
 msgid "message log, last 10 messages:"
-msgstr ""
+msgstr "журнал повідомлень, останні 10 повідомлень:"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3752,8 +3716,8 @@ msgstr ""
 #. .    last line (the one without the newline). So please avoid any line
 #. .    wraps that could place them there.
 #. .
-#: src/top/top_nls.c:657
-#, fuzzy, c-format
+#: src/top/top_nls.c:661
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
 "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
@@ -3805,8 +3769,8 @@ msgstr ""
 "memory; '~1I~2' режим Irix\n"
 "  0,1,2,3,4 Перемикання: '~10~2' нулі; '~11~2/~12~2/~13~2' перегляди проц/"
 "numa; '~14~2' два проц. поряд\n"
-"  f,F,X     Fields: '~1f~2'/'~1F~2' add/remove/order/sort; '~1X~2' increase "
-"фіксована ширина\n"
+"  f,X       Поля: '~1f~2' add/remove/order/sort; '~1X~2' збільшити поля "
+"фіксованої ширини\n"
 "\n"
 "  L,&,<,> . Пошук: '~1L~2'/'~1&~2' знайти дані; Пересунути стовпчик "
 "упорядковування: '~1<~2'/'~1>~2' ліворуч/праворуч\n"
@@ -3822,18 +3786,20 @@ msgstr ""
 "користувачем; '~1o~2'/'~1O~2' інші критерії\n"
 "  n,#,^O  . Встановлення: '~1n~2'/'~1#~2' максимальна показана кількість "
 "завдань; Показ: ~1Ctrl~2+'~1O~2' інші фільтри\n"
-"  V,v     . Перемикання: '~1V~2' перегляд лісу; '~1v~2' приховати або "
-"показати дочірні об'єкти перегляду лісу\n"
+"  V,v,F   . Перемикання: '~1V~2' перегляд лісу; '~1v~2' приховати або "
+"показати дочірні об'єкти; '~1F~2' зберегти фокус\n"
 "\n"
-"%s  W,Y,!     Записати файл налаштувань '~1W~2'; Інспектувати інші виведені "
-"дані '~1Y~2'; Поєднати процесори '~1!~2'\n"
+"%s  ^G,K,N,U  Перегляд: контрольні групи ~1^G~2; командний рядок ~1^K~2; "
+"середовище ~1^N~2; доп. групи ~1^U~2\n"
+"  W,Y,!,^E  Записати налашт. '~1W~2'; Інспектувати '~1Y~2'; Поєднати "
+"процесори '~1!~2'; Масштабувати час ~1^E~2'\n"
 "  q         Вийти\n"
 "          ( для команд з «.» потрібне ~1видиме~2 ~1вікно~2 показу "
 "завдань ) \n"
 "Натисніть «~1h~2» або «~1?~2» для отримання довідки щодо ~1Windows~2,\n"
 "Натисніть «q» або <Esc>, щоб продовжити перегляд даних. "
 
-#: src/top/top_nls.c:683
+#: src/top/top_nls.c:687
 #, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
@@ -3926,8 +3892,8 @@ msgstr ""
 #. .  If you decide to proceed with translation, please take care
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
-#: src/top/top_nls.c:718
-#, fuzzy, c-format
+#: src/top/top_nls.c:722
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -3992,18 +3958,20 @@ msgstr ""
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
-#: src/top/top_nls.c:747
+#: src/top/top_nls.c:751
 msgid ""
 "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' "
 "renice autogroup\n"
 msgstr ""
+"  d,k,r,^R '~1d~2' вст.затримку; '~1k~2' вбити; '~1r~2' зм.пріор.; "
+"~1Ctrl~2+'~1R~2' зм.пріор.автогрупи\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
 #. .  to allow 1 blank line before the fields & descriptions.
 #. .  If absoultely necessary, 4 lines could be used (but never more).
 #. .
-#: src/top/top_nls.c:755
+#: src/top/top_nls.c:759
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
@@ -4020,7 +3988,7 @@ msgstr ""
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
-#: src/top/top_nls.c:763
+#: src/top/top_nls.c:767
 #, c-format
 msgid ""
 "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
@@ -4032,49 +4000,48 @@ msgstr ""
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
-#: src/top/top_nls.c:769
-#, fuzzy, c-format
+#: src/top/top_nls.c:773
+#, c-format
 msgid ""
 "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
 "~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 msgstr ""
 "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
-"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
-#: src/top/top_nls.c:775
-#, fuzzy, c-format
+#: src/top/top_nls.c:779
+#, c-format
 msgid ""
 "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
 "~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 msgstr ""
 "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 
 #. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
-#: src/top/top_nls.c:779
-#, fuzzy, c-format
+#: src/top/top_nls.c:783
+#, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
 "~1    "
 msgstr ""
-"%s %s:~3 %9.9s~2загал,~3 %9.9s~2вільн,~3 %9.9s~2вик,~3 %9.9s~2буф/кеш~3\n"
-"%s %s:~3 %9.9s~2загал,~3 %9.9s~2вільн,~3 %9.9s~2вик.~3 %9.9s~2дост %s~3\n"
+"%s %s:~3 %9.9s~2загал,~3 %9.9s~2вільн,~3 %9.9s~2вик,~3 %9.9s~2буф/кеш~3 "
+"~1    "
 
-#: src/top/top_nls.c:781
-#, fuzzy, c-format
+#: src/top/top_nls.c:785
+#, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
 msgstr ""
-"%s %s:~3 %9.9s~2загал,~3 %9.9s~2вільн,~3 %9.9s~2вик,~3 %9.9s~2буф/кеш~3\n"
-"%s %s:~3 %9.9s~2загал,~3 %9.9s~2вільн,~3 %9.9s~2вик.~3 %9.9s~2дост %s~3\n"
+"%s %s:~3 %9.9s~2загал,~3 %9.9s~2віль,~3 %9.9s~2вико.~3 %9.9s~2дост. %s~3"
 
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
 #. .
-#: src/top/top_nls.c:787
+#: src/top/top_nls.c:791
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
@@ -4087,7 +4054,7 @@ msgstr ""
 "для ~1завершення~5 !\n"
 "Пункти~2: ~1%s\n"
 
-#: src/top/top_nls.c:792
+#: src/top/top_nls.c:796
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
@@ -4103,7 +4070,7 @@ msgstr ""
 
 #: src/uptime.c:47 src/uptime.c:119
 msgid "Cannot get system uptime"
-msgstr ""
+msgstr "Не вдалося отримати час роботи системи"
 
 #: src/uptime.c:63
 msgid " -p, --pretty   show uptime in pretty format\n"
@@ -4164,9 +4131,8 @@ msgid " -t, --timestamp        show timestamp\n"
 msgstr " -t, --timestamp        вивести часову позначку\n"
 
 #: src/vmstat.c:238
-#, fuzzy
 msgid " -y, --no-first         skips first line of output\n"
-msgstr " -w, --wide             виведення у широкому форматі\n"
+msgstr " -y, --no-first         пропустити перший рядок виведення\n"
 
 #: src/vmstat.c:257
 msgid ""
@@ -4177,13 +4143,12 @@ msgstr ""
 "процесор---"
 
 #: src/vmstat.c:259
-#, fuzzy
 msgid ""
 "--procs-- -----------------------memory---------------------- ---swap-- -----"
 "io---- -system-- ----------cpu----------"
 msgstr ""
-"--проц--  -----------------------пам’ять--------------------- ---своп-- ----"
-"в/в---- -система- -----процесор------"
+"проц  -----------пам’ять--------- ---своп-- ----в/в---- -система- ------"
+"процесор-----"
 
 #: src/vmstat.c:260 src/vmstat.c:616
 msgid " -----timestamp-----"
@@ -4287,24 +4252,23 @@ msgstr "st"
 #. Translation Hint: max 2 chars
 #: src/vmstat.c:317
 msgid "gu"
-msgstr ""
+msgstr "gu"
 
 #: src/vmstat.c:378 src/vmstat.c:867
-#, fuzzy
 msgid "Unable to create vmstat structure"
-msgstr "не вдалося створити канали IPC"
+msgstr "Не вдалося створити структуру vmstat"
 
 #: src/vmstat.c:380 src/vmstat.c:863 src/vmstat.c:916
 msgid "Unable to create system stat structure"
-msgstr ""
+msgstr "Не вдалося створити структуру статистики системи"
 
 #: src/vmstat.c:391 src/vmstat.c:871
 msgid "Unable to select memory information"
-msgstr ""
+msgstr "Не вдалося вибрати відомості щодо пам'яті"
 
 #: src/vmstat.c:405 src/vmstat.c:458 src/vmstat.c:865
 msgid "Unable to select stat information"
-msgstr ""
+msgstr "Не вдалося вибрати статистичні відомості"
 
 #. Translation Hint: Translating folloging disk partition
 #. * header fields that follow (marked with max x chars) might
@@ -4331,12 +4295,12 @@ msgstr "запитаних записів"
 
 #: src/vmstat.c:581 src/vmstat.c:684 src/vmstat.c:810
 msgid "Unable to create diskstat structure"
-msgstr ""
+msgstr "Не вдалося створити структуру diskstat"
 
 #: src/vmstat.c:584 src/vmstat.c:590
-#, fuzzy, c-format
+#, c-format
 msgid "Disk/Partition %s not found"
-msgstr "розділ не знайдено\n"
+msgstr "Диск або розділ %s не знайдено"
 
 #: src/vmstat.c:613
 msgid ""
@@ -4386,7 +4350,7 @@ msgstr "сек"
 
 #: src/vmstat.c:691 src/vmstat.c:812
 msgid "Unable to retrieve disk statistics"
-msgstr ""
+msgstr "Не вдалося отримати статистику щодо дисків"
 
 #. Translation Hint: Translating folloging slab fields that
 #. * follow (marked with max x chars) might not work, unless
@@ -4417,14 +4381,14 @@ msgid "Pages"
 msgstr "Сторінки"
 
 #: src/vmstat.c:833
-#, fuzzy, c-format
+#, c-format
 msgid "%13d disks\n"
-msgstr "%13d дисків \n"
+msgstr "%13d дисків\n"
 
 #: src/vmstat.c:834
-#, fuzzy, c-format
+#, c-format
 msgid "%13d partitions\n"
-msgstr "%13d розділів \n"
+msgstr "%13d розділів\n"
 
 #: src/vmstat.c:835
 #, c-format
@@ -4477,9 +4441,9 @@ msgid "%13lu milli spent IO\n"
 msgstr "%13lu мілісекунд на введення-виведення\n"
 
 #: src/vmstat.c:845
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu milli weighted IO\n"
-msgstr "%13lu мілісекунд на введення-виведення\n"
+msgstr "%13lu мілісекунд зваженого введення-виведення\n"
 
 #: src/vmstat.c:873
 #, c-format
@@ -4572,24 +4536,24 @@ msgid "%13lld stolen cpu ticks\n"
 msgstr "%13lld викрадених тактів процесора\n"
 
 #: src/vmstat.c:891
-#, fuzzy, c-format
+#, c-format
 msgid "%13lld non-nice guest cpu ticks\n"
-msgstr "%13lld тактів процесора для неуподобаних процесів користувача\n"
+msgstr "%13lld тактів процесора для неуподобаних гостьових процесів\n"
 
 #: src/vmstat.c:892
-#, fuzzy, c-format
+#, c-format
 msgid "%13lld nice guest cpu ticks\n"
-msgstr "%13lld тактів процесора для уподобаних процесів користувача\n"
+msgstr "%13lld тактів процесора для уподобаних гостьових процесів\n"
 
 #: src/vmstat.c:893
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu K paged in\n"
-msgstr "%13lu сторінок введено\n"
+msgstr "%13lu K поділених на сторінки вхідних даних\n"
 
 #: src/vmstat.c:894
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu K paged out\n"
-msgstr "%13lu сторінок виведено\n"
+msgstr "%13lu K поділених на сторінки вихідних даних\n"
 
 #: src/vmstat.c:895
 #, c-format
@@ -4602,24 +4566,24 @@ msgid "%13lu pages swapped out\n"
 msgstr "%13lu сторінок вивантажено\n"
 
 #: src/vmstat.c:897
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu interrupts\n"
-msgstr "%13u переривань\n"
+msgstr "%13lu переривань\n"
 
 #: src/vmstat.c:898
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu CPU context switches\n"
-msgstr "%13u перемикачів контексту процесора\n"
+msgstr "%13lu перемикачів контексту процесора\n"
 
 #: src/vmstat.c:899
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu boot time\n"
-msgstr "%13u час з моменту завантаження\n"
+msgstr "%13lu час з моменту завантаження\n"
 
 #: src/vmstat.c:900 src/vmstat.c:918
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu forks\n"
-msgstr "%13u відгалужень\n"
+msgstr "%13lu відгалужень\n"
 
 #. Translation Hint: do not change argument characters
 #: src/vmstat.c:1021
@@ -4663,12 +4627,13 @@ msgstr ""
 "  -g, --chgexit          вийти, якщо змінюються дані, виведені командою\n"
 
 #: src/watch.c:100
-#, fuzzy
 msgid ""
 "  -q, --equexit <cycles>\n"
 "                         exit when output from command does not change\n"
 msgstr ""
-"  -g, --chgexit          вийти, якщо змінюються дані, виведені командою\n"
+"  -q, --equexit <цикли>\n"
+"                         вийти, якщо виведення з командного рядка не "
+"змінюється\n"
 
 #: src/watch.c:102
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
@@ -4769,9 +4734,9 @@ msgid " %2lu.%02us"
 msgstr " %2lu,%02us"
 
 #: src/w.c:524
-#, fuzzy, c-format
+#, c-format
 msgid " %s [options] [user]\n"
-msgstr " %s [параметри] [tty]\n"
+msgstr " %s [параметри] [користувач]\n"
 
 #: src/w.c:526
 msgid " -h, --no-header     do not print header\n"
@@ -4878,6 +4843,58 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s з %s\n"
 
+#, c-format
+#~ msgid ""
+#~ "inappropriate '%s'\n"
+#~ "Usage:\n"
+#~ "  %s%s"
+#~ msgstr ""
+#~ "неналежне «%s»\n"
+#~ "Користування:\n"
+#~ "  %s%s"
+
+#~ msgid "error: not enough memory\n"
+#~ msgstr "помилка: недостатньо пам’яті\n"
+
+#~ msgid "error: can not access /proc\n"
+#~ msgstr "помилка: не вдалося отримати доступ до /proc\n"
+
+#~ msgid "something at line %d\n"
+#~ msgstr "щось у рядку %d\n"
+
+#~ msgid "\"%s\" must be of the form name=value"
+#~ msgstr "«%s» слід вказувати у форматі назва=значення"
+
+#~ msgid "malformed setting \"%s\""
+#~ msgstr "помилкове форматування параметра «%s»"
+
+#~ msgid "%s is deprecated, value not set"
+#~ msgstr "%s є застарілим, значення не встановлено"
+
+#~ msgid ""
+#~ "  %s\n"
+#~ "Usage:\n"
+#~ "  %s%s"
+#~ msgstr ""
+#~ "  %s\n"
+#~ "Користування:\n"
+#~ "  %s%s"
+
+#~ msgid "failed openproc: %s"
+#~ msgstr "помилка openproc: %s"
+
+#~ msgid "-%c requires argument"
+#~ msgstr "-%c потребує аргументу"
+
+#~ msgid ""
+#~ " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+#~ msgstr ""
+#~ " -hv | -bcEeHiOSs1 -d сек. -n макс. -u|U користувач -p pid -o поле -w "
+#~ "[стовпчики]"
+
+#~ msgid "failed /proc/stat read"
+#~ msgstr "помилка читання /proc/stat"
+
 #~ msgid "terminal is not wide enough"
 #~ msgstr "термінал є недостатньо широким"
 
@@ -4889,74 +4906,16 @@ msgstr "%s з %s\n"
 #~ "пріоритетність\n"
 #~ "  d або s   Встановити інтервал оновлення\n"
 
-#, c-format
-#~ msgid "error: not enough memory\n"
-#~ msgstr "помилка: недостатньо пам’яті\n"
-
-#, c-format
-#~ msgid "error: can not access /proc\n"
-#~ msgstr "помилка: не вдалося отримати доступ до /proc\n"
-
-#, c-format
-#~ msgid "unknown page size (assume 4096)\n"
-#~ msgstr "невідомий розмір сторінки (припускаємо 4096)\n"
-
-#, c-format
-#~ msgid "something at line %d\n"
-#~ msgstr "щось у рядку %d\n"
-
-#, c-format
-#~ msgid "\"%s\" must be of the form name=value"
-#~ msgstr "«%s» слід вказувати у форматі назва=значення"
-
-#, c-format
-#~ msgid "malformed setting \"%s\""
-#~ msgstr "помилкове форматування параметра «%s»"
-
-#, c-format
-#~ msgid "%s is deprecated, value not set"
-#~ msgstr "%s є застарілим, значення не встановлено"
-
-#, c-format
 #~ msgid ""
-#~ "  %s\n"
-#~ "Usage:\n"
-#~ "  %s%s"
-#~ msgstr ""
-#~ "  %s\n"
-#~ "Користування:\n"
-#~ "  %s%s"
-
-#, c-format
-#~ msgid "failed openproc: %s"
-#~ msgstr "помилка openproc: %s"
-
-#, c-format
-#~ msgid "-%c requires argument"
-#~ msgstr "-%c потребує аргументу"
-
-#, fuzzy
-#~ msgid ""
-#~ " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
-#~ msgstr ""
-#~ " -hv | -bcEeHiOSs1 -d сек. -n макс. -u|U користувач -p pid -o поле -w "
-#~ "[стовпчики]"
-
-#~ msgid "failed /proc/stat read"
-#~ msgstr "помилка читання /proc/stat"
-
-#, fuzzy, c-format
-#~ msgid ""
-#~ "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-#~ "~2idle~3\n"
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle~3"
 #~ msgstr ""
 #~ "%s~3 %#5.1f  ~2кор.,~3 %#5.1f  ~2сист.,~3 %#5.1f   ~2упод.,~3 %#5.1f "
 #~ "~2безд.~3"
 
-#, fuzzy, c-format
 #~ msgid ""
-#~ "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-#~ "~2idle,~3 %#5.1f  ~2IO-wait~3\n"
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle,~3 %#5.1f  ~2IO-wait~3"
 #~ msgstr ""
 #~ "%s~3 %#5.1f  ~2кор.,~3 %#5.1f  ~2система,~3 %#5.1f ~2упод.,~3 %#5.1f "
 #~ "~2безд,~3 %#5.1f  ~2IO-очік.~3"
@@ -4985,6 +4944,9 @@ msgstr "%s з %s\n"
 #~ "самому\n"
 #~ "                           простору назв, що і <pid> або 0 для усіх "
 #~ "просторів назв\n"
+
+#~ msgid "unknown page size (assume 4096)\n"
+#~ msgstr "невідомий розмір сторінки (припускаємо 4096)\n"
 
 #~ msgid "Overwrite existing obsolete/corrupted rcfile?"
 #~ msgstr "Перезаписати наявний застарілий або пошкоджений файл rc?"

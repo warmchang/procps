@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-10-04 10:57+1100\n"
+"POT-Creation-Date: 2022-10-16 19:57+1100\n"
 "PO-Revision-Date: 2021-02-02 09:45-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge."
@@ -139,7 +139,7 @@ msgid "Unable to create meminfo structure"
 msgstr "não foi possível criar pipes IPC"
 
 #: src/free.c:377
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "               total        used        free      shared     buffers       "
 "cache   available"
@@ -148,7 +148,7 @@ msgstr ""
 "cache  disponível"
 
 #: src/free.c:379
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "               total        used        free      shared  buff/cache   "
 "available"
@@ -582,7 +582,7 @@ msgstr "Modo"
 #. has been added ahead of one 'KiB' so that they all
 #. align. You need not preserve such alignment.
 #. Translation Hint: maximum 'RSS' = 6
-#: src/pmap.c:81 src/top/top_nls.c:330
+#: src/pmap.c:81 src/top/top_nls.c:337
 msgid "RSS"
 msgstr "RSS"
 
@@ -2253,9 +2253,8 @@ msgid "Load average file /proc/loadavg does not exist"
 msgstr ""
 
 #: src/tload.c:185
-#, fuzzy
 msgid "Unable to get load average"
-msgstr "%13lu %s de memória total\n"
+msgstr ""
 
 #: src/tload.c:227 src/tload.c:229
 msgid "writing to tty failed"
@@ -2286,773 +2285,773 @@ msgstr "a escrita para tty falhou"
 #. .  In all cases, fewer characters are just fine.
 #. .
 #. Translation Hint: maximum 'PID' = 5
-#: src/top/top_nls.c:145
+#: src/top/top_nls.c:152
 msgid "PID"
 msgstr "PID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:146
+#: src/top/top_nls.c:153
 msgid "Process Id"
 msgstr "ID do processo"
 
 #. Translation Hint: maximum 'PPID' = 5
-#: src/top/top_nls.c:148
+#: src/top/top_nls.c:155
 msgid "PPID"
 msgstr "PPID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:149
+#: src/top/top_nls.c:156
 msgid "Parent Process pid"
 msgstr "PID de processo pai"
 
 #. Translation Hint: maximum 'UID' = 5 +
-#: src/top/top_nls.c:151
+#: src/top/top_nls.c:158
 msgid "UID"
 msgstr "UID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:152
+#: src/top/top_nls.c:159
 msgid "Effective User Id"
 msgstr "ID usuário efetivo"
 
 # Acento retirado para promover alinhamento no `top`
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:154 src/w.c:661
+#: src/top/top_nls.c:161 src/w.c:661
 msgid "USER"
 msgstr "USUARIO"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:155
+#: src/top/top_nls.c:162
 msgid "Effective User Name"
 msgstr "Nome efetivo"
 
 #. Translation Hint: maximum 'RUID' = 5 +
-#: src/top/top_nls.c:157
+#: src/top/top_nls.c:164
 msgid "RUID"
 msgstr "RUID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:158
+#: src/top/top_nls.c:165
 msgid "Real User Id"
 msgstr "ID usuário real"
 
 #. Translation Hint: maximum 'RUSER' = 8 +
-#: src/top/top_nls.c:160
+#: src/top/top_nls.c:167
 msgid "RUSER"
 msgstr "RUSER"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:161
+#: src/top/top_nls.c:168
 msgid "Real User Name"
 msgstr "Nome usuário real"
 
 #. Translation Hint: maximum 'SUID' = 5 +
-#: src/top/top_nls.c:163
+#: src/top/top_nls.c:170
 msgid "SUID"
 msgstr "SUID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:164
+#: src/top/top_nls.c:171
 msgid "Saved User Id"
 msgstr "ID usuário salvo"
 
 #. Translation Hint: maximum 'SUSER' = 8 +
-#: src/top/top_nls.c:166
+#: src/top/top_nls.c:173
 msgid "SUSER"
 msgstr "SUSER"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:167
+#: src/top/top_nls.c:174
 msgid "Saved User Name"
 msgstr "Nome usuário salvo"
 
 #. Translation Hint: maximum 'GID' = 5 +
-#: src/top/top_nls.c:169
+#: src/top/top_nls.c:176
 msgid "GID"
 msgstr "GID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:170
+#: src/top/top_nls.c:177
 msgid "Group Id"
 msgstr "ID de grupo"
 
 #. Translation Hint: maximum 'GROUP' = 8 +
-#: src/top/top_nls.c:172
+#: src/top/top_nls.c:179
 msgid "GROUP"
 msgstr "GRUPO"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:173
+#: src/top/top_nls.c:180
 msgid "Group Name"
 msgstr "Nome do grupo"
 
 #. Translation Hint: maximum 'PGRP' = 5
-#: src/top/top_nls.c:175
+#: src/top/top_nls.c:182
 msgid "PGRP"
 msgstr "PGRP"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:176
+#: src/top/top_nls.c:183
 msgid "Process Group Id"
 msgstr "ID grupo processo"
 
 #. Translation Hint: maximum 'TTY' = 8 +
-#: src/top/top_nls.c:178
+#: src/top/top_nls.c:185
 msgid "TTY"
 msgstr "TTY"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:179
+#: src/top/top_nls.c:186
 msgid "Controlling Tty"
 msgstr "TTY de controle"
 
 #. Translation Hint: maximum 'TPGID' = 5
-#: src/top/top_nls.c:181
+#: src/top/top_nls.c:188
 msgid "TPGID"
 msgstr "TPGID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:182
+#: src/top/top_nls.c:189
 msgid "Tty Process Grp Id"
 msgstr "ID grp processo TTY"
 
 #. Translation Hint: maximum 'SID' = 5
-#: src/top/top_nls.c:184
+#: src/top/top_nls.c:191
 msgid "SID"
 msgstr "SID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:185
+#: src/top/top_nls.c:192
 msgid "Session Id"
 msgstr "ID de sessão"
 
 #. Translation Hint: maximum 'PR' = 3
-#: src/top/top_nls.c:187
+#: src/top/top_nls.c:194
 msgid "PR"
 msgstr "PR"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:188
+#: src/top/top_nls.c:195
 msgid "Priority"
 msgstr "Prioridade"
 
 #. Translation Hint: maximum 'NI' = 3
-#: src/top/top_nls.c:190
+#: src/top/top_nls.c:197
 msgid "NI"
 msgstr "NI"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:191
+#: src/top/top_nls.c:198
 msgid "Nice Value"
 msgstr "Valor de nice"
 
 #. Translation Hint: maximum 'nTH' = 3
-#: src/top/top_nls.c:193
+#: src/top/top_nls.c:200
 msgid "nTH"
 msgstr "nTH"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:194
+#: src/top/top_nls.c:201
 msgid "Number of Threads"
 msgstr "Número de threads"
 
 #. Translation Hint: maximum 'P' = 1
-#: src/top/top_nls.c:196
+#: src/top/top_nls.c:203
 msgid "P"
 msgstr "P"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:197
+#: src/top/top_nls.c:204
 msgid "Last Used Cpu (SMP)"
 msgstr "Últ CPU usado (SMP)"
 
 #. Translation Hint: maximum '%CPU' = 4
-#: src/top/top_nls.c:199
+#: src/top/top_nls.c:206
 #, c-format
 msgid "%CPU"
 msgstr "%CPU"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:200
+#: src/top/top_nls.c:207
 msgid "CPU Usage"
 msgstr "Uso da CPU"
 
 #. Translation Hint: maximum '' = 6
-#: src/top/top_nls.c:202
+#: src/top/top_nls.c:209
 msgid "TIME"
 msgstr "TEMPO"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:203
+#: src/top/top_nls.c:210
 msgid "CPU Time"
 msgstr "Tempo da CPU"
 
 #. Translation Hint: maximum 'TIME+' = 9
-#: src/top/top_nls.c:205
+#: src/top/top_nls.c:212
 msgid "TIME+"
 msgstr "TEMPO+"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:206
+#: src/top/top_nls.c:213
 msgid "CPU Time, hundredths"
 msgstr "Tempo CPU, centenas"
 
 #. Translation Hint: maximum '%MEM' = 4
-#: src/top/top_nls.c:208
+#: src/top/top_nls.c:215
 msgid "%MEM"
 msgstr "%MEM"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:209
+#: src/top/top_nls.c:216
 msgid "Memory Usage (RES)"
 msgstr "Uso memória (RES)"
 
 #. Translation Hint: maximum 'VIRT' = 7
-#: src/top/top_nls.c:211
+#: src/top/top_nls.c:218
 msgid "VIRT"
 msgstr "VIRT"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:212
+#: src/top/top_nls.c:219
 msgid "Virtual Image (KiB)"
 msgstr "Imagem virtual (KB)"
 
 #. Translation Hint: maximum 'SWAP' = 6
-#: src/top/top_nls.c:214
+#: src/top/top_nls.c:221
 msgid "SWAP"
 msgstr "SWAP"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:215
+#: src/top/top_nls.c:222
 msgid "Swapped Size (KiB)"
 msgstr "Tam. da swap (KB)"
 
 #. Translation Hint: maximum 'RES' = 6
-#: src/top/top_nls.c:217
+#: src/top/top_nls.c:224
 msgid "RES"
 msgstr "RES"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:218
+#: src/top/top_nls.c:225
 msgid "Resident Size (KiB)"
 msgstr "Tam. residente (KB)"
 
 #. Translation Hint: maximum 'CODE' = 4
-#: src/top/top_nls.c:220
+#: src/top/top_nls.c:227
 msgid "CODE"
 msgstr "CODE"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:221
+#: src/top/top_nls.c:228
 msgid "Code Size (KiB)"
 msgstr "Tam. código (KB)"
 
 #. Translation Hint: maximum 'DATA' = 7
-#: src/top/top_nls.c:223
+#: src/top/top_nls.c:230
 msgid "DATA"
 msgstr "DADO"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:224
+#: src/top/top_nls.c:231
 msgid "Data+Stack (KiB)"
 msgstr "Dados+Pilha (KB)"
 
 #. Translation Hint: maximum 'SHR' = 6
-#: src/top/top_nls.c:226
+#: src/top/top_nls.c:233
 msgid "SHR"
 msgstr "SHR"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:227
+#: src/top/top_nls.c:234
 msgid "Shared Memory (KiB)"
 msgstr "Mem. cmprtlhda (KB)"
 
 #. Translation Hint: maximum 'nMaj' = 4
-#: src/top/top_nls.c:229
+#: src/top/top_nls.c:236
 msgid "nMaj"
 msgstr "nMaj"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:230
+#: src/top/top_nls.c:237
 msgid "Major Page Faults"
 msgstr "Falhas pág. maior."
 
 #. Translation Hint: maximum 'nMin' = 4
-#: src/top/top_nls.c:232
+#: src/top/top_nls.c:239
 msgid "nMin"
 msgstr "nMin"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:233
+#: src/top/top_nls.c:240
 msgid "Minor Page Faults"
 msgstr "Falhas pág. menor."
 
 #. Translation Hint: maximum 'nDRT' = 4
-#: src/top/top_nls.c:235
+#: src/top/top_nls.c:242
 msgid "nDRT"
 msgstr "nDRT"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:236
+#: src/top/top_nls.c:243
 msgid "Dirty Pages Count"
 msgstr "Cont. pág. sujas"
 
 #. Translation Hint: maximum 'S' = 1
-#: src/top/top_nls.c:238
+#: src/top/top_nls.c:245
 msgid "S"
 msgstr "S"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:239
+#: src/top/top_nls.c:246
 msgid "Process Status"
 msgstr "Estado do processo"
 
 #. Translation Hint: maximum 'COMMAND' = variable
-#: src/top/top_nls.c:241
+#: src/top/top_nls.c:248
 msgid "COMMAND"
 msgstr "COMANDO"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:242
+#: src/top/top_nls.c:249
 msgid "Command Name/Line"
 msgstr "Linha/nome comando"
 
 #. Translation Hint: maximum 'WCHAN' = 10 +
-#: src/top/top_nls.c:244
+#: src/top/top_nls.c:251
 msgid "WCHAN"
 msgstr "WCHAN"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:245
+#: src/top/top_nls.c:252
 msgid "Sleeping in Function"
 msgstr "Dormindo na função"
 
 #. Translation Hint: maximum 'Flags' = 8
-#: src/top/top_nls.c:247
+#: src/top/top_nls.c:254
 msgid "Flags"
 msgstr "Flags"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:248
+#: src/top/top_nls.c:255
 msgid "Task Flags <sched.h>"
 msgstr "sched.h flags tarefa"
 
 #. Translation Hint: maximum 'CGROUPS' = variable
-#: src/top/top_nls.c:250
+#: src/top/top_nls.c:257
 msgid "CGROUPS"
 msgstr "CGROUPS"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:251
+#: src/top/top_nls.c:258
 msgid "Control Groups"
 msgstr "Grupos de controle"
 
 #. Translation Hint: maximum 'SUPGIDS' = variable
-#: src/top/top_nls.c:253
+#: src/top/top_nls.c:260
 msgid "SUPGIDS"
 msgstr "SUPGIDS"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:254
+#: src/top/top_nls.c:261
 msgid "Supp Groups IDs"
 msgstr "IDs grupos suplemen."
 
 #. Translation Hint: maximum 'SUPGRPS' = variable
-#: src/top/top_nls.c:256
+#: src/top/top_nls.c:263
 msgid "SUPGRPS"
 msgstr "SUPGRPS"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:257
+#: src/top/top_nls.c:264
 msgid "Supp Groups Names"
 msgstr "Nomes grupos suplemn."
 
 #. Translation Hint: maximum 'TGID' = 5
-#: src/top/top_nls.c:259
+#: src/top/top_nls.c:266
 msgid "TGID"
 msgstr "TGID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:260
+#: src/top/top_nls.c:267
 msgid "Thread Group Id"
 msgstr "ID grupo thread"
 
 #. Translation Hint: maximum 'OOMa' = 5
-#: src/top/top_nls.c:262
+#: src/top/top_nls.c:269
 msgid "OOMa"
 msgstr "OOMa"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:263
+#: src/top/top_nls.c:270
 msgid "OOMEM Adjustment"
 msgstr "Ajuste OOMEM"
 
 #. Translation Hint: maximum 'OOMs' = 4
-#: src/top/top_nls.c:265
+#: src/top/top_nls.c:272
 msgid "OOMs"
 msgstr "OOMs"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:266
+#: src/top/top_nls.c:273
 msgid "OOMEM Score current"
 msgstr "Pont. OOMEM atual"
 
 #. Translation Hint: maximum 'ENVIRON' = variable
-#: src/top/top_nls.c:268
+#: src/top/top_nls.c:275
 msgid "ENVIRON"
 msgstr "ENVIRON"
 
 # descrição de coluna do top; manter em 20 caracteres
 #. Translation Hint: the abbreviation 'vars' below is shorthand for
 #. 'variables'
-#: src/top/top_nls.c:271
+#: src/top/top_nls.c:278
 msgid "Environment vars"
 msgstr "Variáveis ambiente"
 
 #. Translation Hint: maximum 'vMj' = 3
-#: src/top/top_nls.c:273
+#: src/top/top_nls.c:280
 msgid "vMj"
 msgstr "vMj"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:274
+#: src/top/top_nls.c:281
 msgid "Major Faults delta"
 msgstr "Delta falhas maior."
 
 #. Translation Hint: maximum 'vMn' = 3
-#: src/top/top_nls.c:276
+#: src/top/top_nls.c:283
 msgid "vMn"
 msgstr "vMn"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:277
+#: src/top/top_nls.c:284
 msgid "Minor Faults delta"
 msgstr "Delta falhas menor."
 
 #. Translation Hint: maximum 'USED' = 6
-#: src/top/top_nls.c:279
+#: src/top/top_nls.c:286
 msgid "USED"
 msgstr "USAD"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:280
+#: src/top/top_nls.c:287
 msgid "Res+Swap Size (KiB)"
 msgstr "Tam. res+swap (KiB)"
 
 #. Translation Hint: maximum 'nsIPC' = 10 +
-#: src/top/top_nls.c:282
+#: src/top/top_nls.c:289
 msgid "nsIPC"
 msgstr "nsIPC"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:283
+#: src/top/top_nls.c:290
 msgid "IPC namespace Inode"
 msgstr "Nó-i espaço nome IPC"
 
 #. Translation Hint: maximum 'nsMNT' = 10 +
-#: src/top/top_nls.c:285
+#: src/top/top_nls.c:292
 msgid "nsMNT"
 msgstr "nsMNT"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:286
+#: src/top/top_nls.c:293
 msgid "MNT namespace Inode"
 msgstr "Nó-i espaço nome MNT"
 
 #. Translation Hint: maximum 'nsNET' = 10 +
-#: src/top/top_nls.c:288
+#: src/top/top_nls.c:295
 msgid "nsNET"
 msgstr "nsNET"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:289
+#: src/top/top_nls.c:296
 msgid "NET namespace Inode"
 msgstr "Nó-i espaço nome NET"
 
 #. Translation Hint: maximum 'nsPID' = 10 +
-#: src/top/top_nls.c:291
+#: src/top/top_nls.c:298
 msgid "nsPID"
 msgstr "nsPID"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:292
+#: src/top/top_nls.c:299
 msgid "PID namespace Inode"
 msgstr "Nó-i espaço nome PID"
 
 #. Translation Hint: maximum 'nsUSER' = 10 +
-#: src/top/top_nls.c:294
+#: src/top/top_nls.c:301
 msgid "nsUSER"
 msgstr "nsUSER"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:295
+#: src/top/top_nls.c:302
 msgid "USER namespace Inode"
 msgstr "Nó-i espaço nome USER"
 
 #. Translation Hint: maximum 'nsUTS' = 10 +
-#: src/top/top_nls.c:297
+#: src/top/top_nls.c:304
 msgid "nsUTS"
 msgstr "nsUTS"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:298
+#: src/top/top_nls.c:305
 msgid "UTS namespace Inode"
 msgstr "Nó-i espaço nome UTS"
 
 #. Translation Hint: maximum 'LXC' = 8 +
-#: src/top/top_nls.c:300
+#: src/top/top_nls.c:307
 msgid "LXC"
 msgstr "LXC"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:301
+#: src/top/top_nls.c:308
 msgid "LXC container name"
 msgstr "Nome contêiner LXC"
 
 #. Translation Hint: maximum 'RSan' = 6
-#: src/top/top_nls.c:303
+#: src/top/top_nls.c:310
 msgid "RSan"
 msgstr "RSan"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:304
+#: src/top/top_nls.c:311
 msgid "RES Anonymous (KiB)"
 msgstr "Anônimo RES (KB)"
 
 #. Translation Hint: maximum 'RSfd' = 6
-#: src/top/top_nls.c:306
+#: src/top/top_nls.c:313
 msgid "RSfd"
 msgstr "RSfd"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:307
+#: src/top/top_nls.c:314
 msgid "RES File-based (KiB)"
 msgstr "RES por arquivo (KB)"
 
 #. Translation Hint: maximum 'RSlk' = 6
-#: src/top/top_nls.c:309
+#: src/top/top_nls.c:316
 msgid "RSlk"
 msgstr "RSlk"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:310
+#: src/top/top_nls.c:317
 msgid "RES Locked (KiB)"
 msgstr "RES travado (KB)"
 
 #. Translation Hint: maximum 'RSsh' = 6
-#: src/top/top_nls.c:312
+#: src/top/top_nls.c:319
 msgid "RSsh"
 msgstr "RSsh"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:313
+#: src/top/top_nls.c:320
 msgid "RES Shared (KiB)"
 msgstr "RES cmprtlhdo (KB)"
 
 #. Translation Hint: maximum 'CGNAME' = variable
-#: src/top/top_nls.c:315
+#: src/top/top_nls.c:322
 msgid "CGNAME"
 msgstr "CGNAME"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:316
+#: src/top/top_nls.c:323
 msgid "Control Group name"
 msgstr "Nome grupo controle"
 
 #. Translation Hint: maximum 'NU' = 2
-#: src/top/top_nls.c:318
+#: src/top/top_nls.c:325
 msgid "NU"
 msgstr "NU"
 
-#: src/top/top_nls.c:319
+#: src/top/top_nls.c:326
 msgid "Last Used NUMA node"
 msgstr "Último nó NUMA usado"
 
 #. Translation Hint: maximum 'LOGID' = 5 +
-#: src/top/top_nls.c:321
+#: src/top/top_nls.c:328
 msgid "LOGID"
 msgstr ""
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:322
+#: src/top/top_nls.c:329
 #, fuzzy
 msgid "Login User Id"
 msgstr "ID usuário real"
 
 #. Translation Hint: maximum 'EXE' = variable
-#: src/top/top_nls.c:324
+#: src/top/top_nls.c:331
 msgid "EXE"
 msgstr ""
 
-#: src/top/top_nls.c:325
+#: src/top/top_nls.c:332
 msgid "Executable Path"
 msgstr ""
 
-#: src/top/top_nls.c:331
+#: src/top/top_nls.c:338
 msgid "Res Mem (smaps), KiB"
 msgstr ""
 
 #. Translation Hint: maximum 'PSS' = 6
-#: src/top/top_nls.c:333
+#: src/top/top_nls.c:340
 #, fuzzy
 msgid "PSS"
 msgstr "RSS"
 
-#: src/top/top_nls.c:334
+#: src/top/top_nls.c:341
 msgid "Proportion RSS,  KiB"
 msgstr ""
 
 #. Translation Hint: maximum 'PSan' = 6
-#: src/top/top_nls.c:336
+#: src/top/top_nls.c:343
 msgid "PSan"
 msgstr ""
 
-#: src/top/top_nls.c:337
+#: src/top/top_nls.c:344
 msgid "Proportion Anon, KiB"
 msgstr ""
 
 #. Translation Hint: maximum 'PSfd' = 6
-#: src/top/top_nls.c:339
+#: src/top/top_nls.c:346
 msgid "PSfd"
 msgstr ""
 
-#: src/top/top_nls.c:340
+#: src/top/top_nls.c:347
 msgid "Proportion File, KiB"
 msgstr ""
 
 #. Translation Hint: maximum 'PSsh' = 6
-#: src/top/top_nls.c:342
+#: src/top/top_nls.c:349
 msgid "PSsh"
 msgstr ""
 
-#: src/top/top_nls.c:343
+#: src/top/top_nls.c:350
 msgid "Proportion Shrd, KiB"
 msgstr ""
 
 #. Translation Hint: maximum 'USS' = 6
-#: src/top/top_nls.c:345
+#: src/top/top_nls.c:352
 #, fuzzy
 msgid "USS"
 msgstr "RSS"
 
-#: src/top/top_nls.c:346
+#: src/top/top_nls.c:353
 msgid "Unique RSS, KiB"
 msgstr ""
 
 #. Translation Hint: maximum 'ioR' = 6
-#: src/top/top_nls.c:348
+#: src/top/top_nls.c:355
 msgid "ioR"
 msgstr ""
 
-#: src/top/top_nls.c:349
+#: src/top/top_nls.c:356
 msgid "I/O Bytes Read"
 msgstr ""
 
 #. Translation Hint: maximum 'ioRop' = 5
-#: src/top/top_nls.c:351
+#: src/top/top_nls.c:358
 msgid "ioRop"
 msgstr ""
 
-#: src/top/top_nls.c:352
+#: src/top/top_nls.c:359
 msgid "I/O Read Operations"
 msgstr ""
 
 #. Translation Hint: maximum 'ioW' = 6
-#: src/top/top_nls.c:354
+#: src/top/top_nls.c:361
 msgid "ioW"
 msgstr ""
 
-#: src/top/top_nls.c:355
+#: src/top/top_nls.c:362
 msgid "I/O Bytes Written"
 msgstr ""
 
 #. Translation Hint: maximum 'ioWop' = 5
-#: src/top/top_nls.c:357
+#: src/top/top_nls.c:364
 msgid "ioWop"
 msgstr ""
 
-#: src/top/top_nls.c:358
+#: src/top/top_nls.c:365
 msgid "I/O Write Operations"
 msgstr ""
 
 #. Translation Hint: maximum 'AGID' = 5
-#: src/top/top_nls.c:360
+#: src/top/top_nls.c:367
 msgid "AGID"
 msgstr ""
 
-#: src/top/top_nls.c:361
+#: src/top/top_nls.c:368
 msgid "Autogroup Identifier"
 msgstr ""
 
 #. Translation Hint: maximum 'AGNI' = 4
-#: src/top/top_nls.c:363
+#: src/top/top_nls.c:370
 msgid "AGNI"
 msgstr ""
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:364
+#: src/top/top_nls.c:371
 #, fuzzy
 msgid "Autogroup Nice Value"
 msgstr "Valor de nice"
 
 #. Translation Hint: maximum 'STARTED' = 7
-#: src/top/top_nls.c:366
+#: src/top/top_nls.c:373
 msgid "STARTED"
 msgstr ""
 
-#: src/top/top_nls.c:367
+#: src/top/top_nls.c:374
 msgid "Start Time from boot"
 msgstr ""
 
 #. Translation Hint: maximum 'ELAPSED' = 7
-#: src/top/top_nls.c:369
+#: src/top/top_nls.c:376
 msgid "ELAPSED"
 msgstr ""
 
-#: src/top/top_nls.c:370
+#: src/top/top_nls.c:377
 msgid "Elapsed Running Time"
 msgstr ""
 
 #. Translation Hint: maximum '%CUU' = 6
-#: src/top/top_nls.c:372
+#: src/top/top_nls.c:379
 #, c-format
 msgid "%CUU"
 msgstr ""
 
-#: src/top/top_nls.c:373
+#: src/top/top_nls.c:380
 msgid "CPU Utilization"
 msgstr ""
 
 #. Translation Hint: maximum '%CUC' = 7
-#: src/top/top_nls.c:375
+#: src/top/top_nls.c:382
 #, c-format
 msgid "%CUC"
 msgstr ""
 
-#: src/top/top_nls.c:376
+#: src/top/top_nls.c:383
 msgid "Utilization + child"
 msgstr ""
 
 #. Translation Hint: maximum 'nsCGROUP' = 10 +
-#: src/top/top_nls.c:378
+#: src/top/top_nls.c:385
 #, fuzzy
 msgid "nsCGROUP"
 msgstr "CGROUPS"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:379
+#: src/top/top_nls.c:386
 #, fuzzy
 msgid "CGRP namespace Inode"
 msgstr "Nó-i espaço nome IPC"
 
 #. Translation Hint: maximum 'nsTIME' = 10 +
-#: src/top/top_nls.c:381
+#: src/top/top_nls.c:388
 #, fuzzy
 msgid "nsTIME"
 msgstr "TEMPO"
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:382
+#: src/top/top_nls.c:389
 #, fuzzy
 msgid "TIME namespace Inode"
 msgstr "Nó-i espaço nome IPC"
@@ -3067,7 +3066,7 @@ msgstr "Nó-i espaço nome IPC"
 #. .  and should not be translated without also making corresponding
 #. .  c-code logic changes.
 #. .
-#: src/top/top_nls.c:402
+#: src/top/top_nls.c:409
 #, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
@@ -3076,48 +3075,37 @@ msgstr ""
 "\tsinal %d (%s) capturado por %s, por favor\n"
 "\trelate erros para <procps@freelists.org>\n"
 
-#: src/top/top_nls.c:405
-#, c-format
-msgid ""
-"inappropriate '%s'\n"
-"Usage:\n"
-"  %s%s"
-msgstr ""
-"\"%s\" inapropriado\n"
-"Uso:\n"
-"  %s%s"
-
-#: src/top/top_nls.c:435
+#: src/top/top_nls.c:439
 #, c-format
 msgid "bad delay interval '%s'"
 msgstr "intervalo de atraso inválido \"%s\""
 
-#: src/top/top_nls.c:436
+#: src/top/top_nls.c:440
 #, c-format
 msgid "bad iterations argument '%s'"
 msgstr "argumento de interações inválido \"%s\""
 
-#: src/top/top_nls.c:437
+#: src/top/top_nls.c:441
 #, c-format
 msgid "pid limit (%d) exceeded"
 msgstr "limite de pid (%d) excedido"
 
-#: src/top/top_nls.c:438
+#: src/top/top_nls.c:442
 #, c-format
 msgid "bad pid '%s'"
 msgstr "pid inválido \"%s\""
 
-#: src/top/top_nls.c:439
+#: src/top/top_nls.c:443
 #, fuzzy, c-format
 msgid "-%c argument missing"
 msgstr "faltando argumento"
 
-#: src/top/top_nls.c:440
+#: src/top/top_nls.c:444
 #, c-format
 msgid "bad width arg '%s'"
 msgstr "arg de largura inválido \"%s\""
 
-#: src/top/top_nls.c:441
+#: src/top/top_nls.c:445
 #, fuzzy, c-format
 msgid "unknown option '%s'"
 msgstr ""
@@ -3125,316 +3113,315 @@ msgstr ""
 "Uso:\n"
 "  %s%s"
 
-#: src/top/top_nls.c:442
+#: src/top/top_nls.c:446
 msgid "-d disallowed in \"secure\" mode"
 msgstr "-d não permitido no modo \"seguro\""
 
-#: src/top/top_nls.c:443
+#: src/top/top_nls.c:447
 msgid "-d requires positive argument"
 msgstr "-d requer argumento positivo"
 
 # Recurso em estado ligado; mensagem usada pela ajuda do 'top'
-#: src/top/top_nls.c:444
+#: src/top/top_nls.c:448
 msgid "On"
 msgstr "LIG"
 
 # Recurso em estado desligado; mensagem usada pela ajuda do 'top'
-#: src/top/top_nls.c:445
+#: src/top/top_nls.c:449
 msgid "Off"
 msgstr "DESL"
 
-#: src/top/top_nls.c:446
+#: src/top/top_nls.c:450
 #, fuzzy, c-format
 msgid "%s from %s"
 msgstr "%s de %s\n"
 
-#: src/top/top_nls.c:447
+#: src/top/top_nls.c:451
 #, c-format
 msgid "Forest mode %s"
 msgstr "Modo floresta %s"
 
-#: src/top/top_nls.c:448
+#: src/top/top_nls.c:452
 msgid "failed tty get"
 msgstr "falha ao obter tty"
 
-#: src/top/top_nls.c:449
+#: src/top/top_nls.c:453
 #, c-format
 msgid "failed tty set: %s"
 msgstr "falha ao definir tty: %s"
 
-#: src/top/top_nls.c:450
+#: src/top/top_nls.c:454
 msgid "Choose field group (1 - 4)"
 msgstr "Escolha grupo de campo (1 - 4)"
 
-#: src/top/top_nls.c:451
+#: src/top/top_nls.c:455
 msgid "Command disabled, 'A' mode required"
 msgstr "Comando desabilitado, modo \"A\" exigido"
 
-#: src/top/top_nls.c:452
+#: src/top/top_nls.c:456
 #, c-format
 msgid "Command disabled, activate %s with '-' or '_'"
 msgstr "Comando desabilitado, ative %s com \"-\" ou \"_\""
 
-#: src/top/top_nls.c:453
+#: src/top/top_nls.c:457
 msgid "No colors to map!"
 msgstr "Nenhuma cor para mapear!"
 
-#: src/top/top_nls.c:454
+#: src/top/top_nls.c:458
 #, c-format
 msgid "Failed '%s' open: %s"
 msgstr "Falha ao abrir \"%s\": %s"
 
-#: src/top/top_nls.c:455
+#: src/top/top_nls.c:459
 #, c-format
 msgid "Wrote configuration to '%s'"
 msgstr "Configuração escrita para \"%s\""
 
-#: src/top/top_nls.c:456
+#: src/top/top_nls.c:460
 #, c-format
 msgid "Change delay from %.1f to"
 msgstr "Alterar atraso de %.1f para"
 
-#: src/top/top_nls.c:457
+#: src/top/top_nls.c:461
 #, c-format
 msgid "Show threads %s"
 msgstr "Mostrar threads %s"
 
-#: src/top/top_nls.c:458
+#: src/top/top_nls.c:462
 #, c-format
 msgid "Irix mode %s"
 msgstr "Modo Irix %s"
 
-#: src/top/top_nls.c:459
+#: src/top/top_nls.c:463
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
 msgstr "PID para sinal/terminação [pid padrão = %d]"
 
-#: src/top/top_nls.c:460
+#: src/top/top_nls.c:464
 #, c-format
 msgid "Send pid %d signal [%d/sigterm]"
 msgstr "Enviar sinal do pid %d [%d/sigterm]"
 
-#: src/top/top_nls.c:461
+#: src/top/top_nls.c:465
 #, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
 msgstr "Falha ao sinalizar o pid \"%d\" com \"%d\": %s"
 
-#: src/top/top_nls.c:462
+#: src/top/top_nls.c:466
 msgid "Invalid signal"
 msgstr "Sinal inválido"
 
-#: src/top/top_nls.c:463
+#: src/top/top_nls.c:467
 #, c-format
 msgid "PID to renice [default pid = %d]"
 msgstr "PID para renice [pid padrão = %d]"
 
-#: src/top/top_nls.c:464
+#: src/top/top_nls.c:468
 #, c-format
 msgid "Renice PID %d to value"
 msgstr "Renice PID %d para valor"
 
-#: src/top/top_nls.c:465
+#: src/top/top_nls.c:469
 #, c-format
 msgid "Failed renice of PID %d to %d: %s"
 msgstr "Falha ao executar renice do PID %d para %d: %s"
 
-#: src/top/top_nls.c:466
+#: src/top/top_nls.c:470
 #, c-format
 msgid "Rename window '%s' to (1-3 chars)"
 msgstr "Renomear janela \"%s\" para (1-3 caracteres)"
 
-#: src/top/top_nls.c:467
+#: src/top/top_nls.c:471
 #, c-format
 msgid "Cumulative time %s"
 msgstr "Item cumulativo %s"
 
-#: src/top/top_nls.c:468
+#: src/top/top_nls.c:472
 #, c-format
 msgid "Maximum tasks = %d, change to (0 is unlimited)"
 msgstr "Máx. de tarefas = %d, alterar para (0 é ilimitado)"
 
-#: src/top/top_nls.c:469
+#: src/top/top_nls.c:473
 msgid "Invalid maximum"
 msgstr "Máximo inválido"
 
-#: src/top/top_nls.c:470
+#: src/top/top_nls.c:474
 msgid "Which user (blank for all)"
 msgstr "Qual usuário (em branco, para todos)"
 
-#: src/top/top_nls.c:471
+#: src/top/top_nls.c:475
 msgid "Unknown command - try 'h' for help"
 msgstr "Comando desconhecido - tente \"h\" para ajuda"
 
-#: src/top/top_nls.c:472
-#, fuzzy, c-format
+#: src/top/top_nls.c:476
+#, c-format
 msgid "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
 msgstr "rolar coordenadas: y = %d/%d (tarefas), x = %d/%d (campos)"
 
-#: src/top/top_nls.c:473
+#: src/top/top_nls.c:477
 msgid "failed memory allocate"
 msgstr "falha ao alocar memória"
 
-#: src/top/top_nls.c:474
+#: src/top/top_nls.c:478
 msgid "failed memory re-allocate"
 msgstr "falha ao realocar memória"
 
-#: src/top/top_nls.c:475
+#: src/top/top_nls.c:479
 msgid "Unacceptable floating point"
 msgstr "Ponto flutuante inaceitável"
 
-#: src/top/top_nls.c:476
+#: src/top/top_nls.c:480
 msgid "Invalid user"
 msgstr "Usuário inválido"
 
-#: src/top/top_nls.c:477
+#: src/top/top_nls.c:481
 msgid "forest view"
 msgstr "visão de floresta"
 
-#: src/top/top_nls.c:478
+#: src/top/top_nls.c:482
 msgid "failed pid maximum size test"
 msgstr "falha ao testar o tamanho máximo do pid"
 
-#: src/top/top_nls.c:479
+#: src/top/top_nls.c:483
 msgid "failed number of cpus test"
 msgstr "falha ao testar número de cpus"
 
-#: src/top/top_nls.c:480
+#: src/top/top_nls.c:484
 #, c-format
 msgid "incompatible rcfile, you should delete '%s'"
 msgstr "arquivo rc incompatível, você deve excluir \"%s\""
 
-#: src/top/top_nls.c:481
+#: src/top/top_nls.c:485
 #, c-format
 msgid "window entry #%d corrupt, please delete '%s'"
 msgstr "entrada de janela nº %d corrompida, por favor exclua \"%s\""
 
-#: src/top/top_nls.c:482
+#: src/top/top_nls.c:486
 msgid "Unavailable in secure mode"
 msgstr "Indisponível no modo seguro"
 
-#: src/top/top_nls.c:483
+#: src/top/top_nls.c:487
 msgid "Only 1 cpu detected"
 msgstr "Apenas 1 cpu detectado"
 
-#: src/top/top_nls.c:484
+#: src/top/top_nls.c:488
 msgid "Unacceptable integer"
 msgstr "Inteiro inaceitável"
 
-#: src/top/top_nls.c:485
+#: src/top/top_nls.c:489
 msgid "conflicting process selections (U/p/u)"
 msgstr "seleções de processo conflitantes (U/p/u)"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 kibibytes (1024 bytes)
-#: src/top/top_nls.c:488
+#: src/top/top_nls.c:492
 msgid "KiB"
 msgstr "KB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 mebibytes (1,048,576 bytes)
-#: src/top/top_nls.c:491
+#: src/top/top_nls.c:495
 msgid "MiB"
 msgstr "MB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 gibibytes (1,073,741,824 bytes)
-#: src/top/top_nls.c:494
+#: src/top/top_nls.c:498
 msgid "GiB"
 msgstr "GB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 tebibytes (1,099,511,627,776 bytes)
-#: src/top/top_nls.c:497
+#: src/top/top_nls.c:501
 msgid "TiB"
 msgstr "TB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 pebibytes (1,024 tebibytes)
-#: src/top/top_nls.c:500
+#: src/top/top_nls.c:504
 msgid "PiB"
 msgstr "PB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 exbibytes (1,024 pebibytes)
-#: src/top/top_nls.c:503
+#: src/top/top_nls.c:507
 msgid "EiB"
 msgstr "EB"
 
-#: src/top/top_nls.c:504
+#: src/top/top_nls.c:508
 msgid "Threads"
 msgstr "Threads"
 
-#: src/top/top_nls.c:505
+#: src/top/top_nls.c:509
 msgid "Tasks"
 msgstr "Tarefas"
 
 #. Translation Hint: The following "word" is meant to represent either a single
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, excluding leading % & colon)
-#: src/top/top_nls.c:509
-#, fuzzy, c-format
+#: src/top/top_nls.c:513
+#, c-format
 msgid "%Cpu(s):"
 msgstr "%CPU(s):"
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
 #. .                 (if 'Cp' is translated, it must be exactly 2 characters long)
-#: src/top/top_nls.c:513
+#: src/top/top_nls.c:517
 #, fuzzy, c-format
 msgid "%%Cp%c%-3d:"
 msgstr "%%CPU%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: src/top/top_nls.c:515
+#: src/top/top_nls.c:519
 msgid "another "
 msgstr "outro "
 
-#: src/top/top_nls.c:516
+#: src/top/top_nls.c:520
 msgid "Locate next inactive, use \"L\""
 msgstr "Localizar próximo inativo, use \"L\""
 
-#: src/top/top_nls.c:517
+#: src/top/top_nls.c:521
 msgid "Locate string"
 msgstr "Localizar string"
 
-#: src/top/top_nls.c:518
+#: src/top/top_nls.c:522
 #, c-format
 msgid "%s\"%s\" not found"
 msgstr "%s\"%s\" não localizado"
 
-#: src/top/top_nls.c:519
+#: src/top/top_nls.c:523
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr "aumento de largura é %d, alterar para (0 padrão, -1 auto)"
 
-#: src/top/top_nls.c:520
-#, fuzzy
+#: src/top/top_nls.c:524
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
 msgstr ""
 "o arquivo rc possui erro(s) de inspect/other-filter, salvar mesmo assim?"
 
-#: src/top/top_nls.c:521
+#: src/top/top_nls.c:525
 #, c-format
 msgid "unrecognized field name '%s'"
 msgstr "nome de campo não reconhecido \"%s\""
 
-#: src/top/top_nls.c:522
+#: src/top/top_nls.c:526
 msgid "even using field names only, window is now too small"
 msgstr "mesmo usando nomes de campo apenas, janela é pequena demais agora"
 
-#: src/top/top_nls.c:523
+#: src/top/top_nls.c:527
 msgid "Open Files"
 msgstr "Arquivos abertos"
 
-#: src/top/top_nls.c:524
+#: src/top/top_nls.c:528
 msgid "NUMA Info"
 msgstr "Info de NUMA"
 
-#: src/top/top_nls.c:525
+#: src/top/top_nls.c:529
 msgid "Log"
 msgstr "Log"
 
-#: src/top/top_nls.c:526
+#: src/top/top_nls.c:530
 msgid ""
 "the '=' key will eventually show the actual file read or command(s) "
 "executed ..."
@@ -3442,11 +3429,11 @@ msgstr ""
 "a chave \"=\" eventualmente mostrará o arquivo real lido ou o(s) comando(s) "
 "executado(s) ..."
 
-#: src/top/top_nls.c:527
+#: src/top/top_nls.c:531
 msgid "demo"
 msgstr "demo"
 
-#: src/top/top_nls.c:528
+#: src/top/top_nls.c:532
 #, fuzzy, c-format
 msgid ""
 "This is simulated output representing the contents of some file or the "
@@ -3545,107 +3532,106 @@ msgstr ""
 "\n"
 "Divirta-se!\n"
 
-#: src/top/top_nls.c:560
+#: src/top/top_nls.c:564
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
 msgstr "para habilitar \"Y\", pressione <Enter>, digite \"W\" e reinicie o top"
 
-#: src/top/top_nls.c:561
+#: src/top/top_nls.c:565
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr "para habilitar \"Y\", consulte a página man do top (pressione Enter)"
 
-#: src/top/top_nls.c:562
+#: src/top/top_nls.c:566
 #, c-format
 msgid "Selection failed with: %s\n"
 msgstr "Seleção falhou com: %s\n"
 
-#: src/top/top_nls.c:563
+#: src/top/top_nls.c:567
 #, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "não foi possível inspecionar, pid %d não localizado"
 
-#: src/top/top_nls.c:564
+#: src/top/top_nls.c:568
 #, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr "inspecionar o PID [pid padrão = %d]"
 
-#: src/top/top_nls.c:565
+#: src/top/top_nls.c:569
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: %*d-%-*d linhas, %*d-%*d colunas, %lu bytes lidos"
 
-#: src/top/top_nls.c:566
-#, fuzzy
+#: src/top/top_nls.c:570
 msgid "patience please, working ..."
 msgstr "paciência por favor, trabalhando ..."
 
-#: src/top/top_nls.c:567
+#: src/top/top_nls.c:571
 msgid "working, use Ctrl-C to end ..."
 msgstr "trabalhando, use Ctrl-C para encerrar ..."
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: src/top/top_nls.c:570
+#: src/top/top_nls.c:574
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr "adicionar filtro #%d (%s) como: [!]CAMPO?VALOR"
 
-#: src/top/top_nls.c:571
+#: src/top/top_nls.c:575
 msgid "ignoring case"
 msgstr "ignorando diferença maiúsculo/minúsculo"
 
-#: src/top/top_nls.c:572
+#: src/top/top_nls.c:576
 msgid "case sensitive"
 msgstr "diferenciar maiúsculo/minúsculo"
 
-#: src/top/top_nls.c:573
+#: src/top/top_nls.c:577
 msgid "duplicate filter was ignored"
 msgstr "filtro duplicado foi ignorado"
 
-#: src/top/top_nls.c:574
+#: src/top/top_nls.c:578
 #, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "delimitador de filtro \"%s\" está faltando"
 
-#: src/top/top_nls.c:575
+#: src/top/top_nls.c:579
 #, c-format
 msgid "'%s' filter value is missing"
 msgstr "valor de filtro \"%s\" está faltando"
 
-#: src/top/top_nls.c:576
+#: src/top/top_nls.c:580
 msgid "include"
 msgstr "incluir"
 
-#: src/top/top_nls.c:577
+#: src/top/top_nls.c:581
 msgid "exclude"
 msgstr "excluir"
 
-#: src/top/top_nls.c:578
+#: src/top/top_nls.c:582
 #, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "<Enter> para continuar, filtros: %s"
 
-#: src/top/top_nls.c:579
+#: src/top/top_nls.c:583
 msgid "none"
 msgstr "nenhum"
 
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:582
-#, fuzzy, c-format
+#: src/top/top_nls.c:586
+#, c-format
 msgid "%%Node%-2d:"
 msgstr "%%Node%-2d:"
 
-#: src/top/top_nls.c:583
+#: src/top/top_nls.c:587
 #, fuzzy, c-format
 msgid "expand which numa node (0-%d)"
 msgstr "expandir qual nó (0-%d)"
 
-#: src/top/top_nls.c:584
+#: src/top/top_nls.c:588
 #, fuzzy
 msgid "invalid numa node"
 msgstr "nó inválido"
 
-#: src/top/top_nls.c:585
+#: src/top/top_nls.c:589
 msgid "sorry, NUMA extensions unavailable"
 msgstr "sinto muito, extensões NUMA indisponível"
 
@@ -3654,113 +3640,112 @@ msgstr "sinto muito, extensões NUMA indisponível"
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: src/top/top_nls.c:590
+#: src/top/top_nls.c:594
 msgid "Mem "
 msgstr "mem "
 
 # Coloquei em minúsculo para padronizar; usado em "KB swap"
-#: src/top/top_nls.c:591
+#: src/top/top_nls.c:595
 msgid "Swap"
 msgstr "swap"
 
-#: src/top/top_nls.c:592
+#: src/top/top_nls.c:596
 #, c-format
 msgid "library failed memory statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:593
+#: src/top/top_nls.c:597
 #, c-format
 msgid "library failed cpu statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:594
+#: src/top/top_nls.c:598
 #, c-format
 msgid "library failed pids statistics, at %d: %s"
 msgstr ""
 
-#: src/top/top_nls.c:595
+#: src/top/top_nls.c:599
 #, fuzzy, c-format
 msgid "bad memory scaling arg '%s'"
 msgstr "argumento de escala de memória inválido \"%c\""
 
-#: src/top/top_nls.c:596
+#: src/top/top_nls.c:600
 #, c-format
 msgid "PID to collapse/expand [default pid = %d]"
 msgstr "PID para recolher/expandir [pid padrão = %d]"
 
-#: src/top/top_nls.c:597
+#: src/top/top_nls.c:601
 msgid "wrong mode, command inactive"
 msgstr "modo incorreto, comando inativo"
 
-#: src/top/top_nls.c:598
+#: src/top/top_nls.c:602
 msgid "saving prevents older top from reading, save anyway?"
 msgstr "salvar impede top mais antigo de lê-lo, salvar mesmo assim?"
 
-#: src/top/top_nls.c:599
+#: src/top/top_nls.c:603
 #, fuzzy, c-format
 msgid "failed sem_init() at %d: %s"
 msgstr "falha ao definir tty: %s"
 
-#: src/top/top_nls.c:600
+#: src/top/top_nls.c:604
 #, fuzzy, c-format
 msgid "failed pthread_create() at %d: %s"
 msgstr "falha ao abrir /proc/stat: %s"
 
-#: src/top/top_nls.c:601
+#: src/top/top_nls.c:605
 msgid "sorry, restricted namespace with reduced functionality"
 msgstr ""
 
-#: src/top/top_nls.c:602
+#: src/top/top_nls.c:606
 #, c-format
 msgid "set pid %d AGNI value to"
 msgstr ""
 
-#: src/top/top_nls.c:603
+#: src/top/top_nls.c:607
 msgid "valid AGNI range is -20 to +19"
 msgstr ""
 
-#: src/top/top_nls.c:604
+#: src/top/top_nls.c:608
 #, fuzzy, c-format
 msgid "autogroup open failed, %s"
 msgstr "não foi possível abrir o arquivo %s"
 
-# descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:605
-#, fuzzy, c-format
+#: src/top/top_nls.c:609
+#, c-format
 msgid "autogroup write failed, %s"
-msgstr "Valor de nice"
+msgstr ""
 
-#: src/top/top_nls.c:606
+#: src/top/top_nls.c:610
 #, c-format
 msgid "command line for pid %d, %s"
 msgstr ""
 
-#: src/top/top_nls.c:607
+#: src/top/top_nls.c:611
 #, c-format
 msgid "control groups for pid %d, %s"
 msgstr ""
 
 # descrição de coluna do top; manter em 20 caracteres
-#: src/top/top_nls.c:608
+#: src/top/top_nls.c:612
 #, fuzzy, c-format
 msgid "environment for pid %d, %s"
 msgstr "Variáveis ambiente"
 
-#: src/top/top_nls.c:609
+#: src/top/top_nls.c:613
 #, c-format
 msgid "namespaces for pid %d, %s"
 msgstr ""
 
-#: src/top/top_nls.c:610
+#: src/top/top_nls.c:614
 msgid "n/a"
 msgstr ""
 
-#: src/top/top_nls.c:611
+#: src/top/top_nls.c:615
 #, c-format
 msgid "supplementary groups for pid %d, %s"
 msgstr ""
 
-#: src/top/top_nls.c:612
+#: src/top/top_nls.c:616
 msgid "message log, last 10 messages:"
 msgstr ""
 
@@ -3799,7 +3784,7 @@ msgstr ""
 #. .    last line (the one without the newline). So please avoid any line
 #. .    wraps that could place them there.
 #. .
-#: src/top/top_nls.c:657
+#: src/top/top_nls.c:661
 #, fuzzy, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
@@ -3880,7 +3865,7 @@ msgstr ""
 "Pressione '~1h~2' ou '~1?~2' para ajuda com ~1Janelas~2,\n"
 "Digite 'q' ou <Esc> para continuar "
 
-#: src/top/top_nls.c:683
+#: src/top/top_nls.c:687
 #, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
@@ -3976,8 +3961,8 @@ msgstr ""
 #. .  If you decide to proceed with translation, please take care
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
-#: src/top/top_nls.c:718
-#, fuzzy, c-format
+#: src/top/top_nls.c:722
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4040,7 +4025,7 @@ msgstr ""
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
-#: src/top/top_nls.c:747
+#: src/top/top_nls.c:751
 msgid ""
 "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' "
 "renice autogroup\n"
@@ -4051,7 +4036,7 @@ msgstr ""
 #. .  to allow 1 blank line before the fields & descriptions.
 #. .  If absoultely necessary, 4 lines could be used (but never more).
 #. .
-#: src/top/top_nls.c:755
+#: src/top/top_nls.c:759
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
@@ -4070,7 +4055,7 @@ msgstr ""
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
-#: src/top/top_nls.c:763
+#: src/top/top_nls.c:767
 #, c-format
 msgid ""
 "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
@@ -4086,7 +4071,7 @@ msgstr ""
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
-#: src/top/top_nls.c:769
+#: src/top/top_nls.c:773
 #, fuzzy, c-format
 msgid ""
 "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
@@ -4102,7 +4087,7 @@ msgstr ""
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
-#: src/top/top_nls.c:775
+#: src/top/top_nls.c:779
 #, fuzzy, c-format
 msgid ""
 "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
@@ -4113,7 +4098,7 @@ msgstr ""
 
 # Linhas de memória "KB mem" e "KB swap" (memória)
 #. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
-#: src/top/top_nls.c:779
+#: src/top/top_nls.c:783
 #, fuzzy, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
@@ -4125,7 +4110,7 @@ msgstr ""
 "~3\n"
 
 # Linhas de memória "KB mem" e "KB swap" (memória)
-#: src/top/top_nls.c:781
+#: src/top/top_nls.c:785
 #, fuzzy, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
@@ -4138,7 +4123,7 @@ msgstr ""
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
 #. .
-#: src/top/top_nls.c:787
+#: src/top/top_nls.c:791
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
@@ -4151,7 +4136,7 @@ msgstr ""
 "~1terminar~5 !\n"
 "Opções~2: ~1%s\n"
 
-#: src/top/top_nls.c:792
+#: src/top/top_nls.c:796
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
@@ -4933,16 +4918,6 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
 
-#~ msgid "terminal is not wide enough"
-#~ msgstr "o terminal não é largo o suficiente"
-
-#~ msgid ""
-#~ "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
-#~ "  d or s    Set update interval\n"
-#~ msgstr ""
-#~ "  k,r       Manipular tarefas: '~1k~2' mata; '~1r~2' renice\n"
-#~ "  d ou s    Define intervalo de atualização\n"
-
 #, c-format
 #~ msgid "error: not enough memory\n"
 #~ msgstr "erro: memória insuficiente\n"
@@ -4950,10 +4925,6 @@ msgstr "%s de %s\n"
 #, c-format
 #~ msgid "error: can not access /proc\n"
 #~ msgstr "erro: não foi possível acessar /proc\n"
-
-#, c-format
-#~ msgid "unknown page size (assume 4096)\n"
-#~ msgstr "tamanho de página desconhecido (presumindo 4096)\n"
 
 #, c-format
 #~ msgid "something at line %d\n"
@@ -4973,6 +4944,16 @@ msgstr "%s de %s\n"
 
 #, c-format
 #~ msgid ""
+#~ "inappropriate '%s'\n"
+#~ "Usage:\n"
+#~ "  %s%s"
+#~ msgstr ""
+#~ "\"%s\" inapropriado\n"
+#~ "Uso:\n"
+#~ "  %s%s"
+
+#, c-format
+#~ msgid ""
 #~ "  %s\n"
 #~ "Usage:\n"
 #~ "  %s%s"
@@ -4989,29 +4970,38 @@ msgstr "%s de %s\n"
 #~ msgid "-%c requires argument"
 #~ msgstr "-%c requer argumento"
 
-#, fuzzy
 #~ msgid ""
-#~ " -hv | -bcEHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+#~ " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
 #~ msgstr ""
 #~ " -hv | bcEeHiOSs1 -d segs -n máx -u|U usuário -p pid(s) -o campo -w [cols]"
 
 #~ msgid "failed /proc/stat read"
 #~ msgstr "falha ao abrir /proc/stat"
 
-# Linha de %CPU(s) na Área Resumida - opção 1
-#, fuzzy, c-format
+#~ msgid "terminal is not wide enough"
+#~ msgstr "o terminal não é largo o suficiente"
+
 #~ msgid ""
-#~ "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-#~ "~2idle~3\n"
+#~ "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
+#~ "  d or s    Set update interval\n"
+#~ msgstr ""
+#~ "  k,r       Manipular tarefas: '~1k~2' mata; '~1r~2' renice\n"
+#~ "  d ou s    Define intervalo de atualização\n"
+
+# Linha de %CPU(s) na Área Resumida - opção 1
+#, c-format
+#~ msgid ""
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle~3"
 #~ msgstr ""
 #~ "%s~3 %#5.1f  ~2usuário,~3 %#5.1f  ~2sistema,~3 %#5.1f  ~2nice,~3 %#5.1f  "
 #~ "~2ocioso~3"
 
 # Linha de %CPU(s) na Área Resumida - opção 2
-#, fuzzy, c-format
+#, c-format
 #~ msgid ""
-#~ "%%%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
-#~ "~2idle,~3 %#5.1f  ~2IO-wait~3\n"
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle,~3 %#5.1f  ~2IO-wait~3"
 #~ msgstr ""
 #~ "%s~3 %#5.1f  ~2usuário,~3 %#5.1f  ~2sistema,~3 %#5.1f  ~2nice,~3 %#5.1f  "
 #~ "~2ocioso~3 %#5.1f  ~2aguad-ES~3"
@@ -5036,6 +5026,9 @@ msgstr "%s de %s\n"
 #~ " --ns <PID>                corresponde os processos que pertencem ao\n"
 #~ "                           mesmo espaço de nomes que <pid> ou 0 para\n"
 #~ "                           todos os espaços de nomes\n"
+
+#~ msgid "unknown page size (assume 4096)\n"
+#~ msgstr "tamanho de página desconhecido (presumindo 4096)\n"
 
 #~ msgid "Overwrite existing obsolete/corrupted rcfile?"
 #~ msgstr "Sobrescrever o arquivo rc obsoleto/corrompido existente?"
