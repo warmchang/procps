@@ -1,4 +1,5 @@
-procps-ng-NEXT
+procps-ng-4.0.1
+---------------
   * library
     Re-add elogind support                                 merge #151
     Used memory is Total - Available
