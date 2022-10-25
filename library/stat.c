@@ -455,7 +455,8 @@ static int stat_core_add (
 static void stat_cores_check (
     struct stat_info *info)
 {
-    struct stat_core *core = info->cores;
+    struct stat_core *core;
+#ifndef PRETEND_E_CORES
     int p_core = 0;
 
     core = info->cores;
@@ -473,6 +474,16 @@ static void stat_cores_check (
                 core->type = E_CORE;
         } while ((core = core->next));
     }
+#else
+    core = info->cores;
+    while (core) {
+        core->type = P_CORE;
+        if (core->thread_1 > ECORE_BEGIN
+        || (core->thread_2 > ECORE_BEGIN))
+            core->type = E_CORE;
+        core = core->next;
+    }
+#endif
 } // end: stat_cores_check
 
 #undef E_CORE
@@ -519,19 +530,16 @@ static int stat_cores_verify (
                 errno = EIO;
                 return 0;
             }
+            if (buf[0] == '\n') {     /* Entry for specific processor is finished */
+                a_core = a_cpu;
+                break;
+            }
             if (buf[0] != 'c') continue;
             if (!strstr(buf, "core id"))
                 continue;
             sscanf(buf, "core id : %d", &a_core);
             break;
         }
-#ifdef PRETEND_E_CORES
-      { static int fake_core;
-        if (a_cpu > ECORE_BEGIN) {
-            if (!fake_core) fake_core = a_core + 1;
-            a_core = fake_core++;
-      } }
-#endif
         if (!stat_core_add(info, a_core, a_cpu)) {
             fclose(fp);
             return 0;
@@ -831,8 +839,13 @@ reap_em_again:
     /* whoa, if a new cpu was brought online, we better
        ensure that no new cores have now become visible */
     if (info->cpu_count_hwm < info->cpus.total) {
-        if (!stat_cores_verify(info))
-            return 1;
+        /* next means it's not the first time, so we'll re-verify.
+           otherwise, procps_stat_new() already setup any cores so
+           that they could be linked above during tics processing. */
+        if (info->cpu_count_hwm) {
+            if (!stat_cores_verify(info))
+                return 1;
+        }
         info->cpu_count_hwm = info->cpus.total;
     }
 
