@@ -2734,9 +2734,10 @@ static void *cpus_refresh (void *unused) {
 #endif
       }
 #ifdef PRETENDECORE
-{  int i;
-   for (i = Cpu_cnt - (Cpu_cnt / 4); i < Cpu_cnt; i++)
-      Stat_reap->cpus->stacks[i]->head[stat_COR_TYP].result.s_int = E_CORE;
+{  int i, x;
+   x = Cpu_cnt - (Cpu_cnt / 4);
+   for (i = 0; i < Cpu_cnt; i++)
+      Stat_reap->cpus->stacks[i]->head[stat_COR_TYP].result.s_int = (i < x) ? P_CORE : E_CORE;
 }
 #endif
 #ifdef THREADED_CPU
