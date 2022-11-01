@@ -7,7 +7,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2022-08-31" "procps-ng" "User Commands"
+.TH PGREP "1" "2022-11-01" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
@@ -53,9 +53,14 @@ will wait for each process instead of listing them on stdout.
 .TQ
 \fB\-\-signal\fR \fIsignal\fR
 Defines the signal to send to each matched process.  Either the numeric or
-the symbolic signal name can be used.
-.RB ( pkill
-only.)
+the symbolic signal name can be used. In
+.B pgrep
+or
+.B pidwait
+mode this has no effect unless used in conjunction with
+\fB\-\-require\-handler\fR to filter to processes with a userspace signal
+handler present for a particular signal.
+
 .TP
 \fB\-c\fR, \fB\-\-count\fR
 Suppress normal output; instead print a count of matching processes.  When
@@ -186,6 +191,10 @@ or
 For example, this can be useful when elevating with
 .BR sudo
 or similar tools.
+.TP
+\fB\-H\fR, \fB\-\-require\-handler\fR\fR
+Only match processes with a userspace signal handler present for the signal to
+be sent.
 .TP
 \fB\-\-cgroup \fIname\fP,...
 Match on provided control group (cgroup) v2 name. See

@@ -75,12 +75,13 @@ enum pids_item Items[] = {
     PIDS_CMDLINE,
     PIDS_STATE,
     PIDS_TIME_ELAPSED,
-    PIDS_CGROUP_V
+    PIDS_CGROUP_V,
+    PIDS_SIGCATCH
 };
 enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
     EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA, EU_ELAPSED,
-    EU_CGROUP
+    EU_CGROUP, EU_SIGCATCH
 };
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -119,6 +120,7 @@ static int opt_echo = 0;
 static int opt_threads = 0;
 static pid_t opt_ns_pid = 0;
 static bool use_sigqueue = false;
+static bool require_handler = false;
 static union sigval sigval = {0};
 
 static const char *opt_delim = "\n";
@@ -157,7 +159,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
         fputs(_(" -w, --lightweight         list all TID\n"), fp);
         break;
     case PKILL:
-        fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
+        fputs(_(" -H, --require-handler     match only if signal handler is present\n"), fp);
         fputs(_(" -q, --queue <value>       integer value to be sent with the signal\n"), fp);
         fputs(_(" -e, --echo                display what is killed\n"), fp);
         break;
@@ -167,6 +169,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
         break;
 #endif
     }
+    fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
     fputs(_(" -c, --count               count of matching processes\n"), fp);
     fputs(_(" -f, --full                use full process name to match\n"), fp);
     fputs(_(" -g, --pgroup <PGID,...>   match listed process group IDs\n"), fp);
@@ -212,7 +215,7 @@ static struct el *get_our_ancestors(void)
     while (!done) {
         struct pids_info *info = NULL;
 
-        if (procps_pids_new(&info, Items, 15) < 0)
+        if (procps_pids_new(&info, Items, 16) < 0)
             xerrx(EXIT_FATAL, _("Unable to create pid info structure"));
 
         if (i == size) {
@@ -472,6 +475,24 @@ static int match_numlist (long value, const struct el *restrict list)
     return found;
 }
 
+static unsigned long long unhex (const char *restrict in)
+{
+    unsigned long long ret;
+    char *rem;
+    errno = 0;
+    ret = strtoull(in, &rem, 16);
+    if (errno || *rem != '\0') {
+        xwarnx(_("not a hex string: %s"), in);
+        return 0;
+    }
+    return ret;
+}
+
+static int match_signal_handler (const char *restrict sigcgt, const int signal)
+{
+    return sigcgt && (((1UL << (signal - 1)) & unhex(sigcgt)) != 0);
+}
+
 static int match_strlist (const char *restrict value, const struct el *restrict list)
 {
     int found = 0;
@@ -648,7 +669,7 @@ static struct el * select_procs (int *num)
               _("Error reading reference namespace information\n"));
     }
 
-    if (procps_pids_new(&info, Items, 15) < 0)
+    if (procps_pids_new(&info, Items, 16) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
@@ -690,6 +711,8 @@ static struct el * select_procs (int *num)
         else if (opt_runstates && ! strchr(opt_runstates, PIDS_GETSCH(STA)))
             match = 0;
         else if (opt_cgroup && ! match_cgroup_list (PIDS_GETSTV(CGROUP), opt_cgroup))
+            match = 0;
+        else if (require_handler && ! match_signal_handler (PIDS_GETSTR(SIGCATCH), opt_signal))
             match = 0;
 
         task_cmdline = PIDS_GETSTR(CMDLINE);
@@ -796,6 +819,7 @@ static int pidfd_open (pid_t pid, unsigned int flags)
 static void parse_opts (int argc, char **argv)
 {
     char opts[64] = "";
+    int sig;
     int opt;
     int criteria_count = 0;
 
@@ -808,6 +832,7 @@ static void parse_opts (int argc, char **argv)
     static const struct option longopts[] = {
         {"signal", required_argument, NULL, SIGNAL_OPTION},
         {"ignore-ancestors", no_argument, NULL, 'A'},
+        {"require-handler", no_argument, NULL, 'H'},
         {"count", no_argument, NULL, 'c'},
         {"cgroup", required_argument, NULL, CGROUP_OPTION},
         {"delimiter", required_argument, NULL, 'd'},
@@ -840,6 +865,10 @@ static void parse_opts (int argc, char **argv)
         {NULL, 0, NULL, 0}
     };
 
+    sig = signal_option(&argc, argv);
+    if (-1 < sig)
+        opt_signal = sig;
+
 #ifdef ENABLE_PIDWAIT
     if (strcmp (program_invocation_short_name, "pidwait") == 0 ||
         strcmp (program_invocation_short_name, "lt-pidwait") == 0) {
@@ -849,18 +878,14 @@ static void parse_opts (int argc, char **argv)
 #endif
     if (strcmp (program_invocation_short_name, "pkill") == 0 ||
         strcmp (program_invocation_short_name, "lt-pkill") == 0) {
-        int sig;
         prog_mode = PKILL;
-        sig = signal_option(&argc, argv);
-        if (-1 < sig)
-            opt_signal = sig;
 	strcat (opts, "eq:");
     } else {
         strcat (opts, "lad:vw");
         prog_mode = PGREP;
     }
 
-    strcat (opts, "LF:cfinoxP:O:Ag:s:u:U:G:t:r:?Vh");
+    strcat (opts, "LF:cfinoxP:O:AHg:s:u:U:G:t:r:?Vh");
 
     while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
         switch (opt) {
@@ -1015,6 +1040,10 @@ static void parse_opts (int argc, char **argv)
             opt_cgroup = split_list (optarg, conv_str);
             if (opt_cgroup == NULL)
                 usage ('?');
+            ++criteria_count;
+            break;
+        case 'H':
+            require_handler = true;
             ++criteria_count;
             break;
         case 'h':

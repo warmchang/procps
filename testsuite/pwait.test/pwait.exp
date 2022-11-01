@@ -20,6 +20,10 @@ expect_pass "$test" "^\(lt-\)\?pwait: no matching criteria specified\\s*"
 
 make_testproc
 
+set ps "${topdir}src/ps/pscommand"
+set testproc1_sid [ string trim [ exec $ps --no-headers -o sid $testproc1_pid ] ]
+set not_testproc1_sid [ expr { $testproc1_sid + 1 } ]
+
 set test "pwait with not matching gid"
 spawn $pwait -G $not_gid $testproc_comm
 expect_blank $test
@@ -29,7 +33,7 @@ spawn $pwait -P $not_ppid $testproc_comm
 expect_blank "$test"
 
 set test "pwait doesn't match with bogus sid"
-spawn $pwait -s -1 $testproc_comm
+spawn $pwait -s $not_testproc1_sid $testproc_comm
 expect_blank "$test"
 
 set test "pwait doesn't match with bogus tty"

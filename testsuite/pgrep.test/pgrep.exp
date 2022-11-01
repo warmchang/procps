@@ -20,6 +20,7 @@ make_testproc
 set testproc_len [ string length $testproc_comm ]
 set testproc_trim [ string range $testproc_comm 0 [ expr { $testproc_len - 2 } ] ]
 set testproc1_sid [ string trim [ exec $ps --no-headers -o sid $testproc1_pid ] ]
+set not_testproc1_sid [ expr { $testproc1_sid + 1 } ]
 
 set test "pgrep find both test pids"
 spawn $pgrep $testproc_comm
@@ -75,7 +76,7 @@ spawn $pgrep -s $testproc1_sid $testproc_comm
 expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"
 
 set test "pgrep doesn't match with bogus sid"
-spawn $pgrep -s -1 $testproc_comm
+spawn $pgrep -s $not_testproc1_sid $testproc_comm
 expect_blank "$test"
 
 set test "pgrep matches on tty"
