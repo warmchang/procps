@@ -160,6 +160,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
         fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
         fputs(_(" -q, --queue <value>       integer value to be sent with the signal\n"), fp);
         fputs(_(" -e, --echo                display what is killed\n"), fp);
+        break;
 #ifdef ENABLE_PIDWAIT
     case PIDWAIT:
         fputs(_(" -e, --echo                display PIDs before waiting\n"), fp);
