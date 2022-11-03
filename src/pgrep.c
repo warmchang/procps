@@ -38,9 +38,11 @@
 #include <stdbool.h>
 #include <time.h>
 
-#if defined(ENABLE_PIDWAIT) && !defined(HAVE_PIDFD_OPEN)
+#ifdef ENABLE_PIDWAIT
 #include <sys/epoll.h>
+#ifndef HAVE_PIDFD_OPEN
 #include <sys/syscall.h>
+#endif /* !HAVE_PIDFD_OPEN */
 #endif
 
 /* EXIT_SUCCESS is 0 */
