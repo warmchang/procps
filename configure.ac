@@ -160,7 +160,7 @@ AC_TRY_COMPILE([#include <errno.h>],
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
 
-AC_CHECK_FUNCS([pidfd_open], [enable_pidwait=yes], [
+AC_CHECK_FUNC([pidfd_open], [enable_pidwait=yes], [
   AC_MSG_CHECKING([for __NR_pidfd_open])
   AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <sys/syscall.h>
