@@ -251,34 +251,34 @@ static void print_time_ival7(time_t t, int centi_sec, FILE * fout)
 	if (oldstyle) {
 		if (t >= 48 * 60 * 60)
 			/* > 2 days */
-			fprintf(fout, _(" %2ludays"), t / (24 * 60 * 60));
+			fprintf(fout, _(" %2lludays"), (unsigned long long)t / (24 * 60 * 60));
 		else if (t >= 60 * 60)
 			/* > 1 hour */
 		        /* Translation Hint: Hours:Minutes */
-			fprintf(fout, " %2lu:%02u ", t / (60 * 60),
+			fprintf(fout, " %2llu:%02u ", (unsigned long long)t / (60 * 60),
 				(unsigned)((t / 60) % 60));
 		else if (t > 60)
 			/* > 1 minute */
 		        /* Translation Hint: Minutes:Seconds */
-			fprintf(fout, _(" %2lu:%02um"), t / 60, (unsigned)t % 60);
+			fprintf(fout, _(" %2llu:%02um"), (unsigned long long)t / 60, (unsigned)t % 60);
 		else
 			fprintf(fout, "       ");
 	} else {
 		if (t >= 48 * 60 * 60)
 			/* 2 days or more */
-			fprintf(fout, _(" %2ludays"), t / (24 * 60 * 60));
+			fprintf(fout, _(" %2lludays"), (unsigned long long)t / (24 * 60 * 60));
 		else if (t >= 60 * 60)
 			/* 1 hour or more */
 		        /* Translation Hint: Hours:Minutes */
-			fprintf(fout, _(" %2lu:%02um"), t / (60 * 60),
+			fprintf(fout, _(" %2llu:%02um"), (unsigned long long)t / (60 * 60),
 				(unsigned)((t / 60) % 60));
 		else if (t > 60)
 			/* 1 minute or more */
 		        /* Translation Hint: Minutes:Seconds */
-			fprintf(fout, " %2lu:%02u ", t / 60, (unsigned)t % 60);
+			fprintf(fout, " %2llu:%02u ", (unsigned long long)t / 60, (unsigned)t % 60);
 		else
 		        /* Translation Hint: Seconds:Centiseconds */
-			fprintf(fout, _(" %2lu.%02us"), t, centi_sec);
+			fprintf(fout, _(" %2llu.%02us"), (unsigned long long)t, centi_sec);
 	}
 }
 

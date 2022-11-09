@@ -2,6 +2,7 @@ procps-ng-NEXT
 ---------------
   * library
     Handle absent 'core_id' in /proc/cpuinfo
+  * w: Show time with D_TIME_BITS=64 on 32bit env          issue #256
  
 procps-ng-4.0.1
 ---------------
