@@ -30,7 +30,6 @@ libtool
 ltmain.sh
 m4/
 po-man/translated
-po-man/*.pot
 po-man/man.stamp
 po-man/??/*
 po-man/??_??/*

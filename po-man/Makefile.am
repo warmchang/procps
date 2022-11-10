@@ -7,17 +7,7 @@
 #   make -C po-man man.stamp
 # To update man page translations
 
-# Not sure why this needs to be repeated from the top-level Makefile but it does
-dist_man_MANS = \
-	../man/free.1 \
-	../man/pgrep.1 \
-	../man/pkill.1 \
-	../man/pmap.1 \
-	../man/uptime.1 \
-	../man/vmstat.8 \
-	../man/procps.3 \
-	../man/procps_pids.3 \
-	../man/procps_misc.3
+src_MANS = $(wildcard $(top_srcdir)/man/*.[1-9])
 
 translated_MANS = $(wildcard translated/*/*.[1-9])
 translated_MAN_sections=$(subst .,,$(sort $(suffix $(translated_MANS))))
@@ -62,10 +52,10 @@ clean-local-yes:
 
 .PHONY: update-po
 
-procps-man.pot:
-#	parafiles = $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS)))
-#	parafiles = $(dist_man_MANS:doc=Ente)
-	po4a-gettextize -M utf8 --option groff_code=verbatim --option generated --option untranslated="a.RE,\|" --option unknown_macros=untranslated -f man $(patsubst %,-m%,$(subst :, ,$(dist_man_MANS))) -p $@
+procps-man.pot: $(src_MANS)
+#	parafiles = $(patsubst %,-m%,$(subst :, ,$(src_MANS)))
+#	parafiles = $(src_MANS:doc=Ente)
+	po4a-gettextize -M utf8 --option groff_code=verbatim --option generated --option untranslated="a.RE,\|" --option unknown_macros=untranslated -f man $(patsubst %,-m%,$(subst :, ,$(src_MANS))) -p $@
 
 update-po:
 	$(PO4A_V) $(PO4A) $(PO4A_OPTS) --force $(srcdir)/po4a.cfg
@@ -74,7 +64,7 @@ update-po:
 install-data-local:
 	for lang in $(LINGUAS) ; do \
 	    files=""; \
-	    for trans in $(notdir $(dist_man_MANS)); do \
+	    for trans in $(notdir $(src_MANS)); do \
 		if [ -f $(CURDIR)/$$lang/$$trans ]; then \
 		    files="$$files $(CURDIR)/$$lang/$$trans"; \
 		elif [ -f $(srcdir)/$$lang/$$trans ]; then \
@@ -84,13 +74,13 @@ install-data-local:
 	    $(MAKE) -C .. install-man \
 	            mandir="$(mandir)/$$lang" \
 		    man_MANS="" \
-		    dist_man_MANS="$$files"; \
+		    src_MANS="$$files"; \
 	done
 
 uninstall-local:
 	for lang in $(LINGUAS); do \
 		files=""; \
-		for trans in $(notdir $(dist_man_MANS)); do \
+		for trans in $(notdir $(src_MANS)); do \
 			if [ -f $(CURDIR)/$$lang/$$trans ]; then \
 				files="$$files $(CURDIR)/$$lang/$$trans"; \
 			elif [ -f $(srcdir)/$$lang/$$trans ]; then \
@@ -100,7 +90,7 @@ uninstall-local:
 		$(MAKE) -C .. uninstall-man \
 			mandir="$(mandir)/$$lang" \
 			man_MANS="" \
-			dist_man_MANS="$$files"; \
+			src_MANS="$$files"; \
 	done
 
 dist-hook: man.stamp

@@ -411,3 +411,5 @@ get-trans:
 	echo "Getting the latest translations from translationproject.org..."
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng/  po
 	rsync -Lrtvz  translationproject.org::tp/latest/procps-ng-man/  po-man
+	rm -f po-man/man.stamp
+	make -C po-man man.stamp
