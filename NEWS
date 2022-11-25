@@ -1,4 +1,4 @@
-procps-ng-NEXT
+procps-ng-4.0.2
 ---------------
   * library
     Handle absent 'core_id' in /proc/cpuinfo
