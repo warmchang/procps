@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 4.0.1rc3\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-10-04 10:57+1100\n"
+"POT-Creation-Date: 2022-11-26 08:52+1100\n"
 "PO-Revision-Date: 2022-11-01 12:03+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -136,13 +136,21 @@ msgstr "Kan inte skapa minnesinformationspost"
 
 #: src/free.c:377
 #, c-format
-msgid "               total        used        free      shared     buffers       cache   available"
-msgstr "              totalt      använt       fritt       delat   buffertar       cache  tillgängl."
+msgid ""
+"               total        used        free      shared     buffers       "
+"cache   available"
+msgstr ""
+"              totalt      använt       fritt       delat   buffertar       "
+"cache  tillgängl."
 
 #: src/free.c:379
 #, c-format
-msgid "               total        used        free      shared  buff/cache   available"
-msgstr "              totalt      använt       fritt       delat  buff/cache  tillgängl."
+msgid ""
+"               total        used        free      shared  buff/cache   "
+"available"
+msgstr ""
+"              totalt      använt       fritt       delat  buff/cache  "
+"tillgängl."
 
 #: src/free.c:382
 msgid "Mem:"
@@ -193,8 +201,11 @@ msgid " -q, --queue <value>    integer value to be sent with the signal\n"
 msgstr " -q, --queue <värde>    heltalsvärde att skickas med signalen\n"
 
 #: src/kill.c:44
-msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
-msgstr " -l, --list=[<signal>]  lista alla signalnamn, eller gör om en till ett namn\n"
+msgid ""
+" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+msgstr ""
+" -l, --list=[<signal>]  lista alla signalnamn, eller gör om en till ett "
+"namn\n"
 
 #: src/kill.c:45
 msgid " -L, --table            list all signal names in a nice table\n"
@@ -214,139 +225,144 @@ msgstr "det måste vara ett heltalsvärde för att skickas med signalen."
 msgid "invalid argument %c"
 msgstr "felaktigt argument %c"
 
-#: src/kill.c:144 src/pgrep.c:740 src/pidof.c:243 src/pidof.c:283
+#: src/kill.c:144 src/pgrep.c:743 src/pidof.c:243 src/pidof.c:283
 #: src/sysctl.c:865
 msgid "internal error"
 msgstr "internt fel"
 
-#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375
-#: src/skill.c:459 src/tload.c:135 src/tload.c:140 src/vmstat.c:1044
-#: src/vmstat.c:1054 src/watch.c:870 src/watch.c:882
+#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375 src/skill.c:459
+#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1044 src/vmstat.c:1054
+#: src/watch.c:870 src/watch.c:882
 msgid "failed to parse argument"
 msgstr "misslyckades att tolka argumentet"
 
-#: src/pgrep.c:85 src/pidof.c:37 src/skill.c:70
+#: src/pgrep.c:87 src/pidof.c:37 src/skill.c:70
 msgid "integer overflow"
 msgstr "heltalsspill"
 
-#: src/pgrep.c:147
+#: src/pgrep.c:149
 #, c-format
 msgid " %s [options] <pattern>\n"
 msgstr " %s [flaggor] <mönster>\n"
 
-#: src/pgrep.c:151
+#: src/pgrep.c:153
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr " -d, --delimiter <sträng>  ange avgränsare i utdata\n"
 
-#: src/pgrep.c:152
+#: src/pgrep.c:154
 msgid " -l, --list-name           list PID and process name\n"
 msgstr " -l, --list-name           lista PID och processnamn\n"
 
-#: src/pgrep.c:153
+#: src/pgrep.c:155
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr " -a, --list-full           lista PID och fullständig kommandorad\n"
 
-#: src/pgrep.c:154
+#: src/pgrep.c:156
 msgid " -v, --inverse             negates the matching\n"
 msgstr " -v, --inverse             negerar matchningen\n"
 
-#: src/pgrep.c:155
+#: src/pgrep.c:157
 msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         lista alla TID\n"
 
-#: src/pgrep.c:158
+#: src/pgrep.c:160
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr " -<sig>, --signal <sig>    signal att skicka (antingen nummer eller namn)\n"
+msgstr ""
+" -<sig>, --signal <sig>    signal att skicka (antingen nummer eller namn)\n"
 
-#: src/pgrep.c:159
+#: src/pgrep.c:161
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr " -q, --queue <värde>       heltalsvärde att skickas med signalen\n"
 
-#: src/pgrep.c:160
+#: src/pgrep.c:162
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                visa vad som dödas\n"
 
-#: src/pgrep.c:163
+#: src/pgrep.c:166
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr " -e, --echo                visa PID:ar före väntan\n"
 
-#: src/pgrep.c:167
+#: src/pgrep.c:170
 msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               antal matchande processer\n"
 
-#: src/pgrep.c:168
+#: src/pgrep.c:171
 msgid " -f, --full                use full process name to match\n"
-msgstr " -f, --full                använd fullständigt processnamn för att matcha\n"
+msgstr ""
+" -f, --full                använd fullständigt processnamn för att matcha\n"
 
-#: src/pgrep.c:169
+#: src/pgrep.c:172
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr " -g, --pgroup <PGID,…>     matcha listade processers grupp-ID:n\n"
 
-#: src/pgrep.c:170
+#: src/pgrep.c:173
 msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr " -G, --group <GID,…>       matcha verkliga grupp-ID:n\n"
 
-#: src/pgrep.c:171
+#: src/pgrep.c:174
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr " -i, --ignore-case         matcha utan hänsyn till skiftläge\n"
 
-#: src/pgrep.c:172
+#: src/pgrep.c:175
 msgid " -n, --newest              select most recently started\n"
 msgstr " -n, --newest              välj den senast startade\n"
 
-#: src/pgrep.c:173
+#: src/pgrep.c:176
 msgid " -o, --oldest              select least recently started\n"
 msgstr " -o, --oldest              välj den först startade\n"
 
-#: src/pgrep.c:174
+#: src/pgrep.c:177
 msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr " -O, --older <sek>         välj de som är äldre än sekunder\n"
 
-#: src/pgrep.c:175
-msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr " -P, --parent <PPID,…>     matcha endast barnprocesser till den givna föräldern\n"
+#: src/pgrep.c:178
+msgid ""
+" -P, --parent <PPID,...>   match only child processes of the given parent\n"
+msgstr ""
+" -P, --parent <PPID,…>     matcha endast barnprocesser till den givna "
+"föräldern\n"
 
-#: src/pgrep.c:176
+#: src/pgrep.c:179
 msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,…>     matcha sessions-ID:n\n"
 
-#: src/pgrep.c:177
+#: src/pgrep.c:180
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty,…>    matcha via styrterminal\n"
 
-#: src/pgrep.c:178
+#: src/pgrep.c:181
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr " -u, --euid <ID,…>         matcha via effektiva ID:n\n"
 
-#: src/pgrep.c:179
+#: src/pgrep.c:182
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr " -U, --uid <ID,…>          matcha via verkliga ID:n\n"
 
-#: src/pgrep.c:180
+#: src/pgrep.c:183
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr " -x, --exact               matcha kommandonamnet exakt\n"
 
-#: src/pgrep.c:181
+#: src/pgrep.c:184
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <fil>       läs PID:n från filen\n"
 
-#: src/pgrep.c:182
+#: src/pgrep.c:185
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr " -L, --logpidfile          misslyckas om PID-filen inte kan låsas\n"
 
-#: src/pgrep.c:183
+#: src/pgrep.c:186
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr " -r, --runstates <status>  matcha körstatus [D,S,Z,…]\n"
 
-#: src/pgrep.c:184
+#: src/pgrep.c:187
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
 msgstr " -A, --ignore-ancestors    exkludera våra anfäder from resultat\n"
 
-#: src/pgrep.c:185
+#: src/pgrep.c:188
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr " --cgroup <grp,…>          match via cgroup-v2-namn\n"
 
-#: src/pgrep.c:186
+#: src/pgrep.c:189
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -354,69 +370,73 @@ msgstr ""
 " --ns <PID>                matcha processerna som tillhör samma\n"
 "                           namnrymd som <PID>\n"
 
-#: src/pgrep.c:188
+#: src/pgrep.c:191
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, "
+"uts\n"
 msgstr ""
 " --nslist <ns,…>           lista vilka namnrymder som övervägs för\n"
 "                           flaggan --ns.\n"
-"                           Tillgängliga namnrymder: ipc, mnt, net, pid, user,\n"
+"                           Tillgängliga namnrymder: ipc, mnt, net, pid, "
+"user,\n"
 "                           uts\n"
 
-#: src/pgrep.c:213 src/pgrep.c:650 src/w.c:405
+#: src/pgrep.c:216 src/pgrep.c:653 src/w.c:405
 msgid "Unable to create pid info structure"
 msgstr "Kan inte skapa pid-informationspost"
 
-#: src/pgrep.c:377
+#: src/pgrep.c:380
 #, c-format
 msgid "invalid user name: %s"
 msgstr "felaktigt användarnamn: %s"
 
-#: src/pgrep.c:394
+#: src/pgrep.c:397
 #, c-format
 msgid "invalid group name: %s"
 msgstr "felaktigt gruppnamn: %s"
 
-#: src/pgrep.c:405
+#: src/pgrep.c:408
 #, c-format
 msgid "invalid process group: %s"
 msgstr "felaktig processgrupp: %s"
 
-#: src/pgrep.c:417
+#: src/pgrep.c:420
 #, c-format
 msgid "invalid session id: %s"
 msgstr "felaktigt sessions-id: %s"
 
-#: src/pgrep.c:429
+#: src/pgrep.c:432
 #, c-format
 msgid "not a number: %s"
 msgstr "inte ett tal: %s"
 
-#: src/pgrep.c:496 src/skill.c:158
+#: src/pgrep.c:499 src/skill.c:158
 msgid "Unable to read process namespace information"
 msgstr "Kan inte läsa processnamnrymdsinformation"
 
-#: src/pgrep.c:583
+#: src/pgrep.c:586
 #, c-format
 msgid "regex error: %s"
 msgstr "reguttr-fel: %s"
 
-#: src/pgrep.c:645
+#: src/pgrep.c:648
 msgid "Error reading reference namespace information\n"
 msgstr "Fel när referensnamnrymdens information lästes\n"
 
-#: src/pgrep.c:757
+#: src/pgrep.c:760
 #, c-format
 msgid ""
-"pattern that searches for process name longer than 15 characters will result in zero matches\n"
+"pattern that searches for process name longer than 15 characters will result "
+"in zero matches\n"
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
-"mönster som söker efter processnamn längre än 15 tecken kommer resultera i noll träffar\n"
+"mönster som söker efter processnamn längre än 15 tecken kommer resultera i "
+"noll träffar\n"
 "Prova flaggan ”%s -f” för att matcha mot den fullständiga kommandoraden."
 
-#: src/pgrep.c:1025
+#: src/pgrep.c:1028
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -425,7 +445,7 @@ msgstr ""
 "-L utan -F är meningslöst.\n"
 "Prova ”%s --help” för mer information."
 
-#: src/pgrep.c:1032
+#: src/pgrep.c:1035
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -434,7 +454,7 @@ msgstr ""
 "pid-filen är inte giltig.\n"
 "Prova ”%s --help” för mer information."
 
-#: src/pgrep.c:1041
+#: src/pgrep.c:1044
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -443,7 +463,7 @@ msgstr ""
 "endast ett mönster kan anges\n"
 "Prova ”%s --help” för mer information."
 
-#: src/pgrep.c:1045
+#: src/pgrep.c:1048
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -452,31 +472,31 @@ msgstr ""
 "inget matchande kriterium angivet\n"
 "Prova ”%s --help” för mer information."
 
-#: src/pgrep.c:1097
+#: src/pgrep.c:1100
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s dödad (pid %lu)\n"
 
-#: src/pgrep.c:1104
+#: src/pgrep.c:1107
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "att döda pid %ld misslyckades"
 
-#: src/pgrep.c:1116
+#: src/pgrep.c:1119
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "väntar på %s (pid %lu)\n"
 
-#: src/pgrep.c:1120
+#: src/pgrep.c:1123
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr "pidfd_open() är inte implementerat i Linux < 5.3"
 
-#: src/pgrep.c:1123
+#: src/pgrep.c:1126
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "att öppna pid %ld misslyckades"
 
-#: src/pgrep.c:1137
+#: src/pgrep.c:1140
 msgid "epoll_wait failed"
 msgstr "epoll_wait misslyckades"
 
@@ -503,7 +523,8 @@ msgstr " -w, --with-workers        visa kärnarbetare också\n"
 
 #: src/pidof.c:77
 msgid " -x                        also find shells running the named scripts\n"
-msgstr " -x                        hitta även skal som kör de namngivna skripten\n"
+msgstr ""
+" -x                        hitta även skal som kör de namngivna skripten\n"
 
 #: src/pidof.c:78
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
@@ -554,7 +575,7 @@ msgstr "Läge"
 #. has been added ahead of one 'KiB' so that they all
 #. align. You need not preserve such alignment.
 #. Translation Hint: maximum 'RSS' = 6
-#: src/pmap.c:81 src/top/top_nls.c:330
+#: src/pmap.c:81 src/top/top_nls.c:337
 msgid "RSS"
 msgstr "RSS"
 
@@ -617,7 +638,9 @@ msgstr " -p, --show-path             visa sökväg i mappningarna\n"
 
 #: src/pmap.c:130
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
-msgstr " -A, --range=<låg>[,<hög>]   begränsa resultatet till det angivna intervallet\n"
+msgstr ""
+" -A, --range=<låg>[,<hög>]   begränsa resultatet till det angivna "
+"intervallet\n"
 
 #: src/pmap.c:211
 msgid "shared memory detach"
@@ -1080,8 +1103,11 @@ msgid "  X                   register format\n"
 msgstr "  X                   registerformat\n"
 
 #: src/ps/help.c:147
-msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
-msgstr " -y                   visa inte flaggor, visa rss i.st.f. adr (används med -l)\n"
+msgid ""
+" -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgstr ""
+" -y                   visa inte flaggor, visa rss i.st.f. adr (används med -"
+"l)\n"
 
 #: src/ps/help.c:148
 msgid "     --context        display security context (for SELinux)\n"
@@ -1156,8 +1182,11 @@ msgid "  e                   show the environment after command\n"
 msgstr "  e                   visa miljön efter kommandot\n"
 
 #: src/ps/help.c:168
-msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
-msgstr "  k,    --sort        ange sorteringsordning som: [+|-]nyckel[,[+|-]nyckel[,…]]\n"
+msgid ""
+"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgstr ""
+"  k,    --sort        ange sorteringsordning som: [+|-]nyckel[,"
+"[+|-]nyckel[,…]]\n"
 
 #: src/ps/help.c:169
 msgid "  L                   show format specifiers\n"
@@ -1562,7 +1591,9 @@ msgstr "kolumnbredder måste vara teckenlösa decimaltal"
 
 #: src/ps/sortformat.c:313
 msgid "can not set width for a macro (multi-column) format specifier"
-msgstr "det går inte att sätta bredden för en (flerkolumners) makroformatspecificerare"
+msgstr ""
+"det går inte att sätta bredden för en (flerkolumners) "
+"makroformatspecificerare"
 
 #: src/ps/sortformat.c:367 src/ps/sortformat.c:383
 msgid "improper sort list"
@@ -1610,8 +1641,10 @@ msgid "tell <procps@freelists.org> what you expected"
 msgstr "berätta för <procps@freelists.org> vad du förväntade dig"
 
 #: src/ps/sortformat.c:803
-msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr "berätta för <procps@freelists.org> vad du vill (-L/-T, -m/m/H och $PS_FORMAT)"
+msgid ""
+"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
+msgstr ""
+"berätta för <procps@freelists.org> vad du vill (-L/-T, -m/m/H och $PS_FORMAT)"
 
 #: src/ps/sortformat.c:820
 #, c-format
@@ -1624,7 +1657,8 @@ msgstr "formatflaggor står i konflikt"
 
 #: src/ps/sortformat.c:826
 msgid "can not use output modifiers with user-defined output"
-msgstr "det går inte att använda utdatamodifierare med användardefinierad utdata"
+msgstr ""
+"det går inte att använda utdatamodifierare med användardefinierad utdata"
 
 #: src/ps/sortformat.c:827
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
@@ -1699,8 +1733,11 @@ msgid " -L, --table        list all signal names in a nice table\n"
 msgstr " -L, --table        lista alla signalnamn i en trevlig tabell\n"
 
 #: src/skill.c:325
-msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
-msgstr " -n, --no-action    döda inte processen; skriv bara vad som skulle hända\n"
+msgid ""
+" -n, --no-action    do not actually kill processes; just print what would "
+"happen\n"
+msgstr ""
+" -n, --no-action    döda inte processen; skriv bara vad som skulle hända\n"
 
 #: src/skill.c:326
 msgid " -v, --verbose      explain what is being done\n"
@@ -1766,7 +1803,8 @@ msgid ""
 msgstr ""
 "\n"
 "Standardsignalen är TERM. Använd -l eller -L för att lista tillgängliga\n"
-"signaler.  Särskilt användbara signaler inkluderar HUP, INT, KILL, STOP, CONT\n"
+"signaler.  Särskilt användbara signaler inkluderar HUP, INT, KILL, STOP, "
+"CONT\n"
 "och 0.  Alternativa signaler kan anges på tre sätt: -SIGKILL -KILL -9\n"
 
 #: src/skill.c:356
@@ -1831,7 +1869,8 @@ msgstr " -o, --once          visa endast en gång, avsluta sedan\n"
 
 #: src/slabtop.c:108
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
-msgstr " -s, --sort <tkn>    ange sorteringskriterium enligt tecken (se nedan)\n"
+msgstr ""
+" -s, --sort <tkn>    ange sorteringskriterium enligt tecken (se nedan)\n"
 
 #: src/slabtop.c:113
 msgid ""
@@ -2096,8 +2135,12 @@ msgstr "%s(%d): felaktig syntax, fortsätter …"
 
 #: src/sysctl.c:759
 #, c-format
-msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
-msgstr "GLOB_TILDE stödjs inte på din plattform, tildet i ”%s” kommer inte expanderas."
+msgid ""
+"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
+"expanded."
+msgstr ""
+"GLOB_TILDE stödjs inte på din plattform, tildet i ”%s” kommer inte "
+"expanderas."
 
 #: src/sysctl.c:765
 msgid "glob failed"
@@ -2201,704 +2244,704 @@ msgstr "misslyckades att skriva till tty:n"
 #. .  In all cases, fewer characters are just fine.
 #. .
 #. Translation Hint: maximum 'PID' = 5
-#: src/top/top_nls.c:145
+#: src/top/top_nls.c:152
 msgid "PID"
 msgstr "PID"
 
-#: src/top/top_nls.c:146
+#: src/top/top_nls.c:153
 msgid "Process Id"
 msgstr "Process-id"
 
 #. Translation Hint: maximum 'PPID' = 5
-#: src/top/top_nls.c:148
+#: src/top/top_nls.c:155
 msgid "PPID"
 msgstr "FPID"
 
-#: src/top/top_nls.c:149
+#: src/top/top_nls.c:156
 msgid "Parent Process pid"
 msgstr "Föräldraprocess-pid"
 
 #. Translation Hint: maximum 'UID' = 5 +
-#: src/top/top_nls.c:151
+#: src/top/top_nls.c:158
 msgid "UID"
 msgstr "AID"
 
-#: src/top/top_nls.c:152
+#: src/top/top_nls.c:159
 msgid "Effective User Id"
 msgstr "Effektiv användar-id"
 
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:154 src/w.c:661
+#: src/top/top_nls.c:161 src/w.c:661
 msgid "USER"
 msgstr "ANVÄNDARE"
 
-#: src/top/top_nls.c:155
+#: src/top/top_nls.c:162
 msgid "Effective User Name"
 msgstr "Effektivt anv.-namn"
 
 #. Translation Hint: maximum 'RUID' = 5 +
-#: src/top/top_nls.c:157
+#: src/top/top_nls.c:164
 msgid "RUID"
 msgstr "VAID"
 
-#: src/top/top_nls.c:158
+#: src/top/top_nls.c:165
 msgid "Real User Id"
 msgstr "Verkligt användar-id"
 
 #. Translation Hint: maximum 'RUSER' = 8 +
-#: src/top/top_nls.c:160
+#: src/top/top_nls.c:167
 msgid "RUSER"
 msgstr "VANV"
 
-#: src/top/top_nls.c:161
+#: src/top/top_nls.c:168
 msgid "Real User Name"
 msgstr "Verkligt anv.-namn"
 
 #. Translation Hint: maximum 'SUID' = 5 +
-#: src/top/top_nls.c:163
+#: src/top/top_nls.c:170
 msgid "SUID"
 msgstr "SAID"
 
-#: src/top/top_nls.c:164
+#: src/top/top_nls.c:171
 msgid "Saved User Id"
 msgstr "Sparat användar-id"
 
 #. Translation Hint: maximum 'SUSER' = 8 +
-#: src/top/top_nls.c:166
+#: src/top/top_nls.c:173
 msgid "SUSER"
 msgstr "SANV"
 
-#: src/top/top_nls.c:167
+#: src/top/top_nls.c:174
 msgid "Saved User Name"
 msgstr "Sparat användarnamn"
 
 #. Translation Hint: maximum 'GID' = 5 +
-#: src/top/top_nls.c:169
+#: src/top/top_nls.c:176
 msgid "GID"
 msgstr "GID"
 
-#: src/top/top_nls.c:170
+#: src/top/top_nls.c:177
 msgid "Group Id"
 msgstr "Grupp-id"
 
 #. Translation Hint: maximum 'GROUP' = 8 +
-#: src/top/top_nls.c:172
+#: src/top/top_nls.c:179
 msgid "GROUP"
 msgstr "GRUPP"
 
-#: src/top/top_nls.c:173
+#: src/top/top_nls.c:180
 msgid "Group Name"
 msgstr "Gruppnamn"
 
 #. Translation Hint: maximum 'PGRP' = 5
-#: src/top/top_nls.c:175
+#: src/top/top_nls.c:182
 msgid "PGRP"
 msgstr "PGRP"
 
-#: src/top/top_nls.c:176
+#: src/top/top_nls.c:183
 msgid "Process Group Id"
 msgstr "Processgrupp-id"
 
 #. Translation Hint: maximum 'TTY' = 8 +
-#: src/top/top_nls.c:178
+#: src/top/top_nls.c:185
 msgid "TTY"
 msgstr "TTY"
 
-#: src/top/top_nls.c:179
+#: src/top/top_nls.c:186
 msgid "Controlling Tty"
 msgstr "Styr-tty"
 
 #. Translation Hint: maximum 'TPGID' = 5
-#: src/top/top_nls.c:181
+#: src/top/top_nls.c:188
 msgid "TPGID"
 msgstr "TPGID"
 
-#: src/top/top_nls.c:182
+#: src/top/top_nls.c:189
 msgid "Tty Process Grp Id"
 msgstr "Tty-processgrupp-id"
 
 #. Translation Hint: maximum 'SID' = 5
-#: src/top/top_nls.c:184
+#: src/top/top_nls.c:191
 msgid "SID"
 msgstr "SID"
 
-#: src/top/top_nls.c:185
+#: src/top/top_nls.c:192
 msgid "Session Id"
 msgstr "Sessions-id"
 
 #. Translation Hint: maximum 'PR' = 3
-#: src/top/top_nls.c:187
+#: src/top/top_nls.c:194
 msgid "PR"
 msgstr "PR"
 
-#: src/top/top_nls.c:188
+#: src/top/top_nls.c:195
 msgid "Priority"
 msgstr "Prioritet"
 
 #. Translation Hint: maximum 'NI' = 3
-#: src/top/top_nls.c:190
+#: src/top/top_nls.c:197
 msgid "NI"
 msgstr "NI"
 
-#: src/top/top_nls.c:191
+#: src/top/top_nls.c:198
 msgid "Nice Value"
 msgstr "Nice-värde"
 
 #. Translation Hint: maximum 'nTH' = 3
-#: src/top/top_nls.c:193
+#: src/top/top_nls.c:200
 msgid "nTH"
 msgstr "aTR"
 
-#: src/top/top_nls.c:194
+#: src/top/top_nls.c:201
 msgid "Number of Threads"
 msgstr "Antal trådar"
 
 #. Translation Hint: maximum 'P' = 1
-#: src/top/top_nls.c:196
+#: src/top/top_nls.c:203
 msgid "P"
 msgstr "P"
 
-#: src/top/top_nls.c:197
+#: src/top/top_nls.c:204
 msgid "Last Used Cpu (SMP)"
 msgstr "Sen. anv. CPU (SMP)"
 
 #. Translation Hint: maximum '%CPU' = 4
-#: src/top/top_nls.c:199
+#: src/top/top_nls.c:206
 #, c-format
 msgid "%CPU"
 msgstr "%CPU"
 
-#: src/top/top_nls.c:200
+#: src/top/top_nls.c:207
 msgid "CPU Usage"
 msgstr "CPU-användning"
 
 #. Translation Hint: maximum '' = 6
-#: src/top/top_nls.c:202
+#: src/top/top_nls.c:209
 msgid "TIME"
 msgstr "TID"
 
-#: src/top/top_nls.c:203
+#: src/top/top_nls.c:210
 msgid "CPU Time"
 msgstr "CPU-tid"
 
 #. Translation Hint: maximum 'TIME+' = 9
-#: src/top/top_nls.c:205
+#: src/top/top_nls.c:212
 msgid "TIME+"
 msgstr "TID+"
 
-#: src/top/top_nls.c:206
+#: src/top/top_nls.c:213
 msgid "CPU Time, hundredths"
 msgstr "CPU-tid, hundradelar"
 
 #. Translation Hint: maximum '%MEM' = 4
-#: src/top/top_nls.c:208
+#: src/top/top_nls.c:215
 msgid "%MEM"
 msgstr "%MIN"
 
-#: src/top/top_nls.c:209
+#: src/top/top_nls.c:216
 msgid "Memory Usage (RES)"
 msgstr "Minnesanv. (RES)"
 
 #. Translation Hint: maximum 'VIRT' = 7
-#: src/top/top_nls.c:211
+#: src/top/top_nls.c:218
 msgid "VIRT"
 msgstr "VIRT"
 
-#: src/top/top_nls.c:212
+#: src/top/top_nls.c:219
 msgid "Virtual Image (KiB)"
 msgstr "Virtuell avbild(KiB)"
 
 #. Translation Hint: maximum 'SWAP' = 6
-#: src/top/top_nls.c:214
+#: src/top/top_nls.c:221
 msgid "SWAP"
 msgstr "VÄXL"
 
-#: src/top/top_nls.c:215
+#: src/top/top_nls.c:222
 msgid "Swapped Size (KiB)"
 msgstr "Växlingsstorlek(KiB)"
 
 #. Translation Hint: maximum 'RES' = 6
-#: src/top/top_nls.c:217
+#: src/top/top_nls.c:224
 msgid "RES"
 msgstr "RES"
 
-#: src/top/top_nls.c:218
+#: src/top/top_nls.c:225
 msgid "Resident Size (KiB)"
 msgstr "Resident storl (KiB)"
 
 #. Translation Hint: maximum 'CODE' = 4
-#: src/top/top_nls.c:220
+#: src/top/top_nls.c:227
 msgid "CODE"
 msgstr "KOD"
 
-#: src/top/top_nls.c:221
+#: src/top/top_nls.c:228
 msgid "Code Size (KiB)"
 msgstr "Kodstorlek (KiB)"
 
 #. Translation Hint: maximum 'DATA' = 7
-#: src/top/top_nls.c:223
+#: src/top/top_nls.c:230
 msgid "DATA"
 msgstr "DATA"
 
-#: src/top/top_nls.c:224
+#: src/top/top_nls.c:231
 msgid "Data+Stack (KiB)"
 msgstr "Data+stack (KiB)"
 
 #. Translation Hint: maximum 'SHR' = 6
-#: src/top/top_nls.c:226
+#: src/top/top_nls.c:233
 msgid "SHR"
 msgstr "DELT"
 
-#: src/top/top_nls.c:227
+#: src/top/top_nls.c:234
 msgid "Shared Memory (KiB)"
 msgstr "Delat minne (KiB)"
 
 #. Translation Hint: maximum 'nMaj' = 4
-#: src/top/top_nls.c:229
+#: src/top/top_nls.c:236
 msgid "nMaj"
 msgstr "aSto"
 
-#: src/top/top_nls.c:230
+#: src/top/top_nls.c:237
 msgid "Major Page Faults"
 msgstr "Stora sidfel"
 
 #. Translation Hint: maximum 'nMin' = 4
-#: src/top/top_nls.c:232
+#: src/top/top_nls.c:239
 msgid "nMin"
 msgstr "aSmå"
 
-#: src/top/top_nls.c:233
+#: src/top/top_nls.c:240
 msgid "Minor Page Faults"
 msgstr "Små sidfel"
 
 #. Translation Hint: maximum 'nDRT' = 4
-#: src/top/top_nls.c:235
+#: src/top/top_nls.c:242
 msgid "nDRT"
 msgstr "aSmu"
 
-#: src/top/top_nls.c:236
+#: src/top/top_nls.c:243
 msgid "Dirty Pages Count"
 msgstr "Antal smutsiga sidor"
 
 #. Translation Hint: maximum 'S' = 1
-#: src/top/top_nls.c:238
+#: src/top/top_nls.c:245
 msgid "S"
 msgstr "S"
 
-#: src/top/top_nls.c:239
+#: src/top/top_nls.c:246
 msgid "Process Status"
 msgstr "Processtatus"
 
 #. Translation Hint: maximum 'COMMAND' = variable
-#: src/top/top_nls.c:241
+#: src/top/top_nls.c:248
 msgid "COMMAND"
 msgstr "KOMMANDO"
 
-#: src/top/top_nls.c:242
+#: src/top/top_nls.c:249
 msgid "Command Name/Line"
 msgstr "Kommandonamn/-rad"
 
 #. Translation Hint: maximum 'WCHAN' = 10 +
-#: src/top/top_nls.c:244
+#: src/top/top_nls.c:251
 msgid "WCHAN"
 msgstr "VKAN"
 
-#: src/top/top_nls.c:245
+#: src/top/top_nls.c:252
 msgid "Sleeping in Function"
 msgstr "Sover i funktion"
 
 #. Translation Hint: maximum 'Flags' = 8
-#: src/top/top_nls.c:247
+#: src/top/top_nls.c:254
 msgid "Flags"
 msgstr "Flaggor"
 
-#: src/top/top_nls.c:248
+#: src/top/top_nls.c:255
 msgid "Task Flags <sched.h>"
 msgstr "Uppg.flagg <sched.h>"
 
 #. Translation Hint: maximum 'CGROUPS' = variable
-#: src/top/top_nls.c:250
+#: src/top/top_nls.c:257
 msgid "CGROUPS"
 msgstr "KGRUPPR"
 
-#: src/top/top_nls.c:251
+#: src/top/top_nls.c:258
 msgid "Control Groups"
 msgstr "Kontrollgrupper"
 
 #. Translation Hint: maximum 'SUPGIDS' = variable
-#: src/top/top_nls.c:253
+#: src/top/top_nls.c:260
 msgid "SUPGIDS"
 msgstr "KOMPGID"
 
-#: src/top/top_nls.c:254
+#: src/top/top_nls.c:261
 msgid "Supp Groups IDs"
 msgstr "Kompl. grupp-id:n"
 
 #. Translation Hint: maximum 'SUPGRPS' = variable
-#: src/top/top_nls.c:256
+#: src/top/top_nls.c:263
 msgid "SUPGRPS"
 msgstr "KOMPGRP"
 
-#: src/top/top_nls.c:257
+#: src/top/top_nls.c:264
 msgid "Supp Groups Names"
 msgstr "Kompl. gruppnamn"
 
 #. Translation Hint: maximum 'TGID' = 5
-#: src/top/top_nls.c:259
+#: src/top/top_nls.c:266
 msgid "TGID"
 msgstr "TGID"
 
-#: src/top/top_nls.c:260
+#: src/top/top_nls.c:267
 msgid "Thread Group Id"
 msgstr "Trådgrupp-id"
 
 #. Translation Hint: maximum 'OOMa' = 5
-#: src/top/top_nls.c:262
+#: src/top/top_nls.c:269
 msgid "OOMa"
 msgstr "OOMj"
 
-#: src/top/top_nls.c:263
+#: src/top/top_nls.c:270
 msgid "OOMEM Adjustment"
 msgstr "OOMEM-justering"
 
 #. Translation Hint: maximum 'OOMs' = 4
-#: src/top/top_nls.c:265
+#: src/top/top_nls.c:272
 msgid "OOMs"
 msgstr "OOMv"
 
-#: src/top/top_nls.c:266
+#: src/top/top_nls.c:273
 msgid "OOMEM Score current"
 msgstr "nuvarande OOMEM-värde"
 
 #. Translation Hint: maximum 'ENVIRON' = variable
-#: src/top/top_nls.c:268
+#: src/top/top_nls.c:275
 msgid "ENVIRON"
 msgstr "MILJÖ"
 
 #. Translation Hint: the abbreviation 'vars' below is shorthand for
 #. 'variables'
-#: src/top/top_nls.c:271
+#: src/top/top_nls.c:278
 msgid "Environment vars"
 msgstr "Miljövariabler"
 
 #. Translation Hint: maximum 'vMj' = 3
-#: src/top/top_nls.c:273
+#: src/top/top_nls.c:280
 msgid "vMj"
 msgstr "vSt"
 
-#: src/top/top_nls.c:274
+#: src/top/top_nls.c:281
 msgid "Major Faults delta"
 msgstr "Stora sidfel delta"
 
 #. Translation Hint: maximum 'vMn' = 3
-#: src/top/top_nls.c:276
+#: src/top/top_nls.c:283
 msgid "vMn"
 msgstr "vSm"
 
-#: src/top/top_nls.c:277
+#: src/top/top_nls.c:284
 msgid "Minor Faults delta"
 msgstr "Små sidfel delta"
 
 #. Translation Hint: maximum 'USED' = 6
-#: src/top/top_nls.c:279
+#: src/top/top_nls.c:286
 msgid "USED"
 msgstr "ANV"
 
-#: src/top/top_nls.c:280
+#: src/top/top_nls.c:287
 msgid "Res+Swap Size (KiB)"
 msgstr "Res+Växl-storl (KiB)"
 
 #. Translation Hint: maximum 'nsIPC' = 10 +
-#: src/top/top_nls.c:282
+#: src/top/top_nls.c:289
 msgid "nsIPC"
 msgstr "nrIPK"
 
-#: src/top/top_nls.c:283
+#: src/top/top_nls.c:290
 msgid "IPC namespace Inode"
 msgstr "IPK-namnrymdsinod"
 
 #. Translation Hint: maximum 'nsMNT' = 10 +
-#: src/top/top_nls.c:285
+#: src/top/top_nls.c:292
 msgid "nsMNT"
 msgstr "nrMNT"
 
-#: src/top/top_nls.c:286
+#: src/top/top_nls.c:293
 msgid "MNT namespace Inode"
 msgstr "MNT-namnrymdsinod"
 
 #. Translation Hint: maximum 'nsNET' = 10 +
-#: src/top/top_nls.c:288
+#: src/top/top_nls.c:295
 msgid "nsNET"
 msgstr "nrNÄT"
 
-#: src/top/top_nls.c:289
+#: src/top/top_nls.c:296
 msgid "NET namespace Inode"
 msgstr "NÄT-namnrymdsinod"
 
 #. Translation Hint: maximum 'nsPID' = 10 +
-#: src/top/top_nls.c:291
+#: src/top/top_nls.c:298
 msgid "nsPID"
 msgstr "nrPID"
 
-#: src/top/top_nls.c:292
+#: src/top/top_nls.c:299
 msgid "PID namespace Inode"
 msgstr "PID-namnrymdsinod"
 
 #. Translation Hint: maximum 'nsUSER' = 10 +
-#: src/top/top_nls.c:294
+#: src/top/top_nls.c:301
 msgid "nsUSER"
 msgstr "nrANV"
 
-#: src/top/top_nls.c:295
+#: src/top/top_nls.c:302
 msgid "USER namespace Inode"
 msgstr "ANV-namnrymdsinod"
 
 #. Translation Hint: maximum 'nsUTS' = 10 +
-#: src/top/top_nls.c:297
+#: src/top/top_nls.c:304
 msgid "nsUTS"
 msgstr "nrUTS"
 
-#: src/top/top_nls.c:298
+#: src/top/top_nls.c:305
 msgid "UTS namespace Inode"
 msgstr "UTS-namnrymdsinod"
 
 #. Translation Hint: maximum 'LXC' = 8 +
-#: src/top/top_nls.c:300
+#: src/top/top_nls.c:307
 msgid "LXC"
 msgstr "LXC"
 
-#: src/top/top_nls.c:301
+#: src/top/top_nls.c:308
 msgid "LXC container name"
 msgstr "LXC-behållarnamn"
 
 #. Translation Hint: maximum 'RSan' = 6
-#: src/top/top_nls.c:303
+#: src/top/top_nls.c:310
 msgid "RSan"
 msgstr "RSan"
 
-#: src/top/top_nls.c:304
+#: src/top/top_nls.c:311
 msgid "RES Anonymous (KiB)"
 msgstr "RES anonymt (KiB)"
 
 #. Translation Hint: maximum 'RSfd' = 6
-#: src/top/top_nls.c:306
+#: src/top/top_nls.c:313
 msgid "RSfd"
 msgstr "RSfb"
 
-#: src/top/top_nls.c:307
+#: src/top/top_nls.c:314
 msgid "RES File-based (KiB)"
 msgstr "RES filbaserat (KiB)"
 
 #. Translation Hint: maximum 'RSlk' = 6
-#: src/top/top_nls.c:309
+#: src/top/top_nls.c:316
 msgid "RSlk"
 msgstr "RSlå"
 
-#: src/top/top_nls.c:310
+#: src/top/top_nls.c:317
 msgid "RES Locked (KiB)"
 msgstr "RES låst (KiB)"
 
 #. Translation Hint: maximum 'RSsh' = 6
-#: src/top/top_nls.c:312
+#: src/top/top_nls.c:319
 msgid "RSsh"
 msgstr "RSdl"
 
-#: src/top/top_nls.c:313
+#: src/top/top_nls.c:320
 msgid "RES Shared (KiB)"
 msgstr "RES delat (KiB)"
 
 #. Translation Hint: maximum 'CGNAME' = variable
-#: src/top/top_nls.c:315
+#: src/top/top_nls.c:322
 msgid "CGNAME"
 msgstr "KGNAMN"
 
-#: src/top/top_nls.c:316
+#: src/top/top_nls.c:323
 msgid "Control Group name"
 msgstr "Kontrollgruppnamn"
 
 #. Translation Hint: maximum 'NU' = 2
-#: src/top/top_nls.c:318
+#: src/top/top_nls.c:325
 msgid "NU"
 msgstr "NU"
 
-#: src/top/top_nls.c:319
+#: src/top/top_nls.c:326
 msgid "Last Used NUMA node"
 msgstr "Senast använd NUMA-nod"
 
 #. Translation Hint: maximum 'LOGID' = 5 +
-#: src/top/top_nls.c:321
+#: src/top/top_nls.c:328
 msgid "LOGID"
 msgstr "LOGID"
 
-#: src/top/top_nls.c:322
+#: src/top/top_nls.c:329
 msgid "Login User Id"
 msgstr "Inloggningsanvändar-id"
 
 #. Translation Hint: maximum 'EXE' = variable
-#: src/top/top_nls.c:324
+#: src/top/top_nls.c:331
 msgid "EXE"
 msgstr "KÖRBAR"
 
-#: src/top/top_nls.c:325
+#: src/top/top_nls.c:332
 msgid "Executable Path"
 msgstr "Sökväg till körbar"
 
-#: src/top/top_nls.c:331
+#: src/top/top_nls.c:338
 msgid "Res Mem (smaps), KiB"
 msgstr "Res Min (smaps), KiB"
 
 #. Translation Hint: maximum 'PSS' = 6
-#: src/top/top_nls.c:333
+#: src/top/top_nls.c:340
 msgid "PSS"
 msgstr "ARSS"
 
-#: src/top/top_nls.c:334
+#: src/top/top_nls.c:341
 msgid "Proportion RSS,  KiB"
 msgstr "Andel RSS, KiB"
 
 #. Translation Hint: maximum 'PSan' = 6
-#: src/top/top_nls.c:336
+#: src/top/top_nls.c:343
 msgid "PSan"
 msgstr "ASan"
 
-#: src/top/top_nls.c:337
+#: src/top/top_nls.c:344
 msgid "Proportion Anon, KiB"
 msgstr "Andel anon, KiB"
 
 #. Translation Hint: maximum 'PSfd' = 6
-#: src/top/top_nls.c:339
+#: src/top/top_nls.c:346
 msgid "PSfd"
 msgstr "ASfb"
 
-#: src/top/top_nls.c:340
+#: src/top/top_nls.c:347
 msgid "Proportion File, KiB"
 msgstr "Andel fil, KiB"
 
 #. Translation Hint: maximum 'PSsh' = 6
-#: src/top/top_nls.c:342
+#: src/top/top_nls.c:349
 msgid "PSsh"
 msgstr "ASdelt"
 
-#: src/top/top_nls.c:343
+#: src/top/top_nls.c:350
 msgid "Proportion Shrd, KiB"
 msgstr "Andel delat, KiB"
 
 #. Translation Hint: maximum 'USS' = 6
-#: src/top/top_nls.c:345
+#: src/top/top_nls.c:352
 msgid "USS"
 msgstr "URSS"
 
-#: src/top/top_nls.c:346
+#: src/top/top_nls.c:353
 msgid "Unique RSS, KiB"
 msgstr "Unika RSS, KiB"
 
 #. Translation Hint: maximum 'ioR' = 6
-#: src/top/top_nls.c:348
+#: src/top/top_nls.c:355
 msgid "ioR"
 msgstr "ioL"
 
-#: src/top/top_nls.c:349
+#: src/top/top_nls.c:356
 msgid "I/O Bytes Read"
 msgstr "I/O-byte läst"
 
 #. Translation Hint: maximum 'ioRop' = 5
-#: src/top/top_nls.c:351
+#: src/top/top_nls.c:358
 msgid "ioRop"
 msgstr "ioLåt"
 
-#: src/top/top_nls.c:352
+#: src/top/top_nls.c:359
 msgid "I/O Read Operations"
 msgstr "I/O läsåtgärder"
 
 #. Translation Hint: maximum 'ioW' = 6
-#: src/top/top_nls.c:354
+#: src/top/top_nls.c:361
 msgid "ioW"
 msgstr "ioS"
 
-#: src/top/top_nls.c:355
+#: src/top/top_nls.c:362
 msgid "I/O Bytes Written"
 msgstr "I/O-byte skrivet"
 
 #. Translation Hint: maximum 'ioWop' = 5
-#: src/top/top_nls.c:357
+#: src/top/top_nls.c:364
 msgid "ioWop"
 msgstr "ioSåt"
 
-#: src/top/top_nls.c:358
+#: src/top/top_nls.c:365
 msgid "I/O Write Operations"
 msgstr "I/O-skrivåtgärder"
 
 #. Translation Hint: maximum 'AGID' = 5
-#: src/top/top_nls.c:360
+#: src/top/top_nls.c:367
 msgid "AGID"
 msgstr "AGID"
 
-#: src/top/top_nls.c:361
+#: src/top/top_nls.c:368
 msgid "Autogroup Identifier"
 msgstr "Autogruppidentifierare"
 
 #. Translation Hint: maximum 'AGNI' = 4
-#: src/top/top_nls.c:363
+#: src/top/top_nls.c:370
 msgid "AGNI"
 msgstr "AGNI"
 
-#: src/top/top_nls.c:364
+#: src/top/top_nls.c:371
 msgid "Autogroup Nice Value"
 msgstr "Autogrupps nice-värde"
 
 #. Translation Hint: maximum 'STARTED' = 7
-#: src/top/top_nls.c:366
+#: src/top/top_nls.c:373
 msgid "STARTED"
 msgstr "STARTAD"
 
-#: src/top/top_nls.c:367
+#: src/top/top_nls.c:374
 msgid "Start Time from boot"
 msgstr "Starttid från uppstart"
 
 #. Translation Hint: maximum 'ELAPSED' = 7
-#: src/top/top_nls.c:369
+#: src/top/top_nls.c:376
 msgid "ELAPSED"
 msgstr "FÖRLUP."
 
-#: src/top/top_nls.c:370
+#: src/top/top_nls.c:377
 msgid "Elapsed Running Time"
 msgstr "Förlupen körtid"
 
 #. Translation Hint: maximum '%CUU' = 6
-#: src/top/top_nls.c:372
+#: src/top/top_nls.c:379
 #, c-format
 msgid "%CUU"
 msgstr "%CUA"
 
-#: src/top/top_nls.c:373
+#: src/top/top_nls.c:380
 msgid "CPU Utilization"
 msgstr "CPU-användning"
 
 #. Translation Hint: maximum '%CUC' = 7
-#: src/top/top_nls.c:375
+#: src/top/top_nls.c:382
 #, c-format
 msgid "%CUC"
 msgstr "%CUB"
 
-#: src/top/top_nls.c:376
+#: src/top/top_nls.c:383
 msgid "Utilization + child"
 msgstr "Användning + barn"
 
 #. Translation Hint: maximum 'nsCGROUP' = 10 +
-#: src/top/top_nls.c:378
+#: src/top/top_nls.c:385
 msgid "nsCGROUP"
 msgstr "nrGRUPPER"
 
-#: src/top/top_nls.c:379
+#: src/top/top_nls.c:386
 msgid "CGRP namespace Inode"
 msgstr "CGRP-namnrymdsinod"
 
 #. Translation Hint: maximum 'nsTIME' = 10 +
-#: src/top/top_nls.c:381
+#: src/top/top_nls.c:388
 msgid "nsTIME"
 msgstr "nrTID"
 
-#: src/top/top_nls.c:382
+#: src/top/top_nls.c:389
 msgid "TIME namespace Inode"
 msgstr "TIDS-namnrymdsinod"
 
@@ -2912,7 +2955,7 @@ msgstr "TIDS-namnrymdsinod"
 #. .  and should not be translated without also making corresponding
 #. .  c-code logic changes.
 #. .
-#: src/top/top_nls.c:402
+#: src/top/top_nls.c:409
 #, c-format
 msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
@@ -2921,297 +2964,286 @@ msgstr ""
 "\tsignal %d (%s) fångades av %s,\n"
 "\tskicka felrapporter till <procps@freelists.org>\n"
 
-#: src/top/top_nls.c:405
-#, c-format
-msgid ""
-"inappropriate '%s'\n"
-"Usage:\n"
-"  %s%s"
-msgstr ""
-"felaktig ”%s”\n"
-"Användning:\n"
-"  %s%s"
-
-#: src/top/top_nls.c:435
+#: src/top/top_nls.c:439
 #, c-format
 msgid "bad delay interval '%s'"
 msgstr "felaktigt fördröjningsintervall ”%s”"
 
-#: src/top/top_nls.c:436
+#: src/top/top_nls.c:440
 #, c-format
 msgid "bad iterations argument '%s'"
 msgstr "felaktigt iterationsargument ”%s”"
 
-#: src/top/top_nls.c:437
+#: src/top/top_nls.c:441
 #, c-format
 msgid "pid limit (%d) exceeded"
 msgstr "pid-gränsen (%d) överskriden"
 
-#: src/top/top_nls.c:438
+#: src/top/top_nls.c:442
 #, c-format
 msgid "bad pid '%s'"
 msgstr "felaktig pid ”%s”"
 
-#: src/top/top_nls.c:439
+#: src/top/top_nls.c:443
 #, c-format
 msgid "-%c argument missing"
 msgstr "-%c-argument saknas"
 
-#: src/top/top_nls.c:440
+#: src/top/top_nls.c:444
 #, c-format
 msgid "bad width arg '%s'"
 msgstr "felaktigt breddargument ”%s”"
 
-#: src/top/top_nls.c:441
+#: src/top/top_nls.c:445
 #, c-format
 msgid "unknown option '%s'"
 msgstr "okänd flagga ”%s”"
 
-#: src/top/top_nls.c:442
+#: src/top/top_nls.c:446
 msgid "-d disallowed in \"secure\" mode"
 msgstr "-d otillåtet i ”säkert” läge"
 
-#: src/top/top_nls.c:443
+#: src/top/top_nls.c:447
 msgid "-d requires positive argument"
 msgstr "-d behöver ett positivt argument"
 
-#: src/top/top_nls.c:444
+#: src/top/top_nls.c:448
 msgid "On"
 msgstr "På"
 
-#: src/top/top_nls.c:445
+#: src/top/top_nls.c:449
 msgid "Off"
 msgstr "Av"
 
-#: src/top/top_nls.c:446
+#: src/top/top_nls.c:450
 #, c-format
 msgid "%s from %s"
 msgstr "%s från %s"
 
-#: src/top/top_nls.c:447
+#: src/top/top_nls.c:451
 #, c-format
 msgid "Forest mode %s"
 msgstr "Skogsläge %s"
 
-#: src/top/top_nls.c:448
+#: src/top/top_nls.c:452
 msgid "failed tty get"
 msgstr "misslyckades att få tty"
 
-#: src/top/top_nls.c:449
+#: src/top/top_nls.c:453
 #, c-format
 msgid "failed tty set: %s"
 msgstr "misslyckades att sätta tty: %s"
 
-#: src/top/top_nls.c:450
+#: src/top/top_nls.c:454
 msgid "Choose field group (1 - 4)"
 msgstr "Välj fältgrupp (1 – 4)"
 
-#: src/top/top_nls.c:451
+#: src/top/top_nls.c:455
 msgid "Command disabled, 'A' mode required"
 msgstr "Kommandot avaktiverat, ”A”-läge krävs"
 
-#: src/top/top_nls.c:452
+#: src/top/top_nls.c:456
 #, c-format
 msgid "Command disabled, activate %s with '-' or '_'"
 msgstr "Kommandot avaktiverat, aktivera %s med ”-” eller ”_”"
 
-#: src/top/top_nls.c:453
+#: src/top/top_nls.c:457
 msgid "No colors to map!"
 msgstr "Inga färger att mappa!"
 
-#: src/top/top_nls.c:454
+#: src/top/top_nls.c:458
 #, c-format
 msgid "Failed '%s' open: %s"
 msgstr "Misslyckades öppna ”%s”: %s"
 
-#: src/top/top_nls.c:455
+#: src/top/top_nls.c:459
 #, c-format
 msgid "Wrote configuration to '%s'"
 msgstr "Skriv konfigurationen till ”%s”"
 
-#: src/top/top_nls.c:456
+#: src/top/top_nls.c:460
 #, c-format
 msgid "Change delay from %.1f to"
 msgstr "Ändra fördröjning från %.1f till"
 
-#: src/top/top_nls.c:457
+#: src/top/top_nls.c:461
 #, c-format
 msgid "Show threads %s"
 msgstr "Visa trådar %s"
 
-#: src/top/top_nls.c:458
+#: src/top/top_nls.c:462
 #, c-format
 msgid "Irix mode %s"
 msgstr "Irix-läge %s"
 
-#: src/top/top_nls.c:459
+#: src/top/top_nls.c:463
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
 msgstr "PID att signalera/döda [standard pid = %d]"
 
-#: src/top/top_nls.c:460
+#: src/top/top_nls.c:464
 #, c-format
 msgid "Send pid %d signal [%d/sigterm]"
 msgstr "Skicka pid %d signalen [%d/sigterm]"
 
-#: src/top/top_nls.c:461
+#: src/top/top_nls.c:465
 #, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
 msgstr "Misslyckades att signalera pid ”%d” med ”%d”: %s"
 
-#: src/top/top_nls.c:462
+#: src/top/top_nls.c:466
 msgid "Invalid signal"
 msgstr "Felaktig signal"
 
-#: src/top/top_nls.c:463
+#: src/top/top_nls.c:467
 #, c-format
 msgid "PID to renice [default pid = %d]"
 msgstr "PID att ändra nice-värde på [standard pid = %d]"
 
-#: src/top/top_nls.c:464
+#: src/top/top_nls.c:468
 #, c-format
 msgid "Renice PID %d to value"
 msgstr "Ändra nice-värde på PID %d till värdet"
 
-#: src/top/top_nls.c:465
+#: src/top/top_nls.c:469
 #, c-format
 msgid "Failed renice of PID %d to %d: %s"
 msgstr "Misslyckades att ändra nice-värde på PID %d till %d: %s"
 
-#: src/top/top_nls.c:466
+#: src/top/top_nls.c:470
 #, c-format
 msgid "Rename window '%s' to (1-3 chars)"
 msgstr "Byt namn på fönster ”%s” till (1-3 tecken)"
 
-#: src/top/top_nls.c:467
+#: src/top/top_nls.c:471
 #, c-format
 msgid "Cumulative time %s"
 msgstr "Ackumulerad tid %s"
 
-#: src/top/top_nls.c:468
+#: src/top/top_nls.c:472
 #, c-format
 msgid "Maximum tasks = %d, change to (0 is unlimited)"
 msgstr "Maximalt antal uppgifter = %d, ändra till (0 är obegränsat)"
 
-#: src/top/top_nls.c:469
+#: src/top/top_nls.c:473
 msgid "Invalid maximum"
 msgstr "Felaktigt maximum"
 
-#: src/top/top_nls.c:470
+#: src/top/top_nls.c:474
 msgid "Which user (blank for all)"
 msgstr "Vilken användare (blank för alla)"
 
-#: src/top/top_nls.c:471
+#: src/top/top_nls.c:475
 msgid "Unknown command - try 'h' for help"
 msgstr "Okänt kommando — prova ”h” för hjälp"
 
-#: src/top/top_nls.c:472
+#: src/top/top_nls.c:476
 #, c-format
 msgid "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
 msgstr "rullkoordinater: y = %d/%d (uppgifter), x = %d/%d (fält)"
 
-#: src/top/top_nls.c:473
+#: src/top/top_nls.c:477
 msgid "failed memory allocate"
 msgstr "misslyckades med allokering av minne"
 
-#: src/top/top_nls.c:474
+#: src/top/top_nls.c:478
 msgid "failed memory re-allocate"
 msgstr "misslyckades med omallokering av minne"
 
-#: src/top/top_nls.c:475
+#: src/top/top_nls.c:479
 msgid "Unacceptable floating point"
 msgstr "Oacceptabelt flyttalsvärde"
 
-#: src/top/top_nls.c:476
+#: src/top/top_nls.c:480
 msgid "Invalid user"
 msgstr "Felaktig användare"
 
-#: src/top/top_nls.c:477
+#: src/top/top_nls.c:481
 msgid "forest view"
 msgstr "skogsvy"
 
-#: src/top/top_nls.c:478
+#: src/top/top_nls.c:482
 msgid "failed pid maximum size test"
 msgstr "misslyckades med storlekstest för maximal pid"
 
-#: src/top/top_nls.c:479
+#: src/top/top_nls.c:483
 msgid "failed number of cpus test"
 msgstr "misslyckades med test av antal cpu:er"
 
-#: src/top/top_nls.c:480
+#: src/top/top_nls.c:484
 #, c-format
 msgid "incompatible rcfile, you should delete '%s'"
 msgstr "inkompatibel rc-fil, du bör radera ”%s”"
 
-#: src/top/top_nls.c:481
+#: src/top/top_nls.c:485
 #, c-format
 msgid "window entry #%d corrupt, please delete '%s'"
 msgstr "fönsterpost nr. %d är trasig, var god radera ”%s”"
 
-#: src/top/top_nls.c:482
+#: src/top/top_nls.c:486
 msgid "Unavailable in secure mode"
 msgstr "Otillgänglig i säkert läge"
 
-#: src/top/top_nls.c:483
+#: src/top/top_nls.c:487
 msgid "Only 1 cpu detected"
 msgstr "Endast 1 cpu detekterad"
 
-#: src/top/top_nls.c:484
+#: src/top/top_nls.c:488
 msgid "Unacceptable integer"
 msgstr "Oacceptabelt heltal"
 
-#: src/top/top_nls.c:485
+#: src/top/top_nls.c:489
 msgid "conflicting process selections (U/p/u)"
 msgstr "processval i konflikt (U/p/u)"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 kibibytes (1024 bytes)
-#: src/top/top_nls.c:488
+#: src/top/top_nls.c:492
 msgid "KiB"
 msgstr "KiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 mebibytes (1,048,576 bytes)
-#: src/top/top_nls.c:491
+#: src/top/top_nls.c:495
 msgid "MiB"
 msgstr "MiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 gibibytes (1,073,741,824 bytes)
-#: src/top/top_nls.c:494
+#: src/top/top_nls.c:498
 msgid "GiB"
 msgstr "GiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 tebibytes (1,099,511,627,776 bytes)
-#: src/top/top_nls.c:497
+#: src/top/top_nls.c:501
 msgid "TiB"
 msgstr "TiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 pebibytes (1,024 tebibytes)
-#: src/top/top_nls.c:500
+#: src/top/top_nls.c:504
 msgid "PiB"
 msgstr "PiB"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 exbibytes (1,024 pebibytes)
-#: src/top/top_nls.c:503
+#: src/top/top_nls.c:507
 msgid "EiB"
 msgstr "EiB"
 
-#: src/top/top_nls.c:504
+#: src/top/top_nls.c:508
 msgid "Threads"
 msgstr "Trådar"
 
-#: src/top/top_nls.c:505
+#: src/top/top_nls.c:509
 msgid "Tasks"
 msgstr "Uppgifter"
 
 #. Translation Hint: The following "word" is meant to represent either a single
 #. .                 cpu or all of the processors in a multi-processor computer
 #. .                 (should be exactly 6 characters, excluding leading % & colon)
-#: src/top/top_nls.c:509
+#: src/top/top_nls.c:513
 #, c-format
 msgid "%Cpu(s):"
 msgstr "%Cpu/er:"
@@ -3219,99 +3251,119 @@ msgstr "%Cpu/er:"
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
 #. .                 (if 'Cp' is translated, it must be exactly 2 characters long)
-#: src/top/top_nls.c:513
+#: src/top/top_nls.c:517
 #, c-format
 msgid "%%Cp%c%-3d:"
 msgstr "%%Cp%c%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
-#: src/top/top_nls.c:515
+#: src/top/top_nls.c:519
 msgid "another "
 msgstr "annan "
 
-#: src/top/top_nls.c:516
+#: src/top/top_nls.c:520
 msgid "Locate next inactive, use \"L\""
 msgstr "Hitta nästa inaktiva, använd ”L”"
 
-#: src/top/top_nls.c:517
+#: src/top/top_nls.c:521
 msgid "Locate string"
 msgstr "Hitta sträng"
 
-#: src/top/top_nls.c:518
+#: src/top/top_nls.c:522
 #, c-format
 msgid "%s\"%s\" not found"
 msgstr "%s”%s” finns inte"
 
-#: src/top/top_nls.c:519
+#: src/top/top_nls.c:523
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
 msgstr "breddökning är %d, ändra till (0 standard, -1 auto)"
 
-#: src/top/top_nls.c:520
+#: src/top/top_nls.c:524
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
 msgstr "rc-filen har inspect/other-filterfel, spara ändå?"
 
-#: src/top/top_nls.c:521
+#: src/top/top_nls.c:525
 #, c-format
 msgid "unrecognized field name '%s'"
 msgstr "okänt fältnamn ”%s”"
 
-#: src/top/top_nls.c:522
+#: src/top/top_nls.c:526
 msgid "even using field names only, window is now too small"
 msgstr "även med bara användning av endast fältnamn är fönstret för litet nu"
 
-#: src/top/top_nls.c:523
+#: src/top/top_nls.c:527
 msgid "Open Files"
 msgstr "Öppna filer"
 
-#: src/top/top_nls.c:524
+#: src/top/top_nls.c:528
 msgid "NUMA Info"
 msgstr "NUMA-info"
 
-#: src/top/top_nls.c:525
+#: src/top/top_nls.c:529
 msgid "Log"
 msgstr "Logg"
 
-#: src/top/top_nls.c:526
-msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
-msgstr "tangenten ”=” kommer så småningom visa den faktiskt lästa filen eller körda kommandot …"
+#: src/top/top_nls.c:530
+msgid ""
+"the '=' key will eventually show the actual file read or command(s) "
+"executed ..."
+msgstr ""
+"tangenten ”=” kommer så småningom visa den faktiskt lästa filen eller körda "
+"kommandot …"
 
-#: src/top/top_nls.c:527
+#: src/top/top_nls.c:531
 msgid "demo"
 msgstr "demo"
 
-#: src/top/top_nls.c:528
+#: src/top/top_nls.c:532
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the output\n"
-"from some command.  Exactly which commands and/or files are solely up to you.\n"
+"This is simulated output representing the contents of some file or the "
+"output\n"
+"from some command.  Exactly which commands and/or files are solely up to "
+"you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment with\n"
+"Although this text is for information purposes only, it can still be "
+"scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment "
+"with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of the\n"
-"top personal personal configuration file.  You could use your favorite editor\n"
+"To enable real Inspect functionality, entries must be added to the end of "
+"the\n"
+"top personal personal configuration file.  You could use your favorite "
+"editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting "
+"the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
+"file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
+"toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' command\n"
-"and note those details.  After backing up the current rcfile, try issuing the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' "
+"command\n"
+"and note those details.  After backing up the current rcfile, try issuing "
+"the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
+"safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with this\n"
-"new command can offer.  The possibilities are endless, especially considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with "
+"this\n"
+"new command can offer.  The possibilities are endless, especially "
+"considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
-"For additional important information, please consult the top(1) man document.\n"
-"Then, enhance top with your very own customized 'file' and/or 'pipe' entries.\n"
+"For additional important information, please consult the top(1) man "
+"document.\n"
+"Then, enhance top with your very own customized 'file' and/or 'pipe' "
+"entries.\n"
 "\n"
 "Enjoy!\n"
 msgstr ""
@@ -3326,131 +3378,141 @@ msgstr ""
 "\n"
 "För att aktivera verklig inspektionsfunktionalitet måste poster läggas till\n"
 "i slutet av den personliga top-konfigurationsfilen.  Du kan använda din\n"
-"favoritredigerare för att åstadkomma detta, försiktigt så att inte befintliga\n"
+"favoritredigerare för att åstadkomma detta, försiktigt så att inte "
+"befintliga\n"
 "poster skadas.\n"
 "\n"
-"Ett annat sätt att lägga till poster illustreras nedan, men det riskerar att\n"
-"skriva över rc-filen.  Omdirigerade echo-kommandon får inte ersätta (>) utan\n"
+"Ett annat sätt att lägga till poster illustreras nedan, men det riskerar "
+"att\n"
+"skriva över rc-filen.  Omdirigerade echo-kommandon får inte ersätta (>) "
+"utan\n"
 "måste lägga till (>>) i den filen.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tÖppna filer\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA-info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLogg\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+"  /bin/echo -e \"pipe\\tLogg\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
+"toprc\n"
 "\n"
-"Om du inte vet platsen för eller namnet på top-rc-filen, använd kommandot ”W”\n"
-"och observera detaljerna.  Prova, efter att du säkerhetskopierat den aktuella\n"
-"rc-filen, att skriva ovanstående echo:n exakt som de står, utom att du ersätter\n"
-"”.toprc” på lämpligt sätt.  Säkraste sättet vore att kopiera och sedan klistra\n"
+"Om du inte vet platsen för eller namnet på top-rc-filen, använd kommandot "
+"”W”\n"
+"och observera detaljerna.  Prova, efter att du säkerhetskopierat den "
+"aktuella\n"
+"rc-filen, att skriva ovanstående echo:n exakt som de står, utom att du "
+"ersätter\n"
+"”.toprc” på lämpligt sätt.  Säkraste sättet vore att kopiera och sedan "
+"klistra\n"
 "in för att undvika skrivfel.\n"
 "\n"
 "Starta slutligen om top för att se vad de faktiska inspektionsposterna\n"
 "kombinerade med detta nya kommando kan erbjuda.  Möjligheterna är oändliga,\n"
-"särskilt med tanke på att poster av typen ”pipe” även kan inkludera skalskript.\n"
+"särskilt med tanke på att poster av typen ”pipe” även kan inkludera "
+"skalskript.\n"
 "\n"
 "Se top(1) manualdokumentationen för mer viktig information. Förbättra sedan\n"
 "top med dina helt egna anpassade ”file”- och/eller ”pipe”-poster.\n"
 "\n"
 "Mycket nöje!\n"
 
-#: src/top/top_nls.c:560
+#: src/top/top_nls.c:564
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr "för att aktivera ”Y” tryck <Retur> och skriv sedan ”W” och starta om top"
+msgstr ""
+"för att aktivera ”Y” tryck <Retur> och skriv sedan ”W” och starta om top"
 
-#: src/top/top_nls.c:561
+#: src/top/top_nls.c:565
 msgid "to enable 'Y' please consult the top man page (press Enter)"
 msgstr "för att aktivera ”Y” se manualsidan för top (tryck Retur)"
 
-#: src/top/top_nls.c:562
+#: src/top/top_nls.c:566
 #, c-format
 msgid "Selection failed with: %s\n"
 msgstr "Valet misslyckades med: %s\n"
 
-#: src/top/top_nls.c:563
+#: src/top/top_nls.c:567
 #, c-format
 msgid "unable to inspect, pid %d not found"
 msgstr "kan inte inspektera, pid %d finns inte"
 
-#: src/top/top_nls.c:564
+#: src/top/top_nls.c:568
 #, c-format
 msgid "inspect at PID [default pid = %d]"
 msgstr "inspektion av PID [standard pid = %d]"
 
-#: src/top/top_nls.c:565
+#: src/top/top_nls.c:569
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
 msgstr "%s: %*d-%-*d rader, %*d-%*d kolumner, %lu byte lästa"
 
-#: src/top/top_nls.c:566
+#: src/top/top_nls.c:570
 msgid "patience please, working ..."
 msgstr "ha tålamod, arbetar …"
 
-#: src/top/top_nls.c:567
+#: src/top/top_nls.c:571
 msgid "working, use Ctrl-C to end ..."
 msgstr "arbetar, använd Ctrl-C för att avsluta …"
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
-#: src/top/top_nls.c:570
+#: src/top/top_nls.c:574
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
 msgstr "lägg till filter nr. %d (%s) som: [!]FLT?VRD"
 
-#: src/top/top_nls.c:571
+#: src/top/top_nls.c:575
 msgid "ignoring case"
 msgstr "ignorerar skiftläge"
 
-#: src/top/top_nls.c:572
+#: src/top/top_nls.c:576
 msgid "case sensitive"
 msgstr "skiftlägeskänslig"
 
-#: src/top/top_nls.c:573
+#: src/top/top_nls.c:577
 msgid "duplicate filter was ignored"
 msgstr "dubblerat filter ignorerades"
 
-#: src/top/top_nls.c:574
+#: src/top/top_nls.c:578
 #, c-format
 msgid "'%s' filter delimiter is missing"
 msgstr "”%s”-filteravgränsare saknas"
 
-#: src/top/top_nls.c:575
+#: src/top/top_nls.c:579
 #, c-format
 msgid "'%s' filter value is missing"
 msgstr "”%s”-filtervärde saknas"
 
-#: src/top/top_nls.c:576
+#: src/top/top_nls.c:580
 msgid "include"
 msgstr "inkludera"
 
-#: src/top/top_nls.c:577
+#: src/top/top_nls.c:581
 msgid "exclude"
 msgstr "exkludera"
 
-#: src/top/top_nls.c:578
+#: src/top/top_nls.c:582
 #, c-format
 msgid "<Enter> to resume, filters: %s"
 msgstr "<Retur> för att återuppta, filter: %s"
 
-#: src/top/top_nls.c:579
+#: src/top/top_nls.c:583
 msgid "none"
 msgstr "inget"
 
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
-#: src/top/top_nls.c:582
+#: src/top/top_nls.c:586
 #, c-format
 msgid "%%Node%-2d:"
 msgstr "%%Nod %-2d:"
 
-#: src/top/top_nls.c:583
+#: src/top/top_nls.c:587
 #, c-format
 msgid "expand which numa node (0-%d)"
 msgstr "expandera vilken numa-nod (0-%d)"
 
-#: src/top/top_nls.c:584
+#: src/top/top_nls.c:588
 msgid "invalid numa node"
 msgstr "felaktig numa-nod"
 
-#: src/top/top_nls.c:585
+#: src/top/top_nls.c:589
 msgid "sorry, NUMA extensions unavailable"
 msgstr "ledsen, NUMA-utökningar är inte tillgängliga"
 
@@ -3458,110 +3520,110 @@ msgstr "ledsen, NUMA-utökningar är inte tillgängliga"
 #. .                 'Swap' represents the linux swap file --
 #. .                 please make both translations exactly 4 characters,
 #. .                 padding with extra spaces as necessary
-#: src/top/top_nls.c:590
+#: src/top/top_nls.c:594
 msgid "Mem "
 msgstr "Minn"
 
-#: src/top/top_nls.c:591
+#: src/top/top_nls.c:595
 msgid "Swap"
 msgstr "Växl"
 
-#: src/top/top_nls.c:592
+#: src/top/top_nls.c:596
 #, c-format
 msgid "library failed memory statistics, at %d: %s"
 msgstr "biblioteket misslyckades med minnesstatistik, vid %d: %s"
 
-#: src/top/top_nls.c:593
+#: src/top/top_nls.c:597
 #, c-format
 msgid "library failed cpu statistics, at %d: %s"
 msgstr "biblioteket misslyckades med cpu-statistik, vid %d: %s"
 
-#: src/top/top_nls.c:594
+#: src/top/top_nls.c:598
 #, c-format
 msgid "library failed pids statistics, at %d: %s"
 msgstr "biblioteket misslyckades med pid-statistik, vid %d: %s"
 
-#: src/top/top_nls.c:595
+#: src/top/top_nls.c:599
 #, c-format
 msgid "bad memory scaling arg '%s'"
 msgstr "felaktigt minnesskalningsargument ”%s”"
 
-#: src/top/top_nls.c:596
+#: src/top/top_nls.c:600
 #, c-format
 msgid "PID to collapse/expand [default pid = %d]"
 msgstr "PID att fälla ihop/expandera [standard pid = %d]"
 
-#: src/top/top_nls.c:597
+#: src/top/top_nls.c:601
 msgid "wrong mode, command inactive"
 msgstr "fel läge, kommandot inaktivt"
 
-#: src/top/top_nls.c:598
+#: src/top/top_nls.c:602
 msgid "saving prevents older top from reading, save anyway?"
 msgstr "att spara hindrar äldre top från att läsa, spara ändå?"
 
-#: src/top/top_nls.c:599
+#: src/top/top_nls.c:603
 #, c-format
 msgid "failed sem_init() at %d: %s"
 msgstr "sem_init() misslyckades vid %d: %s"
 
-#: src/top/top_nls.c:600
+#: src/top/top_nls.c:604
 #, c-format
 msgid "failed pthread_create() at %d: %s"
 msgstr "pthread_create() misslyckades vid %d: %s"
 
-#: src/top/top_nls.c:601
+#: src/top/top_nls.c:605
 msgid "sorry, restricted namespace with reduced functionality"
 msgstr "ledsen, begränsad namnrymd med reducerad funktionalitet"
 
-#: src/top/top_nls.c:602
+#: src/top/top_nls.c:606
 #, c-format
 msgid "set pid %d AGNI value to"
 msgstr "sätt pid %d AGNI-värde till"
 
-#: src/top/top_nls.c:603
+#: src/top/top_nls.c:607
 msgid "valid AGNI range is -20 to +19"
 msgstr "tillåtet AGNI-intervall är -20 till +19"
 
-#: src/top/top_nls.c:604
+#: src/top/top_nls.c:608
 #, c-format
 msgid "autogroup open failed, %s"
 msgstr "att öppna autogrupp misslyckades, %s"
 
-#: src/top/top_nls.c:605
+#: src/top/top_nls.c:609
 #, c-format
 msgid "autogroup write failed, %s"
 msgstr "autogruppskrivning misslyckades, %s"
 
-#: src/top/top_nls.c:606
+#: src/top/top_nls.c:610
 #, c-format
 msgid "command line for pid %d, %s"
 msgstr "kommandorad för pid %d, %s"
 
-#: src/top/top_nls.c:607
+#: src/top/top_nls.c:611
 #, c-format
 msgid "control groups for pid %d, %s"
 msgstr "styrgrupper för pid %d, %s"
 
-#: src/top/top_nls.c:608
+#: src/top/top_nls.c:612
 #, c-format
 msgid "environment for pid %d, %s"
 msgstr "miljön för pid %d, %s"
 
-#: src/top/top_nls.c:609
+#: src/top/top_nls.c:613
 #, c-format
 msgid "namespaces for pid %d, %s"
 msgstr "namnrymder för pid %d, %s"
 
-#: src/top/top_nls.c:610
+#: src/top/top_nls.c:614
 msgid "n/a"
 msgstr "e/t"
 
-#: src/top/top_nls.c:611
+#: src/top/top_nls.c:615
 #, c-format
 msgid "supplementary groups for pid %d, %s"
 msgstr "kompletterande grupper för pid %d, %s"
 
-#: src/top/top_nls.c:612
+#: src/top/top_nls.c:616
 msgid "message log, last 10 messages:"
 msgstr "meddelandelogg, 10 senaste meddelanden:"
 
@@ -3600,108 +3662,172 @@ msgstr "meddelandelogg, 10 senaste meddelanden:"
 #. .    last line (the one without the newline). So please avoid any line
 #. .    wraps that could place them there.
 #. .
-#: src/top/top_nls.c:657
+#: src/top/top_nls.c:661
 #, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
+"~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
-"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; '~1I~2' Irix mode\n"
-"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus two abreast\n"
-"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-width fields\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
+"summary/task memory scale\n"
+"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
+"'~1I~2' Irix mode\n"
+"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; "
+"'~14~2' cpus two abreast\n"
+"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-"
+"width fields\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
-"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
-"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' keep focused\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
+"'~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; "
+"'~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
+"'~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
+"tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
+"'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
+"other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
+"other filter(s)\n"
+"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' "
+"keep focused\n"
 "\n"
-"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; supp groups ~1^U~2\n"
-"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^E~2'\n"
+"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; "
+"supp groups ~1^U~2\n"
+"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale "
+"time ~1^E~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display "
+"~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
 "Hjälp för interaktiva kommandon~2 — %s\n"
-"Fönster ~1%s~6: ~1Ackumulativt läge ~3%s~2.  ~1System~6: ~1Fördr. ~3%.1f s~2; ~1Säkert läge ~3%s~2.\n"
+"Fönster ~1%s~6: ~1Ackumulativt läge ~3%s~2.  ~1System~6: ~1Fördr. ~3%.1f "
+"s~2; ~1Säkert läge ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Globalt: ”~1Z~2” färger; ”~1B~2” fet; ”~1E~2”/”~1e~2” sammanf./uppg. minnesskala\n"
-"  l,t,m,I   Växla sammanf.: ”~1l~2” last; ”~1t~2” uppg./cpu; ”~1m~2” minne; ”~1I~2” Irix-läge\n"
-"  0,1,2,3,4 Växla: ”~10~2” nollor; ”~11~2/~12~2/~13~2” cpu/numa-vyer; ”~14~2” cpu:er två i bredd\n"
-"  f,X       Fält: ”~1f~2” lägg till/ta bort/ordna/sortera; ”~1X~2” öka fast breddsfält\n"
+"  Z~5,~1B~5,E,e   Globalt: ”~1Z~2” färger; ”~1B~2” fet; ”~1E~2”/”~1e~2” "
+"sammanf./uppg. minnesskala\n"
+"  l,t,m,I   Växla sammanf.: ”~1l~2” last; ”~1t~2” uppg./cpu; ”~1m~2” minne; "
+"”~1I~2” Irix-läge\n"
+"  0,1,2,3,4 Växla: ”~10~2” nollor; ”~11~2/~12~2/~13~2” cpu/numa-vyer; "
+"”~14~2” cpu:er två i bredd\n"
+"  f,X       Fält: ”~1f~2” lägg till/ta bort/ordna/sortera; ”~1X~2” öka fast "
+"breddsfält\n"
 "\n"
-"  L,&,<,> . Hitta: ”~1L~2”/”~1&~2” sök/igen; Byt sorteringskolumn: ”~1<~2”/”~1>~2” vä/hö\n"
-"  R,H,J,C . Växla: ”~1R~2” Sortering; ”~1H~2” Trådar; ”~1J~2” Taljustera; ”~1C~2” Koordinater\n"
-"  c,i,S,j . Växla: ”~1c~2” Kmd-namn/-rad; ”~1i~2” Inaktiv; ”~1S~2” Tid; ”~1j~2” Strängjustera\n"
-"  x~5,~1y~5     . Växla markering: ”~1x~2” sorteringsfält; ”~1y~2” körande uppgifter\n"
-"  z~5,~1b~5     . Växla: ”~1z~2” färg/mono; ”~1b~2” fet/invers (endast om ”x” eller ”y”)\n"
-"  u,U,o,O . Filtrera enl: ”~1u~2”/”~1U~2” effektiv/någon anv; ”~1o~2”/”~1O~2” andra kriterier\n"
-"  n,#,^O  . Sätt: ”~1n~2”/”~1#~2” max visade uppgifter; Visa: ~1Ctrl~2+”~1O~2” andra filter\n"
-"  V,v,F   . Växla ”~1V~2” skogsvy; ”~1v~2” dölj/visa barn; ”~1F~2” behåll fokus\n"
+"  L,&,<,> . Hitta: ”~1L~2”/”~1&~2” sök/igen; Byt sorteringskolumn: "
+"”~1<~2”/”~1>~2” vä/hö\n"
+"  R,H,J,C . Växla: ”~1R~2” Sortering; ”~1H~2” Trådar; ”~1J~2” Taljustera; "
+"”~1C~2” Koordinater\n"
+"  c,i,S,j . Växla: ”~1c~2” Kmd-namn/-rad; ”~1i~2” Inaktiv; ”~1S~2” Tid; "
+"”~1j~2” Strängjustera\n"
+"  x~5,~1y~5     . Växla markering: ”~1x~2” sorteringsfält; ”~1y~2” körande "
+"uppgifter\n"
+"  z~5,~1b~5     . Växla: ”~1z~2” färg/mono; ”~1b~2” fet/invers (endast om "
+"”x” eller ”y”)\n"
+"  u,U,o,O . Filtrera enl: ”~1u~2”/”~1U~2” effektiv/någon anv; "
+"”~1o~2”/”~1O~2” andra kriterier\n"
+"  n,#,^O  . Sätt: ”~1n~2”/”~1#~2” max visade uppgifter; Visa: "
+"~1Ctrl~2+”~1O~2” andra filter\n"
+"  V,v,F   . Växla ”~1V~2” skogsvy; ”~1v~2” dölj/visa barn; ”~1F~2” behåll "
+"fokus\n"
 "\n"
-"%s  ^G,K,N,U  Visa: styrgrupper ~1^G~2; kommandorad ~1^K~2; miljö ~1^N~2; kompl. grupper ~1^U~2\n"
-"  W,Y,!,^E  Skriv konfig. ”~1W~2”; Inspektera ”~1Y~2”; Kombinera cpu:er Cpus ”~1!~2”; Skala tid ~1^E~2'\n"
+"%s  ^G,K,N,U  Visa: styrgrupper ~1^G~2; kommandorad ~1^K~2; miljö ~1^N~2; "
+"kompl. grupper ~1^U~2\n"
+"  W,Y,!,^E  Skriv konfig. ”~1W~2”; Inspektera ”~1Y~2”; Kombinera cpu:er Cpus "
+"”~1!~2”; Skala tid ~1^E~2'\n"
 "  q         Avsluta\n"
-"          ( kommandon med ”.” behöver ett ~1synligt~2 uppgifts~1fönster~2 ) \n"
+"          ( kommandon med ”.” behöver ett ~1synligt~2 "
+"uppgifts~1fönster~2 ) \n"
 "Tryck ”~1h~2” eller ”~1?~2” för hjälp med ~1fönster~2,\n"
 "Tryck ”q” eller <Esc> för att fortsätta "
 
-#: src/top/top_nls.c:683
+#: src/top/top_nls.c:687
 #, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,"
+"sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your "
+"~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
+"shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
+"('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' "
+"window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
+"~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields "
+"screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
-"    g       . Choose another field group and make it 'current', or change now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
+"windows\n"
+"    g       . Choose another field group and make it 'current', or change "
+"now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
+"or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
+"Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
+"~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can "
+"make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
+"later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
+"~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to "
+"become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
+"the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
 "Hjälp för fönster / Fältgrupper~2 — ”Aktuellt fönster” = ~1 %s ~6\n"
 "\n"
-". Använd flera ~1fönster~2, vart och ett med egna konfig-alt. (färg,fält,sort,etc)\n"
-". Det ”aktuella” fönstret styr ~1Sammanfattning~2 och svarar på dina ~1kommandon~2\n"
-"  . det fönstrets ~1uppg.-visning~2 kan slås ~1av~2 & ~1på~2, växer/krymper andra\n"
-"  . ~1UTAN~2 uppg.-visning, blir några kommandon ~1avaktiverade~2 (”i”,”R”,”n”,”c”, etc)\n"
-"    tills ett ~1annat fönster~2 aktiverats, vilket gör det till ”aktuellt” fönster\n"
-". Du ~1byter~2 det ”aktuella” fönstret med: ~1 1~2) cirkulerar framåt/bakåt;~1 2~2) väljer\n"
-"  en viss fältgrupp; eller~1 3~2) avslutar färgkodnings- eller fält-skärmarna\n"
+". Använd flera ~1fönster~2, vart och ett med egna konfig-alt. (färg,fält,"
+"sort,etc)\n"
+". Det ”aktuella” fönstret styr ~1Sammanfattning~2 och svarar på dina "
+"~1kommandon~2\n"
+"  . det fönstrets ~1uppg.-visning~2 kan slås ~1av~2 & ~1på~2, växer/krymper "
+"andra\n"
+"  . ~1UTAN~2 uppg.-visning, blir några kommandon ~1avaktiverade~2 "
+"(”i”,”R”,”n”,”c”, etc)\n"
+"    tills ett ~1annat fönster~2 aktiverats, vilket gör det till ”aktuellt” "
+"fönster\n"
+". Du ~1byter~2 det ”aktuella” fönstret med: ~1 1~2) cirkulerar framåt/bakåt;"
+"~1 2~2) väljer\n"
+"  en viss fältgrupp; eller~1 3~2) avslutar färgkodnings- eller fält-"
+"skärmarna\n"
 ". Kommandon som ~1alltid är tillgängliga   -------------~2\n"
-"    A       . Växlare för alternativt visningsläge, visa ~1ensamt~2 / ~1flera~2 fönster\n"
+"    A       . Växlare för alternativt visningsläge, visa ~1ensamt~2 / "
+"~1flera~2 fönster\n"
 "    g       . Välj en annan fältgrupp och gör den ”aktuell”, eller byt nu\n"
-"              genom att välja ett tal: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; eller~1 4~2 =%s\n"
+"              genom att välja ett tal: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
+"eller~1 4~2 =%s\n"
 ". Kommandon som ~1kräver~2 ”~1A~2”-läge~1  -------------~2\n"
 "    G       . Ändra ~1namnet~5 på ”aktuellt” fönster/fältgrupp\n"
-" ~1*~4  a , w   . Rotera genom alla fyra fönster:  ”~1a~5” framåt; ”~1w~5” bakåt\n"
-" ~1*~4  - , _   . Visa/Dölj:  ”~1-~5” ~1aktuellt~2 fönster; ”~1_~5” alla ~1synliga~2/~1osynliga~2\n"
+" ~1*~4  a , w   . Rotera genom alla fyra fönster:  ”~1a~5” framåt; ”~1w~5” "
+"bakåt\n"
+" ~1*~4  - , _   . Visa/Dölj:  ”~1-~5” ~1aktuellt~2 fönster; ”~1_~5” alla "
+"~1synliga~2/~1osynliga~2\n"
 "  Skärmen kommer delas lika mellan uppgiftsvisningar.  Men du kan göra\n"
-"  några ~1större~2 eller ~1mindre~2, med kommandona ”~1n~2” och ”~1i~2”.  Sedan kan du:\n"
-" ~1*~4  = , +   . Balansera om uppgifter:  ”~1=~5” ~1aktuellt~2 fönster; ”~1+~5” ~1varje~2 fönster\n"
-"              (detta tvingar även ~1aktuellt~2 eller ~1alla~2 fönster att bli synliga)\n"
+"  några ~1större~2 eller ~1mindre~2, med kommandona ”~1n~2” och ”~1i~2”.  "
+"Sedan kan du:\n"
+" ~1*~4  = , +   . Balansera om uppgifter:  ”~1=~5” ~1aktuellt~2 fönster; "
+"”~1+~5” ~1varje~2 fönster\n"
+"              (detta tvingar även ~1aktuellt~2 eller ~1alla~2 fönster att "
+"bli synliga)\n"
 "\n"
-"I ”~1A~2”-läge är ”~1*~4”-tecken dina ~1viktiga~2 kommandon.  Prova kommandona ”~1a~2” och ”~1w~2”\n"
+"I ”~1A~2”-läge är ”~1*~4”-tecken dina ~1viktiga~2 kommandon.  Prova "
+"kommandona ”~1a~2” och ”~1w~2”\n"
 "plus underkommandona ”g” NU.  Tryck <Retur> för att göra ”aktuellt” "
 
 #. Translation Notes ------------------------------------------------
@@ -3713,14 +3839,16 @@ msgstr ""
 #. .  If you decide to proceed with translation, please take care
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
-#: src/top/top_nls.c:718
+#: src/top/top_nls.c:722
 #, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
+"~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
+"~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3729,7 +3857,8 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
+"~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
 "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
@@ -3744,8 +3873,10 @@ msgstr ""
 "Hjälp för färganpassning~2 — ”Aktuellt fönster” = ~1 %s ~6\n"
 "\n"
 "   färg - 04:25:44 uppe 8 dagar, 50 min,  7 användare,  last:\n"
-"   Uppg.:~3  64 ~2totalt,~3   2 ~3körande,~3  62 ~2sovande,~3   0 ~2stoppade,~3\n"
-"   %%Cpu/er:~3  76,5 ~2anv.,~3  11,2 ~2system,~3   0,0 ~2nice,~3  12,3 ~2inakt.~3\n"
+"   Uppg.:~3  64 ~2totalt,~3   2 ~3körande,~3  62 ~2sovande,~3   0 ~2stoppade,"
+"~3\n"
+"   %%Cpu/er:~3  76,5 ~2anv.,~3  11,2 ~2system,~3   0,0 ~2nice,~3  12,3 "
+"~2inakt.~3\n"
 "   ~1 Otrevligt meddelande! ~4  -eller-  ~1Inmatningsprompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT VÄXL S KOMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3764,90 +3895,121 @@ msgstr ""
 "\n"
 "3) Använd sedan dessa tangenter efteråt:\n"
 "   ”q” eller <Esc> för att avbryta ändringar till fönstret ”~1%s~2”\n"
-"   ”a” el ”w” för att spara & ändra en annan, <Retur> för att spara och avsluta "
+"   ”a” el ”w” för att spara & ändra en annan, <Retur> för att spara och "
+"avsluta "
 
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
-#: src/top/top_nls.c:747
-msgid "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n"
-msgstr "  d,k,r,^R '~1d~2' anje fördröjning; '~1k~2' döda; '~1r~2' ändra nice; ~1Ctrl~2+'~1R~2' ändra nice på autogrupp\n"
+#: src/top/top_nls.c:751
+msgid ""
+"  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' "
+"renice autogroup\n"
+msgstr ""
+"  d,k,r,^R '~1d~2' anje fördröjning; '~1k~2' döda; '~1r~2' ändra nice; "
+"~1Ctrl~2+'~1R~2' ändra nice på autogrupp\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
 #. .  to allow 1 blank line before the fields & descriptions.
 #. .  If absoultely necessary, 4 lines could be used (but never more).
 #. .
-#: src/top/top_nls.c:755
+#: src/top/top_nls.c:759
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
+"commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
 "Fälthantering~2 för fönster ~1%s~6, vars aktuella sorteringsfält är ~1%s~2\n"
-"   Navigera med Upp/Ner, Höger väljer för flytt och <Retur> el Vänster sparar,\n"
-"   ”d” el <Mellanslag> växlar visning, ”s” anger sort.  ”q” el <Esc> avslutar!\n"
+"   Navigera med Upp/Ner, Höger väljer för flytt och <Retur> el Vänster "
+"sparar,\n"
+"   ”d” el <Mellanslag> växlar visning, ”s” anger sort.  ”q” el <Esc> "
+"avslutar!\n"
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
-#: src/top/top_nls.c:763
+#: src/top/top_nls.c:767
 #, c-format
-msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
-msgstr "%s:~3 %3u ~2totalt,~3 %3u ~2körande,~3 %3u ~2sovande,~3 %3u ~2stoppade,~3 %3u ~2zombie~3\n"
+msgid ""
+"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
+"~2zombie~3\n"
+msgstr ""
+"%s:~3 %3u ~2totalt,~3 %3u ~2körande,~3 %3u ~2sovande,~3 %3u ~2stoppade,~3 "
+"%3u ~2zombie~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
-#: src/top/top_nls.c:769
+#: src/top/top_nls.c:773
 #, c-format
-msgid "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
-msgstr "%s~3 %#5.1f ~2an,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2in,~3 %#5.1f ~2vä,~3 %#5.1f ~2ha,~3 %#5.1f ~2ma~3 ~1"
+msgid ""
+"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
+msgstr ""
+"%s~3 %#5.1f ~2an,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2in,~3 %#5.1f ~2vä,"
+"~3 %#5.1f ~2ha,~3 %#5.1f ~2ma~3 ~1"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
-#: src/top/top_nls.c:775
-#, c-format
-msgid "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
-msgstr "%s~3%#5.1f ~2an,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2in,~3%#5.1f ~2vä,~3%#5.1f ~2ha,~3%#5.1f ~2ma,~3%#5.1f ~2st~3 ~1"
-
-#. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
 #: src/top/top_nls.c:779
 #, c-format
-msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 ~1    "
-msgstr "%s %s:~3 %9.9s~2totalt,~3 %9.9s~2fritt,~3 %9.9s~2anv.,~3 %9.9s~2buff/cache~3 ~1    "
+msgid ""
+"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
+msgstr ""
+"%s~3%#5.1f ~2an,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2in,~3%#5.1f ~2vä,"
+"~3%#5.1f ~2ha,~3%#5.1f ~2ma,~3%#5.1f ~2st~3 ~1"
 
-#: src/top/top_nls.c:781
+#. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
+#: src/top/top_nls.c:783
 #, c-format
-msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
-msgstr "%s %s:~3 %9.9s~2totalt,~3 %9.9s~2fritt,~3 %9.9s~2anv.,~3 %9.9s~2tillg %s~3"
+msgid ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
+"~1    "
+msgstr ""
+"%s %s:~3 %9.9s~2totalt,~3 %9.9s~2fritt,~3 %9.9s~2anv.,~3 %9.9s~2buff/cache~3 "
+"~1    "
+
+#: src/top/top_nls.c:785
+#, c-format
+msgid ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
+msgstr ""
+"%s %s:~3 %9.9s~2totalt,~3 %9.9s~2fritt,~3 %9.9s~2anv.,~3 %9.9s~2tillg %s~3"
 
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
 #. .
-#: src/top/top_nls.c:787
+#: src/top/top_nls.c:791
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
+"~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
 "Inspektion~2 Paus vid: pid ~1%d~6, körande ~1%s~6\n"
-"Använd~2:  vänster/höger och <Retur> för att ~1välja~5 ett alternativ; 'q' eller <Esc> för att ~1avsluta~5 !\n"
+"Använd~2:  vänster/höger och <Retur> för att ~1välja~5 ett alternativ; 'q' "
+"eller <Esc> för att ~1avsluta~5 !\n"
 "Alternativ~2: ~1%s\n"
 
-#: src/top/top_nls.c:792
+#: src/top/top_nls.c:796
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
+"~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
 "Inspektion~2 Visa vid pid: ~1%s~3, körande ~1%s~3.  Hitta: ~1%s~6\n"
-"Använd~2:  vänster/höger/upp/ner/etc för att ~1navigera~5 utdatan; 'L'/'&' för att ~1hitta~5/~1nästa~5.\n"
-"Eller~2:   <Retur> för att ~1välja en annan~5; 'q' eller <Esc> för att ~1avsluta~5 !\n"
+"Använd~2:  vänster/höger/upp/ner/etc för att ~1navigera~5 utdatan; 'L'/'&' "
+"för att ~1hitta~5/~1nästa~5.\n"
+"Eller~2:   <Retur> för att ~1välja en annan~5; 'q' eller <Esc> för att "
+"~1avsluta~5 !\n"
 
 #: src/uptime.c:47 src/uptime.c:119
 msgid "Cannot get system uptime"
@@ -3915,12 +4077,20 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         hoppar över första utdataraden\n"
 
 #: src/vmstat.c:257
-msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
-msgstr "procs -----------minne----------- -växling- -----io---- -system-- ------cpu-----"
+msgid ""
+"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
+"cpu-----"
+msgstr ""
+"procs -----------minne----------- -växling- -----io---- -system-- ------"
+"cpu-----"
 
 #: src/vmstat.c:259
-msgid "--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- ----------cpu----------"
-msgstr "--procs-- -----------------------minne----------------------- -växling- -----io---- -system-- -----------cpu----------"
+msgid ""
+"--procs-- -----------------------memory---------------------- ---swap-- -----"
+"io---- -system-- ----------cpu----------"
+msgstr ""
+"--procs-- -----------------------minne----------------------- -växling- -----"
+"io---- -system-- -----------cpu----------"
 
 #: src/vmstat.c:260 src/vmstat.c:616
 msgid " -----timestamp-----"
@@ -4077,12 +4247,20 @@ msgid "Disk/Partition %s not found"
 msgstr "Disken/partitionen %s finns inte"
 
 #: src/vmstat.c:613
-msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
-msgstr "disk- ----------läsningar---------- ----------skrivningar-------- -----IO------"
+msgid ""
+"disk- ------------reads------------ ------------writes----------- -----"
+"IO------"
+msgstr ""
+"disk- ----------läsningar---------- ----------skrivningar-------- -----"
+"IO------"
 
 #: src/vmstat.c:615
-msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
-msgstr "disk- -----------------läsningar----------------- ----------------skrivningar---------------- ------IO-------"
+msgid ""
+"disk- -------------------reads------------------- -------------------"
+"writes------------------ ------IO-------"
+msgstr ""
+"disk- -----------------läsningar----------------- ----------------"
+"skrivningar---------------- ------IO-------"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:634 src/vmstat.c:642
@@ -4379,7 +4557,8 @@ msgstr ""
 
 #: src/watch.c:98
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr "  -e, --errexit          avsluta om kommandot avslutas med annat än noll\n"
+msgstr ""
+"  -e, --errexit          avsluta om kommandot avslutas med annat än noll\n"
 
 #: src/watch.c:99
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -4399,7 +4578,8 @@ msgstr "  -n, --interval <sek>   sekunder att vänta mellan uppdateringar\n"
 
 #: src/watch.c:103
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr "  -p, --precise          försök att köra kommandot med precisa intervall\n"
+msgstr ""
+"  -p, --precise          försök att köra kommandot med precisa intervall\n"
 
 #: src/watch.c:104
 msgid "  -t, --no-title         turn off header\n"
@@ -4411,7 +4591,8 @@ msgstr "  -w, --no-wrap          slå av radbrytning\n"
 
 #: src/watch.c:106
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-msgstr "  -x, --exec             skicka kommandot till exec istället för ”sh -c”\n"
+msgstr ""
+"  -x, --exec             skicka kommandot till exec istället för ”sh -c”\n"
 
 #: src/watch.c:109
 msgid " -v, --version  output version information and exit\n"
@@ -4454,7 +4635,8 @@ msgstr "waitpid"
 
 #: src/watch.c:785
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr "kommandot avslutade med en nollskild status, tryck en tangent för att avsluta"
+msgstr ""
+"kommandot avslutade med en nollskild status, tryck en tangent för att avsluta"
 
 #: src/watch.c:845
 msgid "Could not parse interval from WATCH_INTERVAL"
@@ -4471,21 +4653,21 @@ msgid "unicode handling error (malloc)\n"
 msgstr "fel i hantering av unicode (malloc)\n"
 
 #: src/w.c:254 src/w.c:269
-#, c-format
-msgid " %2ludays"
+#, fuzzy, c-format
+msgid " %2lludays"
 msgstr " %2lu dagar"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
 #: src/w.c:263 src/w.c:273
-#, c-format
-msgid " %2lu:%02um"
+#, fuzzy, c-format
+msgid " %2llu:%02um"
 msgstr " %2lu.%02um"
 
 #. Translation Hint: Seconds:Centiseconds
 #: src/w.c:281
-#, c-format
-msgid " %2lu.%02us"
+#, fuzzy, c-format
+msgid " %2llu.%02us"
 msgstr " %2lu,%02us"
 
 #: src/w.c:524
@@ -4514,18 +4696,26 @@ msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     utdata i gammal stil\n"
 
 #: src/w.c:531
-msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
-msgstr " -i, --ip-addr       visa IP-adress istället för värdnamn (om möjligt)\n"
+msgid ""
+" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+msgstr ""
+" -i, --ip-addr       visa IP-adress istället för värdnamn (om möjligt)\n"
 
 #: src/w.c:625
 #, c-format
-msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
-msgstr "Miljövariabeln PROCPS_USERLEN för användarnamnslängd måste vara mellan 8 och %i, ignorerar.\n"
+msgid ""
+"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgstr ""
+"Miljövariabeln PROCPS_USERLEN för användarnamnslängd måste vara mellan 8 och "
+"%i, ignorerar.\n"
 
 #: src/w.c:635
 #, c-format
-msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
-msgstr "Miljövariabeln PROCPS_FROMLEN för frånlängd måste vara mellan 8 och %d, ignorerar.\n"
+msgid ""
+"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgstr ""
+"Miljövariabeln PROCPS_FROMLEN för frånlängd måste vara mellan 8 och %d, "
+"ignorerar.\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -4589,3 +4779,13 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s från %s\n"
+
+#, c-format
+#~ msgid ""
+#~ "inappropriate '%s'\n"
+#~ "Usage:\n"
+#~ "  %s%s"
+#~ msgstr ""
+#~ "felaktig ”%s”\n"
+#~ "Användning:\n"
+#~ "  %s%s"
