@@ -1,6 +1,6 @@
 procps-ng-4.0.2
 ---------------
-  * library
+  * library revision - 0:1:0
     Handle absent 'core_id' in /proc/cpuinfo
   * w: Show time with D_TIME_BITS=64 on 32bit env          issue #256
  
