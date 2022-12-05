@@ -5,10 +5,10 @@
 # Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019, 2021, 2022.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.1rc3\n"
+"Project-Id-Version: procps-ng-4.0.2-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2022-11-26 08:52+1100\n"
-"PO-Revision-Date: 2022-10-05 17:11+0300\n"
+"PO-Revision-Date: 2022-11-28 14:24+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -4716,22 +4716,22 @@ msgid "unicode handling error (malloc)\n"
 msgstr "помилка обробки unicode (malloc)\n"
 
 #: src/w.c:254 src/w.c:269
-#, fuzzy, c-format
+#, c-format
 msgid " %2lludays"
-msgstr " %2lu днів"
+msgstr " %2lluднів"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
 #: src/w.c:263 src/w.c:273
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu:%02um"
-msgstr " %2lu:%02um"
+msgstr " %2llu:%02uхв"
 
 #. Translation Hint: Seconds:Centiseconds
 #: src/w.c:281
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu.%02us"
-msgstr " %2lu,%02us"
+msgstr " %2llu.%02uс"
 
 #: src/w.c:524
 #, c-format
@@ -4843,7 +4843,6 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s з %s\n"
 
-#, c-format
 #~ msgid ""
 #~ "inappropriate '%s'\n"
 #~ "Usage:\n"

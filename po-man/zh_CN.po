@@ -6,7 +6,6 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.10-rc3\n"
-"Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
 "POT-Creation-Date: 2022-11-10 21:36+1100\n"
 "PO-Revision-Date: 2015-10-30 09:26-0400\n"
 "Last-Translator: Mingye Wang (Arthur2e5) <arthur200126@gmail.com>\n"
@@ -2622,6 +2621,9 @@ msgstr ""
 msgid "SEE ALSO      "
 msgstr "参见"
 
+#
+#
+#
 #.  (C) Copyright 2020 Craig Small <csmall@dropbear.xyz>
 #.  (C) Copyright 2021-2022 Jim Warner <james.warner@comcast.net>
 #.  %%%LICENSE_START(LGPL_2.1+)
@@ -2966,6 +2968,9 @@ msgstr ""
 msgid "SEE ALSO       "
 msgstr "参见"
 
+#
+#
+#
 #.  (C) Copyright 2020-2022 Jim Warner <james.warner@comcast.net>
 #.  %%%LICENSE_START(LGPL_2.1+)
 #.  This manual is free software; you can redistribute it and/or
@@ -3348,10 +3353,9 @@ msgstr ""
 
 #. type: IP
 #: ../man/procps_pids.3:194
-#, fuzzy, no-wrap
-#| msgid "1"
+#, no-wrap
 msgid "1) "
-msgstr "1"
+msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:197
@@ -3362,10 +3366,9 @@ msgstr ""
 
 #. type: IP
 #: ../man/procps_pids.3:198
-#, fuzzy, no-wrap
-#| msgid "2"
+#, no-wrap
 msgid "2) "
-msgstr "2"
+msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:201
@@ -6733,10 +6736,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1172
-#, fuzzy, no-wrap
-#| msgid "User Commands"
+#, no-wrap
 msgid "comm "
-msgstr "用户命令"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1172

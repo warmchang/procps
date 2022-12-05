@@ -2311,10 +2311,9 @@ msgstr ""
 
 #. type: TH
 #: ../man/procio.3:19
-#, fuzzy, no-wrap
-#| msgid "PROCPS_USERLEN"
+#, no-wrap
 msgid "PROCIO"
-msgstr "PROCPS_USERLEN"
+msgstr ""
 
 #. type: TH
 #: ../man/procio.3:19
@@ -3618,10 +3617,9 @@ msgstr ""
 
 #. type: IP
 #: ../man/procps_pids.3:194
-#, fuzzy, no-wrap
-#| msgid "1"
+#, no-wrap
 msgid "1) "
-msgstr "1"
+msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:197
@@ -3632,10 +3630,9 @@ msgstr ""
 
 #. type: IP
 #: ../man/procps_pids.3:198
-#, fuzzy, no-wrap
-#| msgid "2"
+#, no-wrap
 msgid "2) "
-msgstr "2"
+msgstr ""
 
 #. type: Plain text
 #: ../man/procps_pids.3:201

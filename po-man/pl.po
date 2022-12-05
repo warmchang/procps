@@ -555,10 +555,9 @@ msgstr ""
 
 #. type: TH
 #: ../man/kill.1:8
-#, fuzzy, no-wrap
-#| msgid "procps-ng  "
+#, no-wrap
 msgid "procps-ng "
-msgstr "procps-ng  "
+msgstr "procps-ng "
 
 #. type: TH
 #: ../man/kill.1:8
@@ -896,10 +895,9 @@ msgstr "B<pidwait> [opcje] wzorzec"
 
 #. type: SH
 #: ../man/pgrep.1:22
-#, fuzzy, no-wrap
-#| msgid "DESCRIPTION   "
+#, no-wrap
 msgid "DESCRIPTION  "
-msgstr "OPIS   "
+msgstr "OPIS  "
 
 #. type: Plain text
 #: ../man/pgrep.1:27
@@ -2084,10 +2082,9 @@ msgstr "Wyświetlenie tekstu pomocy i zakończenie."
 
 #. type: TP
 #: ../man/pmap.1:61
-#, fuzzy, no-wrap
-#| msgid "B<-V>, B<--version>   "
+#, no-wrap
 msgid "B<-V>, B<--version>  "
-msgstr "B<-V>, B<--version>   "
+msgstr "B<-V>, B<--version>  "
 
 #. type: Plain text
 #: ../man/pmap.1:64
@@ -2282,10 +2279,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/procio.3:47
-#, fuzzy, no-wrap
-#| msgid "B<->I<signal>"
+#, no-wrap
 msgid "B<w>[B<E<lt>delE<gt>>]"
-msgstr "B<->I<sygnał>"
+msgstr ""
 
 #. type: Plain text
 #: ../man/procio.3:59
@@ -6259,10 +6255,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:963
-#, fuzzy, no-wrap
-#| msgid "B<used>"
+#, no-wrap
 msgid "user "
-msgstr "B<użyte>"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:963
@@ -6302,10 +6297,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:965
-#, fuzzy, no-wrap
-#| msgid "OPERANDS"
+#, no-wrap
 msgid "COMMAND "
-msgstr "ARGUMENTY"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:966
@@ -6618,10 +6612,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1035
-#, fuzzy, no-wrap
-#| msgid "OPERANDS"
+#, no-wrap
 msgid "COMMAND  "
-msgstr "ARGUMENTY"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1050
@@ -7175,17 +7168,15 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1172
-#, fuzzy, no-wrap
-#| msgid "User Commands"
+#, no-wrap
 msgid "comm "
-msgstr "Polecenia użytkownika"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1172
-#, fuzzy, no-wrap
-#| msgid "OPERANDS"
+#, no-wrap
 msgid "COMMAND   "
-msgstr "ARGUMENTY"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1185
@@ -7241,10 +7232,9 @@ msgstr "Polecenia użytkownika"
 
 #. type: tbl table
 #: ../man/ps.1:1201
-#, fuzzy, no-wrap
-#| msgid "OPERANDS"
+#, no-wrap
 msgid "COMMAND    "
-msgstr "ARGUMENTY"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1206
@@ -7286,9 +7276,9 @@ msgstr ""
 #. type: tbl table
 #: ../man/ps.1:1213
 #, fuzzy, no-wrap
-#| msgid "UPTIME"
+#| msgid "NAME  "
 msgid "TIME  "
-msgstr "UPTIME"
+msgstr "NAZWA  "
 
 #. type: tbl table
 #: ../man/ps.1:1216
@@ -7307,9 +7297,9 @@ msgstr ""
 #. type: tbl table
 #: ../man/ps.1:1218
 #, fuzzy, no-wrap
-#| msgid "UPTIME"
+#| msgid "NAME   "
 msgid "TIME   "
-msgstr "UPTIME"
+msgstr "NAZWA   "
 
 #. type: tbl table
 #: ../man/ps.1:1221
@@ -7690,10 +7680,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1332
-#, fuzzy, no-wrap
-#| msgid "OPERANDS"
+#, no-wrap
 msgid "COMMAND     "
-msgstr "ARGUMENTY"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1335
@@ -8809,10 +8798,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1622
-#, fuzzy, no-wrap
-#| msgid "B<used>"
+#, no-wrap
 msgid "ruser "
-msgstr "B<użyte>"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1622
@@ -9686,9 +9674,9 @@ msgstr ""
 #. type: tbl table
 #: ../man/ps.1:1870
 #, fuzzy, no-wrap
-#| msgid "OPERANDS"
+#| msgid "NAME      "
 msgid "COMMAND      "
-msgstr "ARGUMENTY"
+msgstr "NAZWA      "
 
 #. type: tbl table
 #: ../man/ps.1:1875
@@ -9766,10 +9754,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1896
-#, fuzzy, no-wrap
-#| msgid "B<used>"
+#, no-wrap
 msgid "user  "
-msgstr "B<użyte>"
+msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1896
@@ -10751,12 +10738,10 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #.  Michael K. Johnson
 #. type: Plain text
 #: ../man/skill.1:9
-#, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/skill.1:9
@@ -11166,11 +11151,11 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/slabtop.1:5
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>    "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/slabtop.1:5
@@ -11668,11 +11653,11 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/snice.1:1
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>     "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/sysctl.8:9
@@ -12226,11 +12211,11 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/sysctl.conf.5:9
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>      "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/sysctl.conf.5:9
@@ -12435,11 +12420,11 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/tload.1:4
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>       "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/tload.1:4
@@ -12642,11 +12627,11 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/top.1:1
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>        "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #.   Setup ////////////////////////////////////////////////////////////////
 #.                       Commonly used strings (for consistency) ----------
@@ -18732,11 +18717,11 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/vmstat.8:3
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>         "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/vmstat.8:3
@@ -18989,10 +18974,9 @@ msgstr "Dołączenie znacznika czasu do każdej linii"
 
 #. type: TP
 #: ../man/vmstat.8:79
-#, fuzzy, no-wrap
-#| msgid "B<-w>, B<--wide>"
+#, no-wrap
 msgid "B<-w>, B<--wide> "
-msgstr "B<-w>, B<--wide>"
+msgstr "B<-w>, B<--wide> "
 
 #. type: Plain text
 #: ../man/vmstat.8:84
@@ -19402,11 +19386,11 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/w.1:3
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>          "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/w.1:3
@@ -19750,12 +19734,12 @@ msgstr "ZGŁASZANIE BŁĘDÓW   "
 #. type: Plain text
 #: ../man/watch.1:1
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>  "
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid ""
 "Please send bug reports to E<.UR procps@freelists.org> E<.UE>           "
 msgstr ""
 "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>  "
+"UE>   "
 
 #. type: TH
 #: ../man/watch.1:1

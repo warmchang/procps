@@ -1,419 +1,477 @@
-# procps-ng Georgian translaton
-# Copyright (C) 2022 Free Software Foundation, Inc.
+# Mesajele în limba română pentru pachetul procps-ng.
+# Copyright © 2022 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022.
+#
+# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2022.
+#
+# Cronologia traducerii fișierului „procps-ng”:
+# Traducerea inițială, făcută de R-GC, pentru versiunea procps-ng 3.3.17rc1 (99% - tradus).
+# Actualizare a traducerii pentru versiunea 4.0.1rc3, făcută de R-GC, 2022 (100% - tradus).
+# Actualizare a traducerii pentru versiunea 4.0.2-rc1, făcută de R-GC, 2022.
+# Actualizare a traducerii pentru versiunea Y, făcută de X, Z(anul).
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.2-rc1\n"
+"Project-Id-Version: procps-ng 4.0.2-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2022-11-26 08:52+1100\n"
-"PO-Revision-Date: 2022-11-28 13:44+0100\n"
-"Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
-"Language-Team: Georgian <(nothing)>\n"
-"Language: ka\n"
+"PO-Revision-Date: 2022-11-30 00:55+0100\n"
+"Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
+"Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
+"Language: ro\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Poedit 3.1.1\n"
 
 #: local/fileutils.c:38
 msgid "write error"
-msgstr "ჩაწერის შეცდომა"
+msgstr "eroare de scriere"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «free --help»
 #: src/free.c:76 src/slabtop.c:104 src/uptime.c:61
 #, c-format
 msgid " %s [options]\n"
-msgstr " %s [პარამეტრები]\n"
+msgstr " %s [opțiuni]\n"
 
 #: src/free.c:78
 msgid " -b, --bytes         show output in bytes\n"
-msgstr " -b, --bytes         მნიშვნელოების ბაიტებში გამოტანა\n"
+msgstr " -b, --bytes         afișează ieșirea în octeți\n"
 
 #: src/free.c:79
 msgid "     --kilo          show output in kilobytes\n"
-msgstr "     --kilo          მნიშვნელობების კილობაიტებში გამოტანა\n"
+msgstr "     --kilo          afișează ieșirea în kiloocteți\n"
 
 #: src/free.c:80
 msgid "     --mega          show output in megabytes\n"
-msgstr "     --mega          მნიშვნელობების მეგაბაიტებში გამოტანა\n"
+msgstr "     --mega          afișează ieșirea în megaocteți\n"
 
 #: src/free.c:81
 msgid "     --giga          show output in gigabytes\n"
-msgstr "     --giga          მნიშვნელობების გიგაბაიტებში გამოტანა\n"
+msgstr "     --giga          afișează ieșirea în gigaocteți\n"
 
 #: src/free.c:82
 msgid "     --tera          show output in terabytes\n"
-msgstr "     --tera          მნიშვნელობების ტერაბაიტებში გამოტანა\n"
+msgstr "     --tera          afișează ieșirea în teraocteți\n"
 
 #: src/free.c:83
 msgid "     --peta          show output in petabytes\n"
-msgstr "     --peta          მნიშვნელობების პეტაბაიტებში გამოტანა\n"
+msgstr "     --peta          afișează ieșirea în petaocteți\n"
 
 #: src/free.c:84
 msgid " -k, --kibi          show output in kibibytes\n"
-msgstr " -k, --kibi          მნიშვნელობების კიბიბაიტებში გამოტანა\n"
+msgstr " -k, --kibi          afișează ieșirea în kibiocteți\n"
 
 #: src/free.c:85
 msgid " -m, --mebi          show output in mebibytes\n"
-msgstr " -m, --mebi          მნიშვნელობების მებიბაიტებში გამოტანა\n"
+msgstr " -m, --mebi          afișează ieșirea în mebiocteți\n"
 
 #: src/free.c:86
 msgid " -g, --gibi          show output in gibibytes\n"
-msgstr " -g, --gibi          მნიშვნელობების გიბიბაიტებში გამოტანა\n"
+msgstr " -g, --gibi          afișează ieșirea în gibiocteți\n"
 
 #: src/free.c:87
 msgid "     --tebi          show output in tebibytes\n"
-msgstr "     --tebi          მნიშვნელობების ტერიბაიტებში გამოტანა\n"
+msgstr "     --tebi          afișează ieșirea în tebiocteți\n"
 
 #: src/free.c:88
 msgid "     --pebi          show output in pebibytes\n"
-msgstr "     --pebi          მნიშვნელობების პებიბაიტებში გამოტანა\n"
+msgstr "     --pebi          afișează ieșirea în pebiocteți\n"
 
 #: src/free.c:89
 msgid " -h, --human         show human-readable output\n"
-msgstr " -h, --human         ადამიანისთვის წაკითხვადი სახით გამოტანა\n"
+msgstr ""
+" -h, --human         afișează ieșirea într-o formă care poate fi citită ușor\n"
+"                     de către om\n"
 
 #: src/free.c:90
 msgid "     --si            use powers of 1000 not 1024\n"
-msgstr "     --si            1024-ის მაგიერ 1000-ის ხარისხის გამოყენება\n"
+msgstr "     --si            utilizează puteri de 1000, nu de 1024\n"
 
 #: src/free.c:91
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
 msgstr ""
+" -l, --lohi          afișează statistici detaliate despre cantitatea de memorie\n"
+"                     utilizată, scăzută(Low) și ridicată(High)\n"
 
 #: src/free.c:92
 msgid " -t, --total         show total for RAM + swap\n"
-msgstr " -t, --total         ჯამური, RAM + სვოპის ჩვენება\n"
+msgstr " -t, --total         afișează totalul pentru RAM + swap\n"
 
 #: src/free.c:93
 msgid " -v, --committed     show committed memory and commit limit\n"
-msgstr ""
+msgstr " -v, --committed     afișează memoria alocată și limita de alocare\n"
 
 #: src/free.c:94
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
-msgstr ""
+msgstr " -s N, --seconds N   repetă afișarea rezultatelor, la fiecare N secunde\n"
 
 #: src/free.c:95
 msgid " -c N, --count N     repeat printing N times, then exit\n"
-msgstr ""
+msgstr " -c N, --count N     repetă afișarea rezultatelor de N ori, după care iese\n"
 
+# R-GC, scrie:
+# ieșire largă
+# ieșire amplă
+# ieșire întinsă
+# ieșire extinsă
+# ***
+# am ales prima variantă care este
+# traducerea mot-a-mot, dar cred
+# că varianta care descrie cel mai
+# „aproape de adevăr”, sensul
+# mesajului original, este cea
+# care apare ultima în această
+# serie.
 #: src/free.c:96
 msgid " -w, --wide          wide output\n"
-msgstr " -w, --wide          ფართო გამოტანა\n"
+msgstr " -w, --wide          ieșire largă\n"
 
 #: src/free.c:98 src/w.c:533
 msgid "     --help     display this help and exit\n"
-msgstr "     --help     ამ დახმარების გამოტანა და გასვლა\n"
+msgstr "     --help     afișează acest mesaj de ajutor și iese\n"
 
 #: src/free.c:173
 msgid "Multiple unit options don't make sense."
-msgstr ""
+msgstr "Opțiunile de unități multiple nu au sens."
 
 #: src/free.c:338
 #, c-format
 msgid "seconds argument `%s' is not positive number"
-msgstr ""
+msgstr "argumentul de secunde „%s” nu este un număr pozitiv"
 
 #: src/free.c:344
 msgid "failed to parse count argument"
-msgstr "რაოდენობის არგუმენტის დამუშავების შეცდომა"
+msgstr "a eșuat analizarea argumentului de numărare (count)"
 
 #: src/free.c:347
 #, c-format
 msgid "failed to parse count argument: '%s'"
-msgstr "რაოდენობის არგუმენტის დამუშავების შეცდომა: \"%s\""
+msgstr "a eșuat analizarea argumentului de numărare (count): „%s”"
 
 #: src/free.c:367
 msgid "Memory information file /proc/meminfo does not exist"
-msgstr ""
+msgstr "Fișierul cu informații despre memorie „/proc/meminfo” nu există"
 
 #: src/free.c:370 src/vmstat.c:382 src/vmstat.c:869
 msgid "Unable to create meminfo structure"
-msgstr ""
+msgstr "Nu se poate crea structura informațiilor despre memorie"
 
 #: src/free.c:377
 #, c-format
-msgid ""
-"               total        used        free      shared     buffers       "
-"cache   available"
-msgstr ""
-"               სულl        გამოყენებული        თავისუფალი      "
-"გაზიარებული     ბუფერი       ქეში   ხელმისაწვდომი"
+msgid "               total        used        free      shared     buffers       cache   available"
+msgstr "               total   utilizată      liberă   partajată     buffers       cache disponibilă"
 
 #: src/free.c:379
 #, c-format
-msgid ""
-"               total        used        free      shared  buff/cache   "
-"available"
-msgstr ""
-"               სულl        გამოყ        თავის      გაზიარ  ბუფ/ქეში   "
-"ხელმისაწვდომი"
+msgid "               total        used        free      shared  buff/cache   available"
+msgstr "               total   utilizată      liberă   partajată  buff/cache disponibilă"
 
 #: src/free.c:382
 msgid "Mem:"
-msgstr "მეხს:"
+msgstr "Mem:"
 
+# R-GC, scrie:
+# am lăsat netradus acest mesaj, și
+# următoarele două, datorită
+# limitărilor de aliniere și de număr
+# de caractere (coloane), impus de
+# autori/geometria terminalului.
+# Altfel, valorile afișate în tabel, pot
+# să apară trunchiate în mașini cu
+# memorie RAM
+# <=8Go, și apar trunchiate în cele
+# cu >8Go.
+# ***
+# Sorry ;)
 #: src/free.c:405
 msgid "Low:"
-msgstr "დაბალი:"
+msgstr "Low:"
 
 #: src/free.c:411
 msgid "High:"
-msgstr "მაღალი:"
+msgstr "High:"
 
 #: src/free.c:418
 msgid "Swap:"
-msgstr "სვაპი:"
+msgstr "Swap:"
 
 #: src/free.c:425
 msgid "Total:"
-msgstr "ჯამი:"
+msgstr "Total:"
 
 #: src/free.c:438
 msgid "Comm:"
-msgstr "ბრძანება:"
+msgstr "Com.:"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «skill --help»
 #: src/kill.c:38
 #, c-format
 msgid " %s [options] <pid> [...]\n"
-msgstr " %s [options] <pid> [...]\n"
+msgstr " %s [opțiuni] <pid> [...]\n"
 
 #: src/kill.c:40
 msgid " <pid> [...]            send signal to every <pid> listed\n"
-msgstr ""
+msgstr " <pid> [...]            trimite semnalul la fiecare <pid> listat\n"
 
 #: src/kill.c:41
 msgid ""
 " -<signal>, -s, --signal <signal>\n"
 "                        specify the <signal> to be sent\n"
 msgstr ""
+" -<signal>, -s, --signal <semnal>\n"
+"                        specifică <semnalul> care trebuie trimis\n"
 
 #: src/kill.c:43
 msgid " -q, --queue <value>    integer value to be sent with the signal\n"
-msgstr ""
+msgstr " -q, --queue <valoare>  valoare întreagă care trebuie trimisă împreună cu semnalul\n"
 
 #: src/kill.c:44
-msgid ""
-" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
 msgstr ""
+" -l, --list=[<semnal>]  listează toate numele semnalelor sau convertește unul\n"
+"                        într-un nume\n"
 
 #: src/kill.c:45
 msgid " -L, --table            list all signal names in a nice table\n"
-msgstr ""
+msgstr " -L, --table            listează toate numele semnalelor într-un tabel\n"
 
 #: src/kill.c:110
 #, c-format
 msgid "unknown signal name %s"
-msgstr "უცნობი სიგნალის სახელი: %s"
+msgstr "nume de semnal necunoscut %s"
 
 #: src/kill.c:129
 msgid "must be an integer value to be passed with the signal."
-msgstr ""
+msgstr "trebuie să fie o valoare întreagă pentru a fi transmisă cu semnalul."
 
 #: src/kill.c:134
 #, c-format
 msgid "invalid argument %c"
-msgstr "არასწორი არგუმენტი %c"
+msgstr "argument nevalid %c"
 
 #: src/kill.c:144 src/pgrep.c:743 src/pidof.c:243 src/pidof.c:283
 #: src/sysctl.c:865
 msgid "internal error"
-msgstr "შიდა შეცდომა"
+msgstr "eroare internă"
 
-#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375 src/skill.c:459
-#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1044 src/vmstat.c:1054
-#: src/watch.c:870 src/watch.c:882
+#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375
+#: src/skill.c:459 src/tload.c:135 src/tload.c:140 src/vmstat.c:1044
+#: src/vmstat.c:1054 src/watch.c:870 src/watch.c:882
 msgid "failed to parse argument"
-msgstr "არგუმენტის დამუშავების შეცდომა"
+msgstr "nu s-a reușit să se analizeze argumentul"
 
 #: src/pgrep.c:87 src/pidof.c:37 src/skill.c:70
 msgid "integer overflow"
-msgstr "მთელი რიცხვის მაქსიმალური მნიშვნელობის გადაცილება"
+msgstr "depășire de număr întreg"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «pgrep --help»
 #: src/pgrep.c:149
 #, c-format
 msgid " %s [options] <pattern>\n"
-msgstr " %s [options] <pattern>\n"
+msgstr " %s [opțiuni] <model>\n"
 
 #: src/pgrep.c:153
 msgid " -d, --delimiter <string>  specify output delimiter\n"
-msgstr " -d, --delimiter <string>  გამოტანის გამყოფის მითითება\n"
+msgstr " -d, --delimiter <șir>     specifică delimitatorul de ieșire\n"
 
 #: src/pgrep.c:154
 msgid " -l, --list-name           list PID and process name\n"
-msgstr ""
+msgstr " -l, --list-name           afișează numărul PID și numele procesului\n"
 
 #: src/pgrep.c:155
 msgid " -a, --list-full           list PID and full command line\n"
-msgstr ""
+msgstr " -a, --list-full           afișează numărul PID și linia de comandă completă\n"
 
 #: src/pgrep.c:156
 msgid " -v, --inverse             negates the matching\n"
 msgstr ""
+" -v, --inverse             inversează potrivirile (afișează ce NU se potrivește\n"
+"                           cu modelul)\n"
 
 #: src/pgrep.c:157
 msgid " -w, --lightweight         list all TID\n"
-msgstr " -w, --lightweight         ყველა TID-ის ჩამონათვალი\n"
+msgstr ""
+" -w, --lightweight         afișează toate numerele TID (Thread-ID,\n"
+"                           identificatoarele firelor procesului furnizat)\n"
 
 #: src/pgrep.c:160
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr ""
+msgstr " -<sig>, --signal <sig>    semnalul «sig» de trimis (fie număr, fie nume)\n"
 
 #: src/pgrep.c:161
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr ""
+" -q, --queue <valoare>     valoarea numărului întreag care trebuie trimis cu\n"
+"                           semnalul\n"
 
 #: src/pgrep.c:162
 msgid " -e, --echo                display what is killed\n"
-msgstr " -e, --echo                მოკლული პროცესების სიის ჩვენება\n"
+msgstr " -e, --echo                afișează care proces este omorât\n"
 
 #: src/pgrep.c:166
 msgid " -e, --echo                display PIDs before waiting\n"
-msgstr " -e, --echo                PID-ების მოცდამდე ჩვენება\n"
+msgstr " -e, --echo                afișează numerele PID înainte de așteptare\n"
 
 #: src/pgrep.c:170
 msgid " -c, --count               count of matching processes\n"
-msgstr ""
+msgstr " -c, --count               numărul de procese care s-au potrivit\n"
 
 #: src/pgrep.c:171
 msgid " -f, --full                use full process name to match\n"
-msgstr ""
+msgstr " -f, --full                utilizează numele complet al procesului pentru a potrivi\n"
 
 #: src/pgrep.c:172
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
-msgstr ""
+msgstr " -g, --pgroup <PGID,...>   găsește ID-urile grupurilor de procese listate\n"
 
 #: src/pgrep.c:173
 msgid " -G, --group <GID,...>     match real group IDs\n"
-msgstr ""
+msgstr " -G, --group <GID,...>     găsește ID-urile reale ale grupului\n"
 
 #: src/pgrep.c:174
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
+" -i, --ignore-case         potrivește fără să diferențieze între majuscule și\n"
+"                           minuscule\n"
 
 #: src/pgrep.c:175
 msgid " -n, --newest              select most recently started\n"
-msgstr ""
+msgstr " -n, --newest              selectează procesul cel mai recent început\n"
 
 #: src/pgrep.c:176
 msgid " -o, --oldest              select least recently started\n"
-msgstr ""
+msgstr " -o, --oldest              selectează procesul cel mai puțin recent început\n"
 
 #: src/pgrep.c:177
 msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr ""
+" -O, --older <secunde>     selectează procesele care sunt mai vechi de\n"
+"                           <secunde> secunde\n"
 
 #: src/pgrep.c:178
-msgid ""
-" -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr ""
+msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
+msgstr " -P, --parent <PPID,...>   potrivește numai procesele-copil ale părintelui dat\n"
 
 #: src/pgrep.c:179
 msgid " -s, --session <SID,...>   match session IDs\n"
-msgstr ""
+msgstr " -s, --session <SID,...>   potrivește ID-urile de sesiune\n"
 
 #: src/pgrep.c:180
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
-msgstr ""
+msgstr " -t, --terminal <tty,...>  potrivire prin terminalul de control\n"
 
 #: src/pgrep.c:181
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
-msgstr ""
+msgstr " -u, --euid <ID,...>       potrivire prin ID-uri efective\n"
 
 #: src/pgrep.c:182
 msgid " -U, --uid <ID,...>        match by real IDs\n"
-msgstr ""
+msgstr " -U, --uid <ID,...>        potrivire prin ID-uri reale\n"
 
 #: src/pgrep.c:183
 msgid " -x, --exact               match exactly with the command name\n"
-msgstr ""
+msgstr " -x, --exact               se potrivește exact cu numele comenzii\n"
 
 #: src/pgrep.c:184
 msgid " -F, --pidfile <file>      read PIDs from file\n"
-msgstr ""
+msgstr " -F, --pidfile <fișier>    citește PID-urile din fișierul <fișier>\n"
 
 #: src/pgrep.c:185
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
-msgstr ""
+msgstr " -L, --logpidfile          eșuează dacă fișierul PID nu este blocat\n"
 
 #: src/pgrep.c:186
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
-msgstr ""
+msgstr " -r, --runstates <stare>   potrivește stările de rulare [D,S,Z,...]\n"
 
 #: src/pgrep.c:187
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
-msgstr ""
+msgstr " -A, --ignore-ancestors    exclude predecesorii noștrii din rezultate\n"
 
 #: src/pgrep.c:188
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
-msgstr ""
+msgstr " --cgroup <nume_grup,...>  potrivește numele cgroup v2\n"
 
 #: src/pgrep.c:189
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
 msgstr ""
+" --ns <PID>                potrivește procesele care aparțin aceluiași\n"
+"                           spațiu de nume ca <pid>\n"
 
 #: src/pgrep.c:191
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, "
-"uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
 msgstr ""
+" --nslist <ns,...>         listează spațiile de nume de utilizat pentru\n"
+"                           procesare cu opțiunea „--ns”.\n"
+"                           Spații de nume disponibile: ipc, mnt, net, pid, user, uts\n"
 
 #: src/pgrep.c:216 src/pgrep.c:653 src/w.c:405
 msgid "Unable to create pid info structure"
-msgstr ""
+msgstr "Nu se poate crea structura de informații pid"
 
 #: src/pgrep.c:380
 #, c-format
 msgid "invalid user name: %s"
-msgstr "არასწორი მომხმარებლის სახელი: %s"
+msgstr "nume de utilizator nevalid: %s"
 
 #: src/pgrep.c:397
 #, c-format
 msgid "invalid group name: %s"
-msgstr "არასწორი ჯგუფის სახელი: %s"
+msgstr "nume de grup nevalid: %s"
 
 #: src/pgrep.c:408
 #, c-format
 msgid "invalid process group: %s"
-msgstr "არასწორი პროცესის ჯგუფი: %s"
+msgstr "grup de procese nevalid: %s"
 
 #: src/pgrep.c:420
 #, c-format
 msgid "invalid session id: %s"
-msgstr "არასწორი სესიის id: %s"
+msgstr "ID de sesiune nevalid: %s"
 
 #: src/pgrep.c:432
 #, c-format
 msgid "not a number: %s"
-msgstr "რიცხვი არაა: %s"
+msgstr "nu este un număr: %s"
 
 #: src/pgrep.c:499 src/skill.c:158
 msgid "Unable to read process namespace information"
-msgstr ""
+msgstr "Nu se pot citi informațiile despre spațiul de nume ale procesului"
 
 #: src/pgrep.c:586
 #, c-format
 msgid "regex error: %s"
-msgstr "რეგექსის შეცდომა: %s"
+msgstr "eroare expresie regulată: %s"
 
 #: src/pgrep.c:648
 msgid "Error reading reference namespace information\n"
-msgstr ""
+msgstr "Eroare la citirea informațiilor despre spațiul de nume de referință\n"
 
 #: src/pgrep.c:760
 #, c-format
 msgid ""
-"pattern that searches for process name longer than 15 characters will result "
-"in zero matches\n"
+"pattern that searches for process name longer than 15 characters will result in zero matches\n"
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
+"modelul care caută un nume de proces mai lung de 15 caractere va avea ca rezultat zero potriviri\n"
+"Încercați cu opțiunea «%s -f» pentru a se potrivi cu linia de comandă completă."
 
 #: src/pgrep.c:1028
 #, c-format
@@ -421,6 +479,8 @@ msgid ""
 "-L without -F makes no sense\n"
 "Try `%s --help' for more information."
 msgstr ""
+"„-L” fără „-F” nu are sens\n"
+"Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1035
 #, c-format
@@ -428,6 +488,8 @@ msgid ""
 "pidfile not valid\n"
 "Try `%s --help' for more information."
 msgstr ""
+"fișierul de PID nu este valid\n"
+"Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1044
 #, c-format
@@ -435,6 +497,8 @@ msgid ""
 "only one pattern can be provided\n"
 "Try `%s --help' for more information."
 msgstr ""
+"doar un model poate fi furnizat\n"
+"Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1048
 #, c-format
@@ -442,104 +506,110 @@ msgid ""
 "no matching criteria specified\n"
 "Try `%s --help' for more information."
 msgstr ""
+"nu sunt specificate criterii de potrivire\n"
+"Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1100
 #, c-format
 msgid "%s killed (pid %lu)\n"
-msgstr "%s მოკვდა (pid %lu)\n"
+msgstr "%s omorât (pid %lu)\n"
 
 #: src/pgrep.c:1107
 #, c-format
 msgid "killing pid %ld failed"
-msgstr "pid %ld -ის მოკვლის შეცდომა"
+msgstr "omorârea pid-ului %ld a eșuat"
 
 #: src/pgrep.c:1119
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
-msgstr "%s (pid %lu)-ის მოლოდინი\n"
+msgstr "se așteaptă %s (pid %lu)\n"
 
 #: src/pgrep.c:1123
 msgid "pidfd_open() not implemented in Linux < 5.3"
-msgstr ""
+msgstr "funcția pidfd_open() nu este implementată în nucleui Linux < 5.3"
 
 #: src/pgrep.c:1126
 #, c-format
 msgid "opening pid %ld failed"
-msgstr "pid %ld -ის გახსნის შეცდომა"
+msgstr "deschiderea pid-ului %ld a eșuat"
 
 #: src/pgrep.c:1140
 msgid "epoll_wait failed"
-msgstr "epoll_wait -ის შეცდომა"
+msgstr "epoll_wait a eșuat"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «pidof --help»
 #: src/pidof.c:71
 #, c-format
 msgid " %s [options] [program [...]]\n"
-msgstr " %s [options] [program [...]]\n"
+msgstr " %s [opțiuni] [program [...]]\n"
 
 #: src/pidof.c:73
 msgid " -s, --single-shot         return one PID only\n"
-msgstr ""
+msgstr " -s, --single-shot         returnează doar un singur PID\n"
 
 #: src/pidof.c:74
 msgid " -c, --check-root          omit processes with different root\n"
-msgstr ""
+msgstr " -c, --check-root          omite procesele cu rădăcină diferită\n"
 
 #: src/pidof.c:75
 msgid " -q,                       quiet mode, only set the exit code\n"
-msgstr ""
+msgstr " -q,                       modul silențios, afișează doar codul de ieșire\n"
 
 #: src/pidof.c:76
 msgid " -w, --with-workers        show kernel workers too\n"
-msgstr ""
+msgstr " -w, --with-workers        afișează de asemenea, firele de lucru ale nucleului\n"
 
 #: src/pidof.c:77
 msgid " -x                        also find shells running the named scripts\n"
-msgstr ""
+msgstr " -x                        găsește, de asemenea, shell-uri care rulează scripturile numite\n"
 
 #: src/pidof.c:78
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
-msgstr ""
+msgstr " -o, --omit-pid <PID,...>  omite procesele cu PID\n"
 
 #: src/pidof.c:79
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
-msgstr ""
+msgstr " -S, --separator SEP       utilizează SEP ca separator între PID-uri"
 
 #: src/pidof.c:286
 #, c-format
 msgid "illegal omit pid value (%s)!\n"
-msgstr ""
+msgstr "omite valoarea pid ilegală (%s)!\n"
 
 #: src/pmap.c:68
 msgid "Address"
-msgstr "მისამართი"
+msgstr "Adresă"
 
 #: src/pmap.c:69
 msgid "Offset"
-msgstr "გადაწევა"
+msgstr "Poziție"
 
 #: src/pmap.c:70
 msgid "Device"
-msgstr "მოწყობილობა"
+msgstr "Dispozitiv"
 
 #: src/pmap.c:71
 msgid "Mapping"
-msgstr "მიბმა"
+msgstr "Atribuire"
 
 #: src/pmap.c:75
 msgid "Perm"
-msgstr "პერმი"
+msgstr "Permisiuni"
 
 #: src/pmap.c:76
 msgid "Inode"
-msgstr "Inode"
+msgstr "Nod-i"
 
 #: src/pmap.c:79
 msgid "Kbytes"
-msgstr "კბაიტი"
+msgstr "Kocteți"
 
 #: src/pmap.c:80
 msgid "Mode"
-msgstr "რეჟიმი"
+msgstr "Mod"
 
 #. Translation Hint: With the next 5 fields, notice how an extra space
 #. has been added ahead of one 'KiB' so that they all
@@ -551,245 +621,262 @@ msgstr "RSS"
 
 #: src/pmap.c:82
 msgid "Dirty"
-msgstr "ბინძური"
+msgstr "Murdar"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «pmap --help»
 #: src/pmap.c:116
 #, c-format
 msgid " %s [options] PID [PID ...]\n"
-msgstr " %s [options] PID [PID ...]\n"
+msgstr " %s [opțiuni] PID [PID ...]\n"
 
 #: src/pmap.c:118
 msgid " -x, --extended              show details\n"
-msgstr " -x, --extended              დეტალების ჩვენება\n"
+msgstr " -x, --extended              afișează detaliile\n"
 
 #: src/pmap.c:119
 msgid " -X                          show even more details\n"
-msgstr " -X                          კიდევ უფრო მეტი დეტალის ჩვენება\n"
+msgstr " -X                          afișează și mai multe detalii\n"
 
 #: src/pmap.c:120
 msgid "            WARNING: format changes according to /proc/PID/smaps\n"
-msgstr ""
+msgstr "            AVERTISMENT: formatul se modifică în funcție de /proc/PID/smaps\n"
 
 #: src/pmap.c:121
 msgid " -XX                         show everything the kernel provides\n"
-msgstr ""
+msgstr " -XX                         afișează toate mesajele ce le oferă nucleul\n"
 
 #: src/pmap.c:122
 msgid " -c, --read-rc               read the default rc\n"
-msgstr " -c, --read-rc               ნაგულისხმები rc-ის წაკითხვა\n"
+msgstr " -c, --read-rc               citește configurarea din fișierul „rc” implicit\n"
 
 #: src/pmap.c:123
 msgid " -C, --read-rc-from=<file>   read the rc from file\n"
-msgstr ""
+msgstr " -C, --read-rc-from=<fișier> citește configurarea din fișierul <fișier>\n"
 
 #: src/pmap.c:124
 msgid " -n, --create-rc             create new default rc\n"
-msgstr ""
+msgstr " -n, --create-rc             creează un nou fișier de configurare implicit „~/.pmaprc”\n"
 
 #: src/pmap.c:125
 msgid " -N, --create-rc-to=<file>   create new rc to file\n"
 msgstr ""
+" -N, --create-rc-to=<fișier> creează un nou fișier de configurare în\n"
+"                             „calea-la/<fișier>”\n"
 
 #: src/pmap.c:126
 msgid "            NOTE: pid arguments are not allowed with -n, -N\n"
-msgstr ""
+msgstr "            NOTĂ: argumentele pid nu sunt permise cu opțiunile „-n”, „-N”\n"
 
 #: src/pmap.c:127
 msgid " -d, --device                show the device format\n"
-msgstr " -d, --device                მოწყობილობის ფორმატის ჩვენება\n"
+msgstr " -d, --device                afișează formatul dispozitivului\n"
 
 #: src/pmap.c:128
 msgid " -q, --quiet                 do not display header and footer\n"
-msgstr ""
+msgstr " -q, --quiet                 nu afișează antetul și notele de subsol\n"
 
 #: src/pmap.c:129
 msgid " -p, --show-path             show path in the mapping\n"
-msgstr ""
+msgstr " -p, --show-path             afișează calea în coloana de asociere\n"
 
 #: src/pmap.c:130
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
-msgstr ""
+msgstr " -A, --range=<jos>[,<sus>]   limitează rezultatele la intervalul dat\n"
 
 #: src/pmap.c:211
 msgid "shared memory detach"
-msgstr "გაზიარებული მეხსიერების მოხსნა"
+msgstr "detașare memorie partajată"
 
 #: src/pmap.c:216
 msgid "shared memory remove"
-msgstr "გაზიარებული მეხსიერების წაშლა"
+msgstr "eliminare memorie partajată"
 
 #: src/pmap.c:241
 msgid "  [ anon ]"
-msgstr ""
+msgstr "  [ anon ]"
 
 #: src/pmap.c:244
 msgid "  [ stack ]"
-msgstr ""
+msgstr "  [ stivă ]"
 
 #: src/pmap.c:330 src/pmap.c:336
 msgid "Unknown format in smaps file!"
-msgstr ""
+msgstr "Format necunoscut în fișierul smaps!"
 
 #: src/pmap.c:361
 msgid "ERROR: memory allocation failed"
-msgstr "მეხსიერების გამოყოფის შეცდომა"
+msgstr "EROARE: alocarea memoriei a eșuat"
 
 #: src/pmap.c:378
 msgid "inconsistent detail field in smaps file, line:\n"
-msgstr ""
+msgstr "câmp de detaliu inconsecvent în fișierul smaps, linia:\n"
 
 #: src/pmap.c:725
 msgid "total kB"
-msgstr "სულ კბ"
+msgstr "total ko"
 
 #: src/pmap.c:736
 #, c-format
 msgid "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"
-msgstr ""
+msgstr "atribuit: %ldK    inscriptibil/privat: %ldK    partajat: %ldK\n"
 
 #. Translation Hint: keep total string length
 #. * as 24 characters. Adjust %16 if needed
 #: src/pmap.c:745
 #, c-format
 msgid " total %16ldK\n"
-msgstr " სულ %16ldკ\n"
+msgstr " total %16ldK\n"
 
 #. Translation Hint: keep total string length
 #. * as 16 characters. Adjust %8 if needed
 #: src/pmap.c:751
 #, c-format
 msgid " total %8ldK\n"
-msgstr " სულ %8ldკ\n"
+msgstr " total %8ldK\n"
 
 #: src/pmap.c:826
 #, c-format
 msgid "config line too long - line %d"
-msgstr "კონფიგურაციის ხაზი ძალიან გრძელია - ხაზი: %d"
+msgstr "linia de configurare este prea lungă - linia %d"
 
 #: src/pmap.c:851
 #, c-format
 msgid "unsupported section found in the config - line %d"
-msgstr ""
+msgstr "secțiune neacceptată găsită în linia de configurare %d"
 
 #: src/pmap.c:854 src/pmap.c:865 src/pmap.c:876 src/pmap.c:895 src/pmap.c:907
 #, c-format
 msgid "syntax error found in the config - line %d"
-msgstr ""
+msgstr "eroare de sintaxă găsită în linia de configurare %d"
 
 #: src/pmap.c:929
 msgid "the file already exists - delete or rename it first"
-msgstr ""
+msgstr "fișierul există deja - ștergeți-l sau redenumiți-l mai întâi"
 
 #: src/pmap.c:992
 msgid "HOME variable undefined"
-msgstr "გარემოს ცვლადი HOME აღწერილი არაა"
+msgstr "Variabila HOME nedefinită"
 
 #: src/pmap.c:1000
 msgid "memory allocation failed"
-msgstr "მეხსიერების გამოყოფის შეცდომა"
+msgstr "alocarea memoriei a eșuat"
 
 #: src/pmap.c:1051
 msgid "option -r is ignored as SunOS compatibility"
-msgstr ""
+msgstr "opțiunea „-r” este ignorată pentru compatibilitate cu SunOS"
 
 #: src/pmap.c:1098
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
-msgstr ""
+msgstr "opțiunile „-c”, „-C”, „-d”, „-n”, „-N”, „-x”, „-X” se exclud reciproc"
 
 #: src/pmap.c:1101
 msgid "options -p, -q are mutually exclusive with -n, -N"
-msgstr ""
+msgstr "opțiunile „-p”, „-q” se exclud reciproc cu „-n”, „-N”"
 
 #: src/pmap.c:1104 src/pmap.c:1153
 msgid "too many arguments"
-msgstr "მეტისმეტად ბევრი არგუმენტი"
+msgstr "prea multe argumente"
 
 #: src/pmap.c:1108
 msgid "rc file successfully created, feel free to edit the content"
-msgstr ""
+msgstr "fișierul de configurare „rc” a fost creat cu succes, nu ezitați să editați conținutul acestuia"
 
 #: src/pmap.c:1111
 msgid "couldn't create the rc file"
-msgstr "rc ფაილის შექმნა შეუძლებელია"
+msgstr "nu s-a putut crea fișierul de configurare „rc”"
 
 #: src/pmap.c:1123
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
-msgstr ""
+msgstr "Fișierul „~/.%src” a fost creat cu succes, nu ezitați să editați conținutul acestuia"
 
 #: src/pmap.c:1126
 #, c-format
 msgid "couldn't create ~/.%src"
-msgstr "~/.%src-ის შექმნის შეცდომა"
+msgstr "nu s-a putut crea fișierul „~/.%src”"
 
 #: src/pmap.c:1131
 msgid "argument missing"
-msgstr "ნაკლული არგუმენტი"
+msgstr "lipsește argumentul"
 
 #: src/pmap.c:1144
 msgid "couldn't read the rc file"
-msgstr "rc ფაილის წაკითხვის შეცდომა"
+msgstr "nu s-a putut citii fișierul de configurare „rc”"
 
 #: src/pmap.c:1146
 #, c-format
 msgid "couldn't read ~/.%src"
-msgstr "~/.%src-ის წაკითხვის შეცდომა"
+msgstr "nu s-a putut citii fișierul „~/.%src”"
 
 #: src/pmap.c:1155 src/pmap.c:1180
 msgid "library failed pids statistics"
-msgstr ""
+msgstr "biblioteca a eșuat în statisticile de pid"
 
 #: src/ps/display.c:57
 #, c-format
 msgid "Signal %d (%s) caught by %s (%s).\n"
-msgstr ""
+msgstr "Semnalul %d (%s) a fost captat de %s (%s).\n"
 
 #: src/ps/display.c:71 src/ps/display.c:248 src/ps/display.c:403
 #: src/ps/output.c:2322 src/ps/parser.c:495 src/ps/parser.c:742
 #: src/ps/select.c:92 src/ps/sortformat.c:259 src/ps/sortformat.c:297
 #: src/ps/sortformat.c:545
 msgid "please report this bug"
-msgstr "გთხოვთ გადააგზავნოთ ანგარიში ამ შეცდომის შესახებ"
+msgstr "raportați acestă eroare"
 
 #: src/ps/display.c:311 src/ps/display.c:480
 #, c-format
 msgid "fatal library error, reap\n"
-msgstr "ბიბლიოთეკის ფატალური შეცდომა, reap\n"
+msgstr "eroare fatală de bibliotecă, reap\n"
 
 #: src/ps/display.c:361
 #, c-format
 msgid "could not find ppid\n"
-msgstr "ppid-ის პოვნის შეცდომა\n"
+msgstr "nu s-a putut găsi ppid\n"
 
 #: src/ps/display.c:371
 #, c-format
 msgid "could not find start_time\n"
-msgstr "start_time-ის პოვნის შეცდომა\n"
+msgstr "nu s-a putut găsi start_time\n"
 
 #: src/ps/global.c:281
 #, c-format
 msgid "your %dx%d screen size is bogus. expect trouble\n"
-msgstr ""
+msgstr "dimensiunea ecranului dumneavoastră %dx%d este falsă. Așteptați-vă la probleme\n"
 
 #: src/ps/global.c:354 src/ps/global.c:366
 msgid "environment specified an unknown personality"
-msgstr ""
+msgstr "mediul a specificat o personalitate necunoscută"
 
 #: src/ps/global.c:358
 #, c-format
 msgid "cannot strdup() personality text\n"
-msgstr ""
+msgstr "textul de personalitate nu poate fi duplicat cu strdup()\n"
 
 #: src/ps/global.c:489
 #, c-format
 msgid "fatal library error, context\n"
-msgstr ""
+msgstr "eroare fatală de bibliotecă, context\n"
 
 #: src/ps/global.c:497
 #, c-format
 msgid "fatal library error, lookup self\n"
-msgstr ""
+msgstr "eroare fatală de bibliotecă, căutare a ei însăși\n"
 
+# R-GC, scrie:
+# ***
+# Lăsat neschimbat, pentru a nu altera
+# compotamentul/funcționarea lui «ps».
+# ***
+# Dacă se traduce, va apărea, așa:
+# „ps --ajutor”, cînd se rulează comanda:
+# «ps -h», dacă se încearcă rularea
+# comenzii: «ps --help», va apărea
+# un mesaj de eroare, spunînd că
+# opțiunea lungă este necunoscută.
 #. Translation Note:
 #. . The following translatable word will be used to recognize the
 #. . user's request for help text.  In other words, the translation
@@ -799,7 +886,7 @@ msgstr ""
 #.
 #: src/ps/global.c:536
 msgid "help"
-msgstr "დახმარება"
+msgstr "help"
 
 #. Translation Notes for ps Help #1 ---------------------------------
 #. .  This next group of lines represents 6 pairs of words + abbreviations
@@ -824,8 +911,13 @@ msgstr "დახმარება"
 #. Translation Hint, Pair #1
 #: src/ps/help.c:63
 msgid "simple"
-msgstr "მარტივი"
+msgstr "simple(simplu)"
 
+# R-GC, scrie:
+# ***
+# Lăsat neschimbat, pentru a nu altera
+# compotamentul/funcționarea lui «ps».
+# ***
 #: src/ps/help.c:63
 msgid "s"
 msgstr "s"
@@ -833,8 +925,13 @@ msgstr "s"
 #. Translation Hint, Pair #2
 #: src/ps/help.c:65
 msgid "list"
-msgstr "სია"
+msgstr "list(listă)"
 
+# R-GC, scrie:
+# ***
+# Lăsat neschimbat, pentru a nu altera
+# compotamentul/funcționarea lui «ps».
+# ***
 #: src/ps/help.c:65
 msgid "l"
 msgstr "l"
@@ -842,8 +939,13 @@ msgstr "l"
 #. Translation Hint, Pair #3
 #: src/ps/help.c:67
 msgid "output"
-msgstr "გამოტანა"
+msgstr "output(ieșire)"
 
+# R-GC, scrie:
+# ***
+# Lăsat neschimbat, pentru a nu altera
+# compotamentul/funcționarea lui «ps».
+# ***
 #: src/ps/help.c:67
 msgid "o"
 msgstr "o"
@@ -851,8 +953,13 @@ msgstr "o"
 #. Translation Hint, Pair #4
 #: src/ps/help.c:69
 msgid "threads"
-msgstr "ნაკადები"
+msgstr "threads(fire)"
 
+# R-GC, scrie:
+# ***
+# Lăsat neschimbat, pentru a nu altera
+# compotamentul/funcționarea lui «ps».
+# ***
 #: src/ps/help.c:69
 msgid "t"
 msgstr "t"
@@ -860,21 +967,35 @@ msgstr "t"
 #. Translation Hint, Pair #5
 #: src/ps/help.c:71
 msgid "misc"
-msgstr "სხვ"
+msgstr "misc(diverse)"
 
+# R-GC, scrie:
+# ***
+# Lăsat neschimbat, pentru a nu altera
+# compotamentul/funcționarea lui «ps».
+# ***
 #: src/ps/help.c:71
 msgid "m"
-msgstr "მილი"
+msgstr "m"
 
 #. Translation Hint, Pair #6
 #: src/ps/help.c:73
 msgid "all"
-msgstr "ყველა"
+msgstr "all(toate)"
 
+# R-GC, scrie:
+# ***
+# Lăsat neschimbat, pentru a nu altera
+# compotamentul/funcționarea lui «ps».
+# ***
 #: src/ps/help.c:73
 msgid "a"
 msgstr "a"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «ps --help»
 #: src/ps/help.c:94
 #, c-format
 msgid ""
@@ -883,8 +1004,8 @@ msgid ""
 " %s [options]\n"
 msgstr ""
 "\n"
-"გამოყენება:\n"
-" %s [პარამეტრები]\n"
+"Utilizare:\n"
+" %s [opțiuni]\n"
 
 #: src/ps/help.c:99
 msgid ""
@@ -892,39 +1013,39 @@ msgid ""
 "Basic options:\n"
 msgstr ""
 "\n"
-"ძირითადი პარამეტრები:\n"
+"Opțiuni de bază:\n"
 
 #: src/ps/help.c:100
 msgid " -A, -e               all processes\n"
-msgstr " -A, -e               ყველა პროცესი\n"
+msgstr " -A, -e               toate procesele\n"
 
 #: src/ps/help.c:101
 msgid " -a                   all with tty, except session leaders\n"
-msgstr ""
+msgstr " -a                   toate procesele cu un tty, cu excepția liderilor de sesiune\n"
 
 #: src/ps/help.c:102
 msgid "  a                   all with tty, including other users\n"
-msgstr ""
+msgstr "  a                   toate procesele cu un tty, inclusiv ale altor utilizatori\n"
 
 #: src/ps/help.c:103
 msgid " -d                   all except session leaders\n"
-msgstr ""
+msgstr " -d                   toate procesele, cu excepția liderilor de sesiune\n"
 
 #: src/ps/help.c:104
 msgid " -N, --deselect       negate selection\n"
-msgstr ""
+msgstr " -N, --deselect       inversează selecția\n"
 
 #: src/ps/help.c:105
 msgid "  r                   only running processes\n"
-msgstr "  r                   მხოლოდ გაშვებული პროცესები\n"
+msgstr "  r                   doar procesele care rulează\n"
 
 #: src/ps/help.c:106
 msgid "  T                   all processes on this terminal\n"
-msgstr "  T                   მხოლოდ ამ ტერმინალის პროცესები\n"
+msgstr "  T                   toate procesele din acest terminal\n"
 
 #: src/ps/help.c:107
 msgid "  x                   processes without controlling ttys\n"
-msgstr ""
+msgstr "  x                   procese fără control al terminalelor\n"
 
 #: src/ps/help.c:110
 msgid ""
@@ -932,49 +1053,51 @@ msgid ""
 "Selection by list:\n"
 msgstr ""
 "\n"
-"სიის მიხედვით არჩევა:\n"
+"Selectare după listă:\n"
 
 #: src/ps/help.c:111
 msgid " -C <command>         command name\n"
-msgstr " -C <command>         ბრძანების სახელი\n"
+msgstr " -C <comanda>         numele comenzii\n"
 
 #: src/ps/help.c:112
 msgid " -G, --Group <GID>    real group id or name\n"
-msgstr ""
+msgstr " -G, --Group <GID>    ID-ul sau numele real al grupului\n"
 
 #: src/ps/help.c:113
 msgid " -g, --group <group>  session or effective group name\n"
-msgstr ""
+msgstr " -g, --group <grup>   sesiune sau numele efectiv al grupului\n"
 
 #: src/ps/help.c:114
 msgid " -p, p, --pid <PID>   process id\n"
-msgstr ""
+msgstr " -p, p, --pid <PID>   ID proces\n"
 
 #: src/ps/help.c:115
 msgid "        --ppid <PID>  parent process id\n"
-msgstr ""
+msgstr "        --ppid <PID>  ID-ul procesului părinte\n"
 
 #: src/ps/help.c:116
 msgid ""
 " -q, q, --quick-pid <PID>\n"
 "                      process id (quick mode)\n"
 msgstr ""
+" -q, q, --quick-pid <PID>\n"
+"                      ID-ul procesului (modul rapid)\n"
 
 #: src/ps/help.c:118
 msgid " -s, --sid <session>  session id\n"
-msgstr " -s, --sid <session>  სესიის id\n"
+msgstr " -s, --sid <session>  ID-ul sesiunii\n"
 
 #: src/ps/help.c:119
 msgid " -t, t, --tty <tty>   terminal\n"
-msgstr " -t, t, --tty <tty>   ტერმინალი\n"
+msgstr " -t, t, --tty <tty>   terminal\n"
 
 #: src/ps/help.c:120
 msgid " -u, U, --user <UID>  effective user id or name\n"
-msgstr ""
+msgstr " -u, U, --user <UID>  ID sau nume de utilizator efectiv\n"
 
 #: src/ps/help.c:121
 msgid " -U, --User <UID>     real user id or name\n"
-msgstr ""
+msgstr " -U, --User <UID>     ID sau nume de utilizator real\n"
 
 #: src/ps/help.c:122
 msgid ""
@@ -983,6 +1106,10 @@ msgid ""
 "    a comma-separated list e.g. '-u root,nobody' or\n"
 "    a blank-separated list e.g. '-p 123 4567'\n"
 msgstr ""
+"\n"
+"  Opțiunile de selecție iau drept argument fie:\n"
+"    o listă separată prin virgulă de exp. „-u root,nobody” sau\n"
+"    o listă separată prin spații de exp. „-p 123 4567”\n"
 
 #: src/ps/help.c:128
 msgid ""
@@ -990,106 +1117,113 @@ msgid ""
 "Output formats:\n"
 msgstr ""
 "\n"
-"გამოტანის ფორმატები:\n"
+"Formate de ieșire:\n"
 
 #: src/ps/help.c:129
 msgid " -F                   extra full\n"
-msgstr " -F                   დამატებით სრული\n"
+msgstr " -F                   format-complet cu elemente extra\n"
 
 #: src/ps/help.c:130
 msgid " -f                   full-format, including command lines\n"
-msgstr ""
+msgstr " -f                   format-complet, inclusiv linii de comandă\n"
 
 #: src/ps/help.c:131
 msgid "  f, --forest         ascii art process tree\n"
-msgstr ""
+msgstr "  f, --forest         arborele procesului în caractere ASCII\n"
 
 #: src/ps/help.c:132
 msgid " -H                   show process hierarchy\n"
-msgstr ""
+msgstr " -H                   arată ierarhia procesului\n"
 
 #: src/ps/help.c:133
 msgid " -j                   jobs format\n"
-msgstr " -j                   დავალების ფორმატი\n"
+msgstr " -j                   format de sarcini(lucrări)\n"
 
 #: src/ps/help.c:134
 msgid "  j                   BSD job control format\n"
-msgstr ""
+msgstr "  j                   format de control al sarcinilor BSD\n"
 
 #: src/ps/help.c:135
 msgid " -l                   long format\n"
-msgstr " -l                   გრძელი ფორმატი\n"
+msgstr " -l                   format lung\n"
 
 #: src/ps/help.c:136
 msgid "  l                   BSD long format\n"
-msgstr ""
+msgstr "  l                   format lung în stil BSD\n"
 
 #: src/ps/help.c:137
 msgid " -M, Z                add security data (for SELinux)\n"
-msgstr ""
+msgstr " -M, Z                adaugă date de securitate (pentru SELinux)\n"
 
 #: src/ps/help.c:138
 msgid " -O <format>          preloaded with default columns\n"
-msgstr ""
+msgstr " -O <format>          preîncărcat cu coloane implicite\n"
 
 #: src/ps/help.c:139
 msgid "  O <format>          as -O, with BSD personality\n"
-msgstr ""
+msgstr "  O <format>          precum „-O”, cu personalitate BSD\n"
 
 #: src/ps/help.c:140
 msgid ""
 " -o, o, --format <format>\n"
 "                      user-defined format\n"
 msgstr ""
+" -o, o, --format <format>\n"
+"                      format definit de utilizator\n"
 
 #: src/ps/help.c:142
 msgid "  -P                  add psr column\n"
-msgstr "  -d                   -h -ის მეტსახელი\n"
+msgstr "  -P                  adaugă coloana psr\n"
 
 #: src/ps/help.c:143
 msgid "  s                   signal format\n"
-msgstr "  s                   სიგნალის ფორმატი\n"
+msgstr "  s                   format de semnal\n"
 
 #: src/ps/help.c:144
 msgid "  u                   user-oriented format\n"
-msgstr ""
+msgstr "  u                   format orientat către utilizator\n"
 
 #: src/ps/help.c:145
 msgid "  v                   virtual memory format\n"
-msgstr "  v                   ვირტუალური მეხსიერების ფორმატი\n"
+msgstr "  v                   format de memorie virtuală\n"
 
 #: src/ps/help.c:146
 msgid "  X                   register format\n"
-msgstr "  X                   ფორმატის რეგისტრაცია\n"
+msgstr "  X                   format înregistrare de jurnal\n"
 
 #: src/ps/help.c:147
-msgid ""
-" -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
 msgstr ""
+" -y                   nu afișează fanioane, afișează „rss” vs. „adresă”\n"
+"                      (utilizată doar cu opțiunea cu „-l”)\n"
 
 #: src/ps/help.c:148
 msgid "     --context        display security context (for SELinux)\n"
-msgstr ""
+msgstr "     --context        afișează contextul de securitate (pentru SELinux)\n"
 
 #: src/ps/help.c:149
 msgid "     --headers        repeat header lines, one per page\n"
-msgstr ""
+msgstr "     --headers        repetă liniile de antet, câte una pe pagină\n"
 
 #: src/ps/help.c:150
 msgid "     --no-headers     do not print header at all\n"
-msgstr ""
+msgstr "     --no-headers     nu afișează deloc antetele\n"
 
 #: src/ps/help.c:151
 msgid ""
 "     --cols, --columns, --width <num>\n"
 "                      set screen width\n"
 msgstr ""
+"     --cols, --columns, --width <num>\n"
+"                      stabilesc lățimea ecranului\n"
 
 #: src/ps/help.c:153
 msgid ""
 "     --rows, --lines <num>\n"
 "                      set screen height\n"
 msgstr ""
+"     --rows, --lines <num>\n"
+"                      stabilesc înălțimea ecranului\n"
 
 #: src/ps/help.c:157
 msgid ""
@@ -1097,23 +1231,23 @@ msgid ""
 "Show threads:\n"
 msgstr ""
 "\n"
-"ნაკადების ჩვენება:\n"
+"Afișează firele de execuție:\n"
 
 #: src/ps/help.c:158
 msgid "  H                   as if they were processes\n"
-msgstr "  H                   როგორც პროცესების\n"
+msgstr "  H                   ca și când ar fi procese\n"
 
 #: src/ps/help.c:159
 msgid " -L                   possibly with LWP and NLWP columns\n"
-msgstr ""
+msgstr " -L                   eventual cu coloane LWP și NLWP\n"
 
 #: src/ps/help.c:160
 msgid " -m, m                after processes\n"
-msgstr " -m, m                პროცესების შემდეგ\n"
+msgstr " -m, m                sunt afișate, după procese\n"
 
 #: src/ps/help.c:161
 msgid " -T                   possibly with SPID column\n"
-msgstr ""
+msgstr " -T                   eventual cu coloană SPID\n"
 
 #: src/ps/help.c:164
 msgid ""
@@ -1121,49 +1255,51 @@ msgid ""
 "Miscellaneous options:\n"
 msgstr ""
 "\n"
-"სხვადასხვა პარამეტრები:\n"
+"Opțiuni diverse:\n"
 
 #: src/ps/help.c:165
 msgid " -c                   show scheduling class with -l option\n"
-msgstr ""
+msgstr " -c                   afișează clasa de programare cu opțiunea „-l”\n"
 
 #: src/ps/help.c:166
 msgid "  c                   show true command name\n"
-msgstr ""
+msgstr "  c                   afișează numele adevărat al comenzii\n"
 
 #: src/ps/help.c:167
 msgid "  e                   show the environment after command\n"
-msgstr ""
+msgstr "  e                   afișează mediul după comandă\n"
 
 #: src/ps/help.c:168
-msgid ""
-"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr ""
+"  k,    --sort        specificați ordinea de sortare după cum urmează:\n"
+"                      [+|-]cheie[,[+|-]cheie[,...]]\n"
 
 #: src/ps/help.c:169
 msgid "  L                   show format specifiers\n"
-msgstr ""
+msgstr "  L                   afișează specificatorii de format\n"
 
 #: src/ps/help.c:170
 msgid "  n                   display numeric uid and wchan\n"
-msgstr ""
+msgstr "  n                   afișează uid și wchan numeric\n"
 
 #: src/ps/help.c:171
 msgid "  S,    --cumulative  include some dead child process data\n"
-msgstr ""
+msgstr "  S,    --cumulative  include unele date asupra proceselor-copii moarte\n"
 
 #: src/ps/help.c:172
 msgid " -y                   do not show flags, show rss (only with -l)\n"
 msgstr ""
+" -y                   nu afișează fanioane, afișează „rss” (utilizată\n"
+"                      doar cu opțiunea „-l”)\n"
 
 #: src/ps/help.c:173
 msgid " -V, V, --version     display version information and exit\n"
-msgstr ""
-"  -V, V, --version                 ვერსიის ინფორმაციის ჩვენება და გასვლა\n"
+msgstr " -V, V, --version     afișează informații despre versiune și iese\n"
 
 #: src/ps/help.c:174
 msgid " -w, w                unlimited output width\n"
-msgstr ""
+msgstr " -w, w                lățime de ieșire nelimitată\n"
 
 #: src/ps/help.c:175
 #, c-format
@@ -1174,7 +1310,7 @@ msgid ""
 msgstr ""
 "\n"
 "        --%s <%s|%s|%s|%s|%s|%s>\n"
-"                      დახმარების გამოტანა და გასვლა\n"
+"                      afișează acest mesaj de ajutor și iese\n"
 
 #. Translation Notes for ps Help #2 ---------------------------------
 #. .  Most of the following c-format string is derived from the 6
@@ -1197,9 +1333,9 @@ msgid ""
 " for additional help text.\n"
 msgstr ""
 "\n"
-" დამატებითი დახმარებისთვის '%s --%s <%s|%s|%s|%s|%s|%s>'\n"
-"  ან '%s --%s <%s|%s|%s|%s|%s|%s>'\n"
-" სცადეთ.\n"
+" Încercați «%s --%s <%s|%s|%s|%s|%s|%s>»\n"
+"  sau «%s --%s <%s|%s|%s|%s|%s|%s>»\n"
+" pentru un mesaj de ajutor mai amplu.\n"
 
 #: src/ps/help.c:209
 #, c-format
@@ -1208,524 +1344,539 @@ msgid ""
 "For more details see ps(1).\n"
 msgstr ""
 "\n"
-"მეტი დეტალებისთვის იხილეთ ps(1).\n"
+"Pentru mai multe detalii consultați ps(1).\n"
 
 #: src/ps/output.c:99
 msgid "Unable to get system boot time"
-msgstr ""
+msgstr "Nu s-a putut obține ora de pornire a sistemului"
 
 #: src/ps/output.c:114
 msgid "Unable to get total memory"
-msgstr "სრული მეხსიერების მიღების შეცდომა"
+msgstr "Nu s-a putut obține memoria totală"
 
 #: src/ps/output.c:2169
 #, c-format
 msgid "fix bigness error\n"
-msgstr ""
+msgstr "remediați eroarea de mărime\n"
 
 #: src/ps/output.c:2252
 #, c-format
 msgid "bad alignment code\n"
-msgstr ""
+msgstr "cod de aliniere defectuos\n"
 
 #: src/ps/parser.c:57
 msgid "the option is exclusive: "
-msgstr ""
+msgstr "opțiunea este exclusivă: "
 
 #: src/ps/parser.c:87
 msgid "process ID list syntax error"
-msgstr ""
+msgstr "eroare de sintaxă a listei de ID-uri de proces"
 
 #: src/ps/parser.c:88 src/ps/parser.c:89
 msgid "process ID out of range"
-msgstr ""
+msgstr "ID-ul procesului în afara intervalului"
 
 #: src/ps/parser.c:102
 msgid "user name does not exist"
-msgstr ""
+msgstr "numele de utilizator nu există"
 
 #: src/ps/parser.c:108
 msgid "user ID out of range"
-msgstr ""
+msgstr "ID-ul utilizatorului în afara intervalului"
 
 #: src/ps/parser.c:121
 msgid "group name does not exist"
-msgstr ""
+msgstr "numele grupului nu există"
 
 #: src/ps/parser.c:127
 msgid "group ID out of range"
-msgstr ""
+msgstr "ID-ul grupului în afara intervalului"
 
 #: src/ps/parser.c:143 src/ps/parser.c:167
 msgid "TTY could not be found"
-msgstr ""
+msgstr "TTY (terminalul) nu a putut fi găsit"
 
 #: src/ps/parser.c:169
 msgid "list member was not a TTY"
-msgstr ""
+msgstr "elementul din listă nu era un TTY"
 
 #: src/ps/parser.c:194
 msgid "improper list"
-msgstr "არასწორი სია"
+msgstr "listă necorespunzătoare"
 
 #: src/ps/parser.c:242
 msgid "list of command names must follow -C"
-msgstr ""
+msgstr "o listă de nume de comenzi trebuie să urmeze după opțiunea „-C”, ca argument al acesteia"
 
 #: src/ps/parser.c:256
 msgid "list of real groups must follow -G"
-msgstr ""
+msgstr "opțiunea „-G”, trebuie să fie urmată de lista de grupuri reale"
 
 #: src/ps/parser.c:269
 msgid "list of jobs must follow -J"
-msgstr ""
+msgstr "opțiunea „-J”, trebuie să fie urmată de lista de sarcini"
 
 #: src/ps/parser.c:297
 msgid "format or sort specification must follow -O"
-msgstr ""
+msgstr "opțiunea „-O”, trebuie să fie urmată de specificația de format sau sortare"
 
 #: src/ps/parser.c:308
 msgid "list of PRM groups must follow -R"
-msgstr ""
+msgstr "opțiunea „-R”, trebuie să fie urmată de lista grupurilor PRM"
 
 #: src/ps/parser.c:327
 msgid "list of real users must follow -U"
-msgstr ""
+msgstr "opțiunea „-U”, trebuie să fie urmată de lista de utilizatori reali"
 
 #: src/ps/parser.c:368
 msgid "list of session leaders OR effective group names must follow -g"
-msgstr ""
+msgstr "opțiunea „-g”, trebuie să fie urmată de lista de lideri de sesiune SAU lista numelor efective de grup"
 
 #: src/ps/parser.c:379
 msgid "list of session leaders OR effective group IDs was invalid"
-msgstr ""
+msgstr "lista de lideri de sesiune SAU lista de ID-uri efective de grup a fost nevalidă"
 
 #: src/ps/parser.c:403
 msgid "format specification must follow -o"
-msgstr ""
+msgstr "opțiunea „-o”, trebuie să fie urmată de specificația de format"
 
 #: src/ps/parser.c:409
 msgid "list of process IDs must follow -p"
-msgstr ""
+msgstr "opțiunea „-p”, trebuie să fie urmată de lista de ID-uri de proces"
 
 #: src/ps/parser.c:426
 msgid "the -r option is reserved"
-msgstr "პარამეტრი -r დარეზერვებულია"
+msgstr "opțiunea „-r” este rezervată"
 
 #: src/ps/parser.c:432
 msgid "list of session IDs must follow -s"
-msgstr ""
+msgstr "opțiunea „-s”, trebuie să fie urmată de lista de ID-uri de sesiune"
 
 #: src/ps/parser.c:440
 msgid "list of terminals (pty, tty...) must follow -t"
-msgstr ""
+msgstr "opțiunea „-t”, trebuie să fie urmată de lista de terminale (pty, tty...)"
 
 #: src/ps/parser.c:448
 msgid "list of users must follow -u"
-msgstr ""
+msgstr "opțiunea „-u”, trebuie să fie urmată de lista de utilizatori"
 
 #: src/ps/parser.c:470
 msgid "must set personality to get -x option"
-msgstr ""
+msgstr "personalitatea trebuie să fie definită pentru a accesa opțiunea „-x”"
 
 #: src/ps/parser.c:485
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
-msgstr ""
+msgstr "opțiunea „-z”, trebuie să fie urmată de lista de zone (contexte, etichete, altceva?)"
 
 #: src/ps/parser.c:492
 msgid "embedded '-' among SysV options makes no sense"
-msgstr ""
+msgstr "„-” încorporat printre opțiunile SysV nu are sens"
 
 #: src/ps/parser.c:498
 msgid "unsupported SysV option"
-msgstr ""
+msgstr "opțiune SysV neacceptată"
 
 #: src/ps/parser.c:511
 msgid "cannot happen - problem #1"
-msgstr "ვერ მოხდება - პრობლემა #1"
+msgstr "nu se poate întâmpla - problema nr. 1"
 
 #: src/ps/parser.c:515
 msgid "cannot happen - problem #2"
-msgstr "ვერ მოხდება - პრობლემა #2"
+msgstr "nu se poate întâmpla - problema nr. 2"
 
 #: src/ps/parser.c:517
 msgid "second chance parse failed, not BSD or SysV"
-msgstr ""
+msgstr "a doua încercare de analizare a eșuat, nu BSD sau SysV"
 
 #: src/ps/parser.c:534
 msgid "option A is reserved"
-msgstr "პარამეტრი A დარეზერვებულია"
+msgstr "opțiunea „A” este rezervată"
 
 #: src/ps/parser.c:539
 msgid "option C is reserved"
-msgstr "პარამეტრი C დარეზერვებულია"
+msgstr "opțiunea „C” este rezervată"
 
 #: src/ps/parser.c:559
 msgid "format or sort specification must follow O"
-msgstr ""
+msgstr "opțiunea „O”, trebuie să fie urmată de specificația de format sau sortare"
 
 #: src/ps/parser.c:584
 msgid "list of users must follow U"
-msgstr ""
+msgstr "opțiunea „U”, trebuie să fie urmată de lista de utilizatori"
 
 #: src/ps/parser.c:596
 msgid "obsolete W option not supported (you have a /dev/drum?)"
-msgstr ""
+msgstr "opțiunea învechită „W”, nu este acceptată (aveți un dispozitiv „/dev/drum”?)"
 
 #: src/ps/parser.c:632 src/ps/parser.c:899 src/ps/parser.c:908
 msgid "only one heading option may be specified"
-msgstr ""
+msgstr "poate fi specificată doar o singură opțiune de antet"
 
 #: src/ps/parser.c:647
 msgid "long sort specification must follow 'k'"
-msgstr ""
+msgstr "opțiunea „k”, trebuie să fie urmată de specificația de sortare lungă"
 
 #: src/ps/parser.c:675
 msgid "format specification must follow o"
-msgstr ""
+msgstr "opțiunea „o”, trebuie să fie urmată de specificația de format"
 
 #: src/ps/parser.c:681
 msgid "list of process IDs must follow p"
-msgstr ""
+msgstr "opțiunea „p”, trebuie să fie urmată de lista de ID-uri de proces"
 
 #: src/ps/parser.c:739
 msgid "embedded '-' among BSD options makes no sense"
-msgstr ""
+msgstr "„-” încorporat printre opțiunile BSD nu are sens"
 
 #: src/ps/parser.c:745
 msgid "unsupported option (BSD syntax)"
-msgstr ""
+msgstr "opțiune neacceptată (sintaxă BSD)"
 
 #: src/ps/parser.c:831 src/ps/parser.c:843
 msgid "unknown gnu long option"
-msgstr "უცნობი GNU გრძელი პარამეტრი"
+msgstr "opțiune lungă gnu necunoscută"
 
 #: src/ps/parser.c:851
 msgid "list of real groups must follow --Group"
-msgstr "ნამდვილი ჯგუფების სია --Group-ს უნდა მოსდევდეს"
+msgstr "opțiunea „--Group”, trebuie să fie urmată de lista de grupuri reale"
 
 #: src/ps/parser.c:859
 msgid "list of real users must follow --User"
-msgstr "ნამდვლი მომხმარებლების სია --User-ს უნდა მოსდევდეს"
+msgstr "opțiunea „--User”, trebuie să fie urmată de lista de utilizatorilor reali"
 
 #: src/ps/parser.c:878
 msgid "number of columns must follow --cols, --width, or --columns"
-msgstr ""
+msgstr "opțiunile „--cols”, „--width”, sau „--columns”, trebuie să fie urmate de numărul de coloane"
 
 #: src/ps/parser.c:881
 msgid "option --cumulative does not take an argument"
-msgstr ""
+msgstr "opțiunea „--cumulative” nu acceptă un argument"
 
 #: src/ps/parser.c:886
 msgid "option --deselect does not take an argument"
-msgstr ""
+msgstr "opțiunea „--deselect” nu acceptă un argument"
 
 #: src/ps/parser.c:898
 msgid "option --no-heading does not take an argument"
-msgstr ""
+msgstr "opțiunea „--no-heading” nu acceptă un argument"
 
 #: src/ps/parser.c:907
 msgid "option --heading does not take an argument"
-msgstr ""
+msgstr "opțiunea „--heading” nu acceptă un argument"
 
 #: src/ps/parser.c:913
 msgid "option --forest does not take an argument"
-msgstr ""
+msgstr "opțiunea „--forest” nu acceptă un argument"
 
 #: src/ps/parser.c:919
 msgid "format specification must follow --format"
-msgstr ""
+msgstr "opțiunea „--format”, trebuie să fie urmată de specificația de format"
 
 #: src/ps/parser.c:925
 msgid "list of effective groups must follow --group"
-msgstr ""
+msgstr "opțiunea „--group”, trebuie să fie urmată de lista de grupuri efective"
 
 #: src/ps/parser.c:943
 msgid "list of process IDs must follow --pid"
-msgstr ""
+msgstr "opțiunea „--pid”, trebuie să fie urmată de lista de ID-uri de proces"
 
 #: src/ps/parser.c:959
 msgid "list of process IDs must follow --ppid"
-msgstr ""
+msgstr "opțiunea „--ppid”, trebuie să fie urmată de lista de ID-uri de proces (părinte)"
 
 #: src/ps/parser.c:977
 msgid "number of rows must follow --rows or --lines"
-msgstr ""
+msgstr "opțiunile „--rows” sau „--lines”, trebuie să fie urmate de numărul de linii"
 
 #: src/ps/parser.c:981
 msgid "some sid thing(s) must follow --sid"
-msgstr ""
+msgstr "opțiunea „--sid”, trebuie să fie urmată de ceva legat de sid (id-ul sesiunii)"
 
 #: src/ps/parser.c:989
 msgid "long sort specification must follow --sort"
-msgstr ""
+msgstr "opțiunea „--sort”, trebuie să fie urmată de specificația de sortare lungă"
 
 #: src/ps/parser.c:995
 msgid "list of ttys must follow --tty"
-msgstr ""
+msgstr "opțiunea „--tty”, trebuie să fie urmată de lista de terminale (pty, tty...)"
 
 #: src/ps/parser.c:1003
 msgid "list of effective users must follow --user"
-msgstr ""
+msgstr "opțiunea „--user”, trebuie să fie urmată de lista de utilizatori efectivi"
 
 #: src/ps/parser.c:1119
 msgid "way bad"
-msgstr "უარესი"
+msgstr "foarte rău"
 
 #: src/ps/parser.c:1133
 msgid "garbage option"
-msgstr "ნაგავი პარამეტრი"
+msgstr "opțiune deșeu"
 
 #: src/ps/parser.c:1137
 msgid "something broke"
-msgstr "რაღაც გაფუჭდა"
+msgstr "ceva s-a rupt"
 
 #: src/ps/parser.c:1157
 msgid "thread display conflicts with forest display"
-msgstr ""
+msgstr "afișarea firelor de execuție (o ramură a arborelui de procese) intră în conflict cu afișarea arborelui de proces(e)"
 
 #: src/ps/parser.c:1162
 msgid "thread flags conflict; can't use H with m or -m"
-msgstr ""
+msgstr "conflict ale opțiunilor firelor de execuție; nu se poate utiliza opțiunea „H” cu opțiunea „m” sau cu opțiunea „-m”"
 
 #: src/ps/parser.c:1164
 msgid "thread flags conflict; can't use both m and -m"
-msgstr ""
+msgstr "conflict ale opțiunilor firelor de execuție; nu se poate utiliza atât opțiunea „m” cât și opțiunea „-m”"
 
 #: src/ps/parser.c:1166
 msgid "thread flags conflict; can't use both -L and -T"
-msgstr ""
+msgstr "conflict ale opțiunilor firelor de execuție; nu se poate utiliza atât opțiunea „-L” cât și opțiunea „-T”"
 
 #: src/ps/parser.c:1239 src/ps/parser.c:1240
 #, c-format
 msgid "error: %s\n"
-msgstr "შეცდომა: %s\n"
+msgstr "eroare: %s.\n"
 
 #: src/ps/select.c:68
 msgid "process selection options conflict"
-msgstr "პროცესის არჩევის პარამეტრების კონფლიქტი"
+msgstr "conflict între opțiunile de selecție a(le) procesului(elor)"
 
 #: src/ps/sortformat.c:106 src/ps/sortformat.c:111
 msgid "seriously crashing: goodbye cruel world"
-msgstr ""
+msgstr "accident grav: adio, lume crudă 😈"
 
 #: src/ps/sortformat.c:146 src/ps/sortformat.c:165
 msgid "missing AIX field descriptor"
-msgstr ""
+msgstr "lipsește descriptorul de câmp AIX"
 
 #: src/ps/sortformat.c:148
 msgid "improper AIX field descriptor"
-msgstr ""
+msgstr "descriptor de câmp AIX necorespunzător"
 
 #: src/ps/sortformat.c:170
 msgid "unknown AIX field descriptor"
-msgstr ""
+msgstr "descriptor de câmp AIX necunoscut"
 
 #: src/ps/sortformat.c:175
 msgid "AIX field descriptor processing bug"
-msgstr ""
+msgstr "eroare la procesarea descriptorului de câmp AIX"
 
 #: src/ps/sortformat.c:283
 #, c-format
 msgid "unknown user-defined format specifier \"%s\""
-msgstr ""
+msgstr "specificator de format definit de utilizator, necunoscut „%s”"
 
 #: src/ps/sortformat.c:310
 msgid "empty format list"
-msgstr "ფორმატების ცარიელი სია"
+msgstr "lista de format este goală"
 
 #: src/ps/sortformat.c:311
 msgid "improper format list"
-msgstr "ფორმატების არასწორი სია"
+msgstr "lista de format este necorespunzătoare"
 
 #: src/ps/sortformat.c:312
 msgid "column widths must be unsigned decimal numbers"
-msgstr ""
+msgstr "lățimile coloanelor trebuie să fie numere zecimale fără semn"
 
+# R-GC, scrie:
+# după revizuirea fișierului, DȘ spune:
+# msgstr ""
+# "nu se poate definii lățimea pentru un specificator de format macro (cu mai "
+# "multe coloane)"
+# → aici cred că „definii” ar trebui să aibă doar un singur „i” la coadă.
+# ***
+# Ok, corecție aplicată!
 #: src/ps/sortformat.c:313
 msgid "can not set width for a macro (multi-column) format specifier"
-msgstr ""
+msgstr "nu se poate defini lățimea pentru un specificator de format macro (cu mai multe coloane)"
 
 #: src/ps/sortformat.c:367 src/ps/sortformat.c:383
 msgid "improper sort list"
-msgstr "დალაგების არასწორი სია"
+msgstr "listă de sortare necorespunzătoare"
 
 #: src/ps/sortformat.c:378
 msgid "empty sort list"
-msgstr "ცააარიელი დალაგების სია"
+msgstr "listă de sortare goală"
 
 #: src/ps/sortformat.c:399 src/ps/sortformat.c:478 src/ps/sortformat.c:480
 msgid "unknown sort specifier"
-msgstr "უცნობი დალაგების მიმთითებელი"
+msgstr "specificator de sortare necunoscut"
 
 #: src/ps/sortformat.c:426 src/ps/sortformat.c:431 src/ps/sortformat.c:438
 #: src/ps/sortformat.c:444
 msgid "bad sorting code"
-msgstr "არასწორი დალაგების კოდი"
+msgstr "cod de sortare incorect"
 
 #: src/ps/sortformat.c:441
 msgid "PPID sort and forest output conflict"
-msgstr ""
+msgstr "conflict între afișarea arborelui de procese și afișarea sortării PPID"
 
 #: src/ps/sortformat.c:515
 msgid "option -O can not follow other format options"
-msgstr ""
+msgstr "opțiunea „-O” nu poate fi urmată de alte opțiuni de format"
 
 #: src/ps/sortformat.c:522 src/ps/sortformat.c:540
 msgid "multiple sort options"
-msgstr "დალაგების ბევრი პარამეტრი"
+msgstr "multiple opțiuni de sortare"
 
 #: src/ps/sortformat.c:530
 msgid "option O is neither first format nor sort order"
-msgstr ""
+msgstr "opțiunea „O” nu este nici primul format, nici ordinea de sortare"
 
 #: src/ps/sortformat.c:657
 msgid "modifier -y without format -l makes no sense"
-msgstr ""
+msgstr "opțiunea modificatoare „-y”, fără opțiunea de format „-l”, nu are niciun sens"
 
 #: src/ps/sortformat.c:756
 msgid "bug: must reset the list first"
-msgstr ""
+msgstr "eroare: trebuie mai întâi să redefiniți lista"
 
 #: src/ps/sortformat.c:793
 msgid "tell <procps@freelists.org> what you expected"
-msgstr ""
+msgstr "spuneți la <procps@freelists.org>, la ce vă așteptați"
 
 #: src/ps/sortformat.c:803
-msgid ""
-"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr ""
+msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
+msgstr "spuneți la <procps@freelists.org>, la ce vă așteptați (-L/-T, -m/m/H, și $PS_FORMAT)"
 
 #: src/ps/sortformat.c:820
 #, c-format
 msgid "warning: $PS_FORMAT ignored. (%s)\n"
-msgstr ""
+msgstr "avertisment: $PS_FORMAT ignorat. (%s)\n"
 
 #: src/ps/sortformat.c:825 src/ps/sortformat.c:835
 msgid "conflicting format options"
-msgstr "ფორმატის ურთიერთგამომრიცხავი პარამეტრები"
+msgstr "opțiuni de format în conflict"
 
 #: src/ps/sortformat.c:826
 msgid "can not use output modifiers with user-defined output"
-msgstr ""
+msgstr "nu se pot folosi modificatori de ieșire, cu ieșire definită de utilizator"
 
 #: src/ps/sortformat.c:827
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
-msgstr ""
+msgstr "-L/-T cu H/m/-m și -o/-O/o/O este un nonsens"
 
 #: src/ps/sortformat.c:885
 msgid "internal error: no PID or PPID for -j option"
-msgstr ""
+msgstr "eroare internă: fără PID sau PPID pentru opțiunea „-j”"
 
 #: src/ps/sortformat.c:887
 msgid "lost my PGID"
-msgstr "დავკარგე ჩემი PGID"
+msgstr "ps: mi-am pierdut PGID-ul"
 
 #: src/ps/sortformat.c:900
 msgid "internal error: no PRI for -c option"
-msgstr ""
+msgstr "eroare internă: fără PRI pentru opțiunea „-c”"
 
 #: src/ps/sortformat.c:903
 msgid "lost my CLS"
-msgstr "დავკარგე ჩემი CSL"
+msgstr "ps: mi-am pierdut CLS-ul"
 
 #: src/ps/sortformat.c:908
 msgid "-T with H/-m/m but no PID for SPID to follow"
-msgstr ""
+msgstr "-T cu H/-m/m, dar fără PID pentru utilizarea cu SPID"
 
 #: src/ps/sortformat.c:919
 msgid "-L with H/-m/m but no PID/PGID/SID/SESS for NLWP to follow"
-msgstr ""
+msgstr "-L cu H/-m/m, dar fără PID/PGID/SID/SESS pentru utilizare cu NLWP"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «pwdx --help»
 #: src/pwdx.c:37
 #, c-format
 msgid " %s [options] pid...\n"
-msgstr " %s [options] pid...\n"
+msgstr " %s [opțiuni] pid...\n"
 
 #: src/pwdx.c:113
 #, c-format
 msgid "invalid process id: %s"
-msgstr "პროცესის არასწორი ID: '%s'"
+msgstr "ID de proces nevalid: %s"
 
 #: src/skill.c:281
 msgid "Unable to create pid Pids_info structure"
-msgstr ""
+msgstr "Nu s-a putut crea structura pid Pids_info"
 
 #: src/skill.c:284 src/w.c:408
 msgid "Unable to load process information"
-msgstr ""
+msgstr "Nu s-au putut încărca informațiile de proces"
 
 #: src/skill.c:313
 #, c-format
 msgid " %s [signal] [options] <expression>\n"
-msgstr " %s [signal] [options] <expression>\n"
+msgstr " %s [semnal] [opțiuni] <expresie>\n"
 
 #: src/skill.c:317
 #, c-format
 msgid " %s [new priority] [options] <expression>\n"
-msgstr " %s [ახალი პრიორიტეტი] [პარამეტრები] <expression>\n"
+msgstr " %s [prioritate nouă] [opțiuni] <expresie>\n"
 
 #: src/skill.c:321
 msgid " -f, --fast         fast mode (not implemented)\n"
-msgstr " -f, --fast         სწრაფი რეჟიმი (განხორციელებული არაა)\n"
+msgstr " -f, --fast         modul rapid (nu este implementat)\n"
 
 #: src/skill.c:322
 msgid " -i, --interactive  interactive\n"
-msgstr " -i, --interactive  ინტერაქტიური\n"
+msgstr " -i, --interactive  interactiv\n"
 
 #: src/skill.c:323
 msgid " -l, --list         list all signal names\n"
-msgstr " -l, --list         ყველა სიგნალის სიის გამოტანა\n"
+msgstr " -l, --list         listează toate numele semnalelor\n"
 
 #: src/skill.c:324
 msgid " -L, --table        list all signal names in a nice table\n"
-msgstr ""
+msgstr " -L, --table        listează toate numele semnalelor într-un tabel\n"
 
 #: src/skill.c:325
-msgid ""
-" -n, --no-action    do not actually kill processes; just print what would "
-"happen\n"
-msgstr ""
+msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
+msgstr " -n, --no-action    nu omoară procesele actuale, de fapt; afișează doar ceea ce s-ar întâmpla\n"
 
 #: src/skill.c:326
 msgid " -v, --verbose      explain what is being done\n"
-msgstr ""
+msgstr " -v, --verbose      explică ce se face în fiecare moment\n"
 
 #: src/skill.c:327
 msgid " -w, --warnings     enable warnings (not implemented)\n"
-msgstr ""
+msgstr " -w, --warnings     activează avertismentele (nu este implementată)\n"
 
 #: src/skill.c:329
 msgid ""
 "Expression can be: terminal, user, pid, command.\n"
 "The options below may be used to ensure correct interpretation.\n"
 msgstr ""
+"Expresia poate fi: „terminal”, „user”, „pid”, „command”.\n"
+"Opțiunile de mai jos pot fi utilizate pentru a asigura o interpretare corectă.\n"
 
 #: src/skill.c:331
 msgid " -c, --command <command>  expression is a command name\n"
-msgstr ""
+msgstr " -c, --command <comanda>  expresia este un nume de comandă\n"
 
 #: src/skill.c:332
 msgid " -p, --pid <pid>          expression is a process id number\n"
-msgstr ""
+msgstr " -p, --pid <pid>          expresia este un număr de identificare a procesului\n"
 
 #: src/skill.c:333
 msgid " -t, --tty <tty>          expression is a terminal\n"
-msgstr ""
+msgstr " -t, --tty <tty>          expresia este un terminal\n"
 
 #: src/skill.c:334
 msgid " -u, --user <username>    expression is a username\n"
 msgstr ""
+" -u, --user <nume_ utilizator>\n"
+"                          expresia este un nume de utilizator\n"
 
 #: src/skill.c:336
 msgid "Alternatively, expression can be:\n"
-msgstr ""
+msgstr "Alternativ, expresia poate fi:\n"
 
 #: src/skill.c:337
 msgid ""
 " --ns <pid>               match the processes that belong to the same\n"
 "                          namespace as <pid>\n"
 msgstr ""
+" --ns <pid>               potrivește procesele care aparțin aceluiași\n"
+"                          spațiu de nume ca <pid>\n"
 
 #: src/skill.c:339
 msgid ""
@@ -1733,6 +1884,9 @@ msgid ""
 "                          the --ns option; available namespaces are\n"
 ":                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
+" --nslist <ns,...>        listează spațiile de nume de utilizat pentru\n"
+"                          procesare cu opțiunea „--ns”; spațiile de nume\n"
+"                          disponibile, sunt: ipc, mnt, net, pid, user, uts\n"
 
 #: src/skill.c:349
 #, c-format
@@ -1742,6 +1896,11 @@ msgid ""
 "Particularly useful signals include HUP, INT, KILL, STOP, CONT, and 0.\n"
 "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
 msgstr ""
+"\n"
+"Semnalul implicit este TERM.\n"
+"Utilizați „-l” sau „-L” pentru a enumera semnalele disponibile.\n"
+"Semnalele deosebit de utile includ HUP, INT, KILL, STOP, CONT și 0.\n"
+"Semnalele alternative pot fi specificate în trei moduri: -SIGKILL -KILL -9\n"
 
 #: src/skill.c:356
 #, c-format
@@ -1751,335 +1910,372 @@ msgid ""
 "Priority numbers range from +20 (slowest) to -20 (fastest).\n"
 "Negative priority numbers are restricted to administrative users.\n"
 msgstr ""
+"\n"
+"Prioritatea implicită este +4. (snice +4...)\n"
+"Numerele de prioritate sunt cuprinse între +20 (cel mai lent) și -20 (cel mai rapid).\n"
+"Numerele de prioritate negative, sunt limitate la utilizatorii administrativi.\n"
 
 #: src/skill.c:378
 #, c-format
 msgid "priority %lu out of range"
-msgstr ""
+msgstr "prioritatea %lu este în afara intervalului"
 
 #: src/skill.c:487
 #, c-format
 msgid "invalid pid number %s"
-msgstr "არასწორი pid რიცხვი: %s"
+msgstr "număr pid nevalid %s"
 
 #: src/skill.c:491
 msgid "error reading reference namespace information"
-msgstr ""
+msgstr "eroare la citirea informațiilor despre spațiul de nume de referință"
 
 #: src/skill.c:499
 msgid "invalid namespace list"
-msgstr "არასწორი სახელების სივრცის სია"
+msgstr "listă de spații de nume nevalidă"
 
 #: src/skill.c:536
 msgid "no process selection criteria"
-msgstr ""
+msgstr "nu există criterii de selecție a procesului"
 
 #: src/skill.c:539
 msgid "general flags may not be repeated"
-msgstr ""
+msgstr "opțiunile generale nu pot fi repetate"
 
 #: src/skill.c:542
 msgid "-i makes no sense with -v, -f, and -n"
-msgstr ""
+msgstr "opțiunea „-i” nu are niciun sens cu „-v”, „-f” și „-n”"
 
 #: src/skill.c:544
 msgid "-v makes no sense with -i and -f"
-msgstr ""
+msgstr "opțiunea „-v” nu are niciun sens cu „-i” și „-f”"
 
 #: src/skill.c:588
 #, c-format
 msgid "skill: \"%s\" is not supported\n"
-msgstr ""
+msgstr "skill: „%s” nu este acceptată\n"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «slabtop --help»
+# =============
+# după revizuirea fișierului, DȘ spune:
+# "... întârzierea între actualizări (intervalul de actualizare)\n"
+# → aici cred că ar fi mai pe înțeles: „întârzie actualizările (număr de secunde pentru întârziere)”
+# ***
+# nu mi se pare c-ar fi mai pe înțeles, datorită
+# faptului că:
+# „întîrzie actulizările” = face ca actualizările să se
+# efectueze (mai) tîrziu | întîrzie momentul actualizării(lor)
+# .
+# în schimb, ce este între paranteze, articulînd
+# primul cuvînt care apare; mi se pare că aduce
+# un plus de claritate definiției
+# *****
+# din aceste ideii, a fost (re)plăsmuit mesajul, la
+# forma ce se poate vedea
 #: src/slabtop.c:106
 msgid " -d, --delay <secs>  delay updates\n"
-msgstr " -d, --delay <secs>  განახლებების დაყოვნება\n"
+msgstr ""
+" -d, --delay <sec>   întârzierea dintre actualizări (intervalul de actualizare;\n"
+"                     sec = numărul de secunde pentru întârziere)\n"
 
 #: src/slabtop.c:107
 msgid " -o, --once          only display once, then exit\n"
-msgstr " -o, --once          ერთხელ ჩვენება და გასვლა\n"
+msgstr " -o, --once          se afișează o singură dată, apoi se iese\n"
 
 #: src/slabtop.c:108
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
 msgstr ""
+" -s, --sort <caracter>\n"
+"                     specifică criteriile de sortare după caracter\n"
+"                     (vedeți mai jos, detaliile )\n"
 
 #: src/slabtop.c:113
 msgid ""
 "\n"
 "The following are valid sort criteria:\n"
 msgstr ""
+"\n"
+"Următoarele sunt criterii de sortare valide:\n"
 
 #: src/slabtop.c:114
 msgid " a: sort by number of active objects\n"
-msgstr ""
+msgstr " a: sortează după numărul de obiecte active\n"
 
 #: src/slabtop.c:115
 msgid " b: sort by objects per slab\n"
-msgstr ""
+msgstr " b: sortează după numărul de obiecte „slab”\n"
 
 #: src/slabtop.c:116
 msgid " c: sort by cache size\n"
-msgstr ""
+msgstr " c: sortează după dimensiunea memoriei tampon\n"
 
 #: src/slabtop.c:117
 msgid " l: sort by number of slabs\n"
-msgstr ""
+msgstr " l: sortează după numărul de „slabs”\n"
 
 #: src/slabtop.c:118
 msgid " v: sort by (non display) number of active slabs\n"
-msgstr ""
+msgstr " v: sortează după (nu afișează) numărul de „slabs” active\n"
 
 #: src/slabtop.c:119
 msgid " n: sort by name\n"
-msgstr ""
+msgstr " n: sortează după nume\n"
 
 #: src/slabtop.c:120
 msgid " o: sort by number of objects (the default)\n"
-msgstr ""
+msgstr " o: sortează după numărul de obiecte (opțiunea implicită)\n"
 
 #: src/slabtop.c:121
 msgid " p: sort by (non display) pages per slab\n"
-msgstr ""
+msgstr " p: sortează după (nu afișează) numărul de pagini per „slab”\n"
 
 #: src/slabtop.c:122
 msgid " s: sort by object size\n"
-msgstr ""
+msgstr " s: sortează după dimensiunea obiectelor\n"
 
 #: src/slabtop.c:123
 msgid " u: sort by cache utilization\n"
-msgstr ""
+msgstr " u: sortează după utilizarea memoriei tampon\n"
 
 #: src/slabtop.c:186 src/slabtop.c:197
 msgid "Cannot combine -d and -o options"
-msgstr ""
+msgstr "Nu se pot combina opțiunile „-d” și „-o”"
 
 #: src/slabtop.c:188
 msgid "illegal delay"
-msgstr "არასწორი დაყოვნება"
+msgstr "întârziere incorectă"
 
 #: src/slabtop.c:190 src/tload.c:142 src/vmstat.c:1046
 msgid "delay must be positive integer"
-msgstr "დაყოვნება დადებითი მთელი რიცხვი უნდა იყოს"
+msgstr "întârzierea trebuie să fie un număr întreg pozitiv"
 
 #: src/slabtop.c:234
 msgid "Error getting slab summary results"
-msgstr ""
+msgstr "Eroare la obținerea rezultatelor rezumatului „slab”"
 
 #. Translation Hint: Next five strings must not
 #. * exceed a length of 35 characters.
 #: src/slabtop.c:240
 #, no-c-format
 msgid "Active / Total Objects (% used)"
-msgstr ""
+msgstr "Active/Total obiecte (%u utilizate)"
 
 #: src/slabtop.c:246
 #, no-c-format
 msgid "Active / Total Slabs (% used)"
-msgstr ""
+msgstr "Active/Total Slabs (%u utilizate)"
 
 #: src/slabtop.c:252
 #, no-c-format
 msgid "Active / Total Caches (% used)"
-msgstr ""
+msgstr "Active/Total MemTamp (%u utilizată)"
 
 #: src/slabtop.c:258
 #, no-c-format
 msgid "Active / Total Size (% used)"
-msgstr ""
+msgstr "Active/Dim. totală (%u utilizată)"
 
 #: src/slabtop.c:263
 msgid "Minimum / Average / Maximum Object"
-msgstr ""
+msgstr "Minim / Mediu / Maxim obiect"
 
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
 #: src/slabtop.c:274
 msgid "  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
-msgstr ""
+msgstr "  OBJS ACTIVE  USE OBJ DIM.  SLABS OBJ/SLAB MTamp DIM. NUME"
 
 #: src/slabtop.c:311 src/vmstat.c:764
 msgid "Unable to create slabinfo structure"
-msgstr ""
+msgstr "Nu se poate crea structura de informații „slab”"
 
 #: src/slabtop.c:316
 msgid "terminal setting retrieval"
-msgstr ""
+msgstr "se preiau configurările terminalului"
 
 #: src/slabtop.c:332 src/vmstat.c:771
 msgid "Unable to get slabinfo node data"
-msgstr ""
+msgstr "Nu s-au putut obține date despre nodul de informații „slab”"
 
 #: src/slabtop.c:338 src/vmstat.c:773
 msgid "Unable to sort slab nodes"
-msgstr ""
+msgstr "Nu s-au putut sorta nodurile „slab”"
 
 #: src/sysctl.c:113
 #, c-format
 msgid "Path is not under %s: %s"
-msgstr ""
+msgstr "Calea nu este sub %s: %s"
 
 #: src/sysctl.c:131
 #, c-format
 msgid "separators should not be repeated: %s"
-msgstr ""
+msgstr "separatorii nu trebuie să se repete: %s"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «sysctl --help»
 #: src/sysctl.c:227
 #, c-format
 msgid " %s [options] [variable[=value] ...]\n"
-msgstr ""
+msgstr " %s [opțiuni] [variabilă[=valoare] ...]\n"
 
 #: src/sysctl.c:230
 msgid "  -a, --all            display all variables\n"
-msgstr ""
+msgstr "  -a, --all            afișează toate variabilele\n"
 
 #: src/sysctl.c:231
 msgid "  -A                   alias of -a\n"
-msgstr ""
+msgstr "  -A                   alias de „-a”\n"
 
 #: src/sysctl.c:232
 msgid "  -X                   alias of -a\n"
-msgstr ""
+msgstr "  -X                   alias de „-a”\n"
 
 #: src/sysctl.c:233
 msgid "      --deprecated     include deprecated parameters to listing\n"
-msgstr ""
+msgstr "      --deprecated     include parametri învechiți în listare\n"
 
 #: src/sysctl.c:234
 msgid "      --dry-run        Print the key and values but do not write\n"
-msgstr ""
+msgstr "      --dry-run        afișează cheia și valorile, dar nu le scrie\n"
 
 #: src/sysctl.c:235
 msgid "  -b, --binary         print value without new line\n"
-msgstr ""
+msgstr "  -b, --binary         afișează valoarea fără linie nouă\n"
 
 #: src/sysctl.c:236
 msgid "  -e, --ignore         ignore unknown variables errors\n"
-msgstr ""
+msgstr "  -e, --ignore         ignoră erorile variabilelor necunoscute\n"
 
 #: src/sysctl.c:237
 msgid "  -N, --names          print variable names without values\n"
-msgstr ""
+msgstr "  -N, --names          afișează numele variabilelor fără valori\n"
 
 #: src/sysctl.c:238
 msgid "  -n, --values         print only values of the given variable(s)\n"
-msgstr ""
+msgstr "  -n, --values         afișează numai valorile variabilelor date\n"
 
 #: src/sysctl.c:239
 msgid "  -p, --load[=<file>]  read values from file\n"
 msgstr ""
+"  -p, --load[=<fișier>]\n"
+"                       citește valorile din fișier\n"
 
 #: src/sysctl.c:240
 msgid "  -f                   alias of -p\n"
-msgstr ""
+msgstr "  -f                   alias de „-p”\n"
 
 #: src/sysctl.c:241
 msgid "      --system         read values from all system directories\n"
-msgstr ""
+msgstr "      --system         citește valorile din toate directoarele de sistem\n"
 
 #: src/sysctl.c:242
 msgid ""
 "  -r, --pattern <expression>\n"
 "                       select setting that match expression\n"
 msgstr ""
+"  -r, --pattern <expresie>\n"
+"                       selectează configurarea care se potrivește cu expresia\n"
 
 #: src/sysctl.c:244
 msgid "  -q, --quiet          do not echo variable set\n"
-msgstr ""
+msgstr "  -q, --quiet          nu afișează setul de variabile(perechile var.=val.)\n"
 
 #: src/sysctl.c:245
 msgid "  -w, --write          enable writing a value to variable\n"
-msgstr ""
+msgstr "  -w, --write          activează scrierea unei valori în variabilă\n"
 
 #: src/sysctl.c:246
 msgid "  -o                   does nothing\n"
-msgstr ""
+msgstr "  -o                   nu face nimic\n"
 
 #: src/sysctl.c:247
 msgid "  -x                   does nothing\n"
-msgstr ""
+msgstr "  -x                   nu face nimic\n"
 
 #: src/sysctl.c:248
 msgid "  -d                   alias of -h\n"
-msgstr "  -d                   -h -ის მეტსახელი\n"
+msgstr "  -d                   alias de „-h”\n"
 
 #: src/sysctl.c:329 src/sysctl.c:390
 #, c-format
 msgid "\"%s\" is an unknown key"
-msgstr "\"%s\" არასწორი გასაღბია"
+msgstr "„%s” este o cheie necunoscută"
 
 #: src/sysctl.c:352 src/sysctl.c:508 src/sysctl.c:545
 #, c-format
 msgid "cannot stat %s"
-msgstr "%s-ის აღმოჩენის შეცდომა"
+msgstr "nu se poate obține starea %s"
 
 #: src/sysctl.c:395 src/sysctl.c:437
 #, c-format
 msgid "permission denied on key '%s'"
-msgstr ""
+msgstr "permisiunea a fost refuzată pentru cheia „%s”"
 
 #: src/sysctl.c:402 src/sysctl.c:454
 #, c-format
 msgid "reading key \"%s\""
-msgstr ""
+msgstr "se citește cheia „%s”"
 
 #: src/sysctl.c:492
 #, c-format
 msgid "unable to open directory \"%s\""
-msgstr "საქაღალდის გახსნის შეცდომა: \"%s\""
+msgstr "nu se poate deschide directorul „%s”"
 
 #: src/sysctl.c:557
 msgid "strdup key"
-msgstr ""
+msgstr "cheie strdup"
 
 #: src/sysctl.c:563 src/sysctl.c:569 src/sysctl.c:602
 #, c-format
 msgid "setting key \"%s\""
-msgstr ""
+msgstr "se configurează cheia „%s”"
 
 #: src/sysctl.c:579
 #, c-format
 msgid "\"%s\" is an unknown key%s"
-msgstr ""
+msgstr "„%s” este o cheie necunoscută%s"
 
 #: src/sysctl.c:580 src/sysctl.c:589 src/sysctl.c:593
 msgid ", ignoring"
-msgstr ", იგნორირება"
+msgstr ", se ignoră"
 
 #: src/sysctl.c:588
 #, c-format
 msgid "permission denied on key \"%s\"%s"
-msgstr ""
+msgstr "permisiunea a fost refuzată pentru cheia „%s”%s"
 
 #: src/sysctl.c:592
 #, c-format
 msgid "setting key \"%s\"%s"
-msgstr ""
+msgstr "se configurează cheia „%s”%s"
 
 #: src/sysctl.c:667
 #, c-format
 msgid "%s(%d): invalid syntax, continuing..."
-msgstr ""
+msgstr "%s(%d): sintaxă nevalidă, se continuă..."
 
 #: src/sysctl.c:759
 #, c-format
-msgid ""
-"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
-"expanded."
-msgstr ""
+msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
+msgstr "GLOB_TILDE nu este acceptată pe platforma dumneavoastră, tilde din „%s” nu va fi extinsă."
 
 #: src/sysctl.c:765
 msgid "glob failed"
-msgstr ""
+msgstr "glob() a eșuat"
 
 #: src/sysctl.c:771
 #, c-format
 msgid "cannot open \"%s\""
-msgstr ""
+msgstr "nu se poate deschide „%s”"
 
 #: src/sysctl.c:875 src/sysctl.c:882
 #, c-format
 msgid "* Applying %s ...\n"
-msgstr ""
+msgstr "* Se aplică %s...\n"
 
 #: src/sysctl.c:1048
 #, c-format
@@ -2087,6 +2283,8 @@ msgid ""
 "no variables specified\n"
 "Try `%s --help' for more information."
 msgstr ""
+"nicio variabilă specificată\n"
+"Încercați «%s --help» pentru informații suplimentare."
 
 #: src/sysctl.c:1052
 #, c-format
@@ -2094,51 +2292,61 @@ msgid ""
 "options -N and -q cannot coexist\n"
 "Try `%s --help' for more information."
 msgstr ""
+"opțiunile „-N” și „-q” nu pot coexista\n"
+"Încercați «%s --help» pentru informații suplimentare."
 
 #: src/tload.c:75 src/tload.c:77
 msgid "screen too small or too large"
-msgstr ""
+msgstr "ecranul este prea mic sau prea mare"
 
 #: src/tload.c:80
 msgid "screen too small"
-msgstr "ეკრანი ძალიან პატარაა"
+msgstr "ecranul este prea mic"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «tload --help»
 #: src/tload.c:96
 #, c-format
 msgid " %s [options] [tty]\n"
-msgstr " %s [options] [tty]\n"
+msgstr " %s [opțiuni] [tty]\n"
 
 #: src/tload.c:98
 msgid " -d, --delay <secs>  update delay in seconds\n"
-msgstr ""
+msgstr " -d, --delay <sec>   întârzierea între actualizări (intervalul de actualizare)\n"
 
 #: src/tload.c:99
 msgid " -s, --scale <num>   vertical scale\n"
-msgstr ""
+msgstr " -s, --scale <num>   scară verticală\n"
 
 #: src/tload.c:137
 msgid "scale cannot be negative"
-msgstr ""
+msgstr "scara nu poate fi negativă"
 
 #: src/tload.c:144 src/vmstat.c:1048
 msgid "too large delay value"
-msgstr ""
+msgstr "valoare de întârziere prea mare"
 
 #: src/tload.c:159
 msgid "can not open tty"
-msgstr "tty-ის გახსნის შეცდომა"
+msgstr "nu se poate deschide terminalul(tty)"
 
 #: src/tload.c:182
 msgid "Load average file /proc/loadavg does not exist"
-msgstr ""
+msgstr "Fișierul de încărcare medie „/proc/loadavg” nu există"
 
 #: src/tload.c:185
 msgid "Unable to get load average"
-msgstr ""
+msgstr "Nu se poate obține încărcarea medie"
 
+# R-GC, scrie:
+# următoarele mesaje, pot să fie
+# vizualizate, rulînd comenzile:
+# «top -h» «top», cu sau fără opțiuni.
 #: src/tload.c:227 src/tload.c:229
 msgid "writing to tty failed"
-msgstr "tty-ში ჩაწერის შეცდომა"
+msgstr "scrierea la terminal(tty) a eșuat"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -2171,7 +2379,7 @@ msgstr "PID"
 
 #: src/top/top_nls.c:153
 msgid "Process Id"
-msgstr "პროცესის ID"
+msgstr "Id-ul procesului"
 
 #. Translation Hint: maximum 'PPID' = 5
 #: src/top/top_nls.c:155
@@ -2180,7 +2388,7 @@ msgstr "PPID"
 
 #: src/top/top_nls.c:156
 msgid "Parent Process pid"
-msgstr "მშობელი პროცესის ID"
+msgstr "PID-ul procesului părinte"
 
 #. Translation Hint: maximum 'UID' = 5 +
 #: src/top/top_nls.c:158
@@ -2189,52 +2397,52 @@ msgstr "UID"
 
 #: src/top/top_nls.c:159
 msgid "Effective User Id"
-msgstr "ეფექტური მომხმარებლის ID"
+msgstr "ID-ul utilizatorului efectiv"
 
 #. Translation Hint: maximum 'USER' = 8 +
 #: src/top/top_nls.c:161 src/w.c:661
 msgid "USER"
-msgstr "მომხმარებელი"
+msgstr "UTILIZ."
 
 #: src/top/top_nls.c:162
 msgid "Effective User Name"
-msgstr "ეფექტური მომხმარებლის სახელი"
+msgstr "Numele utilizatorului efectiv"
 
 #. Translation Hint: maximum 'RUID' = 5 +
 #: src/top/top_nls.c:164
 msgid "RUID"
-msgstr "RUID"
+msgstr "UIDR"
 
 #: src/top/top_nls.c:165
 msgid "Real User Id"
-msgstr "რეალური მომხმარებლის ID"
+msgstr "Id-ul utilizatorului real"
 
 #. Translation Hint: maximum 'RUSER' = 8 +
 #: src/top/top_nls.c:167
 msgid "RUSER"
-msgstr "RUSER"
+msgstr "UTILIZ.R"
 
 #: src/top/top_nls.c:168
 msgid "Real User Name"
-msgstr "რეალური მომხმარებლის სახელი"
+msgstr "Numele utilizatorului real"
 
 #. Translation Hint: maximum 'SUID' = 5 +
 #: src/top/top_nls.c:170
 msgid "SUID"
-msgstr "SUID"
+msgstr "UIDS"
 
 #: src/top/top_nls.c:171
 msgid "Saved User Id"
-msgstr "შენახული მომხმარებლის ID"
+msgstr "ID-ul utilizatorului salvat"
 
 #. Translation Hint: maximum 'SUSER' = 8 +
 #: src/top/top_nls.c:173
 msgid "SUSER"
-msgstr "SUSER"
+msgstr "UTILIZ.S"
 
 #: src/top/top_nls.c:174
 msgid "Saved User Name"
-msgstr "შენახული მომხმარელის სახელი"
+msgstr "Numele utilizatorului salvat"
 
 #. Translation Hint: maximum 'GID' = 5 +
 #: src/top/top_nls.c:176
@@ -2243,16 +2451,16 @@ msgstr "GID"
 
 #: src/top/top_nls.c:177
 msgid "Group Id"
-msgstr "ჯგუფის ID"
+msgstr "ID-ul grupului"
 
 #. Translation Hint: maximum 'GROUP' = 8 +
 #: src/top/top_nls.c:179
 msgid "GROUP"
-msgstr "GROUP"
+msgstr "GRUP"
 
 #: src/top/top_nls.c:180
 msgid "Group Name"
-msgstr "ჯგუფის სახელი"
+msgstr "Numele grupului"
 
 #. Translation Hint: maximum 'PGRP' = 5
 #: src/top/top_nls.c:182
@@ -2261,7 +2469,7 @@ msgstr "PGRP"
 
 #: src/top/top_nls.c:183
 msgid "Process Group Id"
-msgstr "პროცესის ჯგუფის ID"
+msgstr "Id-ul grupului de procese"
 
 #. Translation Hint: maximum 'TTY' = 8 +
 #: src/top/top_nls.c:185
@@ -2270,7 +2478,7 @@ msgstr "TTY"
 
 #: src/top/top_nls.c:186
 msgid "Controlling Tty"
-msgstr "მაკონტროლებელი tty"
+msgstr "Control Tty"
 
 #. Translation Hint: maximum 'TPGID' = 5
 #: src/top/top_nls.c:188
@@ -2279,7 +2487,7 @@ msgstr "TPGID"
 
 #: src/top/top_nls.c:189
 msgid "Tty Process Grp Id"
-msgstr "Tty პროცესის ჯგუფის ID"
+msgstr "ID-ul grupului de procese Tty"
 
 #. Translation Hint: maximum 'SID' = 5
 #: src/top/top_nls.c:191
@@ -2288,16 +2496,16 @@ msgstr "SID"
 
 #: src/top/top_nls.c:192
 msgid "Session Id"
-msgstr "სესიის ID"
+msgstr "ID-ul sesiunii"
 
 #. Translation Hint: maximum 'PR' = 3
 #: src/top/top_nls.c:194
 msgid "PR"
-msgstr "PR"
+msgstr "PRI"
 
 #: src/top/top_nls.c:195
 msgid "Priority"
-msgstr "პრიორიტეტი"
+msgstr "Prioritate"
 
 #. Translation Hint: maximum 'NI' = 3
 #: src/top/top_nls.c:197
@@ -2306,7 +2514,7 @@ msgstr "NI"
 
 #: src/top/top_nls.c:198
 msgid "Nice Value"
-msgstr ""
+msgstr "Valoare „nice”"
 
 #. Translation Hint: maximum 'nTH' = 3
 #: src/top/top_nls.c:200
@@ -2315,16 +2523,16 @@ msgstr "nTH"
 
 #: src/top/top_nls.c:201
 msgid "Number of Threads"
-msgstr "ნაკადების რაოდენობა"
+msgstr "Numărul de fire de execuție"
 
 #. Translation Hint: maximum 'P' = 1
 #: src/top/top_nls.c:203
 msgid "P"
-msgstr "პ"
+msgstr "P"
 
 #: src/top/top_nls.c:204
 msgid "Last Used Cpu (SMP)"
-msgstr ""
+msgstr "Ultimul procesor folosit (SMP)"
 
 #. Translation Hint: maximum '%CPU' = 4
 #: src/top/top_nls.c:206
@@ -2334,25 +2542,25 @@ msgstr "%CPU"
 
 #: src/top/top_nls.c:207
 msgid "CPU Usage"
-msgstr "CPU -ის გამოყენება"
+msgstr "Utilizarea CPU"
 
 #. Translation Hint: maximum '' = 6
 #: src/top/top_nls.c:209
 msgid "TIME"
-msgstr "დრო"
+msgstr "TIMP"
 
 #: src/top/top_nls.c:210
 msgid "CPU Time"
-msgstr "CPU -ის დრო"
+msgstr "Timp CPU"
 
 #. Translation Hint: maximum 'TIME+' = 9
 #: src/top/top_nls.c:212
 msgid "TIME+"
-msgstr "TIME+"
+msgstr "TIMP+"
 
 #: src/top/top_nls.c:213
 msgid "CPU Time, hundredths"
-msgstr "CPU -ის დრო, მეასედები"
+msgstr "Timp CPU, sutimi"
 
 #. Translation Hint: maximum '%MEM' = 4
 #: src/top/top_nls.c:215
@@ -2361,7 +2569,7 @@ msgstr "%MEM"
 
 #: src/top/top_nls.c:216
 msgid "Memory Usage (RES)"
-msgstr "მეხსიერების გამოყენება (RES)"
+msgstr "Utilizarea memoriei (RES)"
 
 #. Translation Hint: maximum 'VIRT' = 7
 #: src/top/top_nls.c:218
@@ -2370,7 +2578,7 @@ msgstr "VIRT"
 
 #: src/top/top_nls.c:219
 msgid "Virtual Image (KiB)"
-msgstr "ვირტუალური ასლი (კიბ)"
+msgstr "Imagine virtuală (Kio)"
 
 #. Translation Hint: maximum 'SWAP' = 6
 #: src/top/top_nls.c:221
@@ -2379,7 +2587,7 @@ msgstr "SWAP"
 
 #: src/top/top_nls.c:222
 msgid "Swapped Size (KiB)"
-msgstr "სვოპის ზომა (კიბ)"
+msgstr "Dimensiunea utilizată din swap (Kio)"
 
 #. Translation Hint: maximum 'RES' = 6
 #: src/top/top_nls.c:224
@@ -2388,34 +2596,34 @@ msgstr "RES"
 
 #: src/top/top_nls.c:225
 msgid "Resident Size (KiB)"
-msgstr "რეზიდენტული ზომა (კიბ)"
+msgstr "Dimensiunea rezidentului (Kio)"
 
 #. Translation Hint: maximum 'CODE' = 4
 #: src/top/top_nls.c:227
 msgid "CODE"
-msgstr "CODE"
+msgstr "COD"
 
 #: src/top/top_nls.c:228
 msgid "Code Size (KiB)"
-msgstr "კოდის ზომა (კიბ)"
+msgstr "Dimensiunea codului (Kio)"
 
 #. Translation Hint: maximum 'DATA' = 7
 #: src/top/top_nls.c:230
 msgid "DATA"
-msgstr "მონაცემები"
+msgstr "DATE"
 
 #: src/top/top_nls.c:231
 msgid "Data+Stack (KiB)"
-msgstr ""
+msgstr "Date+Stiva (Kio)"
 
 #. Translation Hint: maximum 'SHR' = 6
 #: src/top/top_nls.c:233
 msgid "SHR"
-msgstr "SHR"
+msgstr "M.PART"
 
 #: src/top/top_nls.c:234
 msgid "Shared Memory (KiB)"
-msgstr "გაზიარებული მეხსიერება (კიბ)"
+msgstr "Memoria partajată (Kio)"
 
 #. Translation Hint: maximum 'nMaj' = 4
 #: src/top/top_nls.c:236
@@ -2424,7 +2632,7 @@ msgstr "nMaj"
 
 #: src/top/top_nls.c:237
 msgid "Major Page Faults"
-msgstr ""
+msgstr "Greșeli majore de pagină"
 
 #. Translation Hint: maximum 'nMin' = 4
 #: src/top/top_nls.c:239
@@ -2433,7 +2641,7 @@ msgstr "nMin"
 
 #: src/top/top_nls.c:240
 msgid "Minor Page Faults"
-msgstr ""
+msgstr "Greșeli minore de pagină"
 
 #. Translation Hint: maximum 'nDRT' = 4
 #: src/top/top_nls.c:242
@@ -2442,25 +2650,25 @@ msgstr "nDRT"
 
 #: src/top/top_nls.c:243
 msgid "Dirty Pages Count"
-msgstr ""
+msgstr "Numărul de pagini cu greșeli"
 
 #. Translation Hint: maximum 'S' = 1
 #: src/top/top_nls.c:245
 msgid "S"
-msgstr "კ"
+msgstr "S"
 
 #: src/top/top_nls.c:246
 msgid "Process Status"
-msgstr "პროცესის სტატუსი"
+msgstr "Starea procesului"
 
 #. Translation Hint: maximum 'COMMAND' = variable
 #: src/top/top_nls.c:248
 msgid "COMMAND"
-msgstr "ბრძანება"
+msgstr "COMANDA"
 
 #: src/top/top_nls.c:249
 msgid "Command Name/Line"
-msgstr ""
+msgstr "Nume/linie de comandă"
 
 #. Translation Hint: maximum 'WCHAN' = 10 +
 #: src/top/top_nls.c:251
@@ -2469,16 +2677,16 @@ msgstr "WCHAN"
 
 #: src/top/top_nls.c:252
 msgid "Sleeping in Function"
-msgstr ""
+msgstr "Dormire în funcție"
 
 #. Translation Hint: maximum 'Flags' = 8
 #: src/top/top_nls.c:254
 msgid "Flags"
-msgstr "ალმები"
+msgstr "Fanioane"
 
 #: src/top/top_nls.c:255
 msgid "Task Flags <sched.h>"
-msgstr ""
+msgstr "Fanioane sarcini <sched.h>"
 
 #. Translation Hint: maximum 'CGROUPS' = variable
 #: src/top/top_nls.c:257
@@ -2487,7 +2695,7 @@ msgstr "CGROUPS"
 
 #: src/top/top_nls.c:258
 msgid "Control Groups"
-msgstr "საკონტროლო ჯგუფები"
+msgstr "Grupuri de control"
 
 #. Translation Hint: maximum 'SUPGIDS' = variable
 #: src/top/top_nls.c:260
@@ -2496,7 +2704,7 @@ msgstr "SUPGIDS"
 
 #: src/top/top_nls.c:261
 msgid "Supp Groups IDs"
-msgstr ""
+msgstr "ID-urile grupurilor de asistență"
 
 #. Translation Hint: maximum 'SUPGRPS' = variable
 #: src/top/top_nls.c:263
@@ -2505,7 +2713,7 @@ msgstr "SUPGRPS"
 
 #: src/top/top_nls.c:264
 msgid "Supp Groups Names"
-msgstr ""
+msgstr "Numele grupurilor de asistență"
 
 #. Translation Hint: maximum 'TGID' = 5
 #: src/top/top_nls.c:266
@@ -2514,7 +2722,7 @@ msgstr "TGID"
 
 #: src/top/top_nls.c:267
 msgid "Thread Group Id"
-msgstr ""
+msgstr "Id-ul grupului de fire de execuție"
 
 #. Translation Hint: maximum 'OOMa' = 5
 #: src/top/top_nls.c:269
@@ -2523,7 +2731,7 @@ msgstr "OOMa"
 
 #: src/top/top_nls.c:270
 msgid "OOMEM Adjustment"
-msgstr ""
+msgstr "Ajustare OOMEM"
 
 #. Translation Hint: maximum 'OOMs' = 4
 #: src/top/top_nls.c:272
@@ -2532,18 +2740,18 @@ msgstr "OOMs"
 
 #: src/top/top_nls.c:273
 msgid "OOMEM Score current"
-msgstr ""
+msgstr "Scorul OOMEM curent"
 
 #. Translation Hint: maximum 'ENVIRON' = variable
 #: src/top/top_nls.c:275
 msgid "ENVIRON"
-msgstr "ENVIRON"
+msgstr "MEDIU"
 
 #. Translation Hint: the abbreviation 'vars' below is shorthand for
 #. 'variables'
 #: src/top/top_nls.c:278
 msgid "Environment vars"
-msgstr ""
+msgstr "Variabile de mediu"
 
 #. Translation Hint: maximum 'vMj' = 3
 #: src/top/top_nls.c:280
@@ -2552,7 +2760,7 @@ msgstr "vMj"
 
 #: src/top/top_nls.c:281
 msgid "Major Faults delta"
-msgstr ""
+msgstr "Greșeli majore delta"
 
 #. Translation Hint: maximum 'vMn' = 3
 #: src/top/top_nls.c:283
@@ -2561,7 +2769,7 @@ msgstr "vMn"
 
 #: src/top/top_nls.c:284
 msgid "Minor Faults delta"
-msgstr ""
+msgstr "Greșeli minore delta"
 
 #. Translation Hint: maximum 'USED' = 6
 #: src/top/top_nls.c:286
@@ -2570,7 +2778,7 @@ msgstr "USED"
 
 #: src/top/top_nls.c:287
 msgid "Res+Swap Size (KiB)"
-msgstr ""
+msgstr "Dimensiune res+swap (Kio)"
 
 #. Translation Hint: maximum 'nsIPC' = 10 +
 #: src/top/top_nls.c:289
@@ -2579,7 +2787,7 @@ msgstr "nsIPC"
 
 #: src/top/top_nls.c:290
 msgid "IPC namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume IPC"
 
 #. Translation Hint: maximum 'nsMNT' = 10 +
 #: src/top/top_nls.c:292
@@ -2588,7 +2796,7 @@ msgstr "nsMNT"
 
 #: src/top/top_nls.c:293
 msgid "MNT namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume MNT"
 
 #. Translation Hint: maximum 'nsNET' = 10 +
 #: src/top/top_nls.c:295
@@ -2597,7 +2805,7 @@ msgstr "nsNET"
 
 #: src/top/top_nls.c:296
 msgid "NET namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume NET"
 
 #. Translation Hint: maximum 'nsPID' = 10 +
 #: src/top/top_nls.c:298
@@ -2606,7 +2814,7 @@ msgstr "nsPID"
 
 #: src/top/top_nls.c:299
 msgid "PID namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume PID"
 
 #. Translation Hint: maximum 'nsUSER' = 10 +
 #: src/top/top_nls.c:301
@@ -2615,7 +2823,7 @@ msgstr "nsUSER"
 
 #: src/top/top_nls.c:302
 msgid "USER namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume USER"
 
 #. Translation Hint: maximum 'nsUTS' = 10 +
 #: src/top/top_nls.c:304
@@ -2624,7 +2832,7 @@ msgstr "nsUTS"
 
 #: src/top/top_nls.c:305
 msgid "UTS namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume UTS"
 
 #. Translation Hint: maximum 'LXC' = 8 +
 #: src/top/top_nls.c:307
@@ -2633,7 +2841,7 @@ msgstr "LXC"
 
 #: src/top/top_nls.c:308
 msgid "LXC container name"
-msgstr ""
+msgstr "Numele containerului LXC"
 
 #. Translation Hint: maximum 'RSan' = 6
 #: src/top/top_nls.c:310
@@ -2642,7 +2850,7 @@ msgstr "RSan"
 
 #: src/top/top_nls.c:311
 msgid "RES Anonymous (KiB)"
-msgstr ""
+msgstr "RES Anonim (Kio)"
 
 #. Translation Hint: maximum 'RSfd' = 6
 #: src/top/top_nls.c:313
@@ -2651,7 +2859,7 @@ msgstr "RSfd"
 
 #: src/top/top_nls.c:314
 msgid "RES File-based (KiB)"
-msgstr ""
+msgstr "RES bazat pe fișiere (Kio)"
 
 #. Translation Hint: maximum 'RSlk' = 6
 #: src/top/top_nls.c:316
@@ -2660,7 +2868,7 @@ msgstr "RSlk"
 
 #: src/top/top_nls.c:317
 msgid "RES Locked (KiB)"
-msgstr ""
+msgstr "RES blocat (Kio)"
 
 #. Translation Hint: maximum 'RSsh' = 6
 #: src/top/top_nls.c:319
@@ -2669,7 +2877,7 @@ msgstr "RSsh"
 
 #: src/top/top_nls.c:320
 msgid "RES Shared (KiB)"
-msgstr ""
+msgstr "RES partajat (Kio)"
 
 #. Translation Hint: maximum 'CGNAME' = variable
 #: src/top/top_nls.c:322
@@ -2678,7 +2886,7 @@ msgstr "CGNAME"
 
 #: src/top/top_nls.c:323
 msgid "Control Group name"
-msgstr ""
+msgstr "Numele grupului de control"
 
 #. Translation Hint: maximum 'NU' = 2
 #: src/top/top_nls.c:325
@@ -2687,7 +2895,7 @@ msgstr "NU"
 
 #: src/top/top_nls.c:326
 msgid "Last Used NUMA node"
-msgstr ""
+msgstr "Ultimul nod NUMA utilizat"
 
 #. Translation Hint: maximum 'LOGID' = 5 +
 #: src/top/top_nls.c:328
@@ -2696,7 +2904,7 @@ msgstr "LOGID"
 
 #: src/top/top_nls.c:329
 msgid "Login User Id"
-msgstr "რეალური მომხმარებლის ID"
+msgstr "Id-ul utilizatorului autentificat"
 
 #. Translation Hint: maximum 'EXE' = variable
 #: src/top/top_nls.c:331
@@ -2705,11 +2913,11 @@ msgstr "EXE"
 
 #: src/top/top_nls.c:332
 msgid "Executable Path"
-msgstr "გამშვები ფაილის ბილიკი"
+msgstr "Calea la executabil"
 
 #: src/top/top_nls.c:338
 msgid "Res Mem (smaps), KiB"
-msgstr ""
+msgstr "Mem Res (smaps), KiB"
 
 #. Translation Hint: maximum 'PSS' = 6
 #: src/top/top_nls.c:340
@@ -2718,7 +2926,7 @@ msgstr "PSS"
 
 #: src/top/top_nls.c:341
 msgid "Proportion RSS,  KiB"
-msgstr ""
+msgstr "Proporția RSS, KiB"
 
 #. Translation Hint: maximum 'PSan' = 6
 #: src/top/top_nls.c:343
@@ -2727,7 +2935,7 @@ msgstr "PSan"
 
 #: src/top/top_nls.c:344
 msgid "Proportion Anon, KiB"
-msgstr ""
+msgstr "Proporția Anon, KiB"
 
 #. Translation Hint: maximum 'PSfd' = 6
 #: src/top/top_nls.c:346
@@ -2736,7 +2944,7 @@ msgstr "PSfd"
 
 #: src/top/top_nls.c:347
 msgid "Proportion File, KiB"
-msgstr ""
+msgstr "Proporția Fișier, KiB"
 
 #. Translation Hint: maximum 'PSsh' = 6
 #: src/top/top_nls.c:349
@@ -2745,7 +2953,7 @@ msgstr "PSsh"
 
 #: src/top/top_nls.c:350
 msgid "Proportion Shrd, KiB"
-msgstr ""
+msgstr "Proporția Shrd, KiB"
 
 #. Translation Hint: maximum 'USS' = 6
 #: src/top/top_nls.c:352
@@ -2754,7 +2962,7 @@ msgstr "USS"
 
 #: src/top/top_nls.c:353
 msgid "Unique RSS, KiB"
-msgstr ""
+msgstr "RSS unic, KiB"
 
 #. Translation Hint: maximum 'ioR' = 6
 #: src/top/top_nls.c:355
@@ -2763,7 +2971,7 @@ msgstr "ioR"
 
 #: src/top/top_nls.c:356
 msgid "I/O Bytes Read"
-msgstr ""
+msgstr "Octeți citiți la In/Ieș"
 
 #. Translation Hint: maximum 'ioRop' = 5
 #: src/top/top_nls.c:358
@@ -2772,7 +2980,7 @@ msgstr "ioRop"
 
 #: src/top/top_nls.c:359
 msgid "I/O Read Operations"
-msgstr ""
+msgstr "Operații de citire a In/Ieș"
 
 #. Translation Hint: maximum 'ioW' = 6
 #: src/top/top_nls.c:361
@@ -2781,7 +2989,7 @@ msgstr "ioW"
 
 #: src/top/top_nls.c:362
 msgid "I/O Bytes Written"
-msgstr ""
+msgstr "Octeți scriși la In/Ieș"
 
 #. Translation Hint: maximum 'ioWop' = 5
 #: src/top/top_nls.c:364
@@ -2790,7 +2998,7 @@ msgstr "ioWop"
 
 #: src/top/top_nls.c:365
 msgid "I/O Write Operations"
-msgstr ""
+msgstr "Operații de scriere a In/Ieș"
 
 #. Translation Hint: maximum 'AGID' = 5
 #: src/top/top_nls.c:367
@@ -2799,7 +3007,7 @@ msgstr "AGID"
 
 #: src/top/top_nls.c:368
 msgid "Autogroup Identifier"
-msgstr ""
+msgstr "Identificatorul autogrupului"
 
 #. Translation Hint: maximum 'AGNI' = 4
 #: src/top/top_nls.c:370
@@ -2808,25 +3016,25 @@ msgstr "AGNI"
 
 #: src/top/top_nls.c:371
 msgid "Autogroup Nice Value"
-msgstr ""
+msgstr "Valoarea „nice” a autogrupului"
 
 #. Translation Hint: maximum 'STARTED' = 7
 #: src/top/top_nls.c:373
 msgid "STARTED"
-msgstr "STARTED"
+msgstr "ÎNCEPUT"
 
 #: src/top/top_nls.c:374
 msgid "Start Time from boot"
-msgstr ""
+msgstr "Ora începere a pornirii"
 
 #. Translation Hint: maximum 'ELAPSED' = 7
 #: src/top/top_nls.c:376
 msgid "ELAPSED"
-msgstr ""
+msgstr "SCURS"
 
 #: src/top/top_nls.c:377
 msgid "Elapsed Running Time"
-msgstr ""
+msgstr "Timpul de rulare scurs"
 
 #. Translation Hint: maximum '%CUU' = 6
 #: src/top/top_nls.c:379
@@ -2836,7 +3044,7 @@ msgstr "%CUU"
 
 #: src/top/top_nls.c:380
 msgid "CPU Utilization"
-msgstr ""
+msgstr "Utilizarea CPU"
 
 #. Translation Hint: maximum '%CUC' = 7
 #: src/top/top_nls.c:382
@@ -2846,7 +3054,7 @@ msgstr "%CUC"
 
 #: src/top/top_nls.c:383
 msgid "Utilization + child"
-msgstr ""
+msgstr "Utilizare + proces-copil"
 
 #. Translation Hint: maximum 'nsCGROUP' = 10 +
 #: src/top/top_nls.c:385
@@ -2855,16 +3063,16 @@ msgstr "nsCGROUP"
 
 #: src/top/top_nls.c:386
 msgid "CGRP namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume CGRP"
 
 #. Translation Hint: maximum 'nsTIME' = 10 +
 #: src/top/top_nls.c:388
 msgid "nsTIME"
-msgstr "დრო"
+msgstr "nsTIMP"
 
 #: src/top/top_nls.c:389
 msgid "TIME namespace Inode"
-msgstr ""
+msgstr "Nodul-i al spațiului de nume TIMP"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -2882,282 +3090,322 @@ msgid ""
 "\tsignal %d (%s) was caught by %s, please\n"
 "\tsend bug reports to <procps@freelists.org>\n"
 msgstr ""
+"\tsemnalul %d (%s) a fost captat de %s, \n"
+"\ttrimiteți rapoartele de eroare la <procps@freelists.org>\n"
 
 #: src/top/top_nls.c:439
 #, c-format
 msgid "bad delay interval '%s'"
-msgstr ""
+msgstr "interval de întârziere greșit „%s”"
 
 #: src/top/top_nls.c:440
 #, c-format
 msgid "bad iterations argument '%s'"
-msgstr ""
+msgstr "argumentul iterațiilor este greșit „%s”"
 
 #: src/top/top_nls.c:441
 #, c-format
 msgid "pid limit (%d) exceeded"
-msgstr "pid -ის ლიმიტი (%d) გადაჭარბებულია"
+msgstr "limita pid (%d) a fost depășită"
 
 #: src/top/top_nls.c:442
 #, c-format
 msgid "bad pid '%s'"
-msgstr "არასწორი pid '%s'"
+msgstr "pid incorect „%s”"
 
 #: src/top/top_nls.c:443
 #, c-format
 msgid "-%c argument missing"
-msgstr "-%c არგუმენტი აკლია"
+msgstr "argumentul opțiunii „-%c”, lipsește"
 
 #: src/top/top_nls.c:444
 #, c-format
 msgid "bad width arg '%s'"
-msgstr ""
+msgstr "argument de lățime incorect „%s”"
 
 #: src/top/top_nls.c:445
 #, c-format
 msgid "unknown option '%s'"
-msgstr "უცნობი პარამეტრი '%s'"
+msgstr "opțiune necunoscută „%s”"
 
 #: src/top/top_nls.c:446
 msgid "-d disallowed in \"secure\" mode"
-msgstr ""
+msgstr "opțiunea „-d” nu este permisă în modul „securizat”"
 
 #: src/top/top_nls.c:447
 msgid "-d requires positive argument"
-msgstr ""
+msgstr "opțiunea „-d” necesită un argument pozitiv"
 
+# R-GC, scrie:
+# am tradus, inițial, acest mesaj, ca:
+# «Activat», și următorul(perechea lui),
+# ca:
+# «Dezactivat», așa cum e normal și
+# firesc,,, dar, încercați să spune-ți
+# acest lucru, unei lumi care încă
+# trăiește în limitările de:
+# 80 de coloane(caractere) x 24 de linii...
+# ***
+# Rezultă că e: «Misiune Imposibilă!!!»
+# ===
+# Concluzie:
+# a trebuit să le las netraduse, pentru
+# că, altfel, afectează GRAV, geometria
+# unor mesaje ulterioare (le „mănîncă”
+# partea finală; între cîteva caractere, și
+# cîteva rînduri, nu este mult, nu...?
+# =*=*=*=
+# Le mulțumesc, MULT, autorilor, pentru
+# mesajul INEXISTENT de avertizare
+# asupra acestui lucru!
+# Nu am pierdut, decît vreo două ore și
+# jumătate, pentru a elucida misterul
+# dispariției rîndurilor/caracterelor din
+# mesajele traduse (aceste două
+# mesaje, nu sunt singurele astfel de
+# mesaje ce afectează GRAV, geometria
+# altor mesaje, există un alt mesaj, care
+# apare individual(cred), dar și »înglobat«
+# într-un alt mesaj, mai larg (la 2/3 din
+# lungimea acestuia) căruia îi mănîncă
+# ultimele rînduri (în traducerea inițială
+# pe care o făcusem; acum, prima
+# jumătate a acestui mesaj, este tradusă,
+# iar a doua e în mama ei de engleză...)
+# pentru ca acest mesaj să apară întreg,
+# și nu trunchiat (mă refer la mesjul lung).
 #: src/top/top_nls.c:448
 msgid "On"
-msgstr ""
+msgstr "On"
 
 #: src/top/top_nls.c:449
 msgid "Off"
-msgstr "გამორთული"
+msgstr "Off"
 
 #: src/top/top_nls.c:450
 #, c-format
 msgid "%s from %s"
-msgstr "%s -ი %s-სგან"
+msgstr "%s de la %s"
 
 #: src/top/top_nls.c:451
 #, c-format
 msgid "Forest mode %s"
-msgstr "ტყის რეჟიმი %s"
+msgstr "Modul arborescent %s"
 
 #: src/top/top_nls.c:452
 msgid "failed tty get"
-msgstr "tty-ის მიღების შეცდომა"
+msgstr "nu s-a putut obține terminalul (tty)"
 
 #: src/top/top_nls.c:453
 #, c-format
 msgid "failed tty set: %s"
-msgstr "tty-ის დაყენების შეცდომა: %s"
+msgstr "nu s-a putut configura terminalul (tty): %s"
 
 #: src/top/top_nls.c:454
 msgid "Choose field group (1 - 4)"
-msgstr ""
+msgstr "Alegeți grupul câmpului (de la 1 la 4)"
 
 #: src/top/top_nls.c:455
 msgid "Command disabled, 'A' mode required"
-msgstr ""
+msgstr "Comanda este dezactivată, este necesar modul „A”"
 
 #: src/top/top_nls.c:456
 #, c-format
 msgid "Command disabled, activate %s with '-' or '_'"
-msgstr ""
+msgstr "Comanda a fost dezactivată, activați %s cu „-” sau „_”"
 
 #: src/top/top_nls.c:457
 msgid "No colors to map!"
-msgstr ""
+msgstr "Nu există culori aplicabile!"
 
 #: src/top/top_nls.c:458
 #, c-format
 msgid "Failed '%s' open: %s"
-msgstr ""
+msgstr "Deschiderea lui „%s” a eșuat: %s"
 
 #: src/top/top_nls.c:459
 #, c-format
 msgid "Wrote configuration to '%s'"
-msgstr ""
+msgstr "S-a scris configurația în „%s”"
 
 #: src/top/top_nls.c:460
 #, c-format
 msgid "Change delay from %.1f to"
-msgstr ""
+msgstr "Se modifică întârzierea de la %.1f la"
 
 #: src/top/top_nls.c:461
 #, c-format
 msgid "Show threads %s"
-msgstr ""
+msgstr "Afișează firele de execuție %s"
 
 #: src/top/top_nls.c:462
 #, c-format
 msgid "Irix mode %s"
-msgstr "Irix -ის რეჟიმი %s"
+msgstr "Modul Irix %s"
 
 #: src/top/top_nls.c:463
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
-msgstr ""
+msgstr "PID pentru a trimite semnal sau a omorî [pid implicit=%d]"
 
 #: src/top/top_nls.c:464
 #, c-format
 msgid "Send pid %d signal [%d/sigterm]"
-msgstr ""
+msgstr "Trimite semnal la pid %d [%d/sigterm]"
 
 #: src/top/top_nls.c:465
 #, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
-msgstr ""
+msgstr "Trimiterea semnalului „%2$d” către pid „%1$d”: %3$s a eșuat"
 
 #: src/top/top_nls.c:466
 msgid "Invalid signal"
-msgstr "არასწორი სიგნალი"
+msgstr "Semnal nevalid"
 
 #: src/top/top_nls.c:467
 #, c-format
 msgid "PID to renice [default pid = %d]"
-msgstr ""
+msgstr "PID a cărui valoare „nice” se va schimba [pid implicit = %d]"
 
 #: src/top/top_nls.c:468
 #, c-format
 msgid "Renice PID %d to value"
-msgstr ""
+msgstr "Schimbă valoarea „nice” a PID %d la valoarea"
 
 #: src/top/top_nls.c:469
 #, c-format
 msgid "Failed renice of PID %d to %d: %s"
-msgstr ""
+msgstr "Nu s-a putut schimba valoarea „nice” a PID %d în %d: %s"
 
 #: src/top/top_nls.c:470
 #, c-format
 msgid "Rename window '%s' to (1-3 chars)"
-msgstr ""
+msgstr "Redenumește fereastra „%s” la (1-3 caractere)"
 
 #: src/top/top_nls.c:471
 #, c-format
 msgid "Cumulative time %s"
-msgstr ""
+msgstr "Timpul cumulat %s"
 
 #: src/top/top_nls.c:472
 #, c-format
 msgid "Maximum tasks = %d, change to (0 is unlimited)"
-msgstr ""
+msgstr "Numărul maxim de sarcini = %d, schimbați la (0 este nelimitat)"
 
 #: src/top/top_nls.c:473
 msgid "Invalid maximum"
-msgstr "არასწორი მაქსიმუმი"
+msgstr "Maxim nevalid"
 
 #: src/top/top_nls.c:474
 msgid "Which user (blank for all)"
-msgstr ""
+msgstr "Care utilizator (necompletat, pentru toți)"
 
 #: src/top/top_nls.c:475
 msgid "Unknown command - try 'h' for help"
-msgstr "უცნობი ბრძანება - დახმარებისთვის სცადეთ \"h\""
+msgstr "Comandă necunoscută - încercați „h” pentru ajutor"
 
 #: src/top/top_nls.c:476
 #, c-format
 msgid "scroll coordinates: y = %d/%d (tasks), x = %d/%d (fields)"
-msgstr ""
+msgstr "coordonatele derulării: y = %d/%d (sarcini), x = %d/%d (câmpuri)"
 
 #: src/top/top_nls.c:477
 msgid "failed memory allocate"
-msgstr "მეხსიერების გამოყოფის შეცდომა"
+msgstr "alocarea memoriei a eșuat"
 
 #: src/top/top_nls.c:478
 msgid "failed memory re-allocate"
-msgstr "მეხსიერების თავიდან გამოყოფის შეცდომა"
+msgstr "re-alocarea memoriei a eșuat"
 
 #: src/top/top_nls.c:479
 msgid "Unacceptable floating point"
-msgstr ""
+msgstr "Număr zecimal inacceptabil"
 
 #: src/top/top_nls.c:480
 msgid "Invalid user"
-msgstr "არასწორი მომხმარებელი"
+msgstr "Utilizator nevalid"
 
 #: src/top/top_nls.c:481
 msgid "forest view"
-msgstr "ტყის ხედი"
+msgstr "vizualizare arborescentă"
 
 #: src/top/top_nls.c:482
 msgid "failed pid maximum size test"
-msgstr ""
+msgstr "testul de dimensiune maximă a pid-ului a eșuat"
 
 #: src/top/top_nls.c:483
 msgid "failed number of cpus test"
-msgstr ""
+msgstr "testul numărului de cpus, a eșuat"
 
 #: src/top/top_nls.c:484
 #, c-format
 msgid "incompatible rcfile, you should delete '%s'"
-msgstr ""
+msgstr "fișier rc incompatibil, ar trebui să ștergeți „%s”"
 
 #: src/top/top_nls.c:485
 #, c-format
 msgid "window entry #%d corrupt, please delete '%s'"
-msgstr ""
+msgstr "intrarea de fereastră #%d este coruptă, trebuie să ștergeți „%s”"
 
 #: src/top/top_nls.c:486
 msgid "Unavailable in secure mode"
-msgstr ""
+msgstr "Indisponibil în modul securizat"
 
 #: src/top/top_nls.c:487
 msgid "Only 1 cpu detected"
-msgstr "ნაპოვნია მხოლოდ 1 CPU"
+msgstr "Doar 1 CPU a fost detectat"
 
 #: src/top/top_nls.c:488
 msgid "Unacceptable integer"
-msgstr "დაუშვებელი მთელი რიცხვი"
+msgstr "Număr întreg inacceptabil"
 
 #: src/top/top_nls.c:489
 msgid "conflicting process selections (U/p/u)"
-msgstr ""
+msgstr "selecții de proces în conflict (U/p/u)"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 kibibytes (1024 bytes)
 #: src/top/top_nls.c:492
 msgid "KiB"
-msgstr "კიბ"
+msgstr "Kio"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 mebibytes (1,048,576 bytes)
 #: src/top/top_nls.c:495
 msgid "MiB"
-msgstr "მიბ"
+msgstr "Mio"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 gibibytes (1,073,741,824 bytes)
 #: src/top/top_nls.c:498
 msgid "GiB"
-msgstr "გიბ"
+msgstr "Gio"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 tebibytes (1,099,511,627,776 bytes)
 #: src/top/top_nls.c:501
 msgid "TiB"
-msgstr "ტიბ"
+msgstr "Tio"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 pebibytes (1,024 tebibytes)
 #: src/top/top_nls.c:504
 msgid "PiB"
-msgstr "პიბ"
+msgstr "Pio"
 
 #. Translation Hint: This is an abbreviation (limit 3 characters) for:
 #. .                 exbibytes (1,024 pebibytes)
 #: src/top/top_nls.c:507
 msgid "EiB"
-msgstr "ეიბ"
+msgstr "Eio"
 
 #: src/top/top_nls.c:508
 msgid "Threads"
-msgstr "ნაკადები"
+msgstr "Fire exec"
 
 #: src/top/top_nls.c:509
 msgid "Tasks"
-msgstr "Tasks"
+msgstr "Sarcini"
 
 #. Translation Hint: The following "word" is meant to represent either a single
 #. .                 cpu or all of the processors in a multi-processor computer
@@ -3165,7 +3413,7 @@ msgstr "Tasks"
 #: src/top/top_nls.c:513
 #, c-format
 msgid "%Cpu(s):"
-msgstr "%CPU:"
+msgstr "%Cpu(s):"
 
 #. Translation Hint: The following "word" is meant to represent a single processor
 #. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
@@ -3178,214 +3426,231 @@ msgstr "%%Cp%c%-3d:"
 #. Translation Hint: The following word "another" must have 1 trailing space
 #: src/top/top_nls.c:519
 msgid "another "
-msgstr "სხვა "
+msgstr "altul "
 
 #: src/top/top_nls.c:520
 msgid "Locate next inactive, use \"L\""
-msgstr ""
+msgstr "Găsește următorul inactiv, utilizați „L”"
 
 #: src/top/top_nls.c:521
 msgid "Locate string"
-msgstr ""
+msgstr "Găsește șirul"
 
 #: src/top/top_nls.c:522
 #, c-format
 msgid "%s\"%s\" not found"
-msgstr "%s: %s: არ არსებობს"
+msgstr "%s„%s” nu a fost găsit"
 
 #: src/top/top_nls.c:523
 #, c-format
 msgid "width incr is %d, change to (0 default, -1 auto)"
-msgstr ""
+msgstr "incrementul de lățime este %d, schimbați la (0 implicit, -1 automat)"
 
 #: src/top/top_nls.c:524
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
-msgstr ""
+msgstr "erori detectate în fișierul rc prin inspecție sau altă filtrare, îl salvați oricum?"
 
 #: src/top/top_nls.c:525
 #, c-format
 msgid "unrecognized field name '%s'"
-msgstr ""
+msgstr "nume de câmp nerecunoscut „%s”"
 
 #: src/top/top_nls.c:526
 msgid "even using field names only, window is now too small"
-msgstr ""
+msgstr "chiar și folosind numai nume de câmpuri, fereastra este acum prea mică"
 
 #: src/top/top_nls.c:527
 msgid "Open Files"
-msgstr "ფაილების გახსნა"
+msgstr "Deschide fișiere"
 
 #: src/top/top_nls.c:528
 msgid "NUMA Info"
-msgstr "NUMA-ის ინფორმაცია"
+msgstr "Info NUMA"
 
 #: src/top/top_nls.c:529
 msgid "Log"
-msgstr "ჟურნალი"
+msgstr "Jurnal"
 
 #: src/top/top_nls.c:530
-msgid ""
-"the '=' key will eventually show the actual file read or command(s) "
-"executed ..."
-msgstr ""
+msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
+msgstr "tasta „=” va afișa în cele din urmă fișierul citit sau comenzile executate..."
 
 #: src/top/top_nls.c:531
 msgid "demo"
-msgstr "დემო"
+msgstr "demo"
 
 #: src/top/top_nls.c:532
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the "
-"output\n"
-"from some command.  Exactly which commands and/or files are solely up to "
-"you.\n"
+"This is simulated output representing the contents of some file or the output\n"
+"from some command.  Exactly which commands and/or files are solely up to you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be "
-"scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment "
-"with\n"
+"Although this text is for information purposes only, it can still be scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of "
-"the\n"
-"top personal personal configuration file.  You could use your favorite "
-"editor\n"
+"To enable real Inspect functionality, entries must be added to the end of the\n"
+"top personal personal configuration file.  You could use your favorite editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting "
-"the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
-"file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
-"toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' "
-"command\n"
-"and note those details.  After backing up the current rcfile, try issuing "
-"the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
-"safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' command\n"
+"and note those details.  After backing up the current rcfile, try issuing the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with "
-"this\n"
-"new command can offer.  The possibilities are endless, especially "
-"considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with this\n"
+"new command can offer.  The possibilities are endless, especially considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
-"For additional important information, please consult the top(1) man "
-"document.\n"
-"Then, enhance top with your very own customized 'file' and/or 'pipe' "
-"entries.\n"
+"For additional important information, please consult the top(1) man document.\n"
+"Then, enhance top with your very own customized 'file' and/or 'pipe' entries.\n"
 "\n"
 "Enjoy!\n"
 msgstr ""
+"Aceasta este o ieșire simulată care reprezintă conținutul unui fișier sau\n"
+"ieșirea de la o comandă. Exact ce comenzi și/sau fișiere depinde numai de dvs.\n"
+"\n"
+"Deși acest text are doar scop informativ, el poate fi derulat și căutat, așa cum\n"
+"va fi rezultatul real.  Sunteți încurajat să experimentați cu aceste\n"
+"caracteristici, așa cum este explicat în prologul de mai sus.\n"
+"\n"
+"Pentru a activa funcționalitatea „Inspect” reală, trebuie adăugate intrări la\n"
+"sfârșitul fișierului personal de configurare al «top».  Puteți să folosiți\n"
+"editorul dumneavoastră favorit pentru a realiza acest lucru, având grijă să nu\n"
+"modificați intrările existente.\n"
+"\n"
+"O altă modalitate de a adăuga intrări este ilustrată mai jos, dar riscă să\n"
+"suprascrie fișierul „toprc”. Ecourile redirecționate nu trebuie să înlocuiască\n"
+"(>) ci să adauge (>>) la acel fișier.\n"
+"\n"
+"  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
+"  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+"\n"
+"Dacă nu cunoașteți locația sau numele fișierului rc de sus, utilizați comanda\n"
+"„W” și notați aceste detalii.  După ce ați făcut o copie de rezervă a fișierului\n"
+"rc curent, încercați să emiteți ecourile de mai sus exact așa cum se arată,\n"
+"înlocuind „.toprc” după caz.  Cea mai sigură abordare ar fi să folosiți copierea\n"
+"și apoi lipirea pentru a evita orice greșeală de tastare.\n"
+"\n"
+"În cele din urmă, reporniți «top» pentru a descoperi ceea ce pot oferi intrările\n"
+"Inspect combinate cu această nouă comandă.  Posibilitățile sunt nesfârșite, mai\n"
+"ales având în vedere că intrările de tip „pipe” pot include și scripturi shell!\n"
+"\n"
+"Pentru informații suplimentare importante, consultați documentul top(1) man.\n"
+"Apoi, îmbunătățiți «top» cu propriul dumneavoastră „fișier” și/sau intrări\n"
+"personalizate „pipe”.\n"
+"\n"
+"Distrați-vă!\n"
 
 #: src/top/top_nls.c:564
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr ""
+msgstr "pentru a activa „Y” apăsați <Enter> apoi tastați „W” și reporniți «top»"
 
 #: src/top/top_nls.c:565
 msgid "to enable 'Y' please consult the top man page (press Enter)"
-msgstr ""
+msgstr "pentru a activa „Y”, consultați pagina de manual a «top» (apăsați Enter)"
 
 #: src/top/top_nls.c:566
 #, c-format
 msgid "Selection failed with: %s\n"
-msgstr ""
+msgstr "Selectarea a eșuat cu: %s\n"
 
 #: src/top/top_nls.c:567
 #, c-format
 msgid "unable to inspect, pid %d not found"
-msgstr ""
+msgstr "nu se poate inspecta, pid %d nu a fost găsit"
 
 #: src/top/top_nls.c:568
 #, c-format
 msgid "inspect at PID [default pid = %d]"
-msgstr ""
+msgstr "efectuează inspecția la PID [pid implicit = %d]"
 
 #: src/top/top_nls.c:569
 #, c-format
 msgid "%s: %*d-%-*d lines, %*d-%*d columns, %lu bytes read"
-msgstr ""
+msgstr "%s: %*d-%-*d linii, %*d-%*d coloane, %lu octeți citiți"
 
 #: src/top/top_nls.c:570
 msgid "patience please, working ..."
-msgstr "მოითმინეთ, გეთაყვა, ვმუშაობ ..."
+msgstr "aveți răbdare, se lucrează..."
 
 #: src/top/top_nls.c:571
 msgid "working, use Ctrl-C to end ..."
-msgstr ""
+msgstr "funcționează, utilizați Ctrl-C pentru a încheia..."
 
 #. Translation Hint: Below are 2 abbreviations which can be as long as needed:
 #. .                 FLD = FIELD, VAL = VALUE
 #: src/top/top_nls.c:574
 #, c-format
 msgid "add filter #%d (%s) as: [!]FLD?VAL"
-msgstr ""
+msgstr "adăugați filtrul #%d (%s) ca: [!]CÂMP?VALOARE"
 
 #: src/top/top_nls.c:575
 msgid "ignoring case"
-msgstr "რეგისტრის იგნორი"
+msgstr "ignoră diferența majuscule/minuscule"
 
 #: src/top/top_nls.c:576
 msgid "case sensitive"
-msgstr "დიდი და პატარა ასოების განსხვავება"
+msgstr "respectă diferența majuscule/minuscule"
 
 #: src/top/top_nls.c:577
 msgid "duplicate filter was ignored"
-msgstr ""
+msgstr "filtrul duplicat a fost ignorat"
 
 #: src/top/top_nls.c:578
 #, c-format
 msgid "'%s' filter delimiter is missing"
-msgstr ""
+msgstr "delimitatorul filtrului „%s” lipsește"
 
 #: src/top/top_nls.c:579
 #, c-format
 msgid "'%s' filter value is missing"
-msgstr ""
+msgstr "valoarea filtrului „%s” lipsește"
 
 #: src/top/top_nls.c:580
 msgid "include"
-msgstr "ჩასმა"
+msgstr "include"
 
 #: src/top/top_nls.c:581
 msgid "exclude"
-msgstr "გამორიცხვა"
+msgstr "exclude"
 
 #: src/top/top_nls.c:582
 #, c-format
 msgid "<Enter> to resume, filters: %s"
-msgstr ""
+msgstr "<Enter> pentru a relua, filtre: %s"
 
 #: src/top/top_nls.c:583
 msgid "none"
-msgstr "არცერთი"
+msgstr "niciunul"
 
 #. Translation Hint: The following word 'Node' should be exactly
 #. 4 characters, excluding leading %%, fmt chars & colon)
 #: src/top/top_nls.c:586
 #, c-format
 msgid "%%Node%-2d:"
-msgstr ""
+msgstr "%%Nod %-2d:"
 
 #: src/top/top_nls.c:587
 #, c-format
 msgid "expand which numa node (0-%d)"
-msgstr ""
+msgstr "extinde care nod numa (0-%d)"
 
 #: src/top/top_nls.c:588
 msgid "invalid numa node"
-msgstr "არასწორი კვანძი"
+msgstr "nod numa nevalid"
 
 #: src/top/top_nls.c:589
 msgid "sorry, NUMA extensions unavailable"
-msgstr "უკაცრავად, NUMA-ის გაფართოებები მოუწვდომელია"
+msgstr "scuze, extensiile NUMA nu sunt disponibile"
 
 #. Translation Hint: 'Mem ' is an abbreviation for physical memory/ram
 #. .                 'Swap' represents the linux swap file --
@@ -3397,107 +3662,118 @@ msgstr "Mem "
 
 #: src/top/top_nls.c:595
 msgid "Swap"
-msgstr "სვაპი"
+msgstr "Swap"
 
 #: src/top/top_nls.c:596
 #, c-format
 msgid "library failed memory statistics, at %d: %s"
-msgstr ""
+msgstr "biblioteca a eșuat în statisticile de memorie, la %d: %s"
 
 #: src/top/top_nls.c:597
 #, c-format
 msgid "library failed cpu statistics, at %d: %s"
-msgstr ""
+msgstr "biblioteca a eșuat în statisticile cpu, la %d: %s"
 
 #: src/top/top_nls.c:598
 #, c-format
 msgid "library failed pids statistics, at %d: %s"
-msgstr ""
+msgstr "biblioteca a eșuat în statisticile de pid, la %d: %s"
 
 #: src/top/top_nls.c:599
 #, c-format
 msgid "bad memory scaling arg '%s'"
-msgstr ""
+msgstr "argument de scalare a memoriei greșit „%s”"
 
 #: src/top/top_nls.c:600
 #, c-format
 msgid "PID to collapse/expand [default pid = %d]"
-msgstr ""
+msgstr "PID pentru a restrânge sau extinde [pid implicit = %d]"
 
 #: src/top/top_nls.c:601
 msgid "wrong mode, command inactive"
-msgstr ""
+msgstr "mod greșit, comandă inactivă"
 
 #: src/top/top_nls.c:602
 msgid "saving prevents older top from reading, save anyway?"
-msgstr ""
+msgstr "Salvarea împiedică citirea configurației, versiunilor de top mai vechi, continuați oricum?"
 
 #: src/top/top_nls.c:603
 #, c-format
 msgid "failed sem_init() at %d: %s"
-msgstr "sem_init()-ის შეცდომა მისამართზე %d: %s"
+msgstr "a eșuat sem_init() la %d: %s"
 
 #: src/top/top_nls.c:604
 #, c-format
 msgid "failed pthread_create() at %d: %s"
-msgstr "pthread_create() -ის შეცდომა მისამართზე %d: %s"
+msgstr "a eșuat pthread_create() la %d: %s"
 
 #: src/top/top_nls.c:605
 msgid "sorry, restricted namespace with reduced functionality"
-msgstr ""
+msgstr "scuze, spațiu de nume restricționat cu funcționalitate redusă"
 
 #: src/top/top_nls.c:606
 #, c-format
 msgid "set pid %d AGNI value to"
-msgstr ""
+msgstr "stabilește valoarea pid %d AGNI la"
 
 #: src/top/top_nls.c:607
 msgid "valid AGNI range is -20 to +19"
-msgstr ""
+msgstr "intervalul AGNI valid este de la -20 la +19"
 
 #: src/top/top_nls.c:608
 #, c-format
 msgid "autogroup open failed, %s"
-msgstr "ფაილის გახსნის შეცდომა: %s"
+msgstr "deschiderea autogrupului a eșuat, %s"
 
 #: src/top/top_nls.c:609
 #, c-format
 msgid "autogroup write failed, %s"
-msgstr ""
+msgstr "scrierea în autogrup a eșuat, %s"
 
 #: src/top/top_nls.c:610
 #, c-format
 msgid "command line for pid %d, %s"
-msgstr ""
+msgstr "linia de comandă pentru pid %d, %s"
 
 #: src/top/top_nls.c:611
 #, c-format
 msgid "control groups for pid %d, %s"
-msgstr ""
+msgstr "grupuri de control pentru pid %d, %s"
 
 #: src/top/top_nls.c:612
 #, c-format
 msgid "environment for pid %d, %s"
-msgstr ""
+msgstr "variabila de mediu pentru pid %d, %s"
 
 #: src/top/top_nls.c:613
 #, c-format
 msgid "namespaces for pid %d, %s"
-msgstr ""
+msgstr "spații de nume pentru pid %d, %s"
 
 #: src/top/top_nls.c:614
 msgid "n/a"
-msgstr "მიუწვდომელია"
+msgstr "nu este disponibil"
 
 #: src/top/top_nls.c:615
 #, c-format
 msgid "supplementary groups for pid %d, %s"
-msgstr ""
+msgstr "grupuri suplimentare pentru pid %d, %s"
 
 #: src/top/top_nls.c:616
 msgid "message log, last 10 messages:"
-msgstr ""
+msgstr "jurnal de mesaje, ultimele 10 mesaje:"
 
+# ************************
+# R-GC, scrie:
+# acest mesaj, poate să fie vizualizat
+# rulînd «top» cu sau fără opțiuni, și
+# pulsînd tasta „h” (autorii de «top» o
+# numesc comanda h), același drac,
+# cu altă haină ;)
+# ====
+# Am fost nevoit să șterg unul din spațiile
+# inițiale al rîndurilor mesajului, pt. a
+# putea încăpea în „cușca” de 80x24.
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
 #. .  be used with all supporting translation tools, when available.
@@ -3537,91 +3813,105 @@ msgstr ""
 #, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
-"~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
-"summary/task memory scale\n"
-"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
-"'~1I~2' Irix mode\n"
-"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; "
-"'~14~2' cpus two abreast\n"
-"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-"
-"width fields\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
+"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; '~1I~2' Irix mode\n"
+"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus two abreast\n"
+"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-width fields\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
-"'~1<~2'/'~1>~2' left/right\n"
-"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; "
-"'~1C~2' Coordinates\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
-"'~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
-"tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
-"'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
-"other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
-"other filter(s)\n"
-"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' "
-"keep focused\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
+"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' keep focused\n"
 "\n"
-"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; "
-"supp groups ~1^U~2\n"
-"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale "
-"time ~1^E~2'\n"
+"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; supp groups ~1^U~2\n"
+"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^E~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display "
-"~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
+"Ajutor pentru comenzile interactive~2 - %s\n"
+"Fereastra ~1%s~6: ~1Mod cumulativ ~3%s~2.  ~1Sistem~6: ~1Întîrz. ~3%.1f sec~2; ~1Mod securizat ~3%s~2.\n"
+"\n"
+" Z~5,~1B~5,E,e   Global: „~1Z~2” culori; „~1B~2” aldin; „~1E~2”/„~1e~2” rezumat/scalare sarcini mem\n"
+" l,t,m,I   Comut.: „~1l~2” încărc. medie; „~1t~2” sarcini/cpu; „~1m~2” mem; „~1I~2” Modul Irix\n"
+" 0,1,2,3,4 Comut.: „~10~2” zerouri; „~11~2/~12~2/~13~2” cpu/vizual. numa; „~14~2” două cpu pe rând\n"
+" f,X       Câmp: „~1f~2” adaugă/elim./ord./sort.; „~1X~2” mărește câmp cu lățime fixă\n"
+"\n"
+" L,&,<,> . Căutare: „~1L~2”/„~1&~2” găsește/din nou; Mută col. sort.: „~1<~2”/„~1>~2” stg./dr.\n"
+" R,H,J,C . Comut.: „~1R~2” Sortare; „~1H~2” Fire exec; „~1J~2” Aliniere nr.; „~1C~2” Coordonate\n"
+" c,i,S,j . Comut.: „~1c~2” Cmd nume/linie; „~1i~2” Inactiv; „~1S~2” Timp; „~1j~2” Aliniere șir\n"
+" x~5,~1y~5     . Comut. evidențieri: „~1x~2” sortare câmp; „~1y~2” sarcini în execuție\n"
+" z~5,~1b~5     . Comut.: „~1z~2” color/mono; „~1b~2” aldin/invers (doar dacă „x” sau „y”)\n"
+" u,U,o,O . Filtr. după: „~1u~2”/„~1U~2” utilizator efectiv/oricare; „~1o~2”/„~1O~2” alt criteriu\n"
+" n,#,^O  . Def.: „~1n~2”/„~1#~2” max sarcini afișate; Afișare: ~1Ctrl~2+„~1O~2” alte filtre\n"
+" V,v,F   . Comut.: „~1V~2” vizual. arbores.; „~1v~2” asc/afiș copil; „~1F~2” menține focal\n"
+"\n"
+"%s ^G,K,N,U  Vizualiz.: grupuri ctl ~1^G~2; linie cmd ~1^K~2; mediu ~1^N~2; grupuri supl ~1^U~2\n"
+" W,Y,!,^E  Scrie config „~1W~2”; Inspect „~1Y~2”; Combină Cpus „~1!~2”; Scală timp ~1^E~2\n"
+" q         Ieșire\n"
+"         (comenzile cu „.” necesită o ~1fereastră~2 de afișare a sarcinii ~1vizibilă~2) \n"
+"Apăsați „~1h~2” sau „~1?~2” pentru ajutor cu ~1Fereastra~2,\n"
+"Tastați „q” sau <Esc> pentru a continua "
 
 #: src/top/top_nls.c:687
 #, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,"
-"sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your "
-"~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
-"shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
-"('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' "
-"window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
-"~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields "
-"screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
-"windows\n"
-"    g       . Choose another field group and make it 'current', or change "
-"now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
-"or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
+"    g       . Choose another field group and make it 'current', or change now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
-"Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
-"~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can "
-"make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
-"later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
-"~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to "
-"become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
-"the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
+"Ajutor pentru ferestre / grupuri de câmpuri~2 - \"Fereastra curentă\" = ~1 %s ~6\n"
+"\n"
+". Utilizați multiple ~1ferestre~2, fiecare cu opț, separate (culoare, câmpuri, sort., șa)\n"
+". Fereastra „actuală” controlează ~1Zona de rezumat~2 și răspunde la ~1Comenzile~2 dvs.\n"
+". Afișarea sarcinilor din această fereastră poate fi ~1Activ~2/~1Dezactiv~2, maxim/minim \n"
+"pe cele ~1FĂRĂ~2 afișare de sarcini, unele comenzi vor fi ~1dezactivate~2 ('i','R','n',\n"
+"'c', șa) până când va fi activată o ~1altă fereastră~2, devenind fereastra „actuală”\n"
+". ~1Schimbați~2 fereastra „actuală” prin: ~1 1~2) rotind înainte/înapoi;~1 2~2) alegând\n"
+"un câmp specific; sau~1 3~2) ieșind din ecranele de asociere a culorilor sau câmpuri\n"
+". Comenzi ~1disponibile oricând   -------------~2\n"
+"    A       Comutare alternativă a modului de afișare: ~1Una~2 / ~1Multiple~2 ferestre\n"
+"    g       Alegeți un alt grup de câmpuri și faceți-l „actual” sau modificați-l \n"
+"            acum, selectând un număr din: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; sau~1 4~2 =%s\n"
+". Comenzi ~1care necesită ~2modul '~1A~2'~1  -------------~2\n"
+"    G       Schimbați ~1Numele~5 ferestrei/grupului de câmpuri „actual”\n"
+" ~1*~4  a , w   Parcurgeți toate cele patru ferestre:  '~1a~5' Înainte; '~1w~5' Înapoi\n"
+" ~1*~4  - , _   Afiș/Asc:  '~1-~5' ~2Feraastra~1 actuală; '~1_~5' toate ~1Vizibile~2/~1Invizibile~2\n"
+" Ecranul va fi împărțit în mod egal între afișările de sarcini. Dar puteți face\n"
+"unele ~1mai mari~2 sau ~1mai mici~2, utilizând comenzile '~1n~2' și '~1i~2'. Apoi, puteți face:\n"
+" ~1*~4  = , +   Reechilibrați sarcinile: '~1=~5' ~2Fereastra~1 actuală; '~1+~5' ~1Fiecare~2 fereastră\n"
+"(acest lucru forțează, de asemenea, ~1actuala~2/~1fiecare~2 fereastră să devină vizibilă)\n"
+"\n"
+"În modul '~1A~2', tastele '~1*~4' sunt comenzile dvs ~1esențiale~2. Încercați cmds '~1a~2' și '~1w~2'\n"
+"plus subcomenzile 'g' ACUM. Apăsați <Enter> pentru a o face fereastra „Actuală” "
 
 #. Translation Notes ------------------------------------------------
 #. .  The following 'Help for color mapping' simulated screen should
@@ -3638,10 +3928,8 @@ msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
-"~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
-"~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3650,8 +3938,7 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
-"~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
 "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
@@ -3663,15 +3950,49 @@ msgid ""
 "   'q' or <Esc> to abort changes to window '~1%s~2'\n"
 "   'a' or 'w' to commit & change another, <Enter> to commit and end "
 msgstr ""
+"Ajutor pentru asocierea culorilor~2 - „Fereastra curentă” = ~1 %s ~6\n"
+"\n"
+"   culoare - 04:25:44 funcționează 8 zile, 50 min,  7 utilizatori,  încărcarea medie:\n"
+"   Sarcini:~3  64 ~2total,~3   2 ~3rulând,~3  62 ~2dormind,~3   0 ~2oprite,~3\n"
+"   %%Cpu(s):~3  76.5 ~2utilizator,~3  11.2 ~2sistem,~3   0.0 ~2„nice”,~3  12.3 ~2inactiv~3\n"
+"   ~1 Mesaj urât! ~4  -sau-  ~1Solicitare de intrare~5\n"
+"   ~1  PID TTY     PR  NI %%CPU    TIMP+   VIRT SWAP S COMANDA    ~6\n"
+"   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
+"   ~1 8601 pts/1    7 -10  0.4   0:00.03   916    0 R color -b -z~7\n"
+"   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n"
+"   comutatoare disponibile: ~1B~2 =dezact. global caracterele aldine (~1%s~2),\n"
+"       ~1z~2 =color/mono (~1%s~2), ~1b~2 =sarcini „aldin”/invers (~1%s~2)\n"
+"\n"
+"1) Selectați o ~1țintă~2 cu literele în majusculă, ~1ținta curentă~2 este ~1 %c ~4:\n"
+"   S~2 = Rezumat de date,~1  M~2 = Mesaje/Solicitări,\n"
+"   H~2 = Titluri coloane,~1  T~2 = Informații despre sarcini\n"
+"2) Selectați o ~1culoare~2 ca un număr sau utilizați tastele săgeți sus/jos\n"
+"   pt. a crește/micșora valoarea culorii %d, ~1culoarea curentă~2 este ~1 %d ~4:\n"
+"   0~2 = negru,~1  1~2 = roșu,    ~1  2~2 = verde,~1  3~2 = galben,\n"
+"   4~2 = albastru, ~1  5~2 = fucsia,~1  6~2 = cian, ~1  7~2 = alb\n"
+"\n"
+"3) Apoi, când ați terminat, utilizați aceste taste:\n"
+"   „q” sau <Esc> pentru a anula modificările aduse ferestrei „~1%s~2”\n"
+"   „a'”sau „w” pt. a efectua modificările și-a trece la alta, <Enter>pt. a efectua modificările și ieși "
 
+# R-GC, scrie:
+# MULȚUMESC, AUTORILOR pentru
+# „avizarea” asupra acestui mesaj!
+# ***
+# l-am tradus pe jumătate, și i-am șters
+# unul dintre spațiile inițiale, pt. a se
+# putea încadra în blestematele
+# 80 de caractere/coloane.
+# ===
+# Chestia e, că prin artă de magie,
+# apare inclus/insertat în interiorul
+# altui mesaj mai amplu...
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:751
-msgid ""
-"  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' "
-"renice autogroup\n"
-msgstr ""
+msgid "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n"
+msgstr " d,k,r,^R „~1d~2” def. întârzierea; „~1k~2” omoară; „~1r~2” renice; ~1Ctrl~2+„~1R~2” renice autogrup\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -3682,54 +4003,47 @@ msgstr ""
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
-"commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
+"Gestionarea câmpurilor~2 pentru fereastra ~1%s~6, al cărei câmp de sortare curent este ~1%s~2\n"
+"   Navigați cu Sus/Jos; Cu Dreapta selectați pentru mutare, apoi <Enter> sau Stânga pentru a o efectua,\n"
+"   „d” sau <Spațiu> comută afișarea, „s” activează sortarea.  Utilizați „q” sau <Esc> pentru a ieși!\n"
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:767
 #, c-format
-msgid ""
-"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
-"~2zombie~3\n"
-msgstr ""
+msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
+msgstr "%s:~3 %3u ~2total,~3 %3u ~2rulând,~3 %3u ~2dormind,~3 %3u ~2oprit(e),~3 %3u ~2zombi~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
 #: src/top/top_nls.c:773
 #, c-format
-msgid ""
-"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
-"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
-msgstr ""
+msgid "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
+msgstr "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
 #: src/top/top_nls.c:779
 #, c-format
-msgid ""
-"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
-"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
-msgstr ""
+msgid "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
+msgstr "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 
 #. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
 #: src/top/top_nls.c:783
 #, c-format
-msgid ""
-"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
-"~1    "
-msgstr ""
+msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 ~1    "
+msgstr "%s %s:~3 %9.9s~2total,~3 %9.9s~2liberă,~3 %9.9s~2utilizată,~3 %9.9s~2buff/cache~3 ~1    "
 
 #: src/top/top_nls.c:785
 #, c-format
-msgid ""
-"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
-msgstr ""
+msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
+msgstr "%s %s:~3 %9.9s~2total,~3 %9.9s~2liberă,~3 %9.9s~2utilizată.~3 %9.9s~2dispo %s~3"
 
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
@@ -3738,100 +4052,110 @@ msgstr ""
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
-"~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
+"Inspectare~2 Suspendare: pid ~1%d~6, în execuție ~1%s~6\n"
+"Utilizați~2:  stânga/dreapta apoi <Enter> pentru a ~1selecta~5 o opțiune; „q” sau <Esc> pentru ~1a ieși~5 !\n"
+"Opțiuni~2: ~1%s\n"
 
 #: src/top/top_nls.c:796
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
-"~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
+"Inspectare~2 Vizualizare a pid: ~1%s~3, în execuție ~1%s~3.  Poziția: ~1%s~6\n"
+"Utilizați~2:  stânga/dreapta/sus/jos/etc pentru a ~1naviga~5 la ieșire; „L”/„&” pentru a ~1trece la~5/~1următoarea~5.\n"
+"Sau~2:   <Enter> pentru a ~1selecta altă~5; „q” sau <Esc> pentru ~1a ieși~5 !\n"
 
 #: src/uptime.c:47 src/uptime.c:119
 msgid "Cannot get system uptime"
-msgstr ""
+msgstr "Nu se poate obține timpul de funcționare a sistemului"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «uptime --help»
 #: src/uptime.c:63
 msgid " -p, --pretty   show uptime in pretty format\n"
-msgstr ""
+msgstr " -p, --pretty   afișează timpul de funcționare într-un format amiabil\n"
 
 #: src/uptime.c:65
 msgid " -s, --since    system up since\n"
-msgstr ""
+msgstr " -s, --since    sistemul rulează de atunci\n"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «vmstat --help»
 #: src/vmstat.c:224
 #, c-format
 msgid " %s [options] [delay [count]]\n"
-msgstr " %s [options] [დაყოვნება [რაოდენობა]]\n"
+msgstr " %s [opțiuni] [întârziere [număr]]\n"
 
 #: src/vmstat.c:227
 msgid " -a, --active           active/inactive memory\n"
-msgstr ""
+msgstr " -a, --active           memorie activă/inactivă\n"
 
 #: src/vmstat.c:228
 msgid " -f, --forks            number of forks since boot\n"
-msgstr ""
+msgstr " -f, --forks            numărul de bifurcări de la pornire\n"
 
 #: src/vmstat.c:229
 msgid " -m, --slabs            slabinfo\n"
-msgstr ""
+msgstr " -m, --slabs            info-slabs\n"
 
 #: src/vmstat.c:230
 msgid " -n, --one-header       do not redisplay header\n"
-msgstr ""
+msgstr " -n, --one-header       nu reafișează antetul(titlurile)\n"
 
 #: src/vmstat.c:231
 msgid " -s, --stats            event counter statistics\n"
-msgstr ""
+msgstr " -s, --stats            statistici contor de evenimente\n"
 
 #: src/vmstat.c:232
 msgid " -d, --disk             disk statistics\n"
-msgstr ""
+msgstr " -d, --disk             statisticile discului\n"
 
 #: src/vmstat.c:233
 msgid " -D, --disk-sum         summarize disk statistics\n"
-msgstr ""
+msgstr " -D, --disk-sum         rezumatul statisticilor de utilizare a discului\n"
 
 #: src/vmstat.c:234
 msgid " -p, --partition <dev>  partition specific statistics\n"
 msgstr ""
+" -p, --partition <partiția>\n"
+"                        statistici specifice partiției\n"
 
 #: src/vmstat.c:235
 msgid " -S, --unit <char>      define display unit\n"
-msgstr ""
+msgstr " -S, --unit <caracter>  definește unitatea de afișare(k, K, m sau M)\n"
 
 #: src/vmstat.c:236
 msgid " -w, --wide             wide output\n"
-msgstr " -w, --wide          ფართო გამოტანა\n"
+msgstr " -w, --wide             ieșire în format mare (detaliat)\n"
 
 #: src/vmstat.c:237
 msgid " -t, --timestamp        show timestamp\n"
-msgstr " -t, --timestamp        დროის შტამპის ჩვენება\n"
+msgstr " -t, --timestamp        afișează marcajul de timp\n"
 
 #: src/vmstat.c:238
 msgid " -y, --no-first         skips first line of output\n"
-msgstr " -w, --wide          ფართო გამოტანა\n"
+msgstr " -y, --no-first         omite prima linie de ieșire\n"
 
 #: src/vmstat.c:257
-msgid ""
-"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
-"cpu-----"
-msgstr ""
+msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
+msgstr "procese ----------memorie--------- ---swap-- ---in/ieș-- -sistem-- ------cpu-----"
 
 #: src/vmstat.c:259
-msgid ""
-"--procs-- -----------------------memory---------------------- ---swap-- -----"
-"io---- -system-- ----------cpu----------"
-msgstr ""
+msgid "--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- ----------cpu----------"
+msgstr "-procese- -----------------------memorie--------------------- ---swap-- ---in/ieș-- -sistem-- ----------cpu----------"
 
 #: src/vmstat.c:260 src/vmstat.c:616
 msgid " -----timestamp-----"
-msgstr ""
+msgstr " ----marcaj timp----"
 
 #. Translation Hint: max 2 chars
 #: src/vmstat.c:279
@@ -3851,7 +4175,7 @@ msgstr "swpd"
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:285
 msgid "free"
-msgstr "თავისუფალია"
+msgstr "liber"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:287
@@ -3866,7 +4190,7 @@ msgstr "buff"
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:291
 msgid "active"
-msgstr "აქტიური"
+msgstr "activă"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:293
@@ -3876,7 +4200,7 @@ msgstr "cache"
 #. Translation Hint: max 4 chars
 #: src/vmstat.c:295
 msgid "si"
-msgstr "si"
+msgstr "sin"
 
 #. Translation Hint: max 4 chars
 #: src/vmstat.c:297
@@ -3886,7 +4210,7 @@ msgstr "so"
 #. Translation Hint: max 5 chars
 #: src/vmstat.c:299
 msgid "bi"
-msgstr "bi"
+msgstr "bin"
 
 #. Translation Hint: max 5 chars
 #: src/vmstat.c:301
@@ -3935,19 +4259,19 @@ msgstr "gu"
 
 #: src/vmstat.c:378 src/vmstat.c:867
 msgid "Unable to create vmstat structure"
-msgstr ""
+msgstr "Nu se poate crea structura vmstat"
 
 #: src/vmstat.c:380 src/vmstat.c:863 src/vmstat.c:916
 msgid "Unable to create system stat structure"
-msgstr ""
+msgstr "Nu se poate crea structura statistică a sistemului"
 
 #: src/vmstat.c:391 src/vmstat.c:871
 msgid "Unable to select memory information"
-msgstr ""
+msgstr "Nu se pot selecta informațiile de memorie"
 
 #: src/vmstat.c:405 src/vmstat.c:458 src/vmstat.c:865
 msgid "Unable to select stat information"
-msgstr ""
+msgstr "Nu se pot selecta informațiile statistice"
 
 #. Translation Hint: Translating folloging disk partition
 #. * header fields that follow (marked with max x chars) might
@@ -3955,77 +4279,73 @@ msgstr ""
 #. Translation Hint: max 10 chars
 #: src/vmstat.c:562
 msgid "reads"
-msgstr "წაკითხვები"
+msgstr "citiri"
 
 #. Translation Hint: max 16 chars
 #: src/vmstat.c:564
 msgid "read sectors"
-msgstr "წაკითხ სექტ"
+msgstr "citește sectoarele"
 
 #. Translation Hint: max 10 chars
 #: src/vmstat.c:566
 msgid "writes"
-msgstr "ჩაწერები"
+msgstr "scrieri"
 
 #. Translation Hint: max 16 chars
 #: src/vmstat.c:568
 msgid "requested writes"
-msgstr "მოთხ ჩაწ"
+msgstr "solicitare scrieri"
 
 #: src/vmstat.c:581 src/vmstat.c:684 src/vmstat.c:810
 msgid "Unable to create diskstat structure"
-msgstr ""
+msgstr "Nu se poate crea structura statistică a discului"
 
 #: src/vmstat.c:584 src/vmstat.c:590
 #, c-format
 msgid "Disk/Partition %s not found"
-msgstr "დისკი/დანაყოფი %s ვერ ვიპოვე"
+msgstr "Discul sau partiția %s nu a fost găsite"
 
 #: src/vmstat.c:613
-msgid ""
-"disk- ------------reads------------ ------------writes----------- -----"
-"IO------"
-msgstr ""
+msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
+msgstr "disc- ------------citiri----------- ------------scrieri---------- ---In/Ieș----"
 
 #: src/vmstat.c:615
-msgid ""
-"disk- -------------------reads------------------- -------------------"
-"writes------------------ ------IO-------"
-msgstr ""
+msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
+msgstr "disc- -------------------citiri------------------ -------------------scrieri----------------- ----In/Ieș-----"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:634 src/vmstat.c:642
 msgid "total"
-msgstr "ჯამში"
+msgstr "total"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:636 src/vmstat.c:644
 msgid "merged"
-msgstr "შერწყმ"
+msgstr "mixate"
 
 #. Translation Hint: max 7 chars
 #: src/vmstat.c:638 src/vmstat.c:646
 msgid "sectors"
-msgstr "სექტ-ები"
+msgstr "sectors"
 
 #. Translation Hint: max 7 chars
 #: src/vmstat.c:640 src/vmstat.c:648
 msgid "ms"
-msgstr "მწმ"
+msgstr "ms"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:650
 msgid "cur"
-msgstr "მიმდ"
+msgstr "cur"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:652
 msgid "sec"
-msgstr "წმ"
+msgstr "sec"
 
 #: src/vmstat.c:691 src/vmstat.c:812
 msgid "Unable to retrieve disk statistics"
-msgstr ""
+msgstr "Nu se pot prelua statisticile discului"
 
 #. Translation Hint: Translating folloging slab fields that
 #. * follow (marked with max x chars) might not work, unless
@@ -4033,299 +4353,325 @@ msgstr ""
 #. Translation Hint: max 24 chars
 #: src/vmstat.c:738
 msgid "Cache"
-msgstr "კეში"
+msgstr "Cache"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:740
 msgid "Num"
-msgstr "რიცხვი"
+msgstr "Num"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:742
 msgid "Total"
-msgstr "ჯამში"
+msgstr "Total"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:744
 msgid "Size"
-msgstr "ზომა"
+msgstr "Dim."
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:746
 msgid "Pages"
-msgstr "გვერდი"
+msgstr "Pagini"
 
+# R-GC, scrie:
+# în versiunea ulterioară a procps,
+# de urmat exemplul echipei
+# poloneze, pentru a afișa mesajele
+# informative =n „sistemul european”
+# și nu în cel „american” cum este în
+# această versiune; adică:
+# acum →
+# X total citiri
+# Y discuri
+# Z partiții
+# ***
+# vizualizare „europeană” →
+# Total citiri:  X
+# Discuri:      Y
+# Partiții:       Z
 #: src/vmstat.c:833
 #, c-format
 msgid "%13d disks\n"
-msgstr "%13d დისკი \n"
+msgstr "%13d discuri\n"
 
 #: src/vmstat.c:834
 #, c-format
 msgid "%13d partitions\n"
-msgstr "%13d დანაყოფი \n"
+msgstr "%13d partiții\n"
 
 #: src/vmstat.c:835
 #, c-format
 msgid "%13lu total reads\n"
-msgstr "%13lu სულ წაკითხვა\n"
+msgstr "%13lu total citiri\n"
 
 #: src/vmstat.c:836
 #, c-format
 msgid "%13lu merged reads\n"
-msgstr "%13lu შერწყმული წაკითხვა\n"
+msgstr "%13lu de citiri combinate\n"
 
 #: src/vmstat.c:837
 #, c-format
 msgid "%13lu read sectors\n"
-msgstr "%13lu წაკითხული სექტორი\n"
+msgstr "%13lu sectoare citite\n"
 
 #: src/vmstat.c:838
 #, c-format
 msgid "%13lu milli reading\n"
-msgstr "%13lu მილი წაკითხვა\n"
+msgstr "%13lu timp de citire (ms)\n"
 
 #: src/vmstat.c:839
 #, c-format
 msgid "%13lu writes\n"
-msgstr "%13lu ჩაწერა\n"
+msgstr "%13lu scrieri\n"
 
 #: src/vmstat.c:840
 #, c-format
 msgid "%13lu merged writes\n"
-msgstr "%13lu შერწყმული ჩაწერა\n"
+msgstr "%13lu de scrieri combinate\n"
 
 #: src/vmstat.c:841
 #, c-format
 msgid "%13lu written sectors\n"
-msgstr "%13lu ჩაწერილი სექტორი\n"
+msgstr "%13lu sectoare scrise\n"
 
 #: src/vmstat.c:842
 #, c-format
 msgid "%13lu milli writing\n"
-msgstr "%13lu მილი ჩაწერა\n"
+msgstr "%13lu timp de scriere (ms)\n"
 
 #: src/vmstat.c:843
 #, c-format
 msgid "%13lu inprogress IO\n"
-msgstr "%13lu მიმდინარე IO\n"
+msgstr "%13lu In/Ieș în curs\n"
 
 #: src/vmstat.c:844
 #, c-format
 msgid "%13lu milli spent IO\n"
-msgstr "%13lu მილი დახარჯული IO\n"
+msgstr "%13lu ms consumate per In/Ieș\n"
 
 #: src/vmstat.c:845
 #, c-format
 msgid "%13lu milli weighted IO\n"
-msgstr "%13lu მილი დახარჯული IO\n"
+msgstr "%13lu ms In/Ieș ponderat\n"
 
 #: src/vmstat.c:873
 #, c-format
 msgid "%13lu %s total memory\n"
-msgstr "%13lu %s სულ მეხსიერება\n"
+msgstr "%13lu %s total memorie\n"
 
 #: src/vmstat.c:874
 #, c-format
 msgid "%13lu %s used memory\n"
-msgstr "%13lu %s გამოყენებული მეხსიერება\n"
+msgstr "%13lu %s memorie utilizată\n"
 
 #: src/vmstat.c:875
 #, c-format
 msgid "%13lu %s active memory\n"
-msgstr "%13lu %s აქტიური მეხსიერება\n"
+msgstr "%13lu %s memorie activă\n"
 
 #: src/vmstat.c:876
 #, c-format
 msgid "%13lu %s inactive memory\n"
-msgstr "%13lu %s არააქტიური მეხსიერება\n"
+msgstr "%13lu %s memorie inactivă\n"
 
 #: src/vmstat.c:877
 #, c-format
 msgid "%13lu %s free memory\n"
-msgstr "%13lu %s თავისუფალი მეხსიერება\n"
+msgstr "%13lu %s memorie liberă\n"
 
 #: src/vmstat.c:878
 #, c-format
 msgid "%13lu %s buffer memory\n"
-msgstr "%13lu %s ბუფერის მეხსიერება\n"
+msgstr "%13lu %s memorie tampon\n"
 
 #: src/vmstat.c:879
 #, c-format
 msgid "%13lu %s swap cache\n"
-msgstr "%13lu %s სვოპის ქეში\n"
+msgstr "%13lu %s swap cache\n"
 
 #: src/vmstat.c:880
 #, c-format
 msgid "%13lu %s total swap\n"
-msgstr "%13lu %s ჯამური სვოპი\n"
+msgstr "%13lu %s total swap\n"
 
 #: src/vmstat.c:881
 #, c-format
 msgid "%13lu %s used swap\n"
-msgstr "%13lu %s გამოყენებული სვოპი\n"
+msgstr "%13lu %s swap utilizată\n"
 
 #: src/vmstat.c:882
 #, c-format
 msgid "%13lu %s free swap\n"
-msgstr "%13lu %s თავისუფალი სვოპი\n"
+msgstr "%13lu %s swap liberă\n"
 
 #: src/vmstat.c:883
 #, c-format
 msgid "%13lld non-nice user cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu pentru procese de utilizator „non-nice”\n"
 
 #: src/vmstat.c:884
 #, c-format
 msgid "%13lld nice user cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu pentru procese de utilizator „nice”\n"
 
 #: src/vmstat.c:885
 #, c-format
 msgid "%13lld system cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu pentru procese de sistem\n"
 
 #: src/vmstat.c:886
 #, c-format
 msgid "%13lld idle cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu inactiv\n"
 
 #: src/vmstat.c:887
 #, c-format
 msgid "%13lld IO-wait cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu de așteptare In/Ieș\n"
 
 #: src/vmstat.c:888
 #, c-format
 msgid "%13lld IRQ cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu IRQ\n"
 
 #: src/vmstat.c:889
 #, c-format
 msgid "%13lld softirq cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu IRQ-software\n"
 
 #: src/vmstat.c:890
 #, c-format
 msgid "%13lld stolen cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri de cpu furate\n"
 
 #: src/vmstat.c:891
 #, c-format
 msgid "%13lld non-nice guest cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu pentru procese de invitat „non-nice”\n"
 
 #: src/vmstat.c:892
 #, c-format
 msgid "%13lld nice guest cpu ticks\n"
-msgstr ""
+msgstr "%13lld cicluri cpu pentru procese de invitat „nice”\n"
 
 #: src/vmstat.c:893
 #, c-format
 msgid "%13lu K paged in\n"
-msgstr "%13lu შერწყმული ჩაწერა\n"
+msgstr "%13lu K date de intrare paginate\n"
 
 #: src/vmstat.c:894
 #, c-format
 msgid "%13lu K paged out\n"
-msgstr "%13lu შერწყმული ჩაწერა\n"
+msgstr "%13lu K date de ieșire paginate\n"
 
 #: src/vmstat.c:895
 #, c-format
 msgid "%13lu pages swapped in\n"
-msgstr ""
+msgstr "%13lu pagini introduse în stocarea swap\n"
 
 #: src/vmstat.c:896
 #, c-format
 msgid "%13lu pages swapped out\n"
-msgstr ""
+msgstr "%13lu pagini scoase din stocarea swap\n"
 
 #: src/vmstat.c:897
 #, c-format
 msgid "%13lu interrupts\n"
-msgstr "%13lu წყვეტა\n"
+msgstr "%13lu întreruperi\n"
 
 #: src/vmstat.c:898
 #, c-format
 msgid "%13lu CPU context switches\n"
-msgstr "%13lu ჩაწერა\n"
+msgstr "%13lu comutatoare de context CPU\n"
 
 #: src/vmstat.c:899
 #, c-format
 msgid "%13lu boot time\n"
-msgstr "%13lu ჩატვირთვის დრო\n"
+msgstr "%13lu durata timpului pornire\n"
 
 #: src/vmstat.c:900 src/vmstat.c:918
 #, c-format
 msgid "%13lu forks\n"
-msgstr "%13lu ფორკი\n"
+msgstr "%13lu bifurcări\n"
 
 #. Translation Hint: do not change argument characters
 #: src/vmstat.c:1021
 msgid "-S requires k, K, m or M (default is KiB)"
-msgstr ""
+msgstr "opțiunea „-S” necesită k, K, m sau M ca argument (implicit este Kio)"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «watch --help»
 #: src/watch.c:92
 #, c-format
 msgid " %s [options] command\n"
-msgstr " %s [პარამეტრი] ბრძანება\n"
+msgstr " %s [opțiuni] comanda\n"
 
 #: src/watch.c:94
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
-msgstr ""
+msgstr "  -b, --beep             emite un bip dacă comanda are o ieșire diferită de zero\n"
 
 #: src/watch.c:95
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
-msgstr ""
+msgstr "  -c, --color            interpretează secvențele de culoare și stil ANSI\n"
 
 #: src/watch.c:96
 msgid ""
 "  -d, --differences[=<permanent>]\n"
 "                         highlight changes between updates\n"
 msgstr ""
+"  -d, --differences[=<permanent>]\n"
+"                         evidențiază modificările dintre actualizări\n"
 
 #: src/watch.c:98
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr ""
+msgstr "  -e, --errexit          iese dacă comanda are o ieșire diferită de zero\n"
 
 #: src/watch.c:99
 msgid "  -g, --chgexit          exit when output from command changes\n"
-msgstr ""
+msgstr "  -g, --chgexit          iese atunci când ieșirea de la comandă se modifică\n"
 
 #: src/watch.c:100
 msgid ""
 "  -q, --equexit <cycles>\n"
 "                         exit when output from command does not change\n"
 msgstr ""
+"  -q, --equexit <cicluri>\n"
+"                         iese când ieșirea din comandă nu se modifică\n"
 
 #: src/watch.c:102
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr ""
+"  -n, --interval <secunde>\n"
+"                         numărul de secunde de așteptare între actualizări\n"
 
 #: src/watch.c:103
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr ""
+msgstr "  -p, --precise          încearcă să execute comanda la intervale precise\n"
 
 #: src/watch.c:104
 msgid "  -t, --no-title         turn off header\n"
-msgstr ""
+msgstr "  -t, --no-title         nu afișează antetul (titlurile)\n"
 
 #: src/watch.c:105
 msgid "  -w, --no-wrap          turn off line wrapping\n"
-msgstr ""
+msgstr "  -w, --no-wrap          dezactivează întreruperile de linie\n"
 
 #: src/watch.c:106
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-msgstr ""
+msgstr "  -x, --exec             pasează comanda lui „exec” în loc de „sh -c”\n"
 
 #: src/watch.c:109
 msgid " -v, --version  output version information and exit\n"
-msgstr ""
+msgstr " -v, --version  afișează informații despre versiune și iese\n"
 
 #: src/watch.c:483
 #, c-format
 msgid "Every %.1fs: "
-msgstr ""
+msgstr "La fiecare %.1fs: "
 
 #: src/watch.c:484
 #, c-format
@@ -4334,20 +4680,20 @@ msgstr "%s: %s"
 
 #: src/watch.c:573
 msgid "unable to create IPC pipes"
-msgstr ""
+msgstr "nu se pot crea conductele IPC"
 
 #: src/watch.c:583
 msgid "unable to fork process"
-msgstr ""
+msgstr "nu se poate bifurca procesul"
 
 #: src/watch.c:588
 msgid "dup2 failed"
-msgstr "dup2 failed"
+msgstr "dup2 a eșuat"
 
 #: src/watch.c:595
 #, c-format
 msgid "unable to execute '%s'"
-msgstr ""
+msgstr "nu se poate executa „%s”"
 
 #: src/watch.c:612
 msgid "fdopen"
@@ -4359,81 +4705,86 @@ msgstr "waitpid"
 
 #: src/watch.c:785
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr ""
+msgstr "comanda a ieșit cu o stare diferită de zero, apăsați o tastă pentru a ieși"
 
 #: src/watch.c:845
 msgid "Could not parse interval from WATCH_INTERVAL"
-msgstr ""
+msgstr "Nu s-a putut analiza intervalul de la WATCH_INTERVAL"
 
 #: src/watch.c:930
 #, c-format
 msgid "unicode handling error\n"
-msgstr ""
+msgstr "eroare de gestionare a unicode\n"
 
 #: src/watch.c:936
 #, c-format
 msgid "unicode handling error (malloc)\n"
-msgstr ""
+msgstr "eroare de gestionare a unicode (malloc)\n"
 
 #: src/w.c:254 src/w.c:269
 #, c-format
 msgid " %2lludays"
-msgstr " %2lluდღე"
+msgstr " %2lluzile"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
 #: src/w.c:263 src/w.c:273
 #, c-format
 msgid " %2llu:%02um"
-msgstr " %2llu:%02uწთ"
+msgstr " %2llu:%02um"
 
 #. Translation Hint: Seconds:Centiseconds
 #: src/w.c:281
 #, c-format
 msgid " %2llu.%02us"
-msgstr " %2llu.%02uწმ"
+msgstr " %2llu.%02us"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «tload --help»
 #: src/w.c:524
 #, c-format
 msgid " %s [options] [user]\n"
-msgstr " %s [options] [tty]\n"
+msgstr " %s [opțiuni] [utilizator]\n"
 
+# R-GC, scrie:
+# acest mesaj și următoarele, pot să fie
+# vizualizate, rulînd comanda:
+# «w --help»
 #: src/w.c:526
 msgid " -h, --no-header     do not print header\n"
-msgstr ""
+msgstr " -h, --no-header     nu afișează antetul(titlurile)\n"
 
 #: src/w.c:527
 msgid " -u, --no-current    ignore current process username\n"
-msgstr ""
+msgstr " -u, --no-current    ignoră numele de utilizator al procesului curent\n"
 
 #: src/w.c:528
 msgid " -s, --short         short format\n"
-msgstr ""
+msgstr " -s, --short         formatul scurt\n"
 
 #: src/w.c:529
 msgid " -f, --from          show remote hostname field\n"
-msgstr ""
+msgstr " -f, --from          afișează câmpul de nume de gazdă de la distanță\n"
 
 #: src/w.c:530
 msgid " -o, --old-style     old style output\n"
-msgstr ""
+msgstr " -o, --old-style     ieșire în stil vechi\n"
 
 #: src/w.c:531
-msgid ""
-" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
-msgstr ""
+msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+msgstr " -i, --ip-addr       afișează adresa IP în loc de numele gazdei (dacă este posibil)\n"
 
 #: src/w.c:625
 #, c-format
-msgid ""
-"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
-msgstr ""
+msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgstr "Lungimea variabilei de mediu a utilizatorului PROCS_USERLEN trebuie să fie între 8 și %i, se ignoră.\n"
 
 #: src/w.c:635
 #, c-format
-msgid ""
-"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
-msgstr ""
+msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgstr "valoarea lungimii variabilei de mediu, PROCPS_FROMLEN, trebuie să fie între 8 și %d, se ignoră\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -4444,17 +4795,17 @@ msgstr "%-*s TTY      "
 
 #: src/w.c:663
 msgid "FROM"
-msgstr "საიდან"
+msgstr "DIN "
 
 #: src/w.c:665
 #, c-format
 msgid "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
-msgstr ""
+msgstr " ORA AUT. INACTIV  JCPU   PCPU CARE\n"
 
 #: src/w.c:667
 #, c-format
 msgid "   IDLE WHAT\n"
-msgstr ""
+msgstr "   IDLE WHAT\n"
 
 #: local/c.h:153
 msgid ""
@@ -4462,7 +4813,7 @@ msgid ""
 "Usage:\n"
 msgstr ""
 "\n"
-"გამოყენება:\n"
+"Utilizare:\n"
 
 #: local/c.h:154
 msgid ""
@@ -4470,7 +4821,7 @@ msgid ""
 "Options:\n"
 msgstr ""
 "\n"
-"პარამეტრები:\n"
+"Opțiuni:\n"
 
 #: local/c.h:155
 msgid "\n"
@@ -4478,11 +4829,11 @@ msgstr "\n"
 
 #: local/c.h:156
 msgid " -h, --help     display this help and exit\n"
-msgstr ""
+msgstr " -h, --help     afișează acest mesaj de ajutor și iese\n"
 
 #: local/c.h:157
 msgid " -V, --version  output version information and exit\n"
-msgstr ""
+msgstr " -V, --version  afișează informații despre versiune și iese\n"
 
 #: local/c.h:158
 #, c-format
@@ -4491,21 +4842,39 @@ msgid ""
 "For more details see %s.\n"
 msgstr ""
 "\n"
-"დამატებითი ინფორმაციისთვის იხილეთ %s.\n"
+"Pentru mai multe detalii, consultați %s.\n"
 
 #: local/c.h:160
 #, c-format
 msgid "%s from %s\n"
-msgstr "%s -ი %s-სგან\n"
+msgstr "%s de la %s\n"
+
+#~ msgid ""
+#~ "inappropriate '%s'\n"
+#~ "Usage:\n"
+#~ "  %s%s"
+#~ msgstr ""
+#~ "„%s” inadecvat\n"
+#~ "Utilizare:\n"
+#~ "  %s%s"
 
 #~ msgid "error: not enough memory\n"
-#~ msgstr "შეცდომა: არასაკმარისი მეხსიერება\n"
+#~ msgstr "eroare: memorie insuficientă\n"
 
 #~ msgid "error: can not access /proc\n"
-#~ msgstr "შეცდომა: /proc-თან წვდომის შეცდომა\n"
+#~ msgstr "eroare: nu se poate accesa directorul „/proc”\n"
 
 #~ msgid "something at line %d\n"
-#~ msgstr "რაღაც უცნაური ხაზზე %d\n"
+#~ msgstr "ceva pe linia %d\n"
+
+#~ msgid "\"%s\" must be of the form name=value"
+#~ msgstr "„%s” trebuie să fie de forma nume=valoare"
+
+#~ msgid "malformed setting \"%s\""
+#~ msgstr "configurare incorectă „%s”"
+
+#~ msgid "%s is deprecated, value not set"
+#~ msgstr "%s este învechit, valoarea nu se atribuie"
 
 #~ msgid ""
 #~ "  %s\n"
@@ -4513,11 +4882,42 @@ msgstr "%s -ი %s-სგან\n"
 #~ "  %s%s"
 #~ msgstr ""
 #~ "  %s\n"
-#~ "გამოყენება:\n"
+#~ "Utilizare:\n"
 #~ "  %s%s"
 
 #~ msgid "failed openproc: %s"
-#~ msgstr "openproc-ის შეცდომა: %s"
+#~ msgstr "openproc a eșuat: %s"
 
 #~ msgid "-%c requires argument"
-#~ msgstr "-%c -ისთვის არგუმენტის მითითება აუცილებელია"
+#~ msgstr "opțiunea „-%c” necesită un argument"
+
+#~ msgid " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+#~ msgstr " -hv | -bcEeHiOSs1 -d secunde -n max -u|U utilizator -p pid(-uri) -o câmp -w [coloane]"
+
+#~ msgid "failed /proc/stat read"
+#~ msgstr "eroare la citirea /proc/stat"
+
+#~ msgid "terminal is not wide enough"
+#~ msgstr "terminalul nu este suficient de lat"
+
+#~ msgid ""
+#~ "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
+#~ "  d or s    Set update interval\n"
+#~ msgstr ""
+#~ "  k,r       Gestionează sarcinile: '~1k~2' omoară; '~1r~2' schimbă prioritatea\n"
+#~ "  d sau s    Stabilește intervalul de actualizare\n"
+
+#~ msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
+#~ msgstr "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2sistem,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
+
+#~ msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3"
+#~ msgstr "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2sistem,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3"
+
+#~ msgid "your kernel does not support diskstat. (2.5.70 or above required)"
+#~ msgstr "nucleul dumneavoastră. nu acceptă «diskstat» (este necesară versiunea 2.5.70 sau mai mare)"
+
+#~ msgid "your kernel does not support diskstat (2.5.70 or above required)"
+#~ msgstr "nucleul dumneavoastră. nu acceptă «diskstat» (este necesară versiunea 2.5.70 sau mai mare)"
+
+#~ msgid "your kernel does not support slabinfo or your permissions are insufficient"
+#~ msgstr "nucleul dumneavoastră nu acceptă „slabinfo” sau permisiunile dumneavoastră sunt insuficiente"

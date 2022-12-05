@@ -4,13 +4,13 @@
 #
 # Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018, 2019, 2021, 2022.
 #
-# $Id: procps-ng.po,v 1.21 2022-11-01 12:14:25+01 göran Exp $
+# $Id: procps-ng.po,v 1.23 2022-11-28 16:03:10+01 göran Exp göran $
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.1rc3\n"
+"Project-Id-Version: procps-ng 4.0.2-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2022-11-26 08:52+1100\n"
-"PO-Revision-Date: 2022-11-01 12:03+0100\n"
+"PO-Revision-Date: 2022-11-28 16:07+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -4653,22 +4653,22 @@ msgid "unicode handling error (malloc)\n"
 msgstr "fel i hantering av unicode (malloc)\n"
 
 #: src/w.c:254 src/w.c:269
-#, fuzzy, c-format
+#, c-format
 msgid " %2lludays"
-msgstr " %2lu dagar"
+msgstr " %2llu dagar"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
 #: src/w.c:263 src/w.c:273
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu:%02um"
-msgstr " %2lu.%02um"
+msgstr " %2llu.%02um"
 
 #. Translation Hint: Seconds:Centiseconds
 #: src/w.c:281
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu.%02us"
-msgstr " %2lu,%02us"
+msgstr " %2llu,%02us"
 
 #: src/w.c:524
 #, c-format
@@ -4779,13 +4779,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s från %s\n"
-
-#, c-format
-#~ msgid ""
-#~ "inappropriate '%s'\n"
-#~ "Usage:\n"
-#~ "  %s%s"
-#~ msgstr ""
-#~ "felaktig ”%s”\n"
-#~ "Användning:\n"
-#~ "  %s%s"

@@ -21,10 +21,10 @@
 #                                                     Frédéric Marchal
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.1rc3\n"
+"Project-Id-Version: procps-ng 4.0.2-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2022-11-26 08:52+1100\n"
-"PO-Revision-Date: 2022-10-07 11:02+0200\n"
+"PO-Revision-Date: 2022-11-30 07:27+0100\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -4743,22 +4743,22 @@ msgid "unicode handling error (malloc)\n"
 msgstr "erreur de gestion de unicode (malloc)\n"
 
 #: src/w.c:254 src/w.c:269
-#, fuzzy, c-format
+#, c-format
 msgid " %2lludays"
-msgstr "%2lujours"
+msgstr "%2llujours"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
 #: src/w.c:263 src/w.c:273
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu:%02um"
-msgstr " %2lu:%02um"
+msgstr " %2llu:%02um"
 
 #. Translation Hint: Seconds:Centiseconds
 #: src/w.c:281
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu.%02us"
-msgstr " %2lu.%02us"
+msgstr " %2llu.%02us"
 
 #: src/w.c:524
 #, c-format
@@ -4872,7 +4872,6 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
 
-#, c-format
 #~ msgid ""
 #~ "inappropriate '%s'\n"
 #~ "Usage:\n"

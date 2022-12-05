@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.1rc3\n"
+"Project-Id-Version: procps-ng-4.0.2-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2022-11-26 08:52+1100\n"
-"PO-Revision-Date: 2022-10-22 11:45+0200\n"
+"PO-Revision-Date: 2022-12-02 18:45+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -4669,22 +4669,22 @@ msgid "unicode handling error (malloc)\n"
 msgstr "błąd obsługi unikodu (malloc)\n"
 
 #: src/w.c:254 src/w.c:269
-#, fuzzy, c-format
+#, c-format
 msgid " %2lludays"
-msgstr " %2ludni"
+msgstr " %2lludni"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
 #: src/w.c:263 src/w.c:273
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu:%02um"
-msgstr " %2lu:%02um"
+msgstr " %2llu:%02um"
 
 #. Translation Hint: Seconds:Centiseconds
 #: src/w.c:281
-#, fuzzy, c-format
+#, c-format
 msgid " %2llu.%02us"
-msgstr " %2lu.%02us"
+msgstr " %2llu.%02us"
 
 #: src/w.c:524
 #, c-format
@@ -4796,13 +4796,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s z pakietu %s\n"
-
-#, c-format
-#~ msgid ""
-#~ "inappropriate '%s'\n"
-#~ "Usage:\n"
-#~ "  %s%s"
-#~ msgstr ""
-#~ "błędna opcja '%s'\n"
-#~ "Składnia:\n"
-#~ "  %s%s"
