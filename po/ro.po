@@ -22,7 +22,8 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < 20)) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
+"20)) ? 1 : 2);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "X-Generator: Poedit 3.1.1\n"
 
@@ -86,7 +87,8 @@ msgstr "     --pebi          afișează ieșirea în pebiocteți\n"
 #: src/free.c:89
 msgid " -h, --human         show human-readable output\n"
 msgstr ""
-" -h, --human         afișează ieșirea într-o formă care poate fi citită ușor\n"
+" -h, --human         afișează ieșirea într-o formă care poate fi citită "
+"ușor\n"
 "                     de către om\n"
 
 #: src/free.c:90
@@ -96,7 +98,8 @@ msgstr "     --si            utilizează puteri de 1000, nu de 1024\n"
 #: src/free.c:91
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
 msgstr ""
-" -l, --lohi          afișează statistici detaliate despre cantitatea de memorie\n"
+" -l, --lohi          afișează statistici detaliate despre cantitatea de "
+"memorie\n"
 "                     utilizată, scăzută(Low) și ridicată(High)\n"
 
 #: src/free.c:92
@@ -109,11 +112,13 @@ msgstr " -v, --committed     afișează memoria alocată și limita de alocare\n
 
 #: src/free.c:94
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
-msgstr " -s N, --seconds N   repetă afișarea rezultatelor, la fiecare N secunde\n"
+msgstr ""
+" -s N, --seconds N   repetă afișarea rezultatelor, la fiecare N secunde\n"
 
 #: src/free.c:95
 msgid " -c N, --count N     repeat printing N times, then exit\n"
-msgstr " -c N, --count N     repetă afișarea rezultatelor de N ori, după care iese\n"
+msgstr ""
+" -c N, --count N     repetă afișarea rezultatelor de N ori, după care iese\n"
 
 # R-GC, scrie:
 # ieșire largă
@@ -164,13 +169,21 @@ msgstr "Nu se poate crea structura informațiilor despre memorie"
 
 #: src/free.c:377
 #, c-format
-msgid "               total        used        free      shared     buffers       cache   available"
-msgstr "               total   utilizată      liberă   partajată     buffers       cache disponibilă"
+msgid ""
+"               total        used        free      shared     buffers       "
+"cache   available"
+msgstr ""
+"               total   utilizată      liberă   partajată     buffers       "
+"cache disponibilă"
 
 #: src/free.c:379
 #, c-format
-msgid "               total        used        free      shared  buff/cache   available"
-msgstr "               total   utilizată      liberă   partajată  buff/cache disponibilă"
+msgid ""
+"               total        used        free      shared  buff/cache   "
+"available"
+msgstr ""
+"               total   utilizată      liberă   partajată  buff/cache "
+"disponibilă"
 
 #: src/free.c:382
 msgid "Mem:"
@@ -232,17 +245,22 @@ msgstr ""
 
 #: src/kill.c:43
 msgid " -q, --queue <value>    integer value to be sent with the signal\n"
-msgstr " -q, --queue <valoare>  valoare întreagă care trebuie trimisă împreună cu semnalul\n"
+msgstr ""
+" -q, --queue <valoare>  valoare întreagă care trebuie trimisă împreună cu "
+"semnalul\n"
 
 #: src/kill.c:44
-msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+msgid ""
+" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
 msgstr ""
-" -l, --list=[<semnal>]  listează toate numele semnalelor sau convertește unul\n"
+" -l, --list=[<semnal>]  listează toate numele semnalelor sau convertește "
+"unul\n"
 "                        într-un nume\n"
 
 #: src/kill.c:45
 msgid " -L, --table            list all signal names in a nice table\n"
-msgstr " -L, --table            listează toate numele semnalelor într-un tabel\n"
+msgstr ""
+" -L, --table            listează toate numele semnalelor într-un tabel\n"
 
 #: src/kill.c:110
 #, c-format
@@ -263,9 +281,9 @@ msgstr "argument nevalid %c"
 msgid "internal error"
 msgstr "eroare internă"
 
-#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375
-#: src/skill.c:459 src/tload.c:135 src/tload.c:140 src/vmstat.c:1044
-#: src/vmstat.c:1054 src/watch.c:870 src/watch.c:882
+#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375 src/skill.c:459
+#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1044 src/vmstat.c:1054
+#: src/watch.c:870 src/watch.c:882
 msgid "failed to parse argument"
 msgstr "nu s-a reușit să se analizeze argumentul"
 
@@ -292,12 +310,15 @@ msgstr " -l, --list-name           afișează numărul PID și numele procesului
 
 #: src/pgrep.c:155
 msgid " -a, --list-full           list PID and full command line\n"
-msgstr " -a, --list-full           afișează numărul PID și linia de comandă completă\n"
+msgstr ""
+" -a, --list-full           afișează numărul PID și linia de comandă "
+"completă\n"
 
 #: src/pgrep.c:156
 msgid " -v, --inverse             negates the matching\n"
 msgstr ""
-" -v, --inverse             inversează potrivirile (afișează ce NU se potrivește\n"
+" -v, --inverse             inversează potrivirile (afișează ce NU se "
+"potrivește\n"
 "                           cu modelul)\n"
 
 #: src/pgrep.c:157
@@ -308,12 +329,14 @@ msgstr ""
 
 #: src/pgrep.c:160
 msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr " -<sig>, --signal <sig>    semnalul «sig» de trimis (fie număr, fie nume)\n"
+msgstr ""
+" -<sig>, --signal <sig>    semnalul «sig» de trimis (fie număr, fie nume)\n"
 
 #: src/pgrep.c:161
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr ""
-" -q, --queue <valoare>     valoarea numărului întreag care trebuie trimis cu\n"
+" -q, --queue <valoare>     valoarea numărului întreag care trebuie trimis "
+"cu\n"
 "                           semnalul\n"
 
 #: src/pgrep.c:162
@@ -322,7 +345,8 @@ msgstr " -e, --echo                afișează care proces este omorât\n"
 
 #: src/pgrep.c:166
 msgid " -e, --echo                display PIDs before waiting\n"
-msgstr " -e, --echo                afișează numerele PID înainte de așteptare\n"
+msgstr ""
+" -e, --echo                afișează numerele PID înainte de așteptare\n"
 
 #: src/pgrep.c:170
 msgid " -c, --count               count of matching processes\n"
@@ -330,11 +354,14 @@ msgstr " -c, --count               numărul de procese care s-au potrivit\n"
 
 #: src/pgrep.c:171
 msgid " -f, --full                use full process name to match\n"
-msgstr " -f, --full                utilizează numele complet al procesului pentru a potrivi\n"
+msgstr ""
+" -f, --full                utilizează numele complet al procesului pentru a "
+"potrivi\n"
 
 #: src/pgrep.c:172
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
-msgstr " -g, --pgroup <PGID,...>   găsește ID-urile grupurilor de procese listate\n"
+msgstr ""
+" -g, --pgroup <PGID,...>   găsește ID-urile grupurilor de procese listate\n"
 
 #: src/pgrep.c:173
 msgid " -G, --group <GID,...>     match real group IDs\n"
@@ -343,16 +370,19 @@ msgstr " -G, --group <GID,...>     găsește ID-urile reale ale grupului\n"
 #: src/pgrep.c:174
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
-" -i, --ignore-case         potrivește fără să diferențieze între majuscule și\n"
+" -i, --ignore-case         potrivește fără să diferențieze între majuscule "
+"și\n"
 "                           minuscule\n"
 
 #: src/pgrep.c:175
 msgid " -n, --newest              select most recently started\n"
-msgstr " -n, --newest              selectează procesul cel mai recent început\n"
+msgstr ""
+" -n, --newest              selectează procesul cel mai recent început\n"
 
 #: src/pgrep.c:176
 msgid " -o, --oldest              select least recently started\n"
-msgstr " -o, --oldest              selectează procesul cel mai puțin recent început\n"
+msgstr ""
+" -o, --oldest              selectează procesul cel mai puțin recent început\n"
 
 #: src/pgrep.c:177
 msgid " -O, --older <seconds>     select where older than seconds\n"
@@ -361,8 +391,11 @@ msgstr ""
 "                           <secunde> secunde\n"
 
 #: src/pgrep.c:178
-msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr " -P, --parent <PPID,...>   potrivește numai procesele-copil ale părintelui dat\n"
+msgid ""
+" -P, --parent <PPID,...>   match only child processes of the given parent\n"
+msgstr ""
+" -P, --parent <PPID,...>   potrivește numai procesele-copil ale părintelui "
+"dat\n"
 
 #: src/pgrep.c:179
 msgid " -s, --session <SID,...>   match session IDs\n"
@@ -398,7 +431,8 @@ msgstr " -r, --runstates <stare>   potrivește stările de rulare [D,S,Z,...]\n"
 
 #: src/pgrep.c:187
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
-msgstr " -A, --ignore-ancestors    exclude predecesorii noștrii din rezultate\n"
+msgstr ""
+" -A, --ignore-ancestors    exclude predecesorii noștrii din rezultate\n"
 
 #: src/pgrep.c:188
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
@@ -416,11 +450,13 @@ msgstr ""
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, "
+"uts\n"
 msgstr ""
 " --nslist <ns,...>         listează spațiile de nume de utilizat pentru\n"
 "                           procesare cu opțiunea „--ns”.\n"
-"                           Spații de nume disponibile: ipc, mnt, net, pid, user, uts\n"
+"                           Spații de nume disponibile: ipc, mnt, net, pid, "
+"user, uts\n"
 
 #: src/pgrep.c:216 src/pgrep.c:653 src/w.c:405
 msgid "Unable to create pid info structure"
@@ -467,11 +503,14 @@ msgstr "Eroare la citirea informațiilor despre spațiul de nume de referință\
 #: src/pgrep.c:760
 #, c-format
 msgid ""
-"pattern that searches for process name longer than 15 characters will result in zero matches\n"
+"pattern that searches for process name longer than 15 characters will result "
+"in zero matches\n"
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
-"modelul care caută un nume de proces mai lung de 15 caractere va avea ca rezultat zero potriviri\n"
-"Încercați cu opțiunea «%s -f» pentru a se potrivi cu linia de comandă completă."
+"modelul care caută un nume de proces mai lung de 15 caractere va avea ca "
+"rezultat zero potriviri\n"
+"Încercați cu opțiunea «%s -f» pentru a se potrivi cu linia de comandă "
+"completă."
 
 #: src/pgrep.c:1028
 #, c-format
@@ -556,15 +595,20 @@ msgstr " -c, --check-root          omite procesele cu rădăcină diferită\n"
 
 #: src/pidof.c:75
 msgid " -q,                       quiet mode, only set the exit code\n"
-msgstr " -q,                       modul silențios, afișează doar codul de ieșire\n"
+msgstr ""
+" -q,                       modul silențios, afișează doar codul de ieșire\n"
 
 #: src/pidof.c:76
 msgid " -w, --with-workers        show kernel workers too\n"
-msgstr " -w, --with-workers        afișează de asemenea, firele de lucru ale nucleului\n"
+msgstr ""
+" -w, --with-workers        afișează de asemenea, firele de lucru ale "
+"nucleului\n"
 
 #: src/pidof.c:77
 msgid " -x                        also find shells running the named scripts\n"
-msgstr " -x                        găsește, de asemenea, shell-uri care rulează scripturile numite\n"
+msgstr ""
+" -x                        găsește, de asemenea, shell-uri care rulează "
+"scripturile numite\n"
 
 #: src/pidof.c:78
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
@@ -642,23 +686,30 @@ msgstr " -X                          afișează și mai multe detalii\n"
 
 #: src/pmap.c:120
 msgid "            WARNING: format changes according to /proc/PID/smaps\n"
-msgstr "            AVERTISMENT: formatul se modifică în funcție de /proc/PID/smaps\n"
+msgstr ""
+"            AVERTISMENT: formatul se modifică în funcție de /proc/PID/smaps\n"
 
 #: src/pmap.c:121
 msgid " -XX                         show everything the kernel provides\n"
-msgstr " -XX                         afișează toate mesajele ce le oferă nucleul\n"
+msgstr ""
+" -XX                         afișează toate mesajele ce le oferă nucleul\n"
 
 #: src/pmap.c:122
 msgid " -c, --read-rc               read the default rc\n"
-msgstr " -c, --read-rc               citește configurarea din fișierul „rc” implicit\n"
+msgstr ""
+" -c, --read-rc               citește configurarea din fișierul „rc” "
+"implicit\n"
 
 #: src/pmap.c:123
 msgid " -C, --read-rc-from=<file>   read the rc from file\n"
-msgstr " -C, --read-rc-from=<fișier> citește configurarea din fișierul <fișier>\n"
+msgstr ""
+" -C, --read-rc-from=<fișier> citește configurarea din fișierul <fișier>\n"
 
 #: src/pmap.c:124
 msgid " -n, --create-rc             create new default rc\n"
-msgstr " -n, --create-rc             creează un nou fișier de configurare implicit „~/.pmaprc”\n"
+msgstr ""
+" -n, --create-rc             creează un nou fișier de configurare implicit "
+"„~/.pmaprc”\n"
 
 #: src/pmap.c:125
 msgid " -N, --create-rc-to=<file>   create new rc to file\n"
@@ -668,7 +719,8 @@ msgstr ""
 
 #: src/pmap.c:126
 msgid "            NOTE: pid arguments are not allowed with -n, -N\n"
-msgstr "            NOTĂ: argumentele pid nu sunt permise cu opțiunile „-n”, „-N”\n"
+msgstr ""
+"            NOTĂ: argumentele pid nu sunt permise cu opțiunile „-n”, „-N”\n"
 
 #: src/pmap.c:127
 msgid " -d, --device                show the device format\n"
@@ -782,7 +834,9 @@ msgstr "prea multe argumente"
 
 #: src/pmap.c:1108
 msgid "rc file successfully created, feel free to edit the content"
-msgstr "fișierul de configurare „rc” a fost creat cu succes, nu ezitați să editați conținutul acestuia"
+msgstr ""
+"fișierul de configurare „rc” a fost creat cu succes, nu ezitați să editați "
+"conținutul acestuia"
 
 #: src/pmap.c:1111
 msgid "couldn't create the rc file"
@@ -791,7 +845,9 @@ msgstr "nu s-a putut crea fișierul de configurare „rc”"
 #: src/pmap.c:1123
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
-msgstr "Fișierul „~/.%src” a fost creat cu succes, nu ezitați să editați conținutul acestuia"
+msgstr ""
+"Fișierul „~/.%src” a fost creat cu succes, nu ezitați să editați conținutul "
+"acestuia"
 
 #: src/pmap.c:1126
 #, c-format
@@ -845,7 +901,9 @@ msgstr "nu s-a putut găsi start_time\n"
 #: src/ps/global.c:281
 #, c-format
 msgid "your %dx%d screen size is bogus. expect trouble\n"
-msgstr "dimensiunea ecranului dumneavoastră %dx%d este falsă. Așteptați-vă la probleme\n"
+msgstr ""
+"dimensiunea ecranului dumneavoastră %dx%d este falsă. Așteptați-vă la "
+"probleme\n"
 
 #: src/ps/global.c:354 src/ps/global.c:366
 msgid "environment specified an unknown personality"
@@ -1021,15 +1079,20 @@ msgstr " -A, -e               toate procesele\n"
 
 #: src/ps/help.c:101
 msgid " -a                   all with tty, except session leaders\n"
-msgstr " -a                   toate procesele cu un tty, cu excepția liderilor de sesiune\n"
+msgstr ""
+" -a                   toate procesele cu un tty, cu excepția liderilor de "
+"sesiune\n"
 
 #: src/ps/help.c:102
 msgid "  a                   all with tty, including other users\n"
-msgstr "  a                   toate procesele cu un tty, inclusiv ale altor utilizatori\n"
+msgstr ""
+"  a                   toate procesele cu un tty, inclusiv ale altor "
+"utilizatori\n"
 
 #: src/ps/help.c:103
 msgid " -d                   all except session leaders\n"
-msgstr " -d                   toate procesele, cu excepția liderilor de sesiune\n"
+msgstr ""
+" -d                   toate procesele, cu excepția liderilor de sesiune\n"
 
 #: src/ps/help.c:104
 msgid " -N, --deselect       negate selection\n"
@@ -1192,14 +1255,16 @@ msgid "  X                   register format\n"
 msgstr "  X                   format înregistrare de jurnal\n"
 
 #: src/ps/help.c:147
-msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgid ""
+" -y                   do not show flags, show rss vs. addr (used with -l)\n"
 msgstr ""
 " -y                   nu afișează fanioane, afișează „rss” vs. „adresă”\n"
 "                      (utilizată doar cu opțiunea cu „-l”)\n"
 
 #: src/ps/help.c:148
 msgid "     --context        display security context (for SELinux)\n"
-msgstr "     --context        afișează contextul de securitate (pentru SELinux)\n"
+msgstr ""
+"     --context        afișează contextul de securitate (pentru SELinux)\n"
 
 #: src/ps/help.c:149
 msgid "     --headers        repeat header lines, one per page\n"
@@ -1270,7 +1335,8 @@ msgid "  e                   show the environment after command\n"
 msgstr "  e                   afișează mediul după comandă\n"
 
 #: src/ps/help.c:168
-msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgid ""
+"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr ""
 "  k,    --sort        specificați ordinea de sortare după cum urmează:\n"
 "                      [+|-]cheie[,[+|-]cheie[,...]]\n"
@@ -1285,7 +1351,8 @@ msgstr "  n                   afișează uid și wchan numeric\n"
 
 #: src/ps/help.c:171
 msgid "  S,    --cumulative  include some dead child process data\n"
-msgstr "  S,    --cumulative  include unele date asupra proceselor-copii moarte\n"
+msgstr ""
+"  S,    --cumulative  include unele date asupra proceselor-copii moarte\n"
 
 #: src/ps/help.c:172
 msgid " -y                   do not show flags, show rss (only with -l)\n"
@@ -1406,7 +1473,9 @@ msgstr "listă necorespunzătoare"
 
 #: src/ps/parser.c:242
 msgid "list of command names must follow -C"
-msgstr "o listă de nume de comenzi trebuie să urmeze după opțiunea „-C”, ca argument al acesteia"
+msgstr ""
+"o listă de nume de comenzi trebuie să urmeze după opțiunea „-C”, ca argument "
+"al acesteia"
 
 #: src/ps/parser.c:256
 msgid "list of real groups must follow -G"
@@ -1418,7 +1487,8 @@ msgstr "opțiunea „-J”, trebuie să fie urmată de lista de sarcini"
 
 #: src/ps/parser.c:297
 msgid "format or sort specification must follow -O"
-msgstr "opțiunea „-O”, trebuie să fie urmată de specificația de format sau sortare"
+msgstr ""
+"opțiunea „-O”, trebuie să fie urmată de specificația de format sau sortare"
 
 #: src/ps/parser.c:308
 msgid "list of PRM groups must follow -R"
@@ -1430,11 +1500,15 @@ msgstr "opțiunea „-U”, trebuie să fie urmată de lista de utilizatori real
 
 #: src/ps/parser.c:368
 msgid "list of session leaders OR effective group names must follow -g"
-msgstr "opțiunea „-g”, trebuie să fie urmată de lista de lideri de sesiune SAU lista numelor efective de grup"
+msgstr ""
+"opțiunea „-g”, trebuie să fie urmată de lista de lideri de sesiune SAU lista "
+"numelor efective de grup"
 
 #: src/ps/parser.c:379
 msgid "list of session leaders OR effective group IDs was invalid"
-msgstr "lista de lideri de sesiune SAU lista de ID-uri efective de grup a fost nevalidă"
+msgstr ""
+"lista de lideri de sesiune SAU lista de ID-uri efective de grup a fost "
+"nevalidă"
 
 #: src/ps/parser.c:403
 msgid "format specification must follow -o"
@@ -1454,7 +1528,8 @@ msgstr "opțiunea „-s”, trebuie să fie urmată de lista de ID-uri de sesiun
 
 #: src/ps/parser.c:440
 msgid "list of terminals (pty, tty...) must follow -t"
-msgstr "opțiunea „-t”, trebuie să fie urmată de lista de terminale (pty, tty...)"
+msgstr ""
+"opțiunea „-t”, trebuie să fie urmată de lista de terminale (pty, tty...)"
 
 #: src/ps/parser.c:448
 msgid "list of users must follow -u"
@@ -1466,7 +1541,9 @@ msgstr "personalitatea trebuie să fie definită pentru a accesa opțiunea „-x
 
 #: src/ps/parser.c:485
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
-msgstr "opțiunea „-z”, trebuie să fie urmată de lista de zone (contexte, etichete, altceva?)"
+msgstr ""
+"opțiunea „-z”, trebuie să fie urmată de lista de zone (contexte, etichete, "
+"altceva?)"
 
 #: src/ps/parser.c:492
 msgid "embedded '-' among SysV options makes no sense"
@@ -1498,7 +1575,8 @@ msgstr "opțiunea „C” este rezervată"
 
 #: src/ps/parser.c:559
 msgid "format or sort specification must follow O"
-msgstr "opțiunea „O”, trebuie să fie urmată de specificația de format sau sortare"
+msgstr ""
+"opțiunea „O”, trebuie să fie urmată de specificația de format sau sortare"
 
 #: src/ps/parser.c:584
 msgid "list of users must follow U"
@@ -1506,7 +1584,8 @@ msgstr "opțiunea „U”, trebuie să fie urmată de lista de utilizatori"
 
 #: src/ps/parser.c:596
 msgid "obsolete W option not supported (you have a /dev/drum?)"
-msgstr "opțiunea învechită „W”, nu este acceptată (aveți un dispozitiv „/dev/drum”?)"
+msgstr ""
+"opțiunea învechită „W”, nu este acceptată (aveți un dispozitiv „/dev/drum”?)"
 
 #: src/ps/parser.c:632 src/ps/parser.c:899 src/ps/parser.c:908
 msgid "only one heading option may be specified"
@@ -1542,11 +1621,14 @@ msgstr "opțiunea „--Group”, trebuie să fie urmată de lista de grupuri rea
 
 #: src/ps/parser.c:859
 msgid "list of real users must follow --User"
-msgstr "opțiunea „--User”, trebuie să fie urmată de lista de utilizatorilor reali"
+msgstr ""
+"opțiunea „--User”, trebuie să fie urmată de lista de utilizatorilor reali"
 
 #: src/ps/parser.c:878
 msgid "number of columns must follow --cols, --width, or --columns"
-msgstr "opțiunile „--cols”, „--width”, sau „--columns”, trebuie să fie urmate de numărul de coloane"
+msgstr ""
+"opțiunile „--cols”, „--width”, sau „--columns”, trebuie să fie urmate de "
+"numărul de coloane"
 
 #: src/ps/parser.c:881
 msgid "option --cumulative does not take an argument"
@@ -1582,27 +1664,34 @@ msgstr "opțiunea „--pid”, trebuie să fie urmată de lista de ID-uri de pro
 
 #: src/ps/parser.c:959
 msgid "list of process IDs must follow --ppid"
-msgstr "opțiunea „--ppid”, trebuie să fie urmată de lista de ID-uri de proces (părinte)"
+msgstr ""
+"opțiunea „--ppid”, trebuie să fie urmată de lista de ID-uri de proces "
+"(părinte)"
 
 #: src/ps/parser.c:977
 msgid "number of rows must follow --rows or --lines"
-msgstr "opțiunile „--rows” sau „--lines”, trebuie să fie urmate de numărul de linii"
+msgstr ""
+"opțiunile „--rows” sau „--lines”, trebuie să fie urmate de numărul de linii"
 
 #: src/ps/parser.c:981
 msgid "some sid thing(s) must follow --sid"
-msgstr "opțiunea „--sid”, trebuie să fie urmată de ceva legat de sid (id-ul sesiunii)"
+msgstr ""
+"opțiunea „--sid”, trebuie să fie urmată de ceva legat de sid (id-ul sesiunii)"
 
 #: src/ps/parser.c:989
 msgid "long sort specification must follow --sort"
-msgstr "opțiunea „--sort”, trebuie să fie urmată de specificația de sortare lungă"
+msgstr ""
+"opțiunea „--sort”, trebuie să fie urmată de specificația de sortare lungă"
 
 #: src/ps/parser.c:995
 msgid "list of ttys must follow --tty"
-msgstr "opțiunea „--tty”, trebuie să fie urmată de lista de terminale (pty, tty...)"
+msgstr ""
+"opțiunea „--tty”, trebuie să fie urmată de lista de terminale (pty, tty...)"
 
 #: src/ps/parser.c:1003
 msgid "list of effective users must follow --user"
-msgstr "opțiunea „--user”, trebuie să fie urmată de lista de utilizatori efectivi"
+msgstr ""
+"opțiunea „--user”, trebuie să fie urmată de lista de utilizatori efectivi"
 
 #: src/ps/parser.c:1119
 msgid "way bad"
@@ -1618,19 +1707,27 @@ msgstr "ceva s-a rupt"
 
 #: src/ps/parser.c:1157
 msgid "thread display conflicts with forest display"
-msgstr "afișarea firelor de execuție (o ramură a arborelui de procese) intră în conflict cu afișarea arborelui de proces(e)"
+msgstr ""
+"afișarea firelor de execuție (o ramură a arborelui de procese) intră în "
+"conflict cu afișarea arborelui de proces(e)"
 
 #: src/ps/parser.c:1162
 msgid "thread flags conflict; can't use H with m or -m"
-msgstr "conflict ale opțiunilor firelor de execuție; nu se poate utiliza opțiunea „H” cu opțiunea „m” sau cu opțiunea „-m”"
+msgstr ""
+"conflict ale opțiunilor firelor de execuție; nu se poate utiliza opțiunea "
+"„H” cu opțiunea „m” sau cu opțiunea „-m”"
 
 #: src/ps/parser.c:1164
 msgid "thread flags conflict; can't use both m and -m"
-msgstr "conflict ale opțiunilor firelor de execuție; nu se poate utiliza atât opțiunea „m” cât și opțiunea „-m”"
+msgstr ""
+"conflict ale opțiunilor firelor de execuție; nu se poate utiliza atât "
+"opțiunea „m” cât și opțiunea „-m”"
 
 #: src/ps/parser.c:1166
 msgid "thread flags conflict; can't use both -L and -T"
-msgstr "conflict ale opțiunilor firelor de execuție; nu se poate utiliza atât opțiunea „-L” cât și opțiunea „-T”"
+msgstr ""
+"conflict ale opțiunilor firelor de execuție; nu se poate utiliza atât "
+"opțiunea „-L” cât și opțiunea „-T”"
 
 #: src/ps/parser.c:1239 src/ps/parser.c:1240
 #, c-format
@@ -1688,7 +1785,9 @@ msgstr "lățimile coloanelor trebuie să fie numere zecimale fără semn"
 # Ok, corecție aplicată!
 #: src/ps/sortformat.c:313
 msgid "can not set width for a macro (multi-column) format specifier"
-msgstr "nu se poate defini lățimea pentru un specificator de format macro (cu mai multe coloane)"
+msgstr ""
+"nu se poate defini lățimea pentru un specificator de format macro (cu mai "
+"multe coloane)"
 
 #: src/ps/sortformat.c:367 src/ps/sortformat.c:383
 msgid "improper sort list"
@@ -1725,7 +1824,8 @@ msgstr "opțiunea „O” nu este nici primul format, nici ordinea de sortare"
 
 #: src/ps/sortformat.c:657
 msgid "modifier -y without format -l makes no sense"
-msgstr "opțiunea modificatoare „-y”, fără opțiunea de format „-l”, nu are niciun sens"
+msgstr ""
+"opțiunea modificatoare „-y”, fără opțiunea de format „-l”, nu are niciun sens"
 
 #: src/ps/sortformat.c:756
 msgid "bug: must reset the list first"
@@ -1736,8 +1836,11 @@ msgid "tell <procps@freelists.org> what you expected"
 msgstr "spuneți la <procps@freelists.org>, la ce vă așteptați"
 
 #: src/ps/sortformat.c:803
-msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr "spuneți la <procps@freelists.org>, la ce vă așteptați (-L/-T, -m/m/H, și $PS_FORMAT)"
+msgid ""
+"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
+msgstr ""
+"spuneți la <procps@freelists.org>, la ce vă așteptați (-L/-T, -m/m/H, și "
+"$PS_FORMAT)"
 
 #: src/ps/sortformat.c:820
 #, c-format
@@ -1750,7 +1853,8 @@ msgstr "opțiuni de format în conflict"
 
 #: src/ps/sortformat.c:826
 msgid "can not use output modifiers with user-defined output"
-msgstr "nu se pot folosi modificatori de ieșire, cu ieșire definită de utilizator"
+msgstr ""
+"nu se pot folosi modificatori de ieșire, cu ieșire definită de utilizator"
 
 #: src/ps/sortformat.c:827
 msgid "-L/-T with H/m/-m and -o/-O/o/O is nonsense"
@@ -1829,8 +1933,12 @@ msgid " -L, --table        list all signal names in a nice table\n"
 msgstr " -L, --table        listează toate numele semnalelor într-un tabel\n"
 
 #: src/skill.c:325
-msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
-msgstr " -n, --no-action    nu omoară procesele actuale, de fapt; afișează doar ceea ce s-ar întâmpla\n"
+msgid ""
+" -n, --no-action    do not actually kill processes; just print what would "
+"happen\n"
+msgstr ""
+" -n, --no-action    nu omoară procesele actuale, de fapt; afișează doar ceea "
+"ce s-ar întâmpla\n"
 
 #: src/skill.c:326
 msgid " -v, --verbose      explain what is being done\n"
@@ -1846,7 +1954,8 @@ msgid ""
 "The options below may be used to ensure correct interpretation.\n"
 msgstr ""
 "Expresia poate fi: „terminal”, „user”, „pid”, „command”.\n"
-"Opțiunile de mai jos pot fi utilizate pentru a asigura o interpretare corectă.\n"
+"Opțiunile de mai jos pot fi utilizate pentru a asigura o interpretare "
+"corectă.\n"
 
 #: src/skill.c:331
 msgid " -c, --command <command>  expression is a command name\n"
@@ -1854,7 +1963,9 @@ msgstr " -c, --command <comanda>  expresia este un nume de comandă\n"
 
 #: src/skill.c:332
 msgid " -p, --pid <pid>          expression is a process id number\n"
-msgstr " -p, --pid <pid>          expresia este un număr de identificare a procesului\n"
+msgstr ""
+" -p, --pid <pid>          expresia este un număr de identificare a "
+"procesului\n"
 
 #: src/skill.c:333
 msgid " -t, --tty <tty>          expression is a terminal\n"
@@ -1912,8 +2023,10 @@ msgid ""
 msgstr ""
 "\n"
 "Prioritatea implicită este +4. (snice +4...)\n"
-"Numerele de prioritate sunt cuprinse între +20 (cel mai lent) și -20 (cel mai rapid).\n"
-"Numerele de prioritate negative, sunt limitate la utilizatorii administrativi.\n"
+"Numerele de prioritate sunt cuprinse între +20 (cel mai lent) și -20 (cel "
+"mai rapid).\n"
+"Numerele de prioritate negative, sunt limitate la utilizatorii "
+"administrativi.\n"
 
 #: src/skill.c:378
 #, c-format
@@ -1977,7 +2090,8 @@ msgstr "skill: „%s” nu este acceptată\n"
 #: src/slabtop.c:106
 msgid " -d, --delay <secs>  delay updates\n"
 msgstr ""
-" -d, --delay <sec>   întârzierea dintre actualizări (intervalul de actualizare;\n"
+" -d, --delay <sec>   întârzierea dintre actualizări (intervalul de "
+"actualizare;\n"
 "                     sec = numărul de secunde pentru întârziere)\n"
 
 #: src/slabtop.c:107
@@ -2170,7 +2284,8 @@ msgstr "  -f                   alias de „-p”\n"
 
 #: src/sysctl.c:241
 msgid "      --system         read values from all system directories\n"
-msgstr "      --system         citește valorile din toate directoarele de sistem\n"
+msgstr ""
+"      --system         citește valorile din toate directoarele de sistem\n"
 
 #: src/sysctl.c:242
 msgid ""
@@ -2178,11 +2293,13 @@ msgid ""
 "                       select setting that match expression\n"
 msgstr ""
 "  -r, --pattern <expresie>\n"
-"                       selectează configurarea care se potrivește cu expresia\n"
+"                       selectează configurarea care se potrivește cu "
+"expresia\n"
 
 #: src/sysctl.c:244
 msgid "  -q, --quiet          do not echo variable set\n"
-msgstr "  -q, --quiet          nu afișează setul de variabile(perechile var.=val.)\n"
+msgstr ""
+"  -q, --quiet          nu afișează setul de variabile(perechile var.=val.)\n"
 
 #: src/sysctl.c:245
 msgid "  -w, --write          enable writing a value to variable\n"
@@ -2260,8 +2377,12 @@ msgstr "%s(%d): sintaxă nevalidă, se continuă..."
 
 #: src/sysctl.c:759
 #, c-format
-msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
-msgstr "GLOB_TILDE nu este acceptată pe platforma dumneavoastră, tilde din „%s” nu va fi extinsă."
+msgid ""
+"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
+"expanded."
+msgstr ""
+"GLOB_TILDE nu este acceptată pe platforma dumneavoastră, tilde din „%s” nu "
+"va fi extinsă."
 
 #: src/sysctl.c:765
 msgid "glob failed"
@@ -2314,7 +2435,9 @@ msgstr " %s [opțiuni] [tty]\n"
 
 #: src/tload.c:98
 msgid " -d, --delay <secs>  update delay in seconds\n"
-msgstr " -d, --delay <sec>   întârzierea între actualizări (intervalul de actualizare)\n"
+msgstr ""
+" -d, --delay <sec>   întârzierea între actualizări (intervalul de "
+"actualizare)\n"
 
 #: src/tload.c:99
 msgid " -s, --scale <num>   vertical scale\n"
@@ -3448,7 +3571,9 @@ msgstr "incrementul de lățime este %d, schimbați la (0 implicit, -1 automat)"
 
 #: src/top/top_nls.c:524
 msgid "rcfile has inspect/other-filter error(s), save anyway?"
-msgstr "erori detectate în fișierul rc prin inspecție sau altă filtrare, îl salvați oricum?"
+msgstr ""
+"erori detectate în fișierul rc prin inspecție sau altă filtrare, îl salvați "
+"oricum?"
 
 #: src/top/top_nls.c:525
 #, c-format
@@ -3472,8 +3597,11 @@ msgid "Log"
 msgstr "Jurnal"
 
 #: src/top/top_nls.c:530
-msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
-msgstr "tasta „=” va afișa în cele din urmă fișierul citit sau comenzile executate..."
+msgid ""
+"the '=' key will eventually show the actual file read or command(s) "
+"executed ..."
+msgstr ""
+"tasta „=” va afișa în cele din urmă fișierul citit sau comenzile executate..."
 
 #: src/top/top_nls.c:531
 msgid "demo"
@@ -3482,69 +3610,98 @@ msgstr "demo"
 #: src/top/top_nls.c:532
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the output\n"
-"from some command.  Exactly which commands and/or files are solely up to you.\n"
+"This is simulated output representing the contents of some file or the "
+"output\n"
+"from some command.  Exactly which commands and/or files are solely up to "
+"you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment with\n"
+"Although this text is for information purposes only, it can still be "
+"scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment "
+"with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of the\n"
-"top personal personal configuration file.  You could use your favorite editor\n"
+"To enable real Inspect functionality, entries must be added to the end of "
+"the\n"
+"top personal personal configuration file.  You could use your favorite "
+"editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting "
+"the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
+"file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
+"toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' command\n"
-"and note those details.  After backing up the current rcfile, try issuing the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' "
+"command\n"
+"and note those details.  After backing up the current rcfile, try issuing "
+"the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
+"safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with this\n"
-"new command can offer.  The possibilities are endless, especially considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with "
+"this\n"
+"new command can offer.  The possibilities are endless, especially "
+"considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
-"For additional important information, please consult the top(1) man document.\n"
-"Then, enhance top with your very own customized 'file' and/or 'pipe' entries.\n"
+"For additional important information, please consult the top(1) man "
+"document.\n"
+"Then, enhance top with your very own customized 'file' and/or 'pipe' "
+"entries.\n"
 "\n"
 "Enjoy!\n"
 msgstr ""
 "Aceasta este o ieșire simulată care reprezintă conținutul unui fișier sau\n"
-"ieșirea de la o comandă. Exact ce comenzi și/sau fișiere depinde numai de dvs.\n"
+"ieșirea de la o comandă. Exact ce comenzi și/sau fișiere depinde numai de "
+"dvs.\n"
 "\n"
-"Deși acest text are doar scop informativ, el poate fi derulat și căutat, așa cum\n"
+"Deși acest text are doar scop informativ, el poate fi derulat și căutat, așa "
+"cum\n"
 "va fi rezultatul real.  Sunteți încurajat să experimentați cu aceste\n"
 "caracteristici, așa cum este explicat în prologul de mai sus.\n"
 "\n"
-"Pentru a activa funcționalitatea „Inspect” reală, trebuie adăugate intrări la\n"
+"Pentru a activa funcționalitatea „Inspect” reală, trebuie adăugate intrări "
+"la\n"
 "sfârșitul fișierului personal de configurare al «top».  Puteți să folosiți\n"
-"editorul dumneavoastră favorit pentru a realiza acest lucru, având grijă să nu\n"
+"editorul dumneavoastră favorit pentru a realiza acest lucru, având grijă să "
+"nu\n"
 "modificați intrările existente.\n"
 "\n"
 "O altă modalitate de a adăuga intrări este ilustrată mai jos, dar riscă să\n"
-"suprascrie fișierul „toprc”. Ecourile redirecționate nu trebuie să înlocuiască\n"
+"suprascrie fișierul „toprc”. Ecourile redirecționate nu trebuie să "
+"înlocuiască\n"
 "(>) ci să adauge (>>) la acel fișier.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
+"toprc\n"
 "\n"
-"Dacă nu cunoașteți locația sau numele fișierului rc de sus, utilizați comanda\n"
-"„W” și notați aceste detalii.  După ce ați făcut o copie de rezervă a fișierului\n"
+"Dacă nu cunoașteți locația sau numele fișierului rc de sus, utilizați "
+"comanda\n"
+"„W” și notați aceste detalii.  După ce ați făcut o copie de rezervă a "
+"fișierului\n"
 "rc curent, încercați să emiteți ecourile de mai sus exact așa cum se arată,\n"
-"înlocuind „.toprc” după caz.  Cea mai sigură abordare ar fi să folosiți copierea\n"
+"înlocuind „.toprc” după caz.  Cea mai sigură abordare ar fi să folosiți "
+"copierea\n"
 "și apoi lipirea pentru a evita orice greșeală de tastare.\n"
 "\n"
-"În cele din urmă, reporniți «top» pentru a descoperi ceea ce pot oferi intrările\n"
-"Inspect combinate cu această nouă comandă.  Posibilitățile sunt nesfârșite, mai\n"
-"ales având în vedere că intrările de tip „pipe” pot include și scripturi shell!\n"
+"În cele din urmă, reporniți «top» pentru a descoperi ceea ce pot oferi "
+"intrările\n"
+"Inspect combinate cu această nouă comandă.  Posibilitățile sunt nesfârșite, "
+"mai\n"
+"ales având în vedere că intrările de tip „pipe” pot include și scripturi "
+"shell!\n"
 "\n"
-"Pentru informații suplimentare importante, consultați documentul top(1) man.\n"
+"Pentru informații suplimentare importante, consultați documentul top(1) "
+"man.\n"
 "Apoi, îmbunătățiți «top» cu propriul dumneavoastră „fișier” și/sau intrări\n"
 "personalizate „pipe”.\n"
 "\n"
@@ -3552,11 +3709,13 @@ msgstr ""
 
 #: src/top/top_nls.c:564
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr "pentru a activa „Y” apăsați <Enter> apoi tastați „W” și reporniți «top»"
+msgstr ""
+"pentru a activa „Y” apăsați <Enter> apoi tastați „W” și reporniți «top»"
 
 #: src/top/top_nls.c:565
 msgid "to enable 'Y' please consult the top man page (press Enter)"
-msgstr "pentru a activa „Y”, consultați pagina de manual a «top» (apăsați Enter)"
+msgstr ""
+"pentru a activa „Y”, consultați pagina de manual a «top» (apăsați Enter)"
 
 #: src/top/top_nls.c:566
 #, c-format
@@ -3695,7 +3854,9 @@ msgstr "mod greșit, comandă inactivă"
 
 #: src/top/top_nls.c:602
 msgid "saving prevents older top from reading, save anyway?"
-msgstr "Salvarea împiedică citirea configurației, versiunilor de top mai vechi, continuați oricum?"
+msgstr ""
+"Salvarea împiedică citirea configurației, versiunilor de top mai vechi, "
+"continuați oricum?"
 
 #: src/top/top_nls.c:603
 #, c-format
@@ -3813,50 +3974,82 @@ msgstr "jurnal de mesaje, ultimele 10 mesaje:"
 #, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
+"~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
-"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; '~1I~2' Irix mode\n"
-"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus two abreast\n"
-"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-width fields\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
+"summary/task memory scale\n"
+"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
+"'~1I~2' Irix mode\n"
+"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; "
+"'~14~2' cpus two abreast\n"
+"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-"
+"width fields\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
-"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
-"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' keep focused\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
+"'~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; "
+"'~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
+"'~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
+"tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
+"'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
+"other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
+"other filter(s)\n"
+"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' "
+"keep focused\n"
 "\n"
-"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; supp groups ~1^U~2\n"
-"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^E~2'\n"
+"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; "
+"supp groups ~1^U~2\n"
+"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale "
+"time ~1^E~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display "
+"~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
 "Ajutor pentru comenzile interactive~2 - %s\n"
-"Fereastra ~1%s~6: ~1Mod cumulativ ~3%s~2.  ~1Sistem~6: ~1Întîrz. ~3%.1f sec~2; ~1Mod securizat ~3%s~2.\n"
+"Fereastra ~1%s~6: ~1Mod cumulativ ~3%s~2.  ~1Sistem~6: ~1Întîrz. ~3%.1f "
+"sec~2; ~1Mod securizat ~3%s~2.\n"
 "\n"
-" Z~5,~1B~5,E,e   Global: „~1Z~2” culori; „~1B~2” aldin; „~1E~2”/„~1e~2” rezumat/scalare sarcini mem\n"
-" l,t,m,I   Comut.: „~1l~2” încărc. medie; „~1t~2” sarcini/cpu; „~1m~2” mem; „~1I~2” Modul Irix\n"
-" 0,1,2,3,4 Comut.: „~10~2” zerouri; „~11~2/~12~2/~13~2” cpu/vizual. numa; „~14~2” două cpu pe rând\n"
-" f,X       Câmp: „~1f~2” adaugă/elim./ord./sort.; „~1X~2” mărește câmp cu lățime fixă\n"
+" Z~5,~1B~5,E,e   Global: „~1Z~2” culori; „~1B~2” aldin; „~1E~2”/„~1e~2” "
+"rezumat/scalare sarcini mem\n"
+" l,t,m,I   Comut.: „~1l~2” încărc. medie; „~1t~2” sarcini/cpu; „~1m~2” mem; "
+"„~1I~2” Modul Irix\n"
+" 0,1,2,3,4 Comut.: „~10~2” zerouri; „~11~2/~12~2/~13~2” cpu/vizual. numa; "
+"„~14~2” două cpu pe rând\n"
+" f,X       Câmp: „~1f~2” adaugă/elim./ord./sort.; „~1X~2” mărește câmp cu "
+"lățime fixă\n"
 "\n"
-" L,&,<,> . Căutare: „~1L~2”/„~1&~2” găsește/din nou; Mută col. sort.: „~1<~2”/„~1>~2” stg./dr.\n"
-" R,H,J,C . Comut.: „~1R~2” Sortare; „~1H~2” Fire exec; „~1J~2” Aliniere nr.; „~1C~2” Coordonate\n"
-" c,i,S,j . Comut.: „~1c~2” Cmd nume/linie; „~1i~2” Inactiv; „~1S~2” Timp; „~1j~2” Aliniere șir\n"
-" x~5,~1y~5     . Comut. evidențieri: „~1x~2” sortare câmp; „~1y~2” sarcini în execuție\n"
-" z~5,~1b~5     . Comut.: „~1z~2” color/mono; „~1b~2” aldin/invers (doar dacă „x” sau „y”)\n"
-" u,U,o,O . Filtr. după: „~1u~2”/„~1U~2” utilizator efectiv/oricare; „~1o~2”/„~1O~2” alt criteriu\n"
-" n,#,^O  . Def.: „~1n~2”/„~1#~2” max sarcini afișate; Afișare: ~1Ctrl~2+„~1O~2” alte filtre\n"
-" V,v,F   . Comut.: „~1V~2” vizual. arbores.; „~1v~2” asc/afiș copil; „~1F~2” menține focal\n"
+" L,&,<,> . Căutare: „~1L~2”/„~1&~2” găsește/din nou; Mută col. sort.: "
+"„~1<~2”/„~1>~2” stg./dr.\n"
+" R,H,J,C . Comut.: „~1R~2” Sortare; „~1H~2” Fire exec; „~1J~2” Aliniere nr.; "
+"„~1C~2” Coordonate\n"
+" c,i,S,j . Comut.: „~1c~2” Cmd nume/linie; „~1i~2” Inactiv; „~1S~2” Timp; "
+"„~1j~2” Aliniere șir\n"
+" x~5,~1y~5     . Comut. evidențieri: „~1x~2” sortare câmp; „~1y~2” sarcini "
+"în execuție\n"
+" z~5,~1b~5     . Comut.: „~1z~2” color/mono; „~1b~2” aldin/invers (doar dacă "
+"„x” sau „y”)\n"
+" u,U,o,O . Filtr. după: „~1u~2”/„~1U~2” utilizator efectiv/oricare; „~1o~2”/"
+"„~1O~2” alt criteriu\n"
+" n,#,^O  . Def.: „~1n~2”/„~1#~2” max sarcini afișate; Afișare: "
+"~1Ctrl~2+„~1O~2” alte filtre\n"
+" V,v,F   . Comut.: „~1V~2” vizual. arbores.; „~1v~2” asc/afiș copil; „~1F~2” "
+"menține focal\n"
 "\n"
-"%s ^G,K,N,U  Vizualiz.: grupuri ctl ~1^G~2; linie cmd ~1^K~2; mediu ~1^N~2; grupuri supl ~1^U~2\n"
-" W,Y,!,^E  Scrie config „~1W~2”; Inspect „~1Y~2”; Combină Cpus „~1!~2”; Scală timp ~1^E~2\n"
+"%s ^G,K,N,U  Vizualiz.: grupuri ctl ~1^G~2; linie cmd ~1^K~2; mediu ~1^N~2; "
+"grupuri supl ~1^U~2\n"
+" W,Y,!,^E  Scrie config „~1W~2”; Inspect „~1Y~2”; Combină Cpus „~1!~2”; "
+"Scală timp ~1^E~2\n"
 " q         Ieșire\n"
-"         (comenzile cu „.” necesită o ~1fereastră~2 de afișare a sarcinii ~1vizibilă~2) \n"
+"         (comenzile cu „.” necesită o ~1fereastră~2 de afișare a sarcinii "
+"~1vizibilă~2) \n"
 "Apăsați „~1h~2” sau „~1?~2” pentru ajutor cu ~1Fereastra~2,\n"
 "Tastați „q” sau <Esc> pentru a continua "
 
@@ -3865,53 +4058,89 @@ msgstr ""
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,"
+"sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your "
+"~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
+"shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
+"('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' "
+"window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
+"~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields "
+"screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
-"    g       . Choose another field group and make it 'current', or change now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
+"windows\n"
+"    g       . Choose another field group and make it 'current', or change "
+"now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
+"or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
+"Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
+"~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can "
+"make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
+"later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
+"~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to "
+"become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
+"the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
-"Ajutor pentru ferestre / grupuri de câmpuri~2 - \"Fereastra curentă\" = ~1 %s ~6\n"
+"Ajutor pentru ferestre / grupuri de câmpuri~2 - \"Fereastra curentă\" = ~1 "
+"%s ~6\n"
 "\n"
-". Utilizați multiple ~1ferestre~2, fiecare cu opț, separate (culoare, câmpuri, sort., șa)\n"
-". Fereastra „actuală” controlează ~1Zona de rezumat~2 și răspunde la ~1Comenzile~2 dvs.\n"
-". Afișarea sarcinilor din această fereastră poate fi ~1Activ~2/~1Dezactiv~2, maxim/minim \n"
-"pe cele ~1FĂRĂ~2 afișare de sarcini, unele comenzi vor fi ~1dezactivate~2 ('i','R','n',\n"
-"'c', șa) până când va fi activată o ~1altă fereastră~2, devenind fereastra „actuală”\n"
-". ~1Schimbați~2 fereastra „actuală” prin: ~1 1~2) rotind înainte/înapoi;~1 2~2) alegând\n"
-"un câmp specific; sau~1 3~2) ieșind din ecranele de asociere a culorilor sau câmpuri\n"
+". Utilizați multiple ~1ferestre~2, fiecare cu opț, separate (culoare, "
+"câmpuri, sort., șa)\n"
+". Fereastra „actuală” controlează ~1Zona de rezumat~2 și răspunde la "
+"~1Comenzile~2 dvs.\n"
+". Afișarea sarcinilor din această fereastră poate fi ~1Activ~2/~1Dezactiv~2, "
+"maxim/minim \n"
+"pe cele ~1FĂRĂ~2 afișare de sarcini, unele comenzi vor fi ~1dezactivate~2 "
+"('i','R','n',\n"
+"'c', șa) până când va fi activată o ~1altă fereastră~2, devenind fereastra "
+"„actuală”\n"
+". ~1Schimbați~2 fereastra „actuală” prin: ~1 1~2) rotind înainte/înapoi;~1 "
+"2~2) alegând\n"
+"un câmp specific; sau~1 3~2) ieșind din ecranele de asociere a culorilor sau "
+"câmpuri\n"
 ". Comenzi ~1disponibile oricând   -------------~2\n"
-"    A       Comutare alternativă a modului de afișare: ~1Una~2 / ~1Multiple~2 ferestre\n"
-"    g       Alegeți un alt grup de câmpuri și faceți-l „actual” sau modificați-l \n"
-"            acum, selectând un număr din: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; sau~1 4~2 =%s\n"
+"    A       Comutare alternativă a modului de afișare: ~1Una~2 / "
+"~1Multiple~2 ferestre\n"
+"    g       Alegeți un alt grup de câmpuri și faceți-l „actual” sau "
+"modificați-l \n"
+"            acum, selectând un număr din: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
+"sau~1 4~2 =%s\n"
 ". Comenzi ~1care necesită ~2modul '~1A~2'~1  -------------~2\n"
 "    G       Schimbați ~1Numele~5 ferestrei/grupului de câmpuri „actual”\n"
-" ~1*~4  a , w   Parcurgeți toate cele patru ferestre:  '~1a~5' Înainte; '~1w~5' Înapoi\n"
-" ~1*~4  - , _   Afiș/Asc:  '~1-~5' ~2Feraastra~1 actuală; '~1_~5' toate ~1Vizibile~2/~1Invizibile~2\n"
-" Ecranul va fi împărțit în mod egal între afișările de sarcini. Dar puteți face\n"
-"unele ~1mai mari~2 sau ~1mai mici~2, utilizând comenzile '~1n~2' și '~1i~2'. Apoi, puteți face:\n"
-" ~1*~4  = , +   Reechilibrați sarcinile: '~1=~5' ~2Fereastra~1 actuală; '~1+~5' ~1Fiecare~2 fereastră\n"
-"(acest lucru forțează, de asemenea, ~1actuala~2/~1fiecare~2 fereastră să devină vizibilă)\n"
+" ~1*~4  a , w   Parcurgeți toate cele patru ferestre:  '~1a~5' Înainte; "
+"'~1w~5' Înapoi\n"
+" ~1*~4  - , _   Afiș/Asc:  '~1-~5' ~2Feraastra~1 actuală; '~1_~5' toate "
+"~1Vizibile~2/~1Invizibile~2\n"
+" Ecranul va fi împărțit în mod egal între afișările de sarcini. Dar puteți "
+"face\n"
+"unele ~1mai mari~2 sau ~1mai mici~2, utilizând comenzile '~1n~2' și '~1i~2'. "
+"Apoi, puteți face:\n"
+" ~1*~4  = , +   Reechilibrați sarcinile: '~1=~5' ~2Fereastra~1 actuală; "
+"'~1+~5' ~1Fiecare~2 fereastră\n"
+"(acest lucru forțează, de asemenea, ~1actuala~2/~1fiecare~2 fereastră să "
+"devină vizibilă)\n"
 "\n"
-"În modul '~1A~2', tastele '~1*~4' sunt comenzile dvs ~1esențiale~2. Încercați cmds '~1a~2' și '~1w~2'\n"
-"plus subcomenzile 'g' ACUM. Apăsați <Enter> pentru a o face fereastra „Actuală” "
+"În modul '~1A~2', tastele '~1*~4' sunt comenzile dvs ~1esențiale~2. "
+"Încercați cmds '~1a~2' și '~1w~2'\n"
+"plus subcomenzile 'g' ACUM. Apăsați <Enter> pentru a o face fereastra "
+"„Actuală” "
 
 #. Translation Notes ------------------------------------------------
 #. .  The following 'Help for color mapping' simulated screen should
@@ -3928,8 +4157,10 @@ msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
+"~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
+"~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3938,7 +4169,8 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
+"~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
 "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
@@ -3952,28 +4184,35 @@ msgid ""
 msgstr ""
 "Ajutor pentru asocierea culorilor~2 - „Fereastra curentă” = ~1 %s ~6\n"
 "\n"
-"   culoare - 04:25:44 funcționează 8 zile, 50 min,  7 utilizatori,  încărcarea medie:\n"
-"   Sarcini:~3  64 ~2total,~3   2 ~3rulând,~3  62 ~2dormind,~3   0 ~2oprite,~3\n"
-"   %%Cpu(s):~3  76.5 ~2utilizator,~3  11.2 ~2sistem,~3   0.0 ~2„nice”,~3  12.3 ~2inactiv~3\n"
+"   culoare - 04:25:44 funcționează 8 zile, 50 min,  7 utilizatori,  "
+"încărcarea medie:\n"
+"   Sarcini:~3  64 ~2total,~3   2 ~3rulând,~3  62 ~2dormind,~3   0 ~2oprite,"
+"~3\n"
+"   %%Cpu(s):~3  76.5 ~2utilizator,~3  11.2 ~2sistem,~3   0.0 ~2„nice”,~3  "
+"12.3 ~2inactiv~3\n"
 "   ~1 Mesaj urât! ~4  -sau-  ~1Solicitare de intrare~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIMP+   VIRT SWAP S COMANDA    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
 "   ~1 8601 pts/1    7 -10  0.4   0:00.03   916    0 R color -b -z~7\n"
 "   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n"
-"   comutatoare disponibile: ~1B~2 =dezact. global caracterele aldine (~1%s~2),\n"
+"   comutatoare disponibile: ~1B~2 =dezact. global caracterele aldine "
+"(~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =sarcini „aldin”/invers (~1%s~2)\n"
 "\n"
-"1) Selectați o ~1țintă~2 cu literele în majusculă, ~1ținta curentă~2 este ~1 %c ~4:\n"
+"1) Selectați o ~1țintă~2 cu literele în majusculă, ~1ținta curentă~2 este ~1 "
+"%c ~4:\n"
 "   S~2 = Rezumat de date,~1  M~2 = Mesaje/Solicitări,\n"
 "   H~2 = Titluri coloane,~1  T~2 = Informații despre sarcini\n"
 "2) Selectați o ~1culoare~2 ca un număr sau utilizați tastele săgeți sus/jos\n"
-"   pt. a crește/micșora valoarea culorii %d, ~1culoarea curentă~2 este ~1 %d ~4:\n"
+"   pt. a crește/micșora valoarea culorii %d, ~1culoarea curentă~2 este ~1 %d "
+"~4:\n"
 "   0~2 = negru,~1  1~2 = roșu,    ~1  2~2 = verde,~1  3~2 = galben,\n"
 "   4~2 = albastru, ~1  5~2 = fucsia,~1  6~2 = cian, ~1  7~2 = alb\n"
 "\n"
 "3) Apoi, când ați terminat, utilizați aceste taste:\n"
 "   „q” sau <Esc> pentru a anula modificările aduse ferestrei „~1%s~2”\n"
-"   „a'”sau „w” pt. a efectua modificările și-a trece la alta, <Enter>pt. a efectua modificările și ieși "
+"   „a'”sau „w” pt. a efectua modificările și-a trece la alta, <Enter>pt. a "
+"efectua modificările și ieși "
 
 # R-GC, scrie:
 # MULȚUMESC, AUTORILOR pentru
@@ -3991,8 +4230,12 @@ msgstr ""
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:751
-msgid "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n"
-msgstr " d,k,r,^R „~1d~2” def. întârzierea; „~1k~2” omoară; „~1r~2” renice; ~1Ctrl~2+„~1R~2” renice autogrup\n"
+msgid ""
+"  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' "
+"renice autogroup\n"
+msgstr ""
+" d,k,r,^R „~1d~2” def. întârzierea; „~1k~2” omoară; „~1r~2” renice; "
+"~1Ctrl~2+„~1R~2” renice autogrup\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -4003,47 +4246,70 @@ msgstr " d,k,r,^R „~1d~2” def. întârzierea; „~1k~2” omoară; „~1r~2�
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
+"commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
-"Gestionarea câmpurilor~2 pentru fereastra ~1%s~6, al cărei câmp de sortare curent este ~1%s~2\n"
-"   Navigați cu Sus/Jos; Cu Dreapta selectați pentru mutare, apoi <Enter> sau Stânga pentru a o efectua,\n"
-"   „d” sau <Spațiu> comută afișarea, „s” activează sortarea.  Utilizați „q” sau <Esc> pentru a ieși!\n"
+"Gestionarea câmpurilor~2 pentru fereastra ~1%s~6, al cărei câmp de sortare "
+"curent este ~1%s~2\n"
+"   Navigați cu Sus/Jos; Cu Dreapta selectați pentru mutare, apoi <Enter> sau "
+"Stânga pentru a o efectua,\n"
+"   „d” sau <Spațiu> comută afișarea, „s” activează sortarea.  Utilizați „q” "
+"sau <Esc> pentru a ieși!\n"
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:767
 #, c-format
-msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
-msgstr "%s:~3 %3u ~2total,~3 %3u ~2rulând,~3 %3u ~2dormind,~3 %3u ~2oprit(e),~3 %3u ~2zombi~3\n"
+msgid ""
+"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
+"~2zombie~3\n"
+msgstr ""
+"%s:~3 %3u ~2total,~3 %3u ~2rulând,~3 %3u ~2dormind,~3 %3u ~2oprit(e),~3 %3u "
+"~2zombi~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
 #: src/top/top_nls.c:773
 #, c-format
-msgid "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
-msgstr "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
+msgid ""
+"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
+msgstr ""
+"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
 #: src/top/top_nls.c:779
 #, c-format
-msgid "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
-msgstr "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
+msgid ""
+"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
+msgstr ""
+"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 
 #. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
 #: src/top/top_nls.c:783
 #, c-format
-msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 ~1    "
-msgstr "%s %s:~3 %9.9s~2total,~3 %9.9s~2liberă,~3 %9.9s~2utilizată,~3 %9.9s~2buff/cache~3 ~1    "
+msgid ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
+"~1    "
+msgstr ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2liberă,~3 %9.9s~2utilizată,~3 %9.9s~2buff/"
+"cache~3 ~1    "
 
 #: src/top/top_nls.c:785
 #, c-format
-msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
-msgstr "%s %s:~3 %9.9s~2total,~3 %9.9s~2liberă,~3 %9.9s~2utilizată.~3 %9.9s~2dispo %s~3"
+msgid ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
+msgstr ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2liberă,~3 %9.9s~2utilizată.~3 %9.9s~2dispo "
+"%s~3"
 
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
@@ -4052,23 +4318,29 @@ msgstr "%s %s:~3 %9.9s~2total,~3 %9.9s~2liberă,~3 %9.9s~2utilizată.~3 %9.9s~2d
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
+"~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
 "Inspectare~2 Suspendare: pid ~1%d~6, în execuție ~1%s~6\n"
-"Utilizați~2:  stânga/dreapta apoi <Enter> pentru a ~1selecta~5 o opțiune; „q” sau <Esc> pentru ~1a ieși~5 !\n"
+"Utilizați~2:  stânga/dreapta apoi <Enter> pentru a ~1selecta~5 o opțiune; "
+"„q” sau <Esc> pentru ~1a ieși~5 !\n"
 "Opțiuni~2: ~1%s\n"
 
 #: src/top/top_nls.c:796
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
+"~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
-"Inspectare~2 Vizualizare a pid: ~1%s~3, în execuție ~1%s~3.  Poziția: ~1%s~6\n"
-"Utilizați~2:  stânga/dreapta/sus/jos/etc pentru a ~1naviga~5 la ieșire; „L”/„&” pentru a ~1trece la~5/~1următoarea~5.\n"
-"Sau~2:   <Enter> pentru a ~1selecta altă~5; „q” sau <Esc> pentru ~1a ieși~5 !\n"
+"Inspectare~2 Vizualizare a pid: ~1%s~3, în execuție ~1%s~3.  Poziția: "
+"~1%s~6\n"
+"Utilizați~2:  stânga/dreapta/sus/jos/etc pentru a ~1naviga~5 la ieșire; „L”/"
+"„&” pentru a ~1trece la~5/~1următoarea~5.\n"
+"Sau~2:   <Enter> pentru a ~1selecta altă~5; „q” sau <Esc> pentru ~1a "
+"ieși~5 !\n"
 
 #: src/uptime.c:47 src/uptime.c:119
 msgid "Cannot get system uptime"
@@ -4080,7 +4352,8 @@ msgstr "Nu se poate obține timpul de funcționare a sistemului"
 # «uptime --help»
 #: src/uptime.c:63
 msgid " -p, --pretty   show uptime in pretty format\n"
-msgstr " -p, --pretty   afișează timpul de funcționare într-un format amiabil\n"
+msgstr ""
+" -p, --pretty   afișează timpul de funcționare într-un format amiabil\n"
 
 #: src/uptime.c:65
 msgid " -s, --since    system up since\n"
@@ -4121,7 +4394,8 @@ msgstr " -d, --disk             statisticile discului\n"
 
 #: src/vmstat.c:233
 msgid " -D, --disk-sum         summarize disk statistics\n"
-msgstr " -D, --disk-sum         rezumatul statisticilor de utilizare a discului\n"
+msgstr ""
+" -D, --disk-sum         rezumatul statisticilor de utilizare a discului\n"
 
 #: src/vmstat.c:234
 msgid " -p, --partition <dev>  partition specific statistics\n"
@@ -4146,12 +4420,20 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         omite prima linie de ieșire\n"
 
 #: src/vmstat.c:257
-msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
-msgstr "procese ----------memorie--------- ---swap-- ---in/ieș-- -sistem-- ------cpu-----"
+msgid ""
+"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
+"cpu-----"
+msgstr ""
+"procese ----------memorie--------- ---swap-- ---in/ieș-- -sistem-- ------"
+"cpu-----"
 
 #: src/vmstat.c:259
-msgid "--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- ----------cpu----------"
-msgstr "-procese- -----------------------memorie--------------------- ---swap-- ---in/ieș-- -sistem-- ----------cpu----------"
+msgid ""
+"--procs-- -----------------------memory---------------------- ---swap-- -----"
+"io---- -system-- ----------cpu----------"
+msgstr ""
+"-procese- -----------------------memorie--------------------- ---swap-- ---"
+"in/ieș-- -sistem-- ----------cpu----------"
 
 #: src/vmstat.c:260 src/vmstat.c:616
 msgid " -----timestamp-----"
@@ -4306,12 +4588,20 @@ msgid "Disk/Partition %s not found"
 msgstr "Discul sau partiția %s nu a fost găsite"
 
 #: src/vmstat.c:613
-msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
-msgstr "disc- ------------citiri----------- ------------scrieri---------- ---In/Ieș----"
+msgid ""
+"disk- ------------reads------------ ------------writes----------- -----"
+"IO------"
+msgstr ""
+"disc- ------------citiri----------- ------------scrieri---------- ---In/"
+"Ieș----"
 
 #: src/vmstat.c:615
-msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
-msgstr "disc- -------------------citiri------------------ -------------------scrieri----------------- ----In/Ieș-----"
+msgid ""
+"disk- -------------------reads------------------- -------------------"
+"writes------------------ ------IO-------"
+msgstr ""
+"disc- -------------------citiri------------------ -------------------"
+"scrieri----------------- ----In/Ieș-----"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:634 src/vmstat.c:642
@@ -4612,11 +4902,14 @@ msgstr " %s [opțiuni] comanda\n"
 
 #: src/watch.c:94
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
-msgstr "  -b, --beep             emite un bip dacă comanda are o ieșire diferită de zero\n"
+msgstr ""
+"  -b, --beep             emite un bip dacă comanda are o ieșire diferită de "
+"zero\n"
 
 #: src/watch.c:95
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
-msgstr "  -c, --color            interpretează secvențele de culoare și stil ANSI\n"
+msgstr ""
+"  -c, --color            interpretează secvențele de culoare și stil ANSI\n"
 
 #: src/watch.c:96
 msgid ""
@@ -4628,11 +4921,13 @@ msgstr ""
 
 #: src/watch.c:98
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr "  -e, --errexit          iese dacă comanda are o ieșire diferită de zero\n"
+msgstr ""
+"  -e, --errexit          iese dacă comanda are o ieșire diferită de zero\n"
 
 #: src/watch.c:99
 msgid "  -g, --chgexit          exit when output from command changes\n"
-msgstr "  -g, --chgexit          iese atunci când ieșirea de la comandă se modifică\n"
+msgstr ""
+"  -g, --chgexit          iese atunci când ieșirea de la comandă se modifică\n"
 
 #: src/watch.c:100
 msgid ""
@@ -4650,7 +4945,8 @@ msgstr ""
 
 #: src/watch.c:103
 msgid "  -p, --precise          attempt run command in precise intervals\n"
-msgstr "  -p, --precise          încearcă să execute comanda la intervale precise\n"
+msgstr ""
+"  -p, --precise          încearcă să execute comanda la intervale precise\n"
 
 #: src/watch.c:104
 msgid "  -t, --no-title         turn off header\n"
@@ -4662,7 +4958,8 @@ msgstr "  -w, --no-wrap          dezactivează întreruperile de linie\n"
 
 #: src/watch.c:106
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
-msgstr "  -x, --exec             pasează comanda lui „exec” în loc de „sh -c”\n"
+msgstr ""
+"  -x, --exec             pasează comanda lui „exec” în loc de „sh -c”\n"
 
 #: src/watch.c:109
 msgid " -v, --version  output version information and exit\n"
@@ -4705,7 +5002,8 @@ msgstr "waitpid"
 
 #: src/watch.c:785
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr "comanda a ieșit cu o stare diferită de zero, apăsați o tastă pentru a ieși"
+msgstr ""
+"comanda a ieșit cu o stare diferită de zero, apăsați o tastă pentru a ieși"
 
 #: src/watch.c:845
 msgid "Could not parse interval from WATCH_INTERVAL"
@@ -4758,7 +5056,8 @@ msgstr " -h, --no-header     nu afișează antetul(titlurile)\n"
 
 #: src/w.c:527
 msgid " -u, --no-current    ignore current process username\n"
-msgstr " -u, --no-current    ignoră numele de utilizator al procesului curent\n"
+msgstr ""
+" -u, --no-current    ignoră numele de utilizator al procesului curent\n"
 
 #: src/w.c:528
 msgid " -s, --short         short format\n"
@@ -4773,18 +5072,27 @@ msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     ieșire în stil vechi\n"
 
 #: src/w.c:531
-msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
-msgstr " -i, --ip-addr       afișează adresa IP în loc de numele gazdei (dacă este posibil)\n"
+msgid ""
+" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+msgstr ""
+" -i, --ip-addr       afișează adresa IP în loc de numele gazdei (dacă este "
+"posibil)\n"
 
 #: src/w.c:625
 #, c-format
-msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
-msgstr "Lungimea variabilei de mediu a utilizatorului PROCS_USERLEN trebuie să fie între 8 și %i, se ignoră.\n"
+msgid ""
+"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgstr ""
+"Lungimea variabilei de mediu a utilizatorului PROCS_USERLEN trebuie să fie "
+"între 8 și %i, se ignoră.\n"
 
 #: src/w.c:635
 #, c-format
-msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
-msgstr "valoarea lungimii variabilei de mediu, PROCPS_FROMLEN, trebuie să fie între 8 și %d, se ignoră\n"
+msgid ""
+"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgstr ""
+"valoarea lungimii variabilei de mediu, PROCPS_FROMLEN, trebuie să fie între "
+"8 și %d, se ignoră\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -4891,8 +5199,11 @@ msgstr "%s de la %s\n"
 #~ msgid "-%c requires argument"
 #~ msgstr "opțiunea „-%c” necesită un argument"
 
-#~ msgid " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
-#~ msgstr " -hv | -bcEeHiOSs1 -d secunde -n max -u|U utilizator -p pid(-uri) -o câmp -w [coloane]"
+#~ msgid ""
+#~ " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
+#~ msgstr ""
+#~ " -hv | -bcEeHiOSs1 -d secunde -n max -u|U utilizator -p pid(-uri) -o câmp "
+#~ "-w [coloane]"
 
 #~ msgid "failed /proc/stat read"
 #~ msgstr "eroare la citirea /proc/stat"
@@ -4904,20 +5215,36 @@ msgstr "%s de la %s\n"
 #~ "  k,r       Manipulate tasks: '~1k~2' kill; '~1r~2' renice\n"
 #~ "  d or s    Set update interval\n"
 #~ msgstr ""
-#~ "  k,r       Gestionează sarcinile: '~1k~2' omoară; '~1r~2' schimbă prioritatea\n"
+#~ "  k,r       Gestionează sarcinile: '~1k~2' omoară; '~1r~2' schimbă "
+#~ "prioritatea\n"
 #~ "  d sau s    Stabilește intervalul de actualizare\n"
 
-#~ msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
-#~ msgstr "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2sistem,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle~3"
+#~ msgid ""
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle~3"
+#~ msgstr ""
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2sistem,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle~3"
 
-#~ msgid "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3"
-#~ msgstr "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2sistem,~3 %#5.1f  ~2nice,~3 %#5.1f  ~2idle,~3 %#5.1f  ~2IO-wait~3"
+#~ msgid ""
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2system,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle,~3 %#5.1f  ~2IO-wait~3"
+#~ msgstr ""
+#~ "%s~3 %#5.1f  ~2user,~3 %#5.1f  ~2sistem,~3 %#5.1f  ~2nice,~3 %#5.1f  "
+#~ "~2idle,~3 %#5.1f  ~2IO-wait~3"
 
 #~ msgid "your kernel does not support diskstat. (2.5.70 or above required)"
-#~ msgstr "nucleul dumneavoastră. nu acceptă «diskstat» (este necesară versiunea 2.5.70 sau mai mare)"
+#~ msgstr ""
+#~ "nucleul dumneavoastră. nu acceptă «diskstat» (este necesară versiunea "
+#~ "2.5.70 sau mai mare)"
 
 #~ msgid "your kernel does not support diskstat (2.5.70 or above required)"
-#~ msgstr "nucleul dumneavoastră. nu acceptă «diskstat» (este necesară versiunea 2.5.70 sau mai mare)"
+#~ msgstr ""
+#~ "nucleul dumneavoastră. nu acceptă «diskstat» (este necesară versiunea "
+#~ "2.5.70 sau mai mare)"
 
-#~ msgid "your kernel does not support slabinfo or your permissions are insufficient"
-#~ msgstr "nucleul dumneavoastră nu acceptă „slabinfo” sau permisiunile dumneavoastră sunt insuficiente"
+#~ msgid ""
+#~ "your kernel does not support slabinfo or your permissions are insufficient"
+#~ msgstr ""
+#~ "nucleul dumneavoastră nu acceptă „slabinfo” sau permisiunile "
+#~ "dumneavoastră sunt insuficiente"

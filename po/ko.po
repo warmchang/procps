@@ -136,13 +136,20 @@ msgstr "meminfo 구조 정보를 구성할 수 없습니다"
 
 #: src/free.c:377
 #, c-format
-msgid "               total        used        free      shared     buffers       cache   available"
-msgstr "               총계         사용        여분      공유       버퍼          캐시    가용"
+msgid ""
+"               total        used        free      shared     buffers       "
+"cache   available"
+msgstr ""
+"               총계         사용        여분      공유       버퍼          캐"
+"시    가용"
 
 #: src/free.c:379
 #, c-format
-msgid "               total        used        free      shared  buff/cache   available"
-msgstr "               총계         사용        여분      공유    버퍼/캐시    가용"
+msgid ""
+"               total        used        free      shared  buff/cache   "
+"available"
+msgstr ""
+"               총계         사용        여분      공유    버퍼/캐시    가용"
 
 #: src/free.c:382
 msgid "Mem:"
@@ -190,8 +197,11 @@ msgid " -q, --queue <value>    integer value to be sent with the signal\n"
 msgstr " -q, --queue <값>       시그널로 보낼 정수값\n"
 
 #: src/kill.c:44
-msgid " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
-msgstr " -l, --list=[<시그널>]  모든 시그널의 이름을 보여주거나 지정 시그널 하나를 이름으로 보여줍니다\n"
+msgid ""
+" -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
+msgstr ""
+" -l, --list=[<시그널>]  모든 시그널의 이름을 보여주거나 지정 시그널 하나를 이"
+"름으로 보여줍니다\n"
 
 #: src/kill.c:45
 msgid " -L, --table            list all signal names in a nice table\n"
@@ -216,9 +226,9 @@ msgstr "부적절한 %c 인자"
 msgid "internal error"
 msgstr "내부 오류"
 
-#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375
-#: src/skill.c:459 src/tload.c:135 src/tload.c:140 src/vmstat.c:1044
-#: src/vmstat.c:1054 src/watch.c:870 src/watch.c:882
+#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375 src/skill.c:459
+#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1044 src/vmstat.c:1054
+#: src/watch.c:870 src/watch.c:882
 msgid "failed to parse argument"
 msgstr "인자 해석 실패"
 
@@ -300,8 +310,11 @@ msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr " -O, --older <초>          지정 초 이전의 항목 선택\n"
 
 #: src/pgrep.c:178
-msgid " -P, --parent <PPID,...>   match only child processes of the given parent\n"
-msgstr " -P, --parent <PPID,...>   주어진 상위 프로세스 ID가 일치하는 하위 프로세스만\n"
+msgid ""
+" -P, --parent <PPID,...>   match only child processes of the given parent\n"
+msgstr ""
+" -P, --parent <PPID,...>   주어진 상위 프로세스 ID가 일치하는 하위 프로세스"
+"만\n"
 
 #: src/pgrep.c:179
 msgid " -s, --session <SID,...>   match session IDs\n"
@@ -333,7 +346,8 @@ msgstr " -L, --logpidfile          PID 파일을 잠그지 않았다면 실패�
 
 #: src/pgrep.c:186
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
-msgstr " -r, --runstates <상태>    지정 실행상태[D,S,Z,...]와 일치하는 항목만\n"
+msgstr ""
+" -r, --runstates <상태>    지정 실행상태[D,S,Z,...]와 일치하는 항목만\n"
 
 #: src/pgrep.c:187
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
@@ -347,13 +361,15 @@ msgstr " --cgroup <grp,...>        cgroup v2 이름과 일치하는 항목만\n"
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
-msgstr " --ns <PID>                <PID>와 동일한 이름 영역을 소유한 프로세스만\n"
+msgstr ""
+" --ns <PID>                <PID>와 동일한 이름 영역을 소유한 프로세스만\n"
 
 #: src/pgrep.c:191
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
-"                           Available namespaces: ipc, mnt, net, pid, user, uts\n"
+"                           Available namespaces: ipc, mnt, net, pid, user, "
+"uts\n"
 msgstr ""
 " --nslist <ns,...>         --ns 옵션에 지정한 이름 영역만 표시합니다.\n"
 "                           가용 이름 영역 값: ipc, mnt, net, pid, user, uts\n"
@@ -403,7 +419,8 @@ msgstr "참조 이름 영역 정보 읽기 오류\n"
 #: src/pgrep.c:760
 #, c-format
 msgid ""
-"pattern that searches for process name longer than 15 characters will result in zero matches\n"
+"pattern that searches for process name longer than 15 characters will result "
+"in zero matches\n"
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
 "15글자를 넘는 프로세스 이름 패턴 검색시 일치하는 항목이 없을 수 있습니다\n"
@@ -462,7 +479,8 @@ msgstr "%s 기다리는 중 (PID %lu)\n"
 
 #: src/pgrep.c:1123
 msgid "pidfd_open() not implemented in Linux < 5.3"
-msgstr "리눅스 커널 버전 5.3 이전에서는 pidfd_open() 함수를 구현하지 않았습니다"
+msgstr ""
+"리눅스 커널 버전 5.3 이전에서는 pidfd_open() 함수를 구현하지 않았습니다"
 
 #: src/pgrep.c:1126
 #, c-format
@@ -1046,7 +1064,8 @@ msgstr " -O <형식>            기본 컬럼으로 미리 불러오기\n"
 
 #: src/ps/help.c:139
 msgid "  O <format>          as -O, with BSD personality\n"
-msgstr "  O <형식>            -O 옵션과 마찬가지이나, BSD 특유의 형식으로 출력\n"
+msgstr ""
+"  O <형식>            -O 옵션과 마찬가지이나, BSD 특유의 형식으로 출력\n"
 
 #: src/ps/help.c:140
 msgid ""
@@ -1077,8 +1096,11 @@ msgid "  X                   register format\n"
 msgstr "  X                   레지스터 형식\n"
 
 #: src/ps/help.c:147
-msgid " -y                   do not show flags, show rss vs. addr (used with -l)\n"
-msgstr " -y                   플래그를 나타내지 않고, RSS 대비 주소 정보 표시(-l 옵션으로 표시)\n"
+msgid ""
+" -y                   do not show flags, show rss vs. addr (used with -l)\n"
+msgstr ""
+" -y                   플래그를 나타내지 않고, RSS 대비 주소 정보 표시(-l 옵션"
+"으로 표시)\n"
 
 #: src/ps/help.c:148
 msgid "     --context        display security context (for SELinux)\n"
@@ -1153,7 +1175,8 @@ msgid "  e                   show the environment after command\n"
 msgstr "  e                   명령 실행 후 환경 표시\n"
 
 #: src/ps/help.c:168
-msgid "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
+msgid ""
+"  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr "  k,    --sort        정렬 순서 지정: [+|-]<키>[,[+|-]<키>[,...]]\n"
 
 #: src/ps/help.c:169
@@ -1170,7 +1193,8 @@ msgstr "  S,    --cumulative  일부 죽은 하위 프로세스 데이터 포함
 
 #: src/ps/help.c:172
 msgid " -y                   do not show flags, show rss (only with -l)\n"
-msgstr " -y                   플래그 표시 안함. RSS 표시(-l 옵션 지정했을 경우)\n"
+msgstr ""
+" -y                   플래그 표시 안함. RSS 표시(-l 옵션 지정했을 경우)\n"
 
 #: src/ps/help.c:173
 msgid " -V, V, --version     display version information and exit\n"
@@ -1346,7 +1370,8 @@ msgstr "-x 옵션 결과를 가져오려면 개별 설정 값을 지정해야 �
 
 #: src/ps/parser.c:485
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
-msgstr "영역(contexts, labels, 그리고 또 무엇?) 지정시 -z 옵션을 지정해야 합니다"
+msgstr ""
+"영역(contexts, labels, 그리고 또 무엇?) 지정시 -z 옵션을 지정해야 합니다"
 
 #: src/ps/parser.c:492
 msgid "embedded '-' among SysV options makes no sense"
@@ -1608,8 +1633,11 @@ msgid "tell <procps@freelists.org> what you expected"
 msgstr "<procps@freelists.org>에 기대 동작을 알려주십시오"
 
 #: src/ps/sortformat.c:803
-msgid "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
-msgstr "<procps@freelists.org>에 원하는 동작(-L/-T, -m/m/H, $PS_FORMAT)을 알려주십시오"
+msgid ""
+"tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
+msgstr ""
+"<procps@freelists.org>에 원하는 동작(-L/-T, -m/m/H, $PS_FORMAT)을 알려주십시"
+"오"
 
 #: src/ps/sortformat.c:820
 #, c-format
@@ -1646,11 +1674,14 @@ msgstr "CLS 값 분실"
 
 #: src/ps/sortformat.c:908
 msgid "-T with H/-m/m but no PID for SPID to follow"
-msgstr "-T 옵션과 H/-m/m 옵션을 지정했지만 SPID에 대한 PID 값을 지정하지 않았습니다"
+msgstr ""
+"-T 옵션과 H/-m/m 옵션을 지정했지만 SPID에 대한 PID 값을 지정하지 않았습니다"
 
 #: src/ps/sortformat.c:919
 msgid "-L with H/-m/m but no PID/PGID/SID/SESS for NLWP to follow"
-msgstr "-L 옵션과 H/-m/m 옵션을 지정했지만 NLWP에 대한 PID/PGID/SID/SESS 값을 지정하지 않았습니다"
+msgstr ""
+"-L 옵션과 H/-m/m 옵션을 지정했지만 NLWP에 대한 PID/PGID/SID/SESS 값을 지정하"
+"지 않았습니다"
 
 #: src/pwdx.c:37
 #, c-format
@@ -1697,8 +1728,12 @@ msgid " -L, --table        list all signal names in a nice table\n"
 msgstr " -L, --table        nice 테이블에 모든 시그널 이름 표시\n"
 
 #: src/skill.c:325
-msgid " -n, --no-action    do not actually kill processes; just print what would happen\n"
-msgstr " -n, --no-action    실제로 프로세스를 강제로 끝내지 않음. 어떤 일이 일어날 지만 출력\n"
+msgid ""
+" -n, --no-action    do not actually kill processes; just print what would "
+"happen\n"
+msgstr ""
+" -n, --no-action    실제로 프로세스를 강제로 끝내지 않음. 어떤 일이 일어날 지"
+"만 출력\n"
 
 #: src/skill.c:326
 msgid " -v, --verbose      explain what is being done\n"
@@ -1762,7 +1797,8 @@ msgid ""
 "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
 msgstr ""
 "\n"
-"기본 시그널은 TERM 입니다. 가용 시그널 목록을 보려면 -l 또는 -L 옵션을 사용하십시오.\n"
+"기본 시그널은 TERM 입니다. 가용 시그널 목록을 보려면 -l 또는 -L 옵션을 사용하"
+"십시오.\n"
 "HUP, INT, KILL, STOP, CONT, 0 등의 시그널이 일부 쓸만합니다.\n"
 "-SIGKILL -KILL -9 세가지 방식으로 시그널을 대신 지정할 수 있습니다.\n"
 
@@ -2093,8 +2129,12 @@ msgstr "%s(%d): 문법 잘못됨. 계속합니다..."
 
 #: src/sysctl.c:759
 #, c-format
-msgid "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be expanded."
-msgstr "GLOB_TILDE를 플랫폼에서 지원하지 않습니다. \"%s\"의 ~ 를 풀어 해석하지 않습니다."
+msgid ""
+"GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
+"expanded."
+msgstr ""
+"GLOB_TILDE를 플랫폼에서 지원하지 않습니다. \"%s\"의 ~ 를 풀어 해석하지 않습니"
+"다."
 
 #: src/sysctl.c:765
 msgid "glob failed"
@@ -3259,7 +3299,9 @@ msgid "Log"
 msgstr "로그"
 
 #: src/top/top_nls.c:530
-msgid "the '=' key will eventually show the actual file read or command(s) executed ..."
+msgid ""
+"the '=' key will eventually show the actual file read or command(s) "
+"executed ..."
 msgstr "'='키를 사용하면 실제 읽은 파일 내용 또는 실행한 명령도 보여줍니다 ..."
 
 #: src/top/top_nls.c:531
@@ -3269,73 +3311,103 @@ msgstr "데모"
 #: src/top/top_nls.c:532
 #, c-format
 msgid ""
-"This is simulated output representing the contents of some file or the output\n"
-"from some command.  Exactly which commands and/or files are solely up to you.\n"
+"This is simulated output representing the contents of some file or the "
+"output\n"
+"from some command.  Exactly which commands and/or files are solely up to "
+"you.\n"
 "\n"
-"Although this text is for information purposes only, it can still be scrolled\n"
-"and searched like real output will be.  You are encouraged to experiment with\n"
+"Although this text is for information purposes only, it can still be "
+"scrolled\n"
+"and searched like real output will be.  You are encouraged to experiment "
+"with\n"
 "those features as explained in the prologue above.\n"
 "\n"
-"To enable real Inspect functionality, entries must be added to the end of the\n"
-"top personal personal configuration file.  You could use your favorite editor\n"
+"To enable real Inspect functionality, entries must be added to the end of "
+"the\n"
+"top personal personal configuration file.  You could use your favorite "
+"editor\n"
 "to accomplish this, taking care not to disturb existing entries.\n"
 "\n"
-"Another way to add entries is illustrated below, but it risks overwriting the\n"
-"rcfile.  Redirected echoes must not replace (>) but append (>>) to that file.\n"
+"Another way to add entries is illustrated below, but it risks overwriting "
+"the\n"
+"rcfile.  Redirected echoes must not replace (>) but append (>>) to that "
+"file.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
+"toprc\n"
 "\n"
-"If you don't know the location or name of the top rcfile, use the 'W' command\n"
-"and note those details.  After backing up the current rcfile, try issuing the\n"
-"above echoes exactly as shown, replacing '.toprc' as appropriate.  The safest\n"
+"If you don't know the location or name of the top rcfile, use the 'W' "
+"command\n"
+"and note those details.  After backing up the current rcfile, try issuing "
+"the\n"
+"above echoes exactly as shown, replacing '.toprc' as appropriate.  The "
+"safest\n"
 "approach would be to use copy then paste to avoid any typing mistakes.\n"
 "\n"
-"Finally, restart top to reveal what actual Inspect entries combined with this\n"
-"new command can offer.  The possibilities are endless, especially considering\n"
+"Finally, restart top to reveal what actual Inspect entries combined with "
+"this\n"
+"new command can offer.  The possibilities are endless, especially "
+"considering\n"
 "that 'pipe' type entries can include shell scripts too!\n"
 "\n"
-"For additional important information, please consult the top(1) man document.\n"
-"Then, enhance top with your very own customized 'file' and/or 'pipe' entries.\n"
+"For additional important information, please consult the top(1) man "
+"document.\n"
+"Then, enhance top with your very own customized 'file' and/or 'pipe' "
+"entries.\n"
 "\n"
 "Enjoy!\n"
 msgstr ""
-"어떤 파일의 내용 또는 어떤 명령의 출력을 나타내는 출력을 모사했습니다.  정확히 어떤 명령 또는 파일만\n"
+"어떤 파일의 내용 또는 어떤 명령의 출력을 나타내는 출력을 모사했습니다.  정확"
+"히 어떤 명령 또는 파일만\n"
 "단독으로 뜹니다.\n"
 "\n"
-"이 내용은 정보 제공 목적으로 보여주지만 실제 출력처럼 스크롤하고 검색할 수 있습니다.  위에서 설명한\n"
+"이 내용은 정보 제공 목적으로 보여주지만 실제 출력처럼 스크롤하고 검색할 수 있"
+"습니다.  위에서 설명한\n"
 "대로 기능을 시험해보십시오.\n"
 "\n"
-"실제 기능 관찰을 활용하려면, 개인 설정 파일 뒷부분에 항목을 추가해야 합니다.  원하는 편집기를 사용\n"
+"실제 기능 관찰을 활용하려면, 개인 설정 파일 뒷부분에 항목을 추가해야 합니"
+"다.  원하는 편집기를 사용\n"
 "하여 기존 항목을 건드리지 않을 수 있습니다.\n"
 "\n"
-"항목을 추가하는 다른 방법은 아래에 설명했지만, rc 파일을 덮어쓰는 위험이 있을 수 있습니다.  파일\n"
+"항목을 추가하는 다른 방법은 아래에 설명했지만, rc 파일을 덮어쓰는 위험이 있"
+"을 수 있습니다.  파일\n"
 "로의 출력 방향을 대체 (>) 방식이 아닌 추가 (>>) 방식으로 지정해야합니다.\n"
 "\n"
 "  /bin/echo -e \"pipe\\tOpen Files\\tlsof -P -p %d 2>&1\" >> ~/.toprc\n"
 "  /bin/echo -e \"file\\tNUMA Info\\t/proc/%d/numa_maps\" >> ~/.toprc\n"
-"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/.toprc\n"
+"  /bin/echo -e \"pipe\\tLog\\ttail -n200 /var/log/syslog | sort -Mr\" >> ~/."
+"toprc\n"
 "\n"
-"top rc 파일의 위치와 이름을 모르겠다면 'W' 명령을 사용하여 세부 내용을 참고하십시오.  현재 rc\n"
-"파일을 백업하고 나면, 위에 나타난 출력 내용을 정확하게 실행하여 '.toprc'의 내용을 적당하게 바꾸\n"
-"십시오.  가장 안전한 방법은 복사하고 붙여넣는 방식으로 입력 실수를 막는 방식입니다.\n"
+"top rc 파일의 위치와 이름을 모르겠다면 'W' 명령을 사용하여 세부 내용을 참고하"
+"십시오.  현재 rc\n"
+"파일을 백업하고 나면, 위에 나타난 출력 내용을 정확하게 실행하여 '.toprc'의 내"
+"용을 적당하게 바꾸\n"
+"십시오.  가장 안전한 방법은 복사하고 붙여넣는 방식으로 입력 실수를 막는 방식"
+"입니다.\n"
 "\n"
-"마지막으로 top을 다시 시작하여 실제 관할 항목이 새 명령에서 제공할 수 있는 내용과 붙어 나타나게 합\n"
-"니다.  가능성은 끝이 없으며 '파이프'를 활용하여 셸 스크립트에 추가할 수도 있음을 고려해보십시오!\n"
+"마지막으로 top을 다시 시작하여 실제 관할 항목이 새 명령에서 제공할 수 있는 내"
+"용과 붙어 나타나게 합\n"
+"니다.  가능성은 끝이 없으며 '파이프'를 활용하여 셸 스크립트에 추가할 수도 있"
+"음을 고려해보십시오!\n"
 "\n"
-"중요한 추가 내용이 있다면, top(1) 맨 문서를 꼭 살펴보십시오. 그 다음 자체적으로 개별 구성한 \n"
+"중요한 추가 내용이 있다면, top(1) 맨 문서를 꼭 살펴보십시오. 그 다음 자체적으"
+"로 개별 구성한 \n"
 "'파일' 또는 '파이프' 항목으로 top 기능을 개선해보십시오.\n"
 "\n"
 "그럼, 즐겨보세요!\n"
 
 #: src/top/top_nls.c:564
 msgid "to enable 'Y' press <Enter> then type 'W' and restart top"
-msgstr "활성화하려면 'Y' 그리고 <Enter>를 누르신 다음 'W'를 입력하여 top을 다시 시작하십시오"
+msgstr ""
+"활성화하려면 'Y' 그리고 <Enter>를 누르신 다음 'W'를 입력하여 top을 다시 시작"
+"하십시오"
 
 #: src/top/top_nls.c:565
 msgid "to enable 'Y' please consult the top man page (press Enter)"
-msgstr "활성화하려면 'Y'를 입력 후 top 맨 페이지를 살펴보십시오 (Enter를 누르십시오)"
+msgstr ""
+"활성화하려면 'Y'를 입력 후 top 맨 페이지를 살펴보십시오 (Enter를 누르십시오)"
 
 #: src/top/top_nls.c:566
 #, c-format
@@ -3581,50 +3653,81 @@ msgstr "메시지 로그의 마지막 메시지 10건:"
 #, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
-"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; ~1Secure mode ~3%s~2.\n"
+"Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
+"~1Secure mode ~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' summary/task memory scale\n"
-"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; '~1I~2' Irix mode\n"
-"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus two abreast\n"
-"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-width fields\n"
+"  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
+"summary/task memory scale\n"
+"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
+"'~1I~2' Irix mode\n"
+"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; "
+"'~14~2' cpus two abreast\n"
+"  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-"
+"width fields\n"
 "\n"
-"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: '~1<~2'/'~1>~2' left/right\n"
-"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; '~1C~2' Coordinates\n"
-"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; '~1j~2' Str justify\n"
-"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running tasks\n"
-"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if 'x' or 'y')\n"
-"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' other criteria\n"
-"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' other filter(s)\n"
-"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' keep focused\n"
+"  L,&,<,> . Locate: '~1L~2'/'~1&~2' find/again; Move sort column: "
+"'~1<~2'/'~1>~2' left/right\n"
+"  R,H,J,C . Toggle: '~1R~2' Sort; '~1H~2' Threads; '~1J~2' Num justify; "
+"'~1C~2' Coordinates\n"
+"  c,i,S,j . Toggle: '~1c~2' Cmd name/line; '~1i~2' Idle; '~1S~2' Time; "
+"'~1j~2' Str justify\n"
+"  x~5,~1y~5     . Toggle highlights: '~1x~2' sort field; '~1y~2' running "
+"tasks\n"
+"  z~5,~1b~5     . Toggle: '~1z~2' color/mono; '~1b~2' bold/reverse (only if "
+"'x' or 'y')\n"
+"  u,U,o,O . Filter by: '~1u~2'/'~1U~2' effective/any user; '~1o~2'/'~1O~2' "
+"other criteria\n"
+"  n,#,^O  . Set: '~1n~2'/'~1#~2' max tasks displayed; Show: ~1Ctrl~2+'~1O~2' "
+"other filter(s)\n"
+"  V,v,F   . Toggle: '~1V~2' forest view; '~1v~2' hide/show children; '~1F~2' "
+"keep focused\n"
 "\n"
-"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; supp groups ~1^U~2\n"
-"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^E~2'\n"
+"%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; "
+"supp groups ~1^U~2\n"
+"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale "
+"time ~1^E~2'\n"
 "  q         Quit\n"
-"          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
+"          ( commands shown with '.' require a ~1visible~2 task display "
+"~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
 "대화식 명령 도움말~2 - %s\n"
-"창 ~1%s~6: ~1누적 모드 ~3%s~2.  ~1시스템~6: ~1지연 ~3%.1f초~2. ~1보안 모드 ~3%s~2.\n"
+"창 ~1%s~6: ~1누적 모드 ~3%s~2.  ~1시스템~6: ~1지연 ~3%.1f초~2. ~1보안 모드 "
+"~3%s~2.\n"
 "\n"
-"  Z~5,~1B~5,E,e   전역: '~1Z~2' 색상, '~1B~2' 강조, '~1E~2'/'~1e~2' 요약/작업 메모리 스케일링\n"
-"  l,t,m,I   전환: '~1l~2' 부하 평균, '~1t~2' 작업/CPU, '~1m~2' 메모리, '~1I~2' 아이릭스 모드\n"
-"  0,1,2,3,4 전환: '~10~2' 0 갯수, '~11~2/~12~2/~13~2' CPU/NUMA 보기, '~14~2' CPU 나란히 보기\n"
-"  f,X       필드: '~1f~2' 추가/제거/순서/정렬, '~1X~2' 고정폭 필드 길이 증가\n"
+"  Z~5,~1B~5,E,e   전역: '~1Z~2' 색상, '~1B~2' 강조, '~1E~2'/'~1e~2' 요약/작"
+"업 메모리 스케일링\n"
+"  l,t,m,I   전환: '~1l~2' 부하 평균, '~1t~2' 작업/CPU, '~1m~2' 메모리, "
+"'~1I~2' 아이릭스 모드\n"
+"  0,1,2,3,4 전환: '~10~2' 0 갯수, '~11~2/~12~2/~13~2' CPU/NUMA 보기, '~14~2' "
+"CPU 나란히 보기\n"
+"  f,X       필드: '~1f~2' 추가/제거/순서/정렬, '~1X~2' 고정폭 필드 길이 증"
+"가\n"
 "\n"
-"  L,&,<,> . 위치: '~1L~2'/'~1&~2' 찾기/다시, 정렬 컬럼 이동: '~1<~2'/'~1>~2' 좌/우\n"
-"  R,H,J,C . 전환: '~1R~2' 정렬, '~1H~2' 스레드, '~1J~2' 숫자 정렬, '~1C~2' 좌표\n"
-"  c,i,S,j . 전환: '~1c~2' 명령이름/행, '~1i~2' Idle, '~1S~2' 시간, '~1j~2' 문자열 정렬\n"
+"  L,&,<,> . 위치: '~1L~2'/'~1&~2' 찾기/다시, 정렬 컬럼 이동: '~1<~2'/'~1>~2' "
+"좌/우\n"
+"  R,H,J,C . 전환: '~1R~2' 정렬, '~1H~2' 스레드, '~1J~2' 숫자 정렬, '~1C~2' 좌"
+"표\n"
+"  c,i,S,j . 전환: '~1c~2' 명령이름/행, '~1i~2' Idle, '~1S~2' 시간, '~1j~2' 문"
+"자열 정렬\n"
 "  x~5,~1y~5     . 강조 전환: '~1x~2' 필드 정렬, '~1y~2' 실행 작업\n"
-"  z~5,~1b~5     . 전환: '~1z~2' 색상/흑백, '~1b~2' 강조/반전 ('x' 또는 'y'일 때만)\n"
-"  u,U,o,O . 필터기준: '~1u~2'/'~1U~2' 해당/임의 사용자, '~1o~2'/'~1O~2' 다른 기준\n"
-"  n,#,^O  . 설정: '~1n~2'/'~1#~2' 표시할 최대 작업 수, 보기: ~1Ctrl~2+'~1O~2' 다른 필터\n"
-"  V,v,F   . 전환: '~1V~2' 포레스트 보기, '~1v~2' 하위요소 숨김/표시, '~1F~2' 포커스 항목 유지\n"
+"  z~5,~1b~5     . 전환: '~1z~2' 색상/흑백, '~1b~2' 강조/반전 ('x' 또는 'y'일 "
+"때만)\n"
+"  u,U,o,O . 필터기준: '~1u~2'/'~1U~2' 해당/임의 사용자, '~1o~2'/'~1O~2' 다른 "
+"기준\n"
+"  n,#,^O  . 설정: '~1n~2'/'~1#~2' 표시할 최대 작업 수, 보기: "
+"~1Ctrl~2+'~1O~2' 다른 필터\n"
+"  V,v,F   . 전환: '~1V~2' 포레스트 보기, '~1v~2' 하위요소 숨김/표시, '~1F~2' "
+"포커스 항목 유지\n"
 "\n"
-"%s  ^G,K,N,U  보기: 제어그룹 ~1^G~2; 명령행 ~1^K~2; 환경 ~1^N~2; 추가 그룹 ~1^U~2\n"
-"  W,Y,!,^E  설정기록 '~1W~2'; 검사 '~1Y~2'; CPU 통합 '~1!~2'; 시간 스케일링 ~1^E~2'\n"
+"%s  ^G,K,N,U  보기: 제어그룹 ~1^G~2; 명령행 ~1^K~2; 환경 ~1^N~2; 추가 그룹 "
+"~1^U~2\n"
+"  W,Y,!,^E  설정기록 '~1W~2'; 검사 '~1Y~2'; CPU 통합 '~1!~2'; 시간 스케일링 "
+"~1^E~2'\n"
 "  q         끝내기\n"
-"          ( '.'과 나타낸 명령은 ~1창~2을 나타내는 ~1보이기~2 과정이 필요합니다 ) \n"
+"          ( '.'과 나타낸 명령은 ~1창~2을 나타내는 ~1보이기~2 과정이 필요합니"
+"다 ) \n"
 "~1창~2 도움말은 '~1h~2' 또는 '~1?~2'를,\n"
 "계속하려면 'q' 또는 <Esc> 를 입력하십시오 "
 
@@ -3633,52 +3736,77 @@ msgstr ""
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
-". Use multiple ~1windows~2, each with separate config opts (color,fields,sort,etc)\n"
-". The 'current' window controls the ~1Summary Area~2 and responds to your ~1Commands~2\n"
-"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/shrinking others\n"
-"  . with ~1NO~2 task display, some commands will be ~1disabled~2 ('i','R','n','c', etc)\n"
-"    until a ~1different window~2 has been activated, making it the 'current' window\n"
-". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;~1 2~2) choosing\n"
-"  a specific field group; or~1 3~2) exiting the color mapping or fields screens\n"
+". Use multiple ~1windows~2, each with separate config opts (color,fields,"
+"sort,etc)\n"
+". The 'current' window controls the ~1Summary Area~2 and responds to your "
+"~1Commands~2\n"
+"  . that window's ~1task display~2 can be turned ~1Off~2 & ~1On~2, growing/"
+"shrinking others\n"
+"  . with ~1NO~2 task display, some commands will be ~1disabled~2 "
+"('i','R','n','c', etc)\n"
+"    until a ~1different window~2 has been activated, making it the 'current' "
+"window\n"
+". You ~1change~2 the 'current' window by: ~1 1~2) cycling forward/backward;"
+"~1 2~2) choosing\n"
+"  a specific field group; or~1 3~2) exiting the color mapping or fields "
+"screens\n"
 ". Commands ~1available anytime   -------------~2\n"
-"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 windows\n"
-"    g       . Choose another field group and make it 'current', or change now\n"
-"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; or~1 4~2 =%s\n"
+"    A       . Alternate display mode toggle, show ~1Single~2 / ~1Multiple~2 "
+"windows\n"
+"    g       . Choose another field group and make it 'current', or change "
+"now\n"
+"              by selecting a number from: ~1 1~2 =%s;~1 2~2 =%s;~1 3~2 =%s; "
+"or~1 4~2 =%s\n"
 ". Commands ~1requiring~2 '~1A~2' mode~1  -------------~2\n"
 "    G       . Change the ~1Name~5 of the 'current' window/field group\n"
-" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' Backward\n"
-" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all ~1Visible~2/~1Invisible~2\n"
-"  The screen will be divided evenly between task displays.  But you can make\n"
-"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then later you could:\n"
-" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
-"              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
+" ~1*~4  a , w   . Cycle through all four windows:  '~1a~5' Forward; '~1w~5' "
+"Backward\n"
+" ~1*~4  - , _   . Show/Hide:  '~1-~5' ~1Current~2 window; '~1_~5' all "
+"~1Visible~2/~1Invisible~2\n"
+"  The screen will be divided evenly between task displays.  But you can "
+"make\n"
+"  some ~1larger~2 or ~1smaller~2, using '~1n~2' and '~1i~2' commands.  Then "
+"later you could:\n"
+" ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' "
+"~1Every~2 window\n"
+"              (this also forces the ~1current~2 or ~1every~2 window to "
+"become visible)\n"
 "\n"
-"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
+"In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try "
+"the '~1a~2' and '~1w~2'\n"
 "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' "
 msgstr ""
 "창 도움말 / 필드 그룹~2 - \"현재 창\" = ~1 %s ~6\n"
 "\n"
-". 다중 ~1창~2을 활용합니다 각 창에는 별도의 설정 옵션을 부여합니다(색상,필드,정렬,등)\n"
+". 다중 ~1창~2을 활용합니다 각 창에는 별도의 설정 옵션을 부여합니다(색상,필드,"
+"정렬,등)\n"
 ". '현재' 창에서는 ~1요약 영역~2을 다루며, 창의 ~1끔~2과 ~1켬~2이 가능하고\n"
-"  . 나머지에 대해 펼치기/숨기기가 가능한 ~1작업 표시~2에서 ~1명령~2에 응답이 가능합니다\n"
-"  . 작업 표시부가 ~1없다~2면, ~1다른 창~2을 띄워서 '현재' 창으로 만들기 전까지는\n"
+"  . 나머지에 대해 펼치기/숨기기가 가능한 ~1작업 표시~2에서 ~1명령~2에 응답이 "
+"가능합니다\n"
+"  . 작업 표시부가 ~1없다~2면, ~1다른 창~2을 띄워서 '현재' 창으로 만들기 전까"
+"지는\n"
 "    일부 명령('i','R','n','c', 등)을 ~1사용할 수 없습니다~2\n"
-". '현재' 창을 ~1전환~2 하는 방법: ~1 1~2) 앞뒤 순환 ~1 2~2) 지정 필드 그룹 선택\n"
+". '현재' 창을 ~1전환~2 하는 방법: ~1 1~2) 앞뒤 순환 ~1 2~2) 지정 필드 그룹 선"
+"택\n"
 "  ~1 3~2) 색상 대응 또는 필드 화면 선택\n"
 ". ~1언제든 쓸 수 있는~2 명령~1   -------------~2\n"
 "    A       . ~1단일~2 / ~1다중~2 창 모드로 표시 모드를 전환합니다\n"
-"    g       . 다른 필드 그룹을 선택한 다음 '현재' 요소로 만들거나, ~1 1~2 =%s, ~1 2~2=%s,\n"
+"    g       . 다른 필드 그룹을 선택한 다음 '현재' 요소로 만들거나, ~1 1~2 "
+"=%s, ~1 2~2=%s,\n"
 "               ~1 3~2 =%s, ~1 4~2 =%s 숫자 중 하나를 선택하여 바꿉니다\n"
 ". '~1A~2' 모드가 ~1필요한~2 명령~1  -------------~2\n"
 "    G       . '현재' 창/필드 그룹의 ~1이름~5을 바꿉니다\n"
 " ~1*~4  a , w   . 모든 창 네군데를 순환합니다:  '~1a~5' 이전, '~1w~5' 다음\n"
-" ~1*~4  - , _   . 표시/숨김:  '~1-~5' ~1현재~2 창, '~1_~5' 모두 ~1보이기~2/~1가리기~2\n"
-"  작업 화면도 화면을 나눕니다.  ~1n~2과 ~1i~2 명령으로 ~1더 큰~2 또는 ~1더 작은~2 화면을 만들 수도 있습니다.\n"
+" ~1*~4  - , _   . 표시/숨김:  '~1-~5' ~1현재~2 창, '~1_~5' 모두 ~1보이기~2/~1"
+"가리기~2\n"
+"  작업 화면도 화면을 나눕니다.  ~1n~2과 ~1i~2 명령으로 ~1더 큰~2 또는 ~1더 작"
+"은~2 화면을 만들 수도 있습니다.\n"
 "  그 다음:\n"
 " ~1*~4  = , +   . 작업 재균형화:  '~1=~5' ~1현재~2 창, '~1+~5' ~1모든~2 창\n"
 "              (이 명령으로 ~1현재~2 또는 ~1모든~2 창을 보이게 강제합니다)\n"
 "\n"
-"'~1A~2' 모드에서는, '~1*~4' 키가 ~1핵심~2 명령입니다.  하위 명령에서 '~1a~2'와 '~1w~2' 명령을 입력 후\n"
+"'~1A~2' 모드에서는, '~1*~4' 키가 ~1핵심~2 명령입니다.  하위 명령에서 "
+"'~1a~2'와 '~1w~2' 명령을 입력 후\n"
 "'g' 하위 명령을 입력해보십시오.  <Enter>키를 누르면 '현재' 창을 만듭니다 "
 
 #. Translation Notes ------------------------------------------------
@@ -3696,8 +3824,10 @@ msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
 "   color - 04:25:44 up 8 days, 50 min,  7 users,  load average:\n"
-"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,~3\n"
-"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 ~2idle~3\n"
+"   Tasks:~3  64 ~2total,~3   2 ~3running,~3  62 ~2sleeping,~3   0 ~2stopped,"
+"~3\n"
+"   %%Cpu(s):~3  76.5 ~2user,~3  11.2 ~2system,~3   0.0 ~2nice,~3  12.3 "
+"~2idle~3\n"
 "   ~1 Nasty Message! ~4  -or-  ~1Input Prompt~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3706,7 +3836,8 @@ msgid ""
 "   available toggles: ~1B~2 =disable bold globally (~1%s~2),\n"
 "       ~1z~2 =color/mono (~1%s~2), ~1b~2 =tasks \"bold\"/reverse (~1%s~2)\n"
 "\n"
-"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c ~4:\n"
+"1) Select a ~1target~2 as an upper case letter, ~1current target~2 is ~1 %c "
+"~4:\n"
 "   S~2 = Summary Data,~1  M~2 = Messages/Prompts,\n"
 "   H~2 = Column Heads,~1  T~2 = Task Information\n"
 "2) Select a ~1color~2 as a number or use the up/down arrow keys\n"
@@ -3722,7 +3853,8 @@ msgstr ""
 "\n"
 "   색상 - 04:25:44 가동시간 8일, 50분,  7 사용자,  평균 부하:\n"
 "   작업:~3  64 ~2총계,~3   2 ~3실행,~3  62 ~2대기,~3   0 ~2멈춤,~3\n"
-"   %%CPU:~3  76.5 ~2사용자,~3  11.2 ~2시스템,~3   0.0 ~2nice,~3  12.3 ~2대기~3\n"
+"   %%CPU:~3  76.5 ~2사용자,~3  11.2 ~2시스템,~3   0.0 ~2nice,~3  12.3 ~2대기"
+"~3\n"
 "   ~1 징그러운 메시지! ~4  또는  ~1입력 프롬프트~5\n"
 "   ~1  PID TTY     PR  NI %%CPU    TIME+   VIRT SWAP S COMMAND    ~6\n"
 "   17284 ~8pts/2  ~7  8   0  0.0   0:00.75  1380    0 S /bin/bash   ~8\n"
@@ -3741,14 +3873,19 @@ msgstr ""
 "\n"
 "3) 위 과정이 끝나면 아래 키를 활용합니다:\n"
 "   '~1%s~2'창 바꾸기를 취소하려면 'q' 또는 <Esc> 키를,\n"
-"   바뀐 설정을 반영하고 다른 항목을 바꾸려면 'a' 또는 'w' 키를, 반영하고 끝내려면 <Enter> 키를 누릅니다 "
+"   바뀐 설정을 반영하고 다른 항목을 바꾸려면 'a' 또는 'w' 키를, 반영하고 끝내"
+"려면 <Enter> 키를 누릅니다 "
 
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
 #. .                 also imbedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:751
-msgid "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n"
-msgstr "  d,k,r,^R '~1d~2' 지연 설정, '~1k~2' 강제 종료, '~1r~2' nice 재설정, ~1Ctrl~2+'~1R~2' 자동 그룹 nice 재설정\n"
+msgid ""
+"  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' "
+"renice autogroup\n"
+msgstr ""
+"  d,k,r,^R '~1d~2' 지연 설정, '~1k~2' 강제 종료, '~1r~2' nice 재설정, "
+"~1Ctrl~2+'~1R~2' 자동 그룹 nice 재설정\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -3759,47 +3896,66 @@ msgstr "  d,k,r,^R '~1d~2' 지연 설정, '~1k~2' 강제 종료, '~1r~2' nice �
 #, c-format
 msgid ""
 "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
-"   Navigate with Up/Dn, Right selects for move then <Enter> or Left commits,\n"
+"   Navigate with Up/Dn, Right selects for move then <Enter> or Left "
+"commits,\n"
 "   'd' or <Space> toggles display, 's' sets sort.  Use 'q' or <Esc> to end!\n"
 msgstr ""
 "필드 관리~2 창 용도 ~1%s~6, 현재 정렬 필드: ~1%s~2\n"
 "   상/하로 탐색, 우로 선택한 후 <Enter>를 누르거나 좌로 커밋,\n"
-"   'd' 또는 <Space> 키는 표시를 전환하며, 's'는 정렬 기준을 정합니다.  끝내려면 'q' 또는 <Esc>를 누르십시오!\n"
+"   'd' 또는 <Space> 키는 표시를 전환하며, 's'는 정렬 기준을 정합니다.  끝내려"
+"면 'q' 또는 <Esc>를 누르십시오!\n"
 
 #. Translation Hint:
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:767
 #, c-format
-msgid "%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u ~2zombie~3\n"
-msgstr "%s:~3 %3u ~2총계,~3 %3u ~2실행,~3 %3u ~2대기,~3 %3u ~2멈춤,~3 %3u ~2좀비~3\n"
+msgid ""
+"%s:~3 %3u ~2total,~3 %3u ~2running,~3 %3u ~2sleeping,~3 %3u ~2stopped,~3 %3u "
+"~2zombie~3\n"
+msgstr ""
+"%s:~3 %3u ~2총계,~3 %3u ~2실행,~3 %3u ~2대기,~3 %3u ~2멈춤,~3 %3u ~2좀비~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt
 #: src/top/top_nls.c:773
 #, c-format
-msgid "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
-msgstr "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
+msgid ""
+"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
+msgstr ""
+"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f ~2wa,"
+"~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
 #. .                 hi hardware interrupt, si = software interrupt, st = steal time
 #: src/top/top_nls.c:779
 #, c-format
-msgid "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
-msgstr "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
+msgid ""
+"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
+msgstr ""
+"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f ~2wa,"
+"~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 
 #. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
 #: src/top/top_nls.c:783
 #, c-format
-msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 ~1    "
-msgstr "%s %s:~3 %9.9s~2총계,~3 %9.9s~2잔여,~3 %9.9s~2사용,~3 %9.9s~2버퍼/캐시~3 ~1    "
+msgid ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
+"~1    "
+msgstr ""
+"%s %s:~3 %9.9s~2총계,~3 %9.9s~2잔여,~3 %9.9s~2사용,~3 %9.9s~2버퍼/캐시~3 "
+"~1    "
 
 #: src/top/top_nls.c:785
 #, c-format
-msgid "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
-msgstr "%s %s:~3 %9.9s~2총계,~3 %9.9s~2잔여,~3 %9.9s~2사용.~3 %9.9s~2가용  %s~3"
+msgid ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
+msgstr ""
+"%s %s:~3 %9.9s~2총계,~3 %9.9s~2잔여,~3 %9.9s~2사용.~3 %9.9s~2가용  %s~3"
 
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
@@ -3808,7 +3964,8 @@ msgstr "%s %s:~3 %9.9s~2총계,~3 %9.9s~2잔여,~3 %9.9s~2사용.~3 %9.9s~2가�
 #, c-format
 msgid ""
 "Inspection~2 Pause at: pid ~1%d~6, running ~1%s~6\n"
-"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to ~1end~5 !\n"
+"Use~2:  left/right then <Enter> to ~1select~5 an option; 'q' or <Esc> to "
+"~1end~5 !\n"
 "Options~2: ~1%s\n"
 msgstr ""
 "검사~2 중지 위치: PID ~1%d~6, 실행 ~1%s~6\n"
@@ -3819,11 +3976,13 @@ msgstr ""
 #, c-format
 msgid ""
 "Inspection~2 View at pid: ~1%s~3, running ~1%s~3.  Locating: ~1%s~6\n"
-"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to ~1locate~5/~1next~5.\n"
+"Use~2:  left/right/up/down/etc to ~1navigate~5 the output; 'L'/'&' to "
+"~1locate~5/~1next~5.\n"
 "Or~2:   <Enter> to ~1select another~5; 'q' or <Esc> to ~1end~5 !\n"
 msgstr ""
 "검사~2 보기 위치 PID: ~1%s~3, 실행 ~1%s~3.  위치: ~1%s~6\n"
-"사용~2:  좌/우/상/하/등 으로 출력 ~1탐색~5; 'L'/'&'로 ~1가리키기~5/~1다음~5.\n"
+"사용~2:  좌/우/상/하/등 으로 출력 ~1탐색~5; 'L'/'&'로 ~1가리키기~5/~1다음"
+"~5.\n"
 "또는~2:   <Enter>로 ~1다른 항목 선택~5; 'q' 또는 <Esc>로 ~1끝냅니다~5 !\n"
 
 #: src/uptime.c:47 src/uptime.c:119
@@ -3892,12 +4051,20 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         첫 줄 출력 건너뛰기\n"
 
 #: src/vmstat.c:257
-msgid "procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----"
-msgstr "procs -----------메모리---------- ---스왑-- ---입출력-- -시스템-- ------CPU-----"
+msgid ""
+"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
+"cpu-----"
+msgstr ""
+"procs -----------메모리---------- ---스왑-- ---입출력-- -시스템-- ------"
+"CPU-----"
 
 #: src/vmstat.c:259
-msgid "--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- ----------cpu----------"
-msgstr "--procs-- -----------------------메모리---------------------- ---swap-- -----io---- -system-- ----------cpu----------"
+msgid ""
+"--procs-- -----------------------memory---------------------- ---swap-- -----"
+"io---- -system-- ----------cpu----------"
+msgstr ""
+"--procs-- -----------------------메모리---------------------- ---swap-- -----"
+"io---- -system-- ----------cpu----------"
 
 #: src/vmstat.c:260 src/vmstat.c:616
 msgid " -----timestamp-----"
@@ -4052,12 +4219,20 @@ msgid "Disk/Partition %s not found"
 msgstr "%s 디스크/파티션이 없습니다"
 
 #: src/vmstat.c:613
-msgid "disk- ------------reads------------ ------------writes----------- -----IO------"
-msgstr "disk- ------------읽기------------- ------------쓰기------------- ----입출력---"
+msgid ""
+"disk- ------------reads------------ ------------writes----------- -----"
+"IO------"
+msgstr ""
+"disk- ------------읽기------------- ------------쓰기------------- ----입출"
+"력---"
 
 #: src/vmstat.c:615
-msgid "disk- -------------------reads------------------- -------------------writes------------------ ------IO-------"
-msgstr "disk- -------------------읽기-------------------- -------------------쓰기-------------------- ----입출력-----"
+msgid ""
+"disk- -------------------reads------------------- -------------------"
+"writes------------------ ------IO-------"
+msgstr ""
+"disk- -------------------읽기-------------------- -------------------쓰"
+"기-------------------- ----입출력-----"
 
 #. Translation Hint: max 6 chars
 #: src/vmstat.c:634 src/vmstat.c:642
@@ -4338,7 +4513,8 @@ msgstr " %s [<옵션>] <명령>\n"
 
 #: src/watch.c:94
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
-msgstr "  -b, --beep             명령이 0이 아닌 종료 상태값으로 나갔을 때 알림음\n"
+msgstr ""
+"  -b, --beep             명령이 0이 아닌 종료 상태값으로 나갔을 때 알림음\n"
 
 #: src/watch.c:95
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
@@ -4354,7 +4530,8 @@ msgstr ""
 
 #: src/watch.c:98
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
-msgstr "  -e, --errexit          명령이 0이 아닌 종료 상태값으로 나갔을 떄 나감\n"
+msgstr ""
+"  -e, --errexit          명령이 0이 아닌 종료 상태값으로 나갔을 떄 나감\n"
 
 #: src/watch.c:99
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -4429,7 +4606,8 @@ msgstr "waitpid"
 
 #: src/watch.c:785
 msgid "command exit with a non-zero status, press a key to exit"
-msgstr "0이 아닌 종료 상태값으로 명령을 나왔습니다. 나가려면 아무 키나 누르십시오"
+msgstr ""
+"0이 아닌 종료 상태값으로 명령을 나왔습니다. 나가려면 아무 키나 누르십시오"
 
 #: src/watch.c:845
 msgid "Could not parse interval from WATCH_INTERVAL"
@@ -4489,18 +4667,23 @@ msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     오래된 방식 출력\n"
 
 #: src/w.c:531
-msgid " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
+msgid ""
+" -i, --ip-addr       display IP address instead of hostname (if possible)\n"
 msgstr " -i, --ip-addr       호스트 이름 대신 IP 주소 표시(가능한 경우)\n"
 
 #: src/w.c:625
 #, c-format
-msgid "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
-msgstr "PROCPS_USERLEN 사용자 길이 환경 변수 값이 8과 %i 사이여야 합니다. 무시함.\n"
+msgid ""
+"User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
+msgstr ""
+"PROCPS_USERLEN 사용자 길이 환경 변수 값이 8과 %i 사이여야 합니다. 무시함.\n"
 
 #: src/w.c:635
 #, c-format
-msgid "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
-msgstr "PROCPS_FROMLEN 길이 시작 환경 변수 값이 8과 %d 사이여야 합니다. 무시함\n"
+msgid ""
+"from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
+msgstr ""
+"PROCPS_FROMLEN 길이 시작 환경 변수 값이 8과 %d 사이여야 합니다. 무시함\n"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
