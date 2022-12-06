@@ -73,8 +73,7 @@ install-data-local:
 	    done; \
 	    $(MAKE) -C .. install-man \
 	            mandir="$(mandir)/$$lang" \
-		    man_MANS="" \
-		    src_MANS="$$files"; \
+		    dist_man_MANS="$$files"; \
 	done
 
 uninstall-local:
@@ -89,8 +88,7 @@ uninstall-local:
 		done; \
 		$(MAKE) -C .. uninstall-man \
 			mandir="$(mandir)/$$lang" \
-			man_MANS="" \
-			src_MANS="$$files"; \
+			dist_man_MANS="$$files"; \
 	done
 
 dist-hook: man.stamp
