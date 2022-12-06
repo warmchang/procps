@@ -57,7 +57,7 @@ int check_fatal_proc_unmounted(void *data)
     return ( (procps_pids_new(&info, items2, 2) == 0) &&
 	    ( (stack = fatal_proc_unmounted(info, 1)) != NULL) &&
 	    ( PIDS_VAL(0, s_int, stack, info) > 0) &&
-	    ( PIDS_VAL(1, u_int, stack, info) > 0));
+	    ( PIDS_VAL(1, ul_int, stack, info) > 0));
 }
 
 TestFunction test_funcs[] = {
