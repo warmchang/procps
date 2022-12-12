@@ -287,6 +287,8 @@ static void scan_procs(struct run_time_conf_t *run_time)
     for (i=0; i < total_procs; i++) {
         if (PIDS_GETINT(PID) == my_pid || PIDS_GETINT(PID) == 0)
             continue;
+	if (pids && !match_intlist(PIDS_GETINT(PID), pid_count, pids))
+	    continue;
         if (uids && !match_intlist(PIDS_GETUNT(EUID), uid_count, (int *)uids))
             continue;
         if (ttys && !match_intlist(PIDS_GETINT(TTY), tty_count, ttys))

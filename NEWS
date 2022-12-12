@@ -1,3 +1,7 @@
+procps-ng-NEXT
+---------------
+  * docs: Don't install English manpages twice
+  * skill: Match on -p again                               Debian #1025915
 procps-ng-4.0.2
 ---------------
   * library revision - 0:1:0
