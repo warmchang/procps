@@ -51,3 +51,9 @@ expect_pass "$test" "error: missing AIX field descriptor"
 set test "ps with unknown AIX field"
 spawn $ps -o "%p %Z"
 expect_pass "$test" "error: unknown AIX field descriptor"
+
+make_testproc
+set test "ps with c option"
+spawn $ps co command $testproc1_pid
+expect_pass "$test" "^COMMAND\\s+spcorp\\s*$"
+kill_testproc

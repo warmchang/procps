@@ -403,13 +403,16 @@ Modifications to the arguments are not shown.
 static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
   char *endp;
   int rightward, fh;
-setREL2(CMDLINE,ENVIRON)
+setREL3(CMDLINE,CMD,ENVIRON)
   endp = outbuf;
   rightward = max_rightward;
   fh = forest_helper(outbuf);
   endp += fh;
   rightward -= fh;
-  endp += escape_str(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
+  if (!bsd_c_option)
+    endp += escape_str(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
+  else
+    endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
   if(bsd_e_option && rightward>1) {
     char *e = rSv(ENVIRON, str, pp);
     if(*e != '-' || *(e+1) != '\0') {
