@@ -1,8 +1,10 @@
 procps-ng-NEXT
 ---------------
   * docs: Don't install English manpages twice
-  * skill: Match on -p again                               Debian #1025915
   * ps: c flag shows command name again                    Debian #1026326
+  * skill: Match on -p again                               Debian #1025915
+  * vmstat: Referesh memory statistics                     Debian #1027963
+
 procps-ng-4.0.2
 ---------------
   * library revision - 0:1:0

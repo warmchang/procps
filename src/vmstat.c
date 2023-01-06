@@ -468,6 +468,9 @@ static void new_format(void)
         pswpin[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int);
         pswpout[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int);
 
+        if (!(mem_stack = procps_meminfo_select(mem_info, Mem_items, MAX_mem)))
+                xerrx(EXIT_FAILURE, _("Unable to select memory information"));
+
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
