@@ -3,6 +3,7 @@ procps-ng-NEXT
   * docs: Don't install English manpages twice
   * ps: c flag shows command name again                    Debian #1026326
   * skill: Match on -p again                               Debian #1025915
+  * top: E/P-core toggle ('5' key) added to help
   * vmstat: Referesh memory statistics                     Debian #1027963
 
 procps-ng-4.0.2
@@ -10,7 +11,7 @@ procps-ng-4.0.2
   * library revision - 0:1:0
     Handle absent 'core_id' in /proc/cpuinfo
   * w: Show time with D_TIME_BITS=64 on 32bit env          issue #256
- 
+
 procps-ng-4.0.1
 ---------------
   * library
