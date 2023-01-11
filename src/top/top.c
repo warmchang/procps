@@ -1005,7 +1005,7 @@ static void show_special (int interact, const char *glob) {
 
    // handle multiple lines passed in a bunch
    while ((lin_end = strchr(glob, '\n'))) {
-     #define myMIN(a,b) (((a) < (b)) ? (a) : (b))
+    #define myMIN(a,b) (((a) < (b)) ? (a) : (b))
       size_t lessor = myMIN((size_t)(lin_end - glob), sizeof(lin) -3);
 
       // create a local copy we can extend and otherwise abuse
@@ -1046,7 +1046,7 @@ static void show_special (int interact, const char *glob) {
       else PUFF("%s%s\n", row, Caps_endline);
       glob = ++lin_end;                // point to next line (maybe)
 
-     #undef myMIN
+    #undef myMIN
    } // end: while 'lines'
 
    /* If there's anything left in the glob (by virtue of no trailing '\n'),
@@ -2110,8 +2110,8 @@ static void adj_geometry (void) {
 
 #if !defined(TOG4_MEM_FIX) && !defined(TOG4_MEM_1UP)
       if (num > 2) {
-        #define cpuGRAPH  ( GRAPH_prefix_abv + Graph_cpus->length + GRAPH_suffix )
-        #define nxtGRAPH  ( cpuGRAPH + ADJOIN_space )
+       #define cpuGRAPH  ( GRAPH_prefix_abv + Graph_cpus->length + GRAPH_suffix )
+       #define nxtGRAPH  ( cpuGRAPH + ADJOIN_space )
          int len = cpuGRAPH;
          for (;;) {
             if (len + nxtGRAPH > GRAPH_length_max) break;
@@ -2119,8 +2119,8 @@ static void adj_geometry (void) {
          }
          len -= (GRAPH_prefix_abv + ADJOIN_space);
          Graph_mems->length = len;
-        #undef cpuGRAPH
-        #undef nxtGRAPH
+       #undef cpuGRAPH
+       #undef nxtGRAPH
       }
 #endif
    } else {
