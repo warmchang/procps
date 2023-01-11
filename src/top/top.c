@@ -105,6 +105,7 @@ static int   Screen_cols, Screen_rows, Max_lines;
         /* These 'SCREEN_ROWS', 'BOT_ and 'Bot_' guys are used
            in managing the special separate bottom 'window' ... */
 #define      SCREEN_ROWS ( Screen_rows - Bot_rsvd )
+#define      BOT_PRESENT ( Bot_what > 0 )
 #define      BOT_ITEMMAX  10           // Bot_item array's max size
 #define      BOT_MSGSMAX  10           // total entries for Msg_tab
 #define      BOT_UNFOCUS  -1           // tab focus not established
@@ -5669,7 +5670,7 @@ static void keys_global (int ch) {
          bot_item_toggle(EU_CGR, N_fmt(X_BOT_ctlgrp_fmt), BOT_SEP_SLS);
          break;
       case kbd_CtrlI:
-         if (Bot_what) {
+         if (BOT_PRESENT) {
             ++Bot_indx;
             if (Bot_indx > Bot_focus_func(NULL, NULL))
                Bot_indx = BOT_UNFOCUS;
@@ -5719,7 +5720,7 @@ static void keys_global (int ch) {
          bot_item_toggle(EU_SGN, N_fmt(X_BOT_supgrp_fmt), BOT_SEP_CMA);
          break;
       case kbd_BTAB:
-         if (Bot_what) {
+         if (BOT_PRESENT) {
             --Bot_indx;
             num = Bot_focus_func(NULL, NULL);
             if (Bot_indx <= BOT_UNFOCUS)
@@ -7317,9 +7318,13 @@ static void frame_make (void) {
    /* clear to end-of-screen - critical if last window is 'idleps off'
       (main loop must iterate such that we're always called before sleep) */
    if (!Batch && scrlins < Max_lines) {
-      for (i = scrlins + Msg_row + 1; i < SCREEN_ROWS; i++) {
-         putp(tg2(0, i));
-         putp(Cap_clr_eol);
+      if (!BOT_PRESENT)
+         putp(Cap_nl_clreos);
+      else {
+         for (i = scrlins + Msg_row + 1; i < SCREEN_ROWS; i++) {
+            putp(tg2(0, i));
+            putp(Cap_clr_eol);
+         }
       }
       PSU_CLREOS(Pseudo_row);
    }
