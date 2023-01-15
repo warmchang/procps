@@ -6,6 +6,7 @@ procps-ng-NEXT
   * skill: Match on -p again                               Debian #1025915
   * top: E/P-core toggle ('5' key) added to help
   * vmstat: Referesh memory statistics                     Debian #1027963
+  * w: Add --pids option                                   merge #159
 
 procps-ng-4.0.2
 ---------------
