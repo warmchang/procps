@@ -4,7 +4,7 @@
 .\" Quick hack conversion by Albert Cahalan, 1998.
 .\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS "1" "2022-12-12" "procps-ng" "User Commands"
+.TH PS "1" "2023-01-15" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -1240,8 +1240,14 @@ The CPU utilization of a process in an extended "##.###" format.
 T}
 
 drs	DRS	T{
-data resident set size, the amount of physical memory devoted to other than
-executable code.
+data resident set size, the amount of private memory \fIreserved\fR by a process.
+It is also known as DATA. Such memory may not yet be mapped to 
+.B rss
+but will always be included
+included in the
+.B vsz
+amount.
+
 T}
 
 egid	EGID	T{
