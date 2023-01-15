@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ---------------
   * docs: Don't install English manpages twice
+  * pgrep: Add -H match on userspace signal handler        merge #165
   * ps: c flag shows command name again                    Debian #1026326
   * skill: Match on -p again                               Debian #1025915
   * top: E/P-core toggle ('5' key) added to help
