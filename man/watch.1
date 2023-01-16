@@ -1,4 +1,4 @@
-.TH WATCH 1 "2021-04-24" "procps-ng" "User Commands"
+.TH WATCH 1 "2023-01-16" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -22,7 +22,7 @@ will show all changes since the first iteration.
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second
 interval, in which the smaller values are converted. Both '.' and ',' work
-for any locales. The WATCH_INTERVAL environment can be used to persistently
+for any locales. The \fBWATCH_INTERVAL\fR environment can be used to persistently
 set a non-default interval (following the same rules and formatting).
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
@@ -112,7 +112,7 @@ failed, or command exited up on error.
 .B other
 The watch will propagate command exit status as child exit status.
 .SH ENVIRONMENT
-The behaviour of
+The behavior of
 .B watch
 is affected by the following environment variables.
 
@@ -121,6 +121,7 @@ is affected by the following environment variables.
 Update interval, follows the same rules as the
 .B \-\-interval
 command line option.
+.sp
 .SH NOTES
 POSIX option processing is used (i.e., option processing stops at
 the first non\-option argument).  This means that flags after
@@ -128,6 +129,7 @@ the first non\-option argument).  This means that flags after
 don't get interpreted by
 .BR watch
 itself.
+.sp
 .SH BUGS
 Upon terminal resize, the screen will not be correctly repainted until the
 next scheduled update.  All
@@ -162,8 +164,9 @@ also can get into a state where it rapid-fires as many executions of
 as it can to catch up from a previous executions running longer than
 .B \-\-interval
 (for example,
-.B netstat
+.BR netstat (8)
 taking ages on a DNS lookup).
+.sp
 .SH EXAMPLES
 .PP
 To watch for mail, you might do
@@ -201,3 +204,8 @@ watch uname \-r
 isn't guaranteed to work across reboots, especially in the face of
 .B ntpdate
 (if present) or other bootup time-changing mechanisms)
+.sp
+.SH "REPORTING BUGS"
+Please send bug reports to
+.UR procps@freelists.org
+.UE

@@ -7,7 +7,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP "1" "2022-11-01" "procps-ng" "User Commands"
+.TH PGREP "1" "2023-01-16" "procps-ng" "User Commands"
 .SH NAME
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
@@ -172,7 +172,9 @@ match the
 .TP
 \fB\-F\fR, \fB\-\-pidfile\fR \fIfile\fR
 Read \fIPID\fRs from \fIfile\fR.  This option is more useful for
-.BR pkill or pidwait
+.B pkill
+or
+.B pidwait
 than
 .BR pgrep .
 .TP
@@ -207,18 +209,18 @@ limit which namespaces to match.
 .TP
 \fB\-\-nslist \fIname\fP,...
 Match only the provided namespaces. Available namespaces:
-ipc, mnt, net, pid, user,uts.
+ipc, mnt, net, pid, user, uts.
 .TP
 \fB\-q\fR, \fB\-\-queue \fIvalue\fP
 Use
-.BR sigqueue(3)
+.BR sigqueue (3)
 rather than
-.BR kill(2)
+.BR kill (2)
 and the value argument is used to specify
 an integer to be sent with the signal. If the receiving process has
 installed a handler for this signal using the SA_SIGINFO flag to
-.BR sigaction(2)
-, then it can obtain this data via the si_value field of the
+.BR sigaction (2),
+then it can obtain this data via the si_value field of the
 siginfo_t structure.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
@@ -260,7 +262,11 @@ $ renice +4 $(pgrep chrome)
 .PD 0
 .TP
 0
-One or more processes matched the criteria. For pkill and pidwait, one or more
+One or more processes matched the criteria. For
+.B pkill
+and
+.BR pidwait ,
+one or more
 processes must also have been successfully signalled or waited for.
 .TP
 1
@@ -288,7 +294,7 @@ match.
 .PP
 The
 .B \-O \-\-older
-option will silently fail if /proc is mounted with the \fIsubset=pid\fR option.
+option will silently fail if \fI/proc\fR is mounted with the \fIsubset=pid\fR option.
 .SH BUGS
 The options
 .B \-n
@@ -314,7 +320,7 @@ system call which first appeared in Linux 5.3.
 .BR skill (1),
 .BR kill (1),
 .BR kill (2),
-.BR cgroups (8)
+.BR cgroups (8).
 .SH AUTHOR
 .UR kjetilho@ifi.uio.no
 Kjetil Torgrim Homme

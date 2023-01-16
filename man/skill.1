@@ -21,15 +21,19 @@ skill, snice \- send a signal or report process status
 .I expression
 .SH DESCRIPTION
 These tools are obsolete and unportable.  The command syntax is
-poorly defined.  Consider using the killall, pkill, and pgrep
+poorly defined.  Consider using the
+.BR killall ,
+.BR pkill ,
+and
+.B pgrep
 commands instead.
 .PP
-The default signal for skill is TERM.  Use \-l or \-L to list
+The default signal for \fBskill\fP is TERM.  Use \fB\-l\fP or \fB\-L\fP to list
 available signals.  Particularly useful signals include HUP, INT,
 KILL, STOP, CONT, and 0.  Alternate signals may be specified in three
-ways: \-9 \-SIGKILL \-KILL.
+ways: \fB\-9\fP \fB\-SIGKILL\fP \fB\-KILL\fP.
 .PP
-The default priority for snice is +4.  Priority numbers range from
+The default priority for \fBsnice\fP is +4.  Priority numbers range from
 +20 (slowest) to \-20 (fastest).  Negative priority numbers are
 restricted to administrative users.
 .SH OPTIONS
@@ -82,7 +86,7 @@ The next expression is a command name.
 Match the processes that belong to the same namespace as pid.
 .TP
 \fB\-\-nslist \fIns,...\fR
-list which namespaces will be considered for the --ns option.
+list which namespaces will be considered for the \fB\-\-ns\fP option.
 Available namespaces: ipc, mnt, net, pid, user, uts.
 .PD
 .SH SIGNALS
@@ -92,7 +96,7 @@ manual page.
 .SH EXAMPLES
 .TP
 .B snice -c seti -c crack +7
-Slow down seti and crack commands.
++Slow down \fBseti\fP and \fBcrack\fP commands.
 .TP
 .B skill \-KILL \-t /dev/pts/*
 Kill users on PTY devices.

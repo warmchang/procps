@@ -6,7 +6,7 @@
 .\" but WITHOUT ANY WARRANTY; without even the implied warranty of
 .\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
 .\" GNU General Public License for more details."
-.TH SYSCTL "8" "2021-03-29" "procps-ng" "System Administration"
+.TH SYSCTL "8" "2023-01-16" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -18,7 +18,7 @@ sysctl \- configure kernel parameters at runtime
 .SH DESCRIPTION
 .B sysctl
 is used to modify kernel parameters at runtime.  The parameters available
-are those listed under /proc/sys/.  Procfs is required for
+are those listed under \fI/proc/sys/\fR.  Procfs is required for
 .B sysctl
 support in Linux.  You can use
 .B sysctl
@@ -57,9 +57,9 @@ Use this option to not display the values set to stdout.
 Use this option when all arguments prescribe a key to be set.
 .TP
 \fB\-p\fR[\fIFILE\fR], \fB\-\-load\fR[=\fIFILE\fR]
-Load in sysctl settings from the file specified or /etc/sysctl.conf if none
-given.  Specifying \- as filename means reading data from standard input.
-Using this option will mean arguments to
+Load in \fBsysctl\fR settings from the file specified or \fI/etc/sysctl.conf\fR
+if none given.  Specifying \- as filename means reading data from standard
+input. Using this option will mean arguments to
 .B sysctl
 are files, which are read in the order they are specified.
 The file argument may be specified as regular expression.
@@ -159,7 +159,7 @@ are deprecated.  The
 .B sysctl
 command does not allow changing values of these
 parameters.  Users who insist to use deprecated kernel interfaces should push values
-to /proc file system by other means.  For example:
+to \fB/proc\fR file system by other means.  For example:
 .PP
 echo 256 > /proc/sys/net/ipv6/neigh/eth0/base_reachable_time
 .SH FILES
