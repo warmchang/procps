@@ -2,7 +2,7 @@
 .\"  This page Copyright (C) 1993 Matt Welsh, mdw@sunsite.unc.edu.
 .\"  Long options where added at April 15th, 2011.
 .\"  Freely distributable under the terms of the GPL
-.TH FREE 1 "2022-06-25" "procps-ng" "User Commands"
+.TH FREE 1 "2023-01-16" "procps-ng" "User Commands"
 .SH NAME
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
@@ -16,7 +16,8 @@ information is gathered by parsing /proc/meminfo. The displayed
 columns are:
 .TP
 \fBtotal\fR
-Total installed memory (MemTotal and SwapTotal in /proc/meminfo)
+Total usable memory (MemTotal and SwapTotal in /proc/meminfo). This includes
+the physical and swap memory minus a few reserved bits and kernel binary code.
 .TP
 \fBused\fR
 Used or unavailable memory (calculated as \fBtotal\fR - \fBavailable\fR)
