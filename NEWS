@@ -8,6 +8,7 @@ procps-ng-NEXT
   * top: E/P-core toggle ('5' key) added to help
   * vmstat: Referesh memory statistics                     Debian #1027963
   * w: Add --pids option                                   merge #159
+  * watch: Pass through beep                               issue #104
 
 procps-ng-4.0.2
 ---------------

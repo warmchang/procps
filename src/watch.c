@@ -647,6 +647,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 					} while (c != WEOF && !iswprint(c)
 						 && c < 128
 						 && wcwidth(c) == 0
+                                                 && c != L'\a'
 						 && c != L'\n'
 						 && c != L'\t'
 						 && (c != L'\033'
@@ -655,6 +656,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 					do
 						c = getc(p);
 					while (c != EOF && !isprint(c)
+					       && c != '\a'
 					       && c != '\n'
 					       && c != '\t'
 					       && (c != L'\033'
@@ -673,6 +675,10 @@ static int run_command(char *restrict command, char **restrict command_argv)
 						eolseen = 1;
 				else if (c == L'\t')
 					tabpending = 1;
+                                else if (c == L'\a') {
+                                    beep();
+                                    continue;
+                                }
 #ifdef WITH_WATCH8BIT
 				if (x == width - 1 && wcwidth(c) == 2) {
 					y++;
