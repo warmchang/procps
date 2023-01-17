@@ -1,4 +1,4 @@
-.TH WATCH 1 "2023-01-16" "procps-ng" "User Commands"
+.TH WATCH 1 "2023-01-17" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -13,11 +13,25 @@ allows you to watch the program output change over time.  By default,
 \fIcommand\fR is run every 2 seconds and \fBwatch\fR will run until interrupted.
 .SH OPTIONS
 .TP
+\fB\-b\fR, \fB\-\-beep\fR
+Beep if command has a non-zero exit.
+.TP
+\fB\-c\fR, \fB\-\-color\fR
+Interpret ANSI color and style sequences.
+.TP
 \fB\-d\fR, \fB\-\-differences\fR[=\fIpermanent\fR]
 Highlight the differences between successive updates. If the optional
 \fIpermanent\fR argument is specified then
 .B watch
 will show all changes since the first iteration.
+.TP
+\fB\-e\fR, \fB\-\-errexit\fR
+Freeze updates on command error, and exit after a key press.
+.TP
+\fB\-g\fR, \fB\-\-chgexit\fR
+Exit when the output of
+.I command
+changes.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second
@@ -38,28 +52,21 @@ Try it with
 (if present) and notice how the fractional seconds stays (nearly) the same, as opposed to
 normal mode where they continuously increase.
 .TP
-\fB\-t\fR, \fB\-\-no\-title\fR
-Turn off the header showing the interval, command, and current time at the
-top of the display, as well as the following blank line.
-.TP
-\fB\-b\fR, \fB\-\-beep\fR
-Beep if command has a non-zero exit.
-.TP
-\fB\-e\fR, \fB\-\-errexit\fR
-Freeze updates on command error, and exit after a key press.
-.TP
-\fB\-g\fR, \fB\-\-chgexit\fR
-Exit when the output of
-.I command
-changes.
-.TP
 \fB\-q\fR, \fB\-\-equexit\fR <cycles>
 Exit when output of
 .I command
 does not change for the given number of cycles.
 .TP
-\fB\-c\fR, \fB\-\-color\fR
-Interpret ANSI color and style sequences.
+\fB\-r\fR, \fB\-\-no-rerun\fR
+Do not run the program on terminal resize, the output of the program will re-appear at the next
+regular run time.
+.TP
+\fB\-t\fR, \fB\-\-no\-title\fR
+Turn off the header showing the interval, command, and current time at the
+top of the display, as well as the following blank line.
+.TP
+\fB\-w\fR, \fB\-\-no\-wrap\fR
+Turn off line wrapping. Long lines will be truncated instead of wrapped to the next line.
 .TP
 \fB\-x\fR, \fB\-\-exec\fR
 Pass
@@ -69,9 +76,6 @@ to
 instead of
 .B sh \-c
 which reduces the need to use extra quoting to get the desired effect.
-.TP
-\fB\-w\fR, \fB\-\-no\-wrap\fR
-Turn off line wrapping. Long lines will be truncated instead of wrapped to the next line.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
@@ -134,7 +138,9 @@ itself.
 Upon terminal resize, the screen will not be correctly repainted until the
 next scheduled update.  All
 .B \-\-differences
-highlighting is lost on that update as well.
+highlighting is lost on that update as well. When using the
+.B \-\-no\-rerun
+option, no output of will be visible.
 
 Non-printing characters are stripped from program output.  Use \fBcat -v\fR as
 part of the command pipeline if you want to see them.

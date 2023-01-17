@@ -9,6 +9,7 @@ procps-ng-NEXT
   * vmstat: Referesh memory statistics                     Debian #1027963
   * w: Add --pids option                                   merge #159
   * watch: Pass through beep                               issue #104
+  * watch: -r option to not re-exec on SIGWINCH            merge #125
 
 procps-ng-4.0.2
 ---------------
