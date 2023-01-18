@@ -336,8 +336,8 @@ static void new_header(void)
 
 static unsigned long unitConvert(unsigned long size)
 {
-    float cvSize;
-    cvSize = (float)size / dataUnit * ((statMode == SLABSTAT) ? 1 : 1024);
+    double cvSize;
+    cvSize = (double)size / dataUnit * ((statMode == SLABSTAT) ? 1 : 1024);
     return ((unsigned long)cvSize);
 }
 

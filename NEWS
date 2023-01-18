@@ -9,6 +9,7 @@ procps-ng-NEXT
   * vmstat: Referesh memory statistics                     Debian #1027963
   * vmstat: Fix initial si,so,bi,bo,in & cs values         issue #15
                                                            Debian #668580
+  * vmstat: Fix conversion errors due to precision         merge #75
   * w: Add --pids option                                   merge #159
   * watch: Pass through beep                               issue #104
   * watch: -r option to not re-exec on SIGWINCH            merge #125
