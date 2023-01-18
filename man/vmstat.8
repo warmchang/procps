@@ -1,6 +1,13 @@
-.\"  This page Copyright (C) 1994 Henry Ware <al172@yfn.ysu.edu>
-.\"  Distributed under the GPL, Copyleft 1994.
-.TH VMSTAT 8 "2020-06-04" "procps-ng" "System Administration"
+.\"
+.\" Copyright      1994 Henry Ware <al172@yfn.ysu.edu>
+.\"           2011-2012 Sami Kerola <kerolasa@iki.fi>
+.\"           2002-2023 Craig Small <csmall@dropbear.xyz>
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.TH VMSTAT 8 "2023-01-18" "procps-ng" "System Administration"
 .SH NAME
 vmstat \- Report virtual memory statistics
 .SH SYNOPSIS
@@ -91,16 +98,13 @@ Display version information and exit.
 \fB\-h\fR, \fB\-\-help\fR
 Display help and exit.
 .PD
-.SH "FIELD DESCRIPTION FOR VM MODE"
-.SS
-.B "Procs"
+.SH FIELD DESCRIPTION FOR VM MODE
+.SS Procs
 .nf
 r: The number of runnable processes (running or waiting for run time).
 b: The number of processes blocked waiting for I/O to complete.
 .fi
-.PP
-.SS
-.B "Memory"
+.SS Memory
 These are affected by the \fB\-\-unit\fR option.
 .nf
 swpd: the amount of swap memory used.
@@ -110,31 +114,23 @@ cache: the amount of memory used as cache.
 inact: the amount of inactive memory.  (\fB\-a\fR option)
 active: the amount of active memory.  (\fB\-a\fR option)
 .fi
-.PP
-.SS
-.B "Swap"
+.SS Swap
 These are affected by the \fB\-\-unit\fR option.
 .nf
 si: Amount of memory swapped in from disk (/s).
 so: Amount of memory swapped to disk (/s).
 .fi
-.PP
-.SS
-.B "IO"
+.SS IO
 .nf
 bi: Kibibyte received from a block device (KiB/s).
 bo: Kibibyte sent to a block device (KiB/s).
 .fi
-.PP
-.SS
-.B "System"
+.SS System
 .nf
 in: The number of interrupts per second, including the clock.
 cs: The number of context switches per second.
 .fi
-.PP
-.SS
-.B "CPU"
+.SS CPU
 These are percentages of total CPU time.
 .nf
 us: Time spent running non\-kernel code.  (user time, including nice time)
@@ -144,42 +140,38 @@ wa: Time spent waiting for IO.  Prior to Linux 2.5.41, included in idle.
 st: Time stolen from a virtual machine.  Prior to Linux 2.6.11, unknown.
 gu: Time spent running KVM guest code (guest time, including guest nice).
 .fi
-.PP
-.SH "FIELD DESCRIPTION FOR DISK MODE"
-.SS
-.B "Reads"
+.SH FIELD DESCRIPTION FOR DISK MODE
+.SS Reads
 .nf
 total: Total reads completed successfully
 merged: grouped reads (resulting in one I/O)
 sectors: Sectors read successfully
 ms: milliseconds spent reading
 .fi
-.PP
-.SS
-.B "Writes"
+.SS Writes
 .nf
 total: Total writes completed successfully
 merged: grouped writes (resulting in one I/O)
 sectors: Sectors written successfully
 ms: milliseconds spent writing
 .fi
-.PP
-.SS
-.B "IO"
+.SS IO
 .nf
 cur: I/O in progress
 s: seconds spent for I/O
 .fi
-.PP
-.SH "FIELD DESCRIPTION FOR DISK PARTITION MODE"
+.SH FIELD DESCRIPTION FOR DISK PARTITION MODE
 .nf
 reads: Total number of reads issued to this partition
 read sectors: Total read sectors for partition
 writes : Total number of writes issued to this partition
 requested writes: Total number of write requests made for partition
 .fi
+.SH FIELD DESCRIPTION FOR SLAB MODE
+Slab mode shows statistics per slab, for more information
+about this information see
+.BR slabinfo (5)
 .PP
-.SH "FIELD DESCRIPTION FOR SLAB MODE"
 .nf
 cache: Cache name
 num: Number of currently active objects
@@ -189,46 +181,18 @@ pages: Number of pages with at least one active object
 .fi
 .SH NOTES
 .B vmstat
-does not require special permissions.
-.PP
-These reports are intended to help identify system bottlenecks.  Linux
-.B vmstat
-does not count itself as a running process.
-.PP
-All linux blocks are currently 1024 bytes.  Old kernels may report blocks as
-512 bytes, 2048 bytes, or 4096 bytes.
-.PP
-Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default is K
-(1024 bytes) in the default mode.
-.PP
-vmstat uses slabinfo 1.1
-.SH FILES
-.ta
-.nf
-/proc/meminfo
-/proc/stat
-/proc/*/stat
-.fi
+requires read access to files under \fI/proc\fR. The \fB\-m\fR requires read
+access to \fI/proc/slabinfo\fR which may not be available to standard users.
+Mount options for \fI/proc\fR such as \fIsubset=pid\fR may also impact what
+is visible.
 .SH "SEE ALSO"
 .BR free (1),
 .BR iostat (1),
 .BR mpstat (1),
 .BR ps (1),
 .BR sar (1),
-.BR top (1)
-.PP
-.SH BUGS
-Does not tabulate the block io per device or count the number of system calls.
-.SH AUTHORS
-Written by
-.UR al172@yfn.\:ysu.\:edu
-Henry Ware
-.UE .
-.br
-.UR ffrederick@users.\:sourceforge.\:net
-Fabian Fr\('ed\('erick
-.UE
-(diskstat, slab, partitions...)
+.BR top (1),
+.BR slabinfo (5)
 .SH "REPORTING BUGS"
 Please send bug reports to
 .UR procps@freelists.org
