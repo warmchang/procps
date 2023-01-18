@@ -451,6 +451,7 @@ extern int             header_gap;
 extern int             header_type; /* none, single, multi... */
 extern int             include_dead_children;
 extern int             lines_to_next_header;
+extern char           *lstart_format;
 extern int             max_line_width;
 extern int             negate_selection;
 extern int             page_size;  // "int" for math reasons?

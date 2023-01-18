@@ -183,6 +183,7 @@ int             header_gap = -1;
 int             header_type = -1;
 int             include_dead_children = -1;
 int             lines_to_next_header = -1;
+char           *lstart_format = NULL;
 int             negate_selection = -1;
 int             running_only = -1;
 int             page_size = -1;  // "int" for math reasons?

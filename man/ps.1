@@ -1,10 +1,15 @@
-'\" t
-.\" (The preceding line is a note to broken versions of man to tell
-.\" Man page for ps.
-.\" Quick hack conversion by Albert Cahalan, 1998.
-.\" Licensed under version 2 of the Gnu General Public License.
 .\"
-.TH PS "1" "2023-01-16" "procps-ng" "User Commands"
+.\" Copyright      1998 Albert Cahalan
+.\"           2011-2023 Jim Warner <james.warner@comcast.net>
+.\"           2011-2023 Craig Small <csmall@dropbear.xyz>
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\"
+.TH PS "1" "2023-01-18" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -597,6 +602,16 @@ Set screen width.
 .TP
 .B \-\-cumulative
 Include some dead child process data (as a sum with the parent).
+.TP
+.TP
+.BI \-D \ format
+Set the date format of the \fBlstart\fR field to \fIformat\fR. This format is parsed
+by
+.BR strftime (3)
+and should be a maximum of 24 characters to not mis-align columns.
+.TP
+.BI \-\-date-format \ format
+Identical to \fB\-D\fR.
 .TP
 .B e
 Show the environment after the command.
@@ -1385,8 +1400,8 @@ the
 T}
 
 lstart	STARTED	T{
-time the command started.  See also
-.BR bsdstart , \ start , \ start_time ", and" \ stime .
+time the command started. This will be in the form "DDD mmm HH:MM:SS YYY"
+unless changed by the \fB\-D\fR option.
 T}
 
 lsession	SESSION	T{
@@ -2064,10 +2079,18 @@ unix98	standard
 .TE
 .PP
 .PP
+.SH BUGS
+The fields \fBbsdstart\fR and \fBstart\fR will only show the abbreviated
+month name in English. The fields \fBlstart\fR and \fBstime\fR will show
+the abbreviated month name in the configured locale but may exceed the
+column width due to the different lengths for abbreviated month and day
+names across languages.
+.PP
 .SH "SEE ALSO"
 .BR pgrep (1),
 .BR pstree (1),
 .BR top (1),
+.BR strftime (3),
 .BR proc (5).
 .PP
 .PP

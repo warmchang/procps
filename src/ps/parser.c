@@ -244,6 +244,13 @@ static const char *parse_sysv_option(void){
       if(err) return err;
       selection_list->typecode = SEL_COMM;
       return NULL; /* can't have any more options */
+    case 'D':
+      trace("-D sets lstart date format\n");
+      arg = get_opt_arg();
+      if (!arg) return _("date format must follow -D");
+      if (lstart_format) free(lstart_format);
+      lstart_format = strdup(arg);
+      break;
     case 'F':  /* DYNIX/ptx -f plus sz,rss,psr=ENG between c and stime */
       trace("-F does fuller listing\n");
       format_modifiers |= FM_F;
@@ -794,6 +801,7 @@ static const char *parse_gnu_option(void){
   {"columns",       &&case_columns},
   {"context",       &&case_context},
   {"cumulative",    &&case_cumulative},
+  {"date-format",   &&case_dateformat},
   {"deselect",      &&case_deselect},    /* -N */
   {"forest",        &&case_forest},      /* f -H */
   {"format",        &&case_format},
@@ -880,6 +888,12 @@ static const char *parse_gnu_option(void){
     trace("--cumulative\n");
     if(s[sl]) return _("option --cumulative does not take an argument");
     include_dead_children = 1;
+    return NULL;
+  case_dateformat:
+    arg=grab_gnu_arg();
+    if (!arg) return _("date format must follow --date-format");
+    if (lstart_format) free(lstart_format);
+    lstart_format = strdup(arg);
     return NULL;
   case_deselect:
     trace("--deselect\n");

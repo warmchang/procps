@@ -126,6 +126,7 @@ void do_help (const char *opt, int rc) {
   }
   if (section == HELP_OUT || section == HELP_ALL) {
     fputs(_("\nOutput formats:\n"), out);
+    fputs(_(" -D <format>          date format for lstart\n"), out);
     fputs(_(" -F                   extra full\n"), out);
     fputs(_(" -f                   full-format, including command lines\n"), out);
     fputs(_("  f, --forest         ascii art process tree\n"), out);

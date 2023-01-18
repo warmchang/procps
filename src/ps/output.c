@@ -1044,11 +1044,21 @@ setREL1(VM_RSS)
   return snprintf(outbuf, COLWID, "%2u.%u", (unsigned)(pmem/10), (unsigned)(pmem%10));
 }
 
+// Format cannot be %c as the length changes depending on locale
+#define DEFAULT_LSTART_FORMAT "%a %b %e %H:%M:%S %Y"
 static int pr_lstart(char *restrict const outbuf, const proc_t *restrict const pp){
-  time_t t;
+    time_t t;
+    struct tm start_time;
+    size_t len;
 setREL1(TICS_BEGAN)
-  t = boot_time() + rSv(TICS_BEGAN, ull_int, pp) / Hertz;
-  return snprintf(outbuf, COLWID, "%24.24s", ctime(&t));
+    t = boot_time() + rSv(TICS_BEGAN, ull_int, pp) / Hertz;
+    if (localtime_r(&t, &start_time) == NULL)
+        return 0;
+    len = strftime(outbuf, COLWID,
+            (lstart_format?lstart_format:DEFAULT_LSTART_FORMAT), &start_time);
+    if (len <= 0 || len >= COLWID)
+        outbuf[len = 0] = '\0';
+  return len;
 }
 
 /* Unix98 specifies a STIME header for a column that shows the start
