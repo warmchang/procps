@@ -774,8 +774,11 @@ static int run_command(char *restrict command, char **restrict command_argv)
 		    reset_ansi();
 		    if (flags & WATCH_COLOR)
 			attrset(A_NORMAL);
-		    find_eol(p);
 		}
+                if (!line_wrap && !eolseen)
+                {
+                    find_eol(p);
+                }
 	}
 
 	fclose(p);
