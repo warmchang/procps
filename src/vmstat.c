@@ -365,6 +365,7 @@ static void new_format(void)
     struct tm *tm_ptr;
     time_t the_time;
     char timebuf[32];
+    double uptime;
     struct vmstat_info *vm_info = NULL;
     struct stat_info *stat_info = NULL;
     struct stat_stack *stat_stack;
@@ -380,6 +381,10 @@ static void new_format(void)
         xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
     if (procps_meminfo_new(&mem_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+    if (procps_uptime(&uptime, NULL) < 0)
+        xerr(EXIT_FAILURE, _("Unable to get uptime"));
+    if (0.0 == uptime)
+        uptime = 1.0;
     new_header();
 
     pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
@@ -425,12 +430,12 @@ static void new_format(void)
                unitConvert(MEMv(mem_FREE)),
                unitConvert((a_option?MEMv(mem_INA):MEMv(mem_BUF))),
                unitConvert((a_option?MEMv(mem_ACT):MEMv(mem_CAC))),
-               (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int)  * kb_per_page) * hz + divo2) / Div ),
-               (unsigned)( (unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int)  * kb_per_page) * hz + divo2) / Div ),
-               (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int) * hz + divo2) / Div ),
-               (unsigned)( (VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int) * hz + divo2) / Div ),
-               (unsigned)( (SYSv(stat_INT)           * hz + divo2) / Div ),
-               (unsigned)( (SYSv(stat_CTX)           * hz + divo2) / Div ),
+               (unsigned)( unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int)  * kb_per_page) / uptime ),
+               (unsigned)( unitConvert(VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int)  * kb_per_page) / uptime ),
+               (unsigned)( VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int) / uptime ),
+               (unsigned)( VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int) / uptime ),
+               (unsigned)( SYSv(stat_INT) / uptime ),
+               (unsigned)( SYSv(stat_CTX) / Div ),
                (unsigned)( (100*cpu_use        + divo2) / Div ),
                (unsigned)( (100*cpu_sys        + divo2) / Div ),
                (unsigned)( (100*cpu_idl        + divo2) / Div ),
@@ -764,7 +769,7 @@ static void slabformat (void)
         slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
     if (procps_slabinfo_new(&slab_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create slabinfo structure"));
+        xerr(EXIT_FAILURE, _("Unable to create slabinfo structure"));
 
     if (!moreheaders)
         slabheader();
