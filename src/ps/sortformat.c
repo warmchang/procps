@@ -61,10 +61,10 @@ static format_node *do_one_spec(const char *spec, const char *override){
     if(override){
       w2 = strlen(override);
       thisnode->width = (w1>w2)?w1:w2;
-      thisnode->name = strdup(override);
+      thisnode->name = xstrdup(override);
     }else{
       thisnode->width = w1;
-      thisnode->name = strdup(fs->head);
+      thisnode->name = xstrdup(fs->head);
     }
     thisnode->pr = fs->pr;
     thisnode->vendor = fs->vendor;
@@ -155,7 +155,7 @@ static const char *aix_format_parse(sf_node *sfn){
   }
 
   /*** sanity check passed ***/
-  buf = strdup(sfn->sf);
+  buf = xstrdup(sfn->sf);
   walk = sfn->sf;
 
   while(items--){
@@ -186,7 +186,7 @@ static const char *aix_format_parse(sf_node *sfn){
       walk += len;
       fnode = xmalloc(sizeof(format_node));
       fnode->width = len < INT_MAX ? len : INT_MAX;
-      fnode->name = strdup(buf);
+      fnode->name = xstrdup(buf);
       fnode->pr = NULL;     /* checked for */
       fnode->vendor = AIX;
       fnode->flags = CF_PRINT_EVERY_TIME;
@@ -218,7 +218,7 @@ static const char *format_parse(sf_node *sfn){
   static char errbuf[80]; /* for variable-text error message */
 
   /*** prepare to operate ***/
-  buf = strdup(sfn->sf);
+  buf = xstrdup(sfn->sf);
 
   /*** sanity check and count items ***/
   need_item = 1; /* true */
@@ -357,7 +357,7 @@ static const char *long_sort_parse(sf_node *sfn){
   int need_item;
 
   /*** prepare to operate ***/
-  buf = strdup(sfn->sf);
+  buf = xstrdup(sfn->sf);
 
   /*** sanity check and count items ***/
   need_item = 1; /* true */
@@ -562,7 +562,7 @@ int defer_sf_option(const char *arg, int source){
   int need_item = 1;
 
   sfn = xmalloc(sizeof(sf_node));
-  sfn->sf = strdup(arg);
+  sfn->sf = xstrdup(arg);
   sfn->sf_code = source;
   sfn->s_cooked = NULL;
   sfn->f_cooked = NULL;
@@ -687,7 +687,7 @@ static const char *generate_sysv_list(void){
       PUSH("sgi_rss");
       fn = xmalloc(sizeof(format_node));
       fn->width = 1;
-      fn->name = strdup(":");
+      fn->name = xstrdup(":");
       fn->pr = NULL;     /* checked for */
       fn->vendor = AIX;   /* yes, for SGI weirdness */
       fn->flags = CF_PRINT_EVERY_TIME;

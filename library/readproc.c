@@ -68,7 +68,7 @@ extern void __cyg_profile_func_enter(void*,void*);
 // any function following an openproc() call
 static __thread char *src_buffer,
                      *dst_buffer;
-#define MAX_BUFSZ 1024*64*2
+#define MAX_BUFSZ (1024*64*2)
 
 // dynamic 'utility' buffer support for file2str() calls
 struct utlbuf_s {
@@ -1579,13 +1579,13 @@ PROCTAB *openproc(unsigned flags, ...) {
 
     if (!src_buffer
     && !(src_buffer = malloc(MAX_BUFSZ))) {
-        closedir(PT->procfs);
+        if (PT->procfs) closedir(PT->procfs);
         free(PT);
         return NULL;
     }
     if (!dst_buffer
     && !(dst_buffer = malloc(MAX_BUFSZ))) {
-        closedir(PT->procfs);
+        if (PT->procfs) closedir(PT->procfs);
         free(src_buffer);
         free(PT);
         return NULL;

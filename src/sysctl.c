@@ -181,9 +181,9 @@ static SysctlSetting *setting_new(
     s = xmalloc(sizeof(SysctlSetting));
 
     *s = (SysctlSetting) {
-        .key = strdup(key),
+        .key = xstrdup(key),
         .path = path,
-        .value = value? strdup(value): NULL,
+        .value = value? xstrdup(value): NULL,
         .ignore_failure = ignore_failure,
         .glob_exclude = glob_exclude,
         .next = NULL,

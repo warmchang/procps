@@ -1,10 +1,10 @@
 /*
- * This header was copied from util-linux at fall 2011.
+ * This header was initially copied in fall 2011 from util-linux.
  */
 
 /*
- * General memory allocation wrappers for malloc, realloc, calloc
- * and strdup.
+ * General memory allocation wrappers for malloc, realloc, calloc,
+ * strdup, strndup.
  */
 
 #ifndef PROCPS_NG_XALLOC_H
@@ -53,6 +53,16 @@ static inline char *xstrdup(const char *str)
 		return NULL;
 	ret = strdup(str);
 	if (!ret)
+		xerrx(XALLOC_EXIT_CODE, "cannot duplicate string");
+	return ret;
+}
+
+static inline char *xstrndup(const char *s, size_t n)
+{
+	if (! s)
+		return NULL;
+	char *ret = strndup(s, n);
+	if (! ret)
 		xerrx(XALLOC_EXIT_CODE, "cannot duplicate string");
 	return ret;
 }

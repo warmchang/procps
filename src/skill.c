@@ -108,10 +108,10 @@ static int parse_namespaces(char *optarg)
     while (1) {
         if (strchr(ptr, ',') == NULL) {
             len = -1;
-            tmp = strdup(ptr);
+            tmp = xstrdup(ptr);
         } else {
             len = strchr(ptr, ',') - ptr;
-            tmp = strndup(ptr, len);
+            tmp = xstrndup(ptr, len);
         }
 
         id = procps_ns_get_id(tmp);
