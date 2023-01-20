@@ -104,14 +104,10 @@ int main(int argc, char **argv)
                 sig_option = argv[optind];
             }
             if (sig_option) {
-                char *s;
-                s = strtosig(sig_option);
+                const char *s = strtosig(sig_option);
                 if (s)
-                    printf("%s\n", s);
-                else
-                    xwarnx(_("unknown signal name %s"),
-                          sig_option);
-                free(s);
+                    puts(s);
+                else xwarnx(_("unknown signal name %s"), sig_option);
             } else {
                 unix_print_signals();
             }

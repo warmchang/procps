@@ -192,7 +192,8 @@ src_top_top_SOURCES = \
 	src/top/top_nls.h \
 	src/top/top_nls.c \
 	local/fileutils.c \
-	local/signals.c
+	local/signals.c \
+	local/strutils.c
 if CYGWIN
 src_top_top_SOURCES += local/strverscmp.c
 endif
@@ -223,11 +224,11 @@ else
 endif
 
 src_free_SOURCES = src/free.c local/strutils.c local/fileutils.c
-src_pgrep_SOURCES = src/pgrep.c local/fileutils.c local/signals.c
-src_pkill_SOURCES = src/pgrep.c local/fileutils.c local/signals.c
+src_pgrep_SOURCES = src/pgrep.c local/fileutils.c local/signals.c local/strutils.c
+src_pkill_SOURCES = src/pgrep.c local/fileutils.c local/signals.c local/strutils.c
 src_pmap_SOURCES = src/pmap.c local/fileutils.c
 if BUILD_PIDWAIT
-src_pidwait_SOURCES = src/pgrep.c local/fileutils.c local/signals.c
+src_pidwait_SOURCES = src/pgrep.c local/fileutils.c local/signals.c local/strutils.c
 endif
 if !CYGWIN
 src_pwdx_SOURCES = src/pwdx.c local/fileutils.c
@@ -327,7 +328,8 @@ src_ps_pscommand_SOURCES =  \
 	src/ps/sortformat.c \
 	src/ps/stacktrace.c \
 	local/fileutils.c \
-	local/signals.c
+	local/signals.c \
+	local/strutils.c
 
 
 # Test programs required for dejagnu or standalone testing

@@ -11,23 +11,12 @@
  * GNU Library General Public License for more details.
  */
 
-extern const int number_of_signals;
-
-extern const char *get_sigtable_name(int row);
-
-extern const int get_sigtable_num(int row);
-
 /* return -1 on failure */
-extern int signal_name_to_number(const char *__restrict name);
-
+extern int signal_name_to_number(const char *name);
 extern const char *signal_number_to_name(int signo);
-
 extern int skill_sig_option(int *argc, char **argv);
-
-extern char *strtosig(const char *restrict s);
-
-extern void pretty_print_signals(void);
-
+extern const char *strtosig(const char *s);
 extern void unix_print_signals(void);
+extern void pretty_print_signals(void);
 
 #endif
