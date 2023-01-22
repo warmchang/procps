@@ -22,7 +22,7 @@
 /* #include "safe-ctype.h" */
 #include <ctype.h>
 
-/* 
+/*
 @deftypefun int strverscmp (const char *@var{s1}, const char *@var{s2})
 The @code{strverscmp} function compares the string @var{s1} against
 @var{s2}, considering them as holding indices/version numbers.  Return
@@ -144,14 +144,14 @@ strverscmp (const char *s1, const char *s2)
     {
     case CMP:
       return diff;
-      
+
     case LEN:
       while (isdigit (*p1++))
 	if (!isdigit (*p2++))
 	  return 1;
-      
+
       return isdigit (*p2) ? -1 : diff;
-      
+
     default:
       return state;
     }

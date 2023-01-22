@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
 
     sleep_time = DEFAULT_SLEEPTIME;
     while ((opt = getopt(argc, argv, "s:")) != -1)
-    { 
+    {
         switch(opt)
         {
 	    case 's':
