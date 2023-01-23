@@ -59,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "September 2022" "procps-ng" "User Commands"
+.TH TOP 1 "January 2023" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -474,9 +474,9 @@ terminal at which \*(We was invoked whether or not in Batch mode.
 Starts \*(We with the last remembered Cpu States portion of the \*(SA reversed.
 Either all \*(Pu information will be displayed in a single line or
 each \*(Pu will be displayed separately, depending on the state of the NUMA Node
-\*(CT ('2').
+\*(CT (`2').
 
-\*(XC `1' and '2' \*(CIs for additional information.
+\*(XC `1' and `2' \*(CIs for additional information.
 
 .\" ----------------------------------------------------------------------
 .SH 2. SUMMARY Display
@@ -764,9 +764,9 @@ included in the \*(MV (VIRT) amount.
 The length of time since a process was started.
 Thus, the most recently started task will display the smallest time interval.
 
-The value will be expressed as 'HH,MM' (hours,minutes) but is subject to
+The value will be expressed as `HH,MM' (hours,minutes) but is subject to
 additional scaling if the interval becomes too great to fit column width.
-At that point it will be scaled to 'DD+HH' (days+hours) and possibly
+At that point it will be scaled to `DD+HH' (days+hours) and possibly
 beyond.
 
 .TP 4
@@ -834,7 +834,7 @@ in the same autogroup.
 A number representing the NUMA node associated with the last used processor (`P').
 When -1 is displayed it means that NUMA information is not available.
 
-\*(XC `'2' and `3' \*(CIs for additional NUMA provisions affecting the \*(SA.
+\*(XC `2' and `3' \*(CIs for additional NUMA provisions affecting the \*(SA.
 
 .TP 4
 \fBOOMa \*(Em Out of Memory Adjustment Factor \fR
@@ -1007,9 +1007,9 @@ login shell.
 The length of time since system boot when a process started.
 Thus, the most recently started task will display the largest time interval.
 
-The value will be expressed as 'MM:SS' (minutes:seconds).
+The value will be expressed as `MM:SS' (minutes:seconds).
 But if the interval is too great to fit column width it will be scaled
-as 'HH,MM' (hours,minutes) and possibly beyond.
+as `HH,MM' (hours,minutes) and possibly beyond.
 
 .TP 4
 \fBSUID \*(Em Saved User Id \fR
@@ -1734,7 +1734,7 @@ combined and displayed as `0-1, 2-3, ...' instead of the normal
 `%Cpu0, %Cpu1, %Cpu2, %Cpu3, ...'.
 With a second `!' \*(CT two additional \*(Pus are combined and shown
 as `0-2, 3-5, ...'.
-Then the third '!' press, combining four additional \*(Pus, shows
+Then the third `!' press, combining four additional \*(Pus, shows
 as `0-4, 5-9, ...', etc.
 
 Such progression continues until individual \*(Pus are again displayed
@@ -1914,8 +1914,8 @@ This toggle reduces that precision until it wraps.
 It also illustrates the scaling those fields \fImight\fR experience
 automatically, which usually depends on how long the system runs.
 
-For example, if 'MMM:SS.hh' is shown, each ^E keystroke would change
-it to: 'MM:SS', 'Hours,MM', 'Days+Hours' and finally 'Weeks+Days'.
+For example, if `MMM:SS.hh' is shown, each ^E keystroke would change
+it to: `MM:SS', `Hours,MM', `Days+Hours' and finally `Weeks+Days'.
 
 Not all time fields are subject to the full range of such scaling.
 
@@ -2294,7 +2294,7 @@ available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 You can use this `Other Filter' feature to establish selection criteria which
 will then determine which tasks are shown in the \*(CW.
 Such filters can be made persistent if preserved in the rcfile via
-the 'W' \*(CI.
+the `W' \*(CI.
 
 Establishing a filter requires: 1) a field name; 2) an operator; and
 3) a selection value, as a minimum.
@@ -2435,14 +2435,14 @@ only multi-threaded processes being shown.
 It also reminds us that a trailing space is part of every displayed field.
 The second filter achieves the exact same results with less typing.
 .nf
-     !nTH=` 1 '                ( ' for clarity only )
+     !nTH=` 1 '                ( ` for clarity only )
      nTH>1                     ( same with less i/p )
 .fi
 
 With Forest View mode active and the \fBCOMMAND\fR column in view, this
 filter effectively collapses child processes so that just 3 levels are shown.
 .nf
-     !COMMAND=`       `- '     ( ' for clarity only )
+     !COMMAND=`       `- '     ( ` for clarity only )
 .fi
 
 The final two filters appear as in response to the status request key (^O).
@@ -2462,7 +2462,7 @@ achieve the failed `9999' objective discussed above.
 .\" ----------------------------------------------------------------------
 .SS 6a. PERSONAL Configuration File
 .\" ----------------------------------------------------------------------
-This file is created or updated via the 'W' \*(CI.
+This file is created or updated via the `W' \*(CI.
 
 The legacy version is written as `$HOME/.your\-name\-4\-\*(We' + `rc'
 with a leading period.
@@ -2481,8 +2481,8 @@ While not intended to be edited manually, here is the general layout:
       "      # line  c: summclr,msgsclr,headclr,taskclr
     global   # line 15: additional miscellaneous settings
       "      # any remaining lines are devoted to optional
-      "      # active 'other filters' discussed in section 5e above
-      "      # plus 'inspect' entries discussed in section 6b below
+      "      # active `other filters' discussed in section 5e above
+      "      # plus `inspect' entries discussed in section 6b below
 .fi
 
 If a valid absolute path to the rcfile cannot be established, customizations
