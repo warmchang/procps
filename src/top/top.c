@@ -105,7 +105,7 @@ static int   Screen_cols, Screen_rows, Max_lines;
         /* These 'SCREEN_ROWS', 'BOT_ and 'Bot_' guys are used
            in managing the special separate bottom 'window' ... */
 #define      SCREEN_ROWS ( Screen_rows - Bot_rsvd )
-#define      BOT_PRESENT ( Bot_what > 0 )
+#define      BOT_PRESENT ( Bot_what != 0 )
 #define      BOT_ITEMMAX  10           // Bot_item array's max size
 #define      BOT_MSGSMAX  10           // total entries for Msg_tab
 #define      BOT_UNFOCUS  -1           // tab focus not established
