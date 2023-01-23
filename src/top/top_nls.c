@@ -678,8 +678,8 @@ static void build_uniq_nlstab (void) {
       "\n"
       "%s"
       "  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; supp groups ~1^U~2\n"
-      "  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^E~2'\n"
-      "  q         Quit\n"
+      "  Y,!,^E,P  Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^E~2; View namespaces ~1^P~2\n"
+      "  W,q       Write config file '~1W~2'; Quit '~1q~2'\n"
       "          ( commands shown with '.' require a ~1visible~2 task display ~1window~2 ) \n"
       "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
       "Type 'q' or <Esc> to continue ");
