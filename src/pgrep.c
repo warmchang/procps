@@ -706,8 +706,8 @@ static struct el * select_procs (int *num)
             match = 0;
 	else if (opt_older && (int)PIDS_GETFLT(ELAPSED) < opt_older)
 	    match = 0;
-        else if (opt_term)
-            match = match_strlist(PIDS_GETSTR(TTYNAME), opt_term);
+        else if (opt_term && ! match_strlist(PIDS_GETSTR(TTYNAME), opt_term))
+            match = 0;
         else if (opt_runstates && ! strchr(opt_runstates, PIDS_GETSCH(STA)))
             match = 0;
         else if (opt_cgroup && ! match_cgroup_list (PIDS_GETSTV(CGROUP), opt_cgroup))

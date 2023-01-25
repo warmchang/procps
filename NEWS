@@ -2,6 +2,7 @@ procps-ng-NEXT
 ---------------
   * docs: Don't install English manpages twice
   * pgrep: Add -H match on userspace signal handler        merge #165
+  * pgrep: make --terminal respect other criteria
   * ps: c flag shows command name again                    Debian #1026326
   * ps.1: Match drs description from top.1                 merge #156
   * skill: Match on -p again                               Debian #1025915
