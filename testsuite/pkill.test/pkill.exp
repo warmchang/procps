@@ -5,9 +5,9 @@ set mypid [pid]
 set not_ppid [ expr { $mypid + 1 } ]
 set pkill "${topdir}src/pkill"
 set uid [ exec id -u ]
-set not_uid [ expr { $uid + 1 } ] 
+set not_uid [ expr { $uid + 1 } ]
 set gid [ exec id -g ]
-set not_gid [ expr { $gid + 1 } ] 
+set not_gid [ expr { $gid + 1 } ]
 set ps "${topdir}src/ps/pscommand"
 set tty [ get_tty ]
 

@@ -26,9 +26,9 @@ set sort_tests {
     "b" "objects per slab" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+(\\d+)\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
     "c" "cache size" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+(\\d+)K\\s+\\S\[^\r\]+\\s*"
     "l" "number of slabs" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+(\\d+)\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
-    "o" "object count" "^\\s*(\\d+)\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
-    "s" "object size" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+(\\d+\\.\\d+)K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
-    "u" "utilisation" "^\\s*\\d+\\s+\\d+\\s+(\\d+)%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*" 
+    "o" "object count" "^\\s*(\\d+)\\s+\\d+\\s+\\d+%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
+    "s" "object size" "^\\s*\\d+\\s+\\d+\\s+\\d+%\\s+(\\d+\\.\\d+)K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
+    "u" "utilisation" "^\\s*\\d+\\s+\\d+\\s+(\\d+)%\\s+\\d+\\.\\d+K\\s+\\d+\\s+\\d+\\s+\\d+K\\s+\\S\[^\r\]+\\s*"
  }
 
 # BEGIN - Tests requiring /proc/slabinfo
