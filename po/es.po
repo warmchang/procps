@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2022-11-26 08:52+1100\n"
+"POT-Creation-Date: 2023-01-24 12:16+1100\n"
 "PO-Revision-Date: 2022-10-30 20:13+0100\n"
 "Last-Translator: Rodrigo Lledó Milanca <rodhos92@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
@@ -107,7 +107,7 @@ msgstr " -c N, --count N     se muestra N veces, luego sale del programa\n"
 msgid " -w, --wide          wide output\n"
 msgstr " -w, --wide          salida amplia\n"
 
-#: src/free.c:98 src/w.c:533
+#: src/free.c:98 src/w.c:550
 msgid "     --help     display this help and exit\n"
 msgstr "     --help     muestra esta ayuda y sale\n"
 
@@ -136,7 +136,7 @@ msgstr "fallo al analizar el argumento de «count»: «%s»"
 msgid "Memory information file /proc/meminfo does not exist"
 msgstr ""
 
-#: src/free.c:370 src/vmstat.c:382 src/vmstat.c:869
+#: src/free.c:370 src/vmstat.c:383 src/vmstat.c:877
 msgid "Unable to create meminfo structure"
 msgstr ""
 
@@ -225,165 +225,169 @@ msgstr ""
 msgid "invalid argument %c"
 msgstr ""
 
-#: src/kill.c:144 src/pgrep.c:743 src/pidof.c:243 src/pidof.c:283
+#: src/kill.c:144 src/pgrep.c:766 src/pidof.c:243 src/pidof.c:283
 #: src/sysctl.c:865
 msgid "internal error"
 msgstr "error interno"
 
-#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:375 src/skill.c:459
-#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1044 src/vmstat.c:1054
-#: src/watch.c:870 src/watch.c:882
+#: src/kill.c:156 src/pmap.c:765 src/pmap.c:780 src/skill.c:377 src/skill.c:461
+#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1052 src/vmstat.c:1062
+#: src/watch.c:883 src/watch.c:898
 msgid "failed to parse argument"
 msgstr "fallo al analizar el argumento"
 
-#: src/pgrep.c:87 src/pidof.c:37 src/skill.c:70
+#: src/pgrep.c:88 src/pidof.c:37 src/skill.c:70
 msgid "integer overflow"
 msgstr "desbordamiento de entero"
 
-#: src/pgrep.c:149
+#: src/pgrep.c:151
 #, c-format
 msgid " %s [options] <pattern>\n"
 msgstr " %s [opciones] <patrón>\n"
 
-#: src/pgrep.c:153
+#: src/pgrep.c:155
 msgid " -d, --delimiter <string>  specify output delimiter\n"
 msgstr " -d, --delimiter <cadena>  especifica el delimitador de salida\n"
 
 # 'Listar' no existe con ese significado. Sugerencias: saca lista, enumera.
-#: src/pgrep.c:154
+#: src/pgrep.c:156
 msgid " -l, --list-name           list PID and process name\n"
 msgstr " -l, --list-name           muestra el PID y el nombre del proceso\n"
 
 # 'Command' es más adecuado traducirlo como 'orden' (command line -> línea de órdenes),
 # aunque veo que la RAE ya admite la acepción informática.
-#: src/pgrep.c:155
+#: src/pgrep.c:157
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
 " -a, --list-full           muestra el PID y la línea de órdenes completa\n"
 
 # No describe bien el significado. Sugerencia basada en la traducción de grep: selecciona no coincidencias.
-#: src/pgrep.c:156
+#: src/pgrep.c:158
 msgid " -v, --inverse             negates the matching\n"
 msgstr " -v, --inverse             muestra los no coincidentes\n"
 
-#: src/pgrep.c:157
+#: src/pgrep.c:159
 msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         muestra todos los TID\n"
 
-#: src/pgrep.c:160
-msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
+#: src/pgrep.c:162
+msgid " -H, --require-handler     match only if signal handler is present\n"
 msgstr ""
-" -<señal>, --signal <señal>    señal que enviar (ya sea un nombre o un "
-"número)\n"
 
-#: src/pgrep.c:161
+#: src/pgrep.c:163
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr " -q, --queue <valor>       valor entero que enviar con la señal\n"
 
 # Haría una traducción más literal del tiempo verbal si no estás seguro de que signifique otra cosa:
 # muestra lo que se ha matado
-#: src/pgrep.c:162
+#: src/pgrep.c:164
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                muestra lo que se ha matado\n"
 
-#: src/pgrep.c:166
+#: src/pgrep.c:168
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr " -e, --echo                muestra PIDs antes de esperar\n"
 
-#: src/pgrep.c:170
+#: src/pgrep.c:172
+msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
+msgstr ""
+" -<señal>, --signal <señal>    señal que enviar (ya sea un nombre o un "
+"número)\n"
+
+#: src/pgrep.c:173
 msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               número de procesos coincidentes\n"
 
-#: src/pgrep.c:171
+#: src/pgrep.c:174
 msgid " -f, --full                use full process name to match\n"
 msgstr ""
 " -f, --full                usa el nombre de proceso completo al buscar "
 "coincidencias\n"
 
-#: src/pgrep.c:172
+#: src/pgrep.c:175
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr ""
 " -g, --pgroup <PGID,...>   compara con las IDs de grupo de procesos "
 "mostrada\n"
 
-#: src/pgrep.c:173
+#: src/pgrep.c:176
 msgid " -G, --group <GID,...>     match real group IDs\n"
 msgstr " -G, --group <GID,...>     compara con las IDs de grupo real\n"
 
-#: src/pgrep.c:174
+#: src/pgrep.c:177
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
 " -i, --ignore-case         busca coincidencias sin diferenciar entre "
 "mayúsculas y minúsculas\n"
 
-#: src/pgrep.c:175
+#: src/pgrep.c:178
 msgid " -n, --newest              select most recently started\n"
 msgstr ""
 " -n, --newest              selecciona los más iniciados recientemente\n"
 
-#: src/pgrep.c:176
+#: src/pgrep.c:179
 msgid " -o, --oldest              select least recently started\n"
 msgstr ""
 " -o, --oldest              selecciona los menos iniciados recientemente\n"
 
-#: src/pgrep.c:177
+#: src/pgrep.c:180
 msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr ""
 " -O, --older <segundos>     selecciona los más antiguos que esos segundos\n"
 
-#: src/pgrep.c:178
+#: src/pgrep.c:181
 msgid ""
 " -P, --parent <PPID,...>   match only child processes of the given parent\n"
 msgstr ""
 " -P, --parent <PPID,...>   compara solo los procesos hijo del padre dado\n"
 
-#: src/pgrep.c:179
+#: src/pgrep.c:182
 msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   compara las IDs de sesión\n"
 
-#: src/pgrep.c:180
+#: src/pgrep.c:183
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty,...>  compara por terminal de control\n"
 
-#: src/pgrep.c:181
+#: src/pgrep.c:184
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr " -u, --euid <ID,...>       compara por IDs efectivas\n"
 
-#: src/pgrep.c:182
+#: src/pgrep.c:185
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr " -U, --uid <ID,...>        compara por IDs reales\n"
 
-#: src/pgrep.c:183
+#: src/pgrep.c:186
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr ""
 " -x, --exact               hace coincidir exactamente con el nombre de "
 "orden\n"
 
-#: src/pgrep.c:184
+#: src/pgrep.c:187
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <archivo>      read PIDs from file\n"
 
-#: src/pgrep.c:185
+#: src/pgrep.c:188
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 " -L, --logpidfile          falla si el archivo de PID no está bloqueado\n"
 
-#: src/pgrep.c:186
+#: src/pgrep.c:189
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr ""
 " -r, --runstates <estado>   compara con los estados de ejecución [D,S,"
 "Z,...]\n"
 
-#: src/pgrep.c:187
+#: src/pgrep.c:190
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
 msgstr ""
 
-#: src/pgrep.c:188
+#: src/pgrep.c:191
 #, fuzzy
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr " -G, --group <GID,...>     compara con las IDs de grupo real\n"
 
-#: src/pgrep.c:189
+#: src/pgrep.c:192
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -391,7 +395,7 @@ msgstr ""
 " --ns <PID>                compara los procesos que pertenecen al mismo\n"
 "                           espacio de nombres que <pid>\n"
 
-#: src/pgrep.c:191
+#: src/pgrep.c:194
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -404,50 +408,55 @@ msgstr ""
 "                           Espacios de nombre disponibles: ipc, mnt, net, "
 "pid, user, uts\n"
 
-#: src/pgrep.c:216 src/pgrep.c:653 src/w.c:405
+#: src/pgrep.c:219 src/pgrep.c:674 src/w.c:407
 msgid "Unable to create pid info structure"
 msgstr ""
 
-#: src/pgrep.c:380
+#: src/pgrep.c:383
 #, c-format
 msgid "invalid user name: %s"
 msgstr "nombre de usuario no válido: %s"
 
-#: src/pgrep.c:397
+#: src/pgrep.c:400
 #, c-format
 msgid "invalid group name: %s"
 msgstr "nombre de grupo no válido: %s"
 
-#: src/pgrep.c:408
+#: src/pgrep.c:411
 #, c-format
 msgid "invalid process group: %s"
 msgstr "grupo de procesos no válido: %s"
 
-#: src/pgrep.c:420
+#: src/pgrep.c:423
 #, c-format
 msgid "invalid session id: %s"
 msgstr "id de sesión no válida: %s"
 
-#: src/pgrep.c:432
+#: src/pgrep.c:435
 #, c-format
 msgid "not a number: %s"
 msgstr "no es un número: %s"
 
-#: src/pgrep.c:499 src/skill.c:158
+#: src/pgrep.c:485
+#, fuzzy, c-format
+msgid "not a hex string: %s"
+msgstr "no es un número: %s"
+
+#: src/pgrep.c:520 src/skill.c:158
 #, fuzzy
 msgid "Unable to read process namespace information"
 msgstr "Error al leer la información del espacio de nombres de referencia\n"
 
-#: src/pgrep.c:586
+#: src/pgrep.c:607
 #, fuzzy, c-format
 msgid "regex error: %s"
 msgstr "error de escritura"
 
-#: src/pgrep.c:648
+#: src/pgrep.c:669
 msgid "Error reading reference namespace information\n"
 msgstr "Error al leer la información del espacio de nombres de referencia\n"
 
-#: src/pgrep.c:760
+#: src/pgrep.c:783
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -455,7 +464,7 @@ msgid ""
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
 
-#: src/pgrep.c:1028
+#: src/pgrep.c:1057
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -464,7 +473,7 @@ msgstr ""
 "Usar -L sin -F no tiene sentido\n"
 "Pruebe «%s --help» para más información."
 
-#: src/pgrep.c:1035
+#: src/pgrep.c:1064
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -473,7 +482,7 @@ msgstr ""
 "pidfile no válido\n"
 "Pruebe «%s --help» para más información."
 
-#: src/pgrep.c:1044
+#: src/pgrep.c:1073
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -482,7 +491,7 @@ msgstr ""
 "solo se puede proporcionar un único patrón\n"
 "Pruebe «%s --help» para más información."
 
-#: src/pgrep.c:1048
+#: src/pgrep.c:1077
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -491,31 +500,31 @@ msgstr ""
 "no se especificó un criterio de búsqueda\n"
 "Pruebe «%s --help» para más información."
 
-#: src/pgrep.c:1100
+#: src/pgrep.c:1129
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s muerto (pid %lu)\n"
 
-#: src/pgrep.c:1107
+#: src/pgrep.c:1136
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "no se pudo matar el pid %ld"
 
-#: src/pgrep.c:1119
+#: src/pgrep.c:1148
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "esperando a %s (pid %lu)\n"
 
-#: src/pgrep.c:1123
+#: src/pgrep.c:1152
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr ""
 
-#: src/pgrep.c:1126
+#: src/pgrep.c:1155
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "no se pudo abrir el pid %ld"
 
-#: src/pgrep.c:1140
+#: src/pgrep.c:1169
 msgid "epoll_wait failed"
 msgstr "epoll_wait falló"
 
@@ -802,7 +811,7 @@ msgid "Signal %d (%s) caught by %s (%s).\n"
 msgstr "Señal %d (%s) capturada por %s (%s).\n"
 
 #: src/ps/display.c:71 src/ps/display.c:248 src/ps/display.c:403
-#: src/ps/output.c:2322 src/ps/parser.c:495 src/ps/parser.c:742
+#: src/ps/output.c:2335 src/ps/parser.c:502 src/ps/parser.c:749
 #: src/ps/select.c:92 src/ps/sortformat.c:259 src/ps/sortformat.c:297
 #: src/ps/sortformat.c:545
 msgid "please report this bug"
@@ -823,26 +832,26 @@ msgstr "no se pudo encontrar el ppid\n"
 msgid "could not find start_time\n"
 msgstr "no se pudo encontrar el start_time\n"
 
-#: src/ps/global.c:281
+#: src/ps/global.c:282
 #, c-format
 msgid "your %dx%d screen size is bogus. expect trouble\n"
 msgstr "su tamaño de pantalla %dx%d es falso. Espere problemas\n"
 
-#: src/ps/global.c:354 src/ps/global.c:366
+#: src/ps/global.c:355 src/ps/global.c:367
 msgid "environment specified an unknown personality"
 msgstr "el entorno ha especificado una personalidad desconocida"
 
-#: src/ps/global.c:358
+#: src/ps/global.c:359
 #, c-format
 msgid "cannot strdup() personality text\n"
 msgstr "no se puede strdup() el texto de personalidad\n"
 
-#: src/ps/global.c:489
+#: src/ps/global.c:490
 #, c-format
 msgid "fatal library error, context\n"
 msgstr ""
 
-#: src/ps/global.c:497
+#: src/ps/global.c:498
 #, c-format
 msgid "fatal library error, lookup self\n"
 msgstr ""
@@ -854,7 +863,7 @@ msgstr ""
 #. .
 #. . It must be limited to 15 characters or less.
 #.
-#: src/ps/global.c:536
+#: src/ps/global.c:537
 msgid "help"
 msgstr "ayuda"
 
@@ -1052,175 +1061,179 @@ msgstr ""
 "Formatos de salida:\n"
 
 #: src/ps/help.c:129
+msgid " -D <format>          date format for lstart\n"
+msgstr ""
+
+#: src/ps/help.c:130
 msgid " -F                   extra full\n"
 msgstr " -F                   extra completo\n"
 
-#: src/ps/help.c:130
+#: src/ps/help.c:131
 msgid " -f                   full-format, including command lines\n"
 msgstr " -f                   formato completo, incluyendo líneas de órdenes\n"
 
-#: src/ps/help.c:131
+#: src/ps/help.c:132
 msgid "  f, --forest         ascii art process tree\n"
 msgstr ""
 
-#: src/ps/help.c:132
+#: src/ps/help.c:133
 msgid " -H                   show process hierarchy\n"
 msgstr ""
 
-#: src/ps/help.c:133
+#: src/ps/help.c:134
 msgid " -j                   jobs format\n"
 msgstr ""
 
-#: src/ps/help.c:134
+#: src/ps/help.c:135
 msgid "  j                   BSD job control format\n"
 msgstr ""
 
-#: src/ps/help.c:135
+#: src/ps/help.c:136
 msgid " -l                   long format\n"
 msgstr ""
 
-#: src/ps/help.c:136
+#: src/ps/help.c:137
 msgid "  l                   BSD long format\n"
 msgstr ""
 
-#: src/ps/help.c:137
+#: src/ps/help.c:138
 msgid " -M, Z                add security data (for SELinux)\n"
 msgstr ""
 
-#: src/ps/help.c:138
+#: src/ps/help.c:139
 msgid " -O <format>          preloaded with default columns\n"
 msgstr ""
 
-#: src/ps/help.c:139
+#: src/ps/help.c:140
 msgid "  O <format>          as -O, with BSD personality\n"
 msgstr ""
 
-#: src/ps/help.c:140
+#: src/ps/help.c:141
 msgid ""
 " -o, o, --format <format>\n"
 "                      user-defined format\n"
 msgstr ""
 
-#: src/ps/help.c:142
+#: src/ps/help.c:143
 #, fuzzy
 msgid "  -P                  add psr column\n"
 msgstr " -F                   extra completo\n"
 
-#: src/ps/help.c:143
+#: src/ps/help.c:144
 msgid "  s                   signal format\n"
 msgstr ""
 
-#: src/ps/help.c:144
+#: src/ps/help.c:145
 msgid "  u                   user-oriented format\n"
 msgstr ""
 
-#: src/ps/help.c:145
+#: src/ps/help.c:146
 msgid "  v                   virtual memory format\n"
 msgstr ""
 
-#: src/ps/help.c:146
+#: src/ps/help.c:147
 msgid "  X                   register format\n"
 msgstr ""
 
-#: src/ps/help.c:147
+#: src/ps/help.c:148
 msgid ""
 " -y                   do not show flags, show rss vs. addr (used with -l)\n"
 msgstr ""
 
-#: src/ps/help.c:148
+#: src/ps/help.c:149
 msgid "     --context        display security context (for SELinux)\n"
 msgstr ""
 
-#: src/ps/help.c:149
+#: src/ps/help.c:150
 msgid "     --headers        repeat header lines, one per page\n"
 msgstr ""
 
-#: src/ps/help.c:150
+#: src/ps/help.c:151
 msgid "     --no-headers     do not print header at all\n"
 msgstr ""
 
-#: src/ps/help.c:151
+#: src/ps/help.c:152
 msgid ""
 "     --cols, --columns, --width <num>\n"
 "                      set screen width\n"
 msgstr ""
 
-#: src/ps/help.c:153
+#: src/ps/help.c:154
 msgid ""
 "     --rows, --lines <num>\n"
 "                      set screen height\n"
 msgstr ""
 
-#: src/ps/help.c:157
+#: src/ps/help.c:158
 msgid ""
 "\n"
 "Show threads:\n"
 msgstr ""
 
-#: src/ps/help.c:158
+#: src/ps/help.c:159
 msgid "  H                   as if they were processes\n"
 msgstr ""
 
-#: src/ps/help.c:159
+#: src/ps/help.c:160
 msgid " -L                   possibly with LWP and NLWP columns\n"
 msgstr ""
 
-#: src/ps/help.c:160
+#: src/ps/help.c:161
 msgid " -m, m                after processes\n"
 msgstr ""
 
-#: src/ps/help.c:161
+#: src/ps/help.c:162
 msgid " -T                   possibly with SPID column\n"
 msgstr ""
 
-#: src/ps/help.c:164
+#: src/ps/help.c:165
 msgid ""
 "\n"
 "Miscellaneous options:\n"
 msgstr ""
 
-#: src/ps/help.c:165
+#: src/ps/help.c:166
 msgid " -c                   show scheduling class with -l option\n"
 msgstr ""
 
-#: src/ps/help.c:166
+#: src/ps/help.c:167
 msgid "  c                   show true command name\n"
 msgstr ""
 
-#: src/ps/help.c:167
+#: src/ps/help.c:168
 msgid "  e                   show the environment after command\n"
 msgstr ""
 
-#: src/ps/help.c:168
+#: src/ps/help.c:169
 msgid ""
 "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr ""
 
-#: src/ps/help.c:169
+#: src/ps/help.c:170
 msgid "  L                   show format specifiers\n"
 msgstr ""
 
-#: src/ps/help.c:170
+#: src/ps/help.c:171
 msgid "  n                   display numeric uid and wchan\n"
 msgstr ""
 
-#: src/ps/help.c:171
+#: src/ps/help.c:172
 msgid "  S,    --cumulative  include some dead child process data\n"
 msgstr ""
 
-#: src/ps/help.c:172
+#: src/ps/help.c:173
 msgid " -y                   do not show flags, show rss (only with -l)\n"
 msgstr ""
 
-#: src/ps/help.c:173
+#: src/ps/help.c:174
 msgid " -V, V, --version     display version information and exit\n"
 msgstr ""
 
-#: src/ps/help.c:174
+#: src/ps/help.c:175
 msgid " -w, w                unlimited output width\n"
 msgstr ""
 
-#: src/ps/help.c:175
+#: src/ps/help.c:176
 #, c-format
 msgid ""
 "\n"
@@ -1240,7 +1253,7 @@ msgstr ""
 #. .  The word for "help" will be translated elsewhere.  Thus, the only
 #. .  translations below will be: "Try", "or" and "for additional...".
 #. .
-#: src/ps/help.c:196
+#: src/ps/help.c:197
 #, c-format
 msgid ""
 "\n"
@@ -1249,7 +1262,7 @@ msgid ""
 " for additional help text.\n"
 msgstr ""
 
-#: src/ps/help.c:209
+#: src/ps/help.c:210
 #, c-format
 msgid ""
 "\n"
@@ -1265,12 +1278,12 @@ msgstr ""
 msgid "Unable to get total memory"
 msgstr "%13lu %s memoria total\n"
 
-#: src/ps/output.c:2169
+#: src/ps/output.c:2182
 #, c-format
 msgid "fix bigness error\n"
 msgstr ""
 
-#: src/ps/output.c:2252
+#: src/ps/output.c:2265
 #, c-format
 msgid "bad alignment code\n"
 msgstr ""
@@ -1319,231 +1332,239 @@ msgstr ""
 msgid "list of command names must follow -C"
 msgstr ""
 
-#: src/ps/parser.c:256
+#: src/ps/parser.c:250
+msgid "date format must follow -D"
+msgstr ""
+
+#: src/ps/parser.c:263
 msgid "list of real groups must follow -G"
 msgstr ""
 
-#: src/ps/parser.c:269
+#: src/ps/parser.c:276
 msgid "list of jobs must follow -J"
 msgstr ""
 
-#: src/ps/parser.c:297
+#: src/ps/parser.c:304
 msgid "format or sort specification must follow -O"
 msgstr ""
 
-#: src/ps/parser.c:308
+#: src/ps/parser.c:315
 msgid "list of PRM groups must follow -R"
 msgstr ""
 
-#: src/ps/parser.c:327
+#: src/ps/parser.c:334
 msgid "list of real users must follow -U"
 msgstr ""
 
-#: src/ps/parser.c:368
+#: src/ps/parser.c:375
 msgid "list of session leaders OR effective group names must follow -g"
 msgstr ""
 
-#: src/ps/parser.c:379
+#: src/ps/parser.c:386
 msgid "list of session leaders OR effective group IDs was invalid"
 msgstr ""
 
-#: src/ps/parser.c:403
+#: src/ps/parser.c:410
 msgid "format specification must follow -o"
 msgstr ""
 
-#: src/ps/parser.c:409
+#: src/ps/parser.c:416
 msgid "list of process IDs must follow -p"
 msgstr ""
 
-#: src/ps/parser.c:426
+#: src/ps/parser.c:433
 msgid "the -r option is reserved"
 msgstr ""
 
-#: src/ps/parser.c:432
+#: src/ps/parser.c:439
 msgid "list of session IDs must follow -s"
 msgstr ""
 
-#: src/ps/parser.c:440
+#: src/ps/parser.c:447
 msgid "list of terminals (pty, tty...) must follow -t"
 msgstr ""
 
-#: src/ps/parser.c:448
+#: src/ps/parser.c:455
 msgid "list of users must follow -u"
 msgstr ""
 
-#: src/ps/parser.c:470
+#: src/ps/parser.c:477
 msgid "must set personality to get -x option"
 msgstr ""
 
-#: src/ps/parser.c:485
+#: src/ps/parser.c:492
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
 msgstr ""
 
-#: src/ps/parser.c:492
+#: src/ps/parser.c:499
 msgid "embedded '-' among SysV options makes no sense"
 msgstr ""
 
-#: src/ps/parser.c:498
+#: src/ps/parser.c:505
 msgid "unsupported SysV option"
 msgstr ""
 
-#: src/ps/parser.c:511
+#: src/ps/parser.c:518
 msgid "cannot happen - problem #1"
 msgstr ""
 
-#: src/ps/parser.c:515
+#: src/ps/parser.c:522
 msgid "cannot happen - problem #2"
 msgstr ""
 
-#: src/ps/parser.c:517
+#: src/ps/parser.c:524
 msgid "second chance parse failed, not BSD or SysV"
 msgstr ""
 
-#: src/ps/parser.c:534
+#: src/ps/parser.c:541
 msgid "option A is reserved"
 msgstr ""
 
-#: src/ps/parser.c:539
+#: src/ps/parser.c:546
 msgid "option C is reserved"
 msgstr ""
 
-#: src/ps/parser.c:559
+#: src/ps/parser.c:566
 msgid "format or sort specification must follow O"
 msgstr ""
 
-#: src/ps/parser.c:584
+#: src/ps/parser.c:591
 msgid "list of users must follow U"
 msgstr ""
 
-#: src/ps/parser.c:596
+#: src/ps/parser.c:603
 msgid "obsolete W option not supported (you have a /dev/drum?)"
 msgstr ""
 
-#: src/ps/parser.c:632 src/ps/parser.c:899 src/ps/parser.c:908
+#: src/ps/parser.c:639 src/ps/parser.c:913 src/ps/parser.c:922
 msgid "only one heading option may be specified"
 msgstr ""
 
-#: src/ps/parser.c:647
+#: src/ps/parser.c:654
 msgid "long sort specification must follow 'k'"
 msgstr ""
 
-#: src/ps/parser.c:675
+#: src/ps/parser.c:682
 msgid "format specification must follow o"
 msgstr ""
 
-#: src/ps/parser.c:681
+#: src/ps/parser.c:688
 msgid "list of process IDs must follow p"
 msgstr ""
 
-#: src/ps/parser.c:739
+#: src/ps/parser.c:746
 msgid "embedded '-' among BSD options makes no sense"
 msgstr ""
 
-#: src/ps/parser.c:745
+#: src/ps/parser.c:752
 msgid "unsupported option (BSD syntax)"
 msgstr ""
 
-#: src/ps/parser.c:831 src/ps/parser.c:843
+#: src/ps/parser.c:839 src/ps/parser.c:851
 msgid "unknown gnu long option"
 msgstr ""
 
-#: src/ps/parser.c:851
+#: src/ps/parser.c:859
 msgid "list of real groups must follow --Group"
 msgstr ""
 
-#: src/ps/parser.c:859
+#: src/ps/parser.c:867
 msgid "list of real users must follow --User"
 msgstr ""
 
-#: src/ps/parser.c:878
+#: src/ps/parser.c:886
 msgid "number of columns must follow --cols, --width, or --columns"
 msgstr ""
 
-#: src/ps/parser.c:881
+#: src/ps/parser.c:889
 msgid "option --cumulative does not take an argument"
 msgstr ""
 
-#: src/ps/parser.c:886
+#: src/ps/parser.c:894
+msgid "date format must follow --date-format"
+msgstr ""
+
+#: src/ps/parser.c:900
 msgid "option --deselect does not take an argument"
 msgstr ""
 
-#: src/ps/parser.c:898
+#: src/ps/parser.c:912
 msgid "option --no-heading does not take an argument"
 msgstr ""
 
-#: src/ps/parser.c:907
+#: src/ps/parser.c:921
 msgid "option --heading does not take an argument"
 msgstr ""
 
-#: src/ps/parser.c:913
+#: src/ps/parser.c:927
 msgid "option --forest does not take an argument"
 msgstr ""
 
-#: src/ps/parser.c:919
+#: src/ps/parser.c:933
 msgid "format specification must follow --format"
 msgstr ""
 
-#: src/ps/parser.c:925
+#: src/ps/parser.c:939
 msgid "list of effective groups must follow --group"
 msgstr ""
 
-#: src/ps/parser.c:943
+#: src/ps/parser.c:957
 msgid "list of process IDs must follow --pid"
 msgstr ""
 
-#: src/ps/parser.c:959
+#: src/ps/parser.c:973
 msgid "list of process IDs must follow --ppid"
 msgstr ""
 
-#: src/ps/parser.c:977
+#: src/ps/parser.c:991
 msgid "number of rows must follow --rows or --lines"
 msgstr ""
 
-#: src/ps/parser.c:981
+#: src/ps/parser.c:995
 msgid "some sid thing(s) must follow --sid"
 msgstr ""
 
-#: src/ps/parser.c:989
+#: src/ps/parser.c:1003
 msgid "long sort specification must follow --sort"
 msgstr ""
 
-#: src/ps/parser.c:995
+#: src/ps/parser.c:1009
 msgid "list of ttys must follow --tty"
 msgstr ""
 
-#: src/ps/parser.c:1003
+#: src/ps/parser.c:1017
 msgid "list of effective users must follow --user"
 msgstr ""
 
-#: src/ps/parser.c:1119
+#: src/ps/parser.c:1133
 msgid "way bad"
 msgstr ""
 
-#: src/ps/parser.c:1133
+#: src/ps/parser.c:1147
 msgid "garbage option"
 msgstr ""
 
-#: src/ps/parser.c:1137
+#: src/ps/parser.c:1151
 msgid "something broke"
 msgstr ""
 
-#: src/ps/parser.c:1157
+#: src/ps/parser.c:1171
 msgid "thread display conflicts with forest display"
 msgstr ""
 
-#: src/ps/parser.c:1162
+#: src/ps/parser.c:1176
 msgid "thread flags conflict; can't use H with m or -m"
 msgstr ""
 
-#: src/ps/parser.c:1164
+#: src/ps/parser.c:1178
 msgid "thread flags conflict; can't use both m and -m"
 msgstr ""
 
-#: src/ps/parser.c:1166
+#: src/ps/parser.c:1180
 msgid "thread flags conflict; can't use both -L and -T"
 msgstr ""
 
-#: src/ps/parser.c:1239 src/ps/parser.c:1240
+#: src/ps/parser.c:1253 src/ps/parser.c:1254
 #, c-format
 msgid "error: %s\n"
 msgstr ""
@@ -1698,90 +1719,90 @@ msgstr ""
 msgid "Unable to create pid Pids_info structure"
 msgstr ""
 
-#: src/skill.c:284 src/w.c:408
+#: src/skill.c:284 src/w.c:410
 msgid "Unable to load process information"
 msgstr ""
 
-#: src/skill.c:313
+#: src/skill.c:315
 #, c-format
 msgid " %s [signal] [options] <expression>\n"
 msgstr ""
 
-#: src/skill.c:317
+#: src/skill.c:319
 #, c-format
 msgid " %s [new priority] [options] <expression>\n"
 msgstr ""
 
-#: src/skill.c:321
+#: src/skill.c:323
 msgid " -f, --fast         fast mode (not implemented)\n"
 msgstr ""
 
-#: src/skill.c:322
+#: src/skill.c:324
 msgid " -i, --interactive  interactive\n"
 msgstr ""
 
-#: src/skill.c:323
+#: src/skill.c:325
 msgid " -l, --list         list all signal names\n"
 msgstr ""
 
-#: src/skill.c:324
+#: src/skill.c:326
 msgid " -L, --table        list all signal names in a nice table\n"
 msgstr ""
 
-#: src/skill.c:325
+#: src/skill.c:327
 msgid ""
 " -n, --no-action    do not actually kill processes; just print what would "
 "happen\n"
 msgstr ""
 
-#: src/skill.c:326
+#: src/skill.c:328
 msgid " -v, --verbose      explain what is being done\n"
 msgstr ""
 
-#: src/skill.c:327
+#: src/skill.c:329
 msgid " -w, --warnings     enable warnings (not implemented)\n"
 msgstr ""
 
-#: src/skill.c:329
+#: src/skill.c:331
 msgid ""
 "Expression can be: terminal, user, pid, command.\n"
 "The options below may be used to ensure correct interpretation.\n"
 msgstr ""
 
-#: src/skill.c:331
+#: src/skill.c:333
 msgid " -c, --command <command>  expression is a command name\n"
 msgstr ""
 
-#: src/skill.c:332
+#: src/skill.c:334
 msgid " -p, --pid <pid>          expression is a process id number\n"
 msgstr ""
 
-#: src/skill.c:333
+#: src/skill.c:335
 msgid " -t, --tty <tty>          expression is a terminal\n"
 msgstr ""
 
-#: src/skill.c:334
+#: src/skill.c:336
 msgid " -u, --user <username>    expression is a username\n"
 msgstr ""
 
-#: src/skill.c:336
+#: src/skill.c:338
 msgid "Alternatively, expression can be:\n"
 msgstr ""
 
-#: src/skill.c:337
+#: src/skill.c:339
 msgid ""
 " --ns <pid>               match the processes that belong to the same\n"
 "                          namespace as <pid>\n"
 msgstr ""
 
-#: src/skill.c:339
+#: src/skill.c:341
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are\n"
 ":                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
 
-#: src/skill.c:349
+#: src/skill.c:351
 #, c-format
 msgid ""
 "\n"
@@ -1790,7 +1811,7 @@ msgid ""
 "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
 msgstr ""
 
-#: src/skill.c:356
+#: src/skill.c:358
 #, c-format
 msgid ""
 "\n"
@@ -1799,41 +1820,41 @@ msgid ""
 "Negative priority numbers are restricted to administrative users.\n"
 msgstr ""
 
-#: src/skill.c:378
+#: src/skill.c:380
 #, c-format
 msgid "priority %lu out of range"
 msgstr ""
 
-#: src/skill.c:487
+#: src/skill.c:489
 #, c-format
 msgid "invalid pid number %s"
 msgstr ""
 
-#: src/skill.c:491
+#: src/skill.c:493
 msgid "error reading reference namespace information"
 msgstr ""
 
-#: src/skill.c:499
+#: src/skill.c:501
 msgid "invalid namespace list"
 msgstr ""
 
-#: src/skill.c:536
+#: src/skill.c:538
 msgid "no process selection criteria"
 msgstr ""
 
-#: src/skill.c:539
+#: src/skill.c:541
 msgid "general flags may not be repeated"
 msgstr ""
 
-#: src/skill.c:542
+#: src/skill.c:544
 msgid "-i makes no sense with -v, -f, and -n"
 msgstr ""
 
-#: src/skill.c:544
+#: src/skill.c:546
 msgid "-v makes no sense with -i and -f"
 msgstr ""
 
-#: src/skill.c:588
+#: src/skill.c:590
 #, c-format
 msgid "skill: \"%s\" is not supported\n"
 msgstr ""
@@ -1904,7 +1925,7 @@ msgstr ""
 msgid "illegal delay"
 msgstr ""
 
-#: src/slabtop.c:190 src/tload.c:142 src/vmstat.c:1046
+#: src/slabtop.c:190 src/tload.c:142 src/vmstat.c:1054
 msgid "delay must be positive integer"
 msgstr ""
 
@@ -1944,7 +1965,7 @@ msgstr ""
 msgid "  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
 msgstr ""
 
-#: src/slabtop.c:311 src/vmstat.c:764
+#: src/slabtop.c:311 src/vmstat.c:772
 msgid "Unable to create slabinfo structure"
 msgstr ""
 
@@ -1952,11 +1973,11 @@ msgstr ""
 msgid "terminal setting retrieval"
 msgstr ""
 
-#: src/slabtop.c:332 src/vmstat.c:771
+#: src/slabtop.c:332 src/vmstat.c:779
 msgid "Unable to get slabinfo node data"
 msgstr ""
 
-#: src/slabtop.c:338 src/vmstat.c:773
+#: src/slabtop.c:338 src/vmstat.c:781
 msgid "Unable to sort slab nodes"
 msgstr ""
 
@@ -2167,7 +2188,7 @@ msgstr ""
 msgid "scale cannot be negative"
 msgstr ""
 
-#: src/tload.c:144 src/vmstat.c:1048
+#: src/tload.c:144 src/vmstat.c:1056
 msgid "too large delay value"
 msgstr ""
 
@@ -2239,7 +2260,7 @@ msgid "Effective User Id"
 msgstr ""
 
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:161 src/w.c:661
+#: src/top/top_nls.c:161 src/w.c:683
 msgid "USER"
 msgstr ""
 
@@ -3592,10 +3613,10 @@ msgid ""
 "\n"
 "  Z~5,~1B~5,E,e   Global: '~1Z~2' colors; '~1B~2' bold; '~1E~2'/'~1e~2' "
 "summary/task memory scale\n"
-"  l,t,m,I   Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
-"'~1I~2' Irix mode\n"
-"  0,1,2,3,4 Toggle: '~10~2' zeros; '~11~2/~12~2/~13~2' cpu/numa views; "
-"'~14~2' cpus two abreast\n"
+"  l,t,m,I,0 Toggle: '~1l~2' load avg; '~1t~2' task/cpu; '~1m~2' memory; "
+"'~1I~2' Irix; '~10~2' zeros\n"
+"  1,2,3,4,5 Toggle: '~11~2/~12~2/~13~2' cpu/numa views; '~14~2' cpus "
+"abreast; '~15~2' P/E-cores\n"
 "  f,X       Fields: '~1f~2' add/remove/order/sort; '~1X~2' increase fixed-"
 "width fields\n"
 "\n"
@@ -3618,9 +3639,9 @@ msgid ""
 "\n"
 "%s  ^G,K,N,U  View: ctl groups ~1^G~2; cmdline ~1^K~2; environment ~1^N~2; "
 "supp groups ~1^U~2\n"
-"  W,Y,!,^E  Write cfg '~1W~2'; Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale "
-"time ~1^E~2'\n"
-"  q         Quit\n"
+"  Y,!,^E,P  Inspect '~1Y~2'; Combine Cpus '~1!~2'; Scale time ~1^E~2; View "
+"namespaces ~1^P~2\n"
+"  W,q       Write config file '~1W~2'; Quit '~1q~2'\n"
 "          ( commands shown with '.' require a ~1visible~2 task display "
 "~1window~2 ) \n"
 "Press '~1h~2' or '~1?~2' for help with ~1Windows~2,\n"
@@ -3880,7 +3901,7 @@ msgid ""
 "io---- -system-- ----------cpu----------"
 msgstr ""
 
-#: src/vmstat.c:260 src/vmstat.c:616
+#: src/vmstat.c:260 src/vmstat.c:624
 msgid " -----timestamp-----"
 msgstr ""
 
@@ -3984,19 +4005,24 @@ msgstr "st"
 msgid "gu"
 msgstr ""
 
-#: src/vmstat.c:378 src/vmstat.c:867
+#: src/vmstat.c:379 src/vmstat.c:875
 msgid "Unable to create vmstat structure"
 msgstr ""
 
-#: src/vmstat.c:380 src/vmstat.c:863 src/vmstat.c:916
+#: src/vmstat.c:381 src/vmstat.c:871 src/vmstat.c:924
 msgid "Unable to create system stat structure"
 msgstr ""
 
-#: src/vmstat.c:391 src/vmstat.c:871
+#: src/vmstat.c:385
+#, fuzzy
+msgid "Unable to get uptime"
+msgstr "%13lu %s memoria total\n"
+
+#: src/vmstat.c:396 src/vmstat.c:477 src/vmstat.c:879
 msgid "Unable to select memory information"
 msgstr ""
 
-#: src/vmstat.c:405 src/vmstat.c:458 src/vmstat.c:865
+#: src/vmstat.c:410 src/vmstat.c:463 src/vmstat.c:873
 msgid "Unable to select stat information"
 msgstr ""
 
@@ -4004,77 +4030,77 @@ msgstr ""
 #. * header fields that follow (marked with max x chars) might
 #. * not work, unless manual page is translated as well.
 #. Translation Hint: max 10 chars
-#: src/vmstat.c:562
+#: src/vmstat.c:570
 msgid "reads"
 msgstr "lecturas"
 
 #. Translation Hint: max 16 chars
-#: src/vmstat.c:564
+#: src/vmstat.c:572
 msgid "read sectors"
 msgstr "sectores leídos"
 
 #. Translation Hint: max 10 chars
-#: src/vmstat.c:566
+#: src/vmstat.c:574
 msgid "writes"
 msgstr "escrituras"
 
 #. Translation Hint: max 16 chars
-#: src/vmstat.c:568
+#: src/vmstat.c:576
 msgid "requested writes"
 msgstr "escrituras solicitadas"
 
-#: src/vmstat.c:581 src/vmstat.c:684 src/vmstat.c:810
+#: src/vmstat.c:589 src/vmstat.c:692 src/vmstat.c:818
 msgid "Unable to create diskstat structure"
 msgstr ""
 
-#: src/vmstat.c:584 src/vmstat.c:590
+#: src/vmstat.c:592 src/vmstat.c:598
 #, c-format
 msgid "Disk/Partition %s not found"
 msgstr ""
 
-#: src/vmstat.c:613
+#: src/vmstat.c:621
 msgid ""
 "disk- ------------reads------------ ------------writes----------- -----"
 "IO------"
 msgstr ""
 
-#: src/vmstat.c:615
+#: src/vmstat.c:623
 msgid ""
 "disk- -------------------reads------------------- -------------------"
 "writes------------------ ------IO-------"
 msgstr ""
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:634 src/vmstat.c:642
+#: src/vmstat.c:642 src/vmstat.c:650
 msgid "total"
 msgstr "total"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:636 src/vmstat.c:644
+#: src/vmstat.c:644 src/vmstat.c:652
 msgid "merged"
 msgstr "combinado"
 
 #. Translation Hint: max 7 chars
-#: src/vmstat.c:638 src/vmstat.c:646
+#: src/vmstat.c:646 src/vmstat.c:654
 msgid "sectors"
 msgstr "sectores"
 
 #. Translation Hint: max 7 chars
-#: src/vmstat.c:640 src/vmstat.c:648
+#: src/vmstat.c:648 src/vmstat.c:656
 msgid "ms"
 msgstr "ms"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:650
+#: src/vmstat.c:658
 msgid "cur"
 msgstr "cur"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:652
+#: src/vmstat.c:660
 msgid "sec"
 msgstr "seg"
 
-#: src/vmstat.c:691 src/vmstat.c:812
+#: src/vmstat.c:699 src/vmstat.c:820
 msgid "Unable to retrieve disk statistics"
 msgstr ""
 
@@ -4082,346 +4108,350 @@ msgstr ""
 #. * follow (marked with max x chars) might not work, unless
 #. * manual page is translated as well.
 #. Translation Hint: max 24 chars
-#: src/vmstat.c:738
+#: src/vmstat.c:746
 msgid "Cache"
 msgstr "Caché"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:740
+#: src/vmstat.c:748
 msgid "Num"
 msgstr "Núm"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:742
+#: src/vmstat.c:750
 msgid "Total"
 msgstr "Total"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:744
+#: src/vmstat.c:752
 msgid "Size"
 msgstr "Tamaño"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:746
+#: src/vmstat.c:754
 msgid "Pages"
 msgstr "Páginas"
 
-#: src/vmstat.c:833
+#: src/vmstat.c:841
 #, fuzzy, c-format
 msgid "%13d disks\n"
 msgstr "%13d discos \n"
 
-#: src/vmstat.c:834
+#: src/vmstat.c:842
 #, fuzzy, c-format
 msgid "%13d partitions\n"
 msgstr "%13d particiones \n"
 
-#: src/vmstat.c:835
+#: src/vmstat.c:843
 #, c-format
 msgid "%13lu total reads\n"
 msgstr "%13lu lecturas totales\n"
 
-#: src/vmstat.c:836
+#: src/vmstat.c:844
 #, c-format
 msgid "%13lu merged reads\n"
 msgstr "%13lu lecturas combinadas\n"
 
-#: src/vmstat.c:837
+#: src/vmstat.c:845
 #, c-format
 msgid "%13lu read sectors\n"
 msgstr "%13lu sectores leídos\n"
 
-#: src/vmstat.c:838
+#: src/vmstat.c:846
 #, c-format
 msgid "%13lu milli reading\n"
 msgstr "%13lu mili lecturas\n"
 
-#: src/vmstat.c:839
+#: src/vmstat.c:847
 #, c-format
 msgid "%13lu writes\n"
 msgstr "%13lu escrituras\n"
 
-#: src/vmstat.c:840
+#: src/vmstat.c:848
 #, c-format
 msgid "%13lu merged writes\n"
 msgstr "%13lu escrituras combinadas\n"
 
-#: src/vmstat.c:841
+#: src/vmstat.c:849
 #, c-format
 msgid "%13lu written sectors\n"
 msgstr "%13lu sectores escritos\n"
 
-#: src/vmstat.c:842
+#: src/vmstat.c:850
 #, c-format
 msgid "%13lu milli writing\n"
 msgstr "%13lu milli escrituras\n"
 
-#: src/vmstat.c:843
+#: src/vmstat.c:851
 #, c-format
 msgid "%13lu inprogress IO\n"
 msgstr "%13lu IO en progreso\n"
 
-#: src/vmstat.c:844
+#: src/vmstat.c:852
 #, c-format
 msgid "%13lu milli spent IO\n"
 msgstr ""
 
-#: src/vmstat.c:845
+#: src/vmstat.c:853
 #, fuzzy, c-format
 msgid "%13lu milli weighted IO\n"
 msgstr "%13lu milli escrituras\n"
 
-#: src/vmstat.c:873
+#: src/vmstat.c:881
 #, c-format
 msgid "%13lu %s total memory\n"
 msgstr "%13lu %s memoria total\n"
 
-#: src/vmstat.c:874
+#: src/vmstat.c:882
 #, c-format
 msgid "%13lu %s used memory\n"
 msgstr "%13lu %s memoria usada\n"
 
-#: src/vmstat.c:875
+#: src/vmstat.c:883
 #, c-format
 msgid "%13lu %s active memory\n"
 msgstr "%13lu %s memoria activa\n"
 
-#: src/vmstat.c:876
+#: src/vmstat.c:884
 #, c-format
 msgid "%13lu %s inactive memory\n"
 msgstr "%13lu %s memoria inactiva\n"
 
-#: src/vmstat.c:877
+#: src/vmstat.c:885
 #, c-format
 msgid "%13lu %s free memory\n"
 msgstr "%13lu %s memoria libre\n"
 
-#: src/vmstat.c:878
+#: src/vmstat.c:886
 #, c-format
 msgid "%13lu %s buffer memory\n"
 msgstr "%13lu %s memoria de búfer\n"
 
-#: src/vmstat.c:879
+#: src/vmstat.c:887
 #, c-format
 msgid "%13lu %s swap cache\n"
 msgstr "%13lu %s caché de intercambio\n"
 
-#: src/vmstat.c:880
+#: src/vmstat.c:888
 #, c-format
 msgid "%13lu %s total swap\n"
 msgstr "%13lu %s intercambio total\n"
 
-#: src/vmstat.c:881
+#: src/vmstat.c:889
 #, c-format
 msgid "%13lu %s used swap\n"
 msgstr "%13lu %s intercambio usado\n"
 
-#: src/vmstat.c:882
+#: src/vmstat.c:890
 #, c-format
 msgid "%13lu %s free swap\n"
 msgstr "%13lu %s intercambio libre\n"
 
-#: src/vmstat.c:883
+#: src/vmstat.c:891
 #, c-format
 msgid "%13lld non-nice user cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:884
+#: src/vmstat.c:892
 #, c-format
 msgid "%13lld nice user cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:885
+#: src/vmstat.c:893
 #, c-format
 msgid "%13lld system cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:886
+#: src/vmstat.c:894
 #, c-format
 msgid "%13lld idle cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:887
+#: src/vmstat.c:895
 #, c-format
 msgid "%13lld IO-wait cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:888
+#: src/vmstat.c:896
 #, c-format
 msgid "%13lld IRQ cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:889
+#: src/vmstat.c:897
 #, c-format
 msgid "%13lld softirq cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:890
+#: src/vmstat.c:898
 #, c-format
 msgid "%13lld stolen cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:891
+#: src/vmstat.c:899
 #, c-format
 msgid "%13lld non-nice guest cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:892
+#: src/vmstat.c:900
 #, c-format
 msgid "%13lld nice guest cpu ticks\n"
 msgstr ""
 
-#: src/vmstat.c:893
+#: src/vmstat.c:901
 #, fuzzy, c-format
 msgid "%13lu K paged in\n"
 msgstr "%13lu escrituras combinadas\n"
 
-#: src/vmstat.c:894
+#: src/vmstat.c:902
 #, fuzzy, c-format
 msgid "%13lu K paged out\n"
 msgstr "%13lu escrituras combinadas\n"
 
-#: src/vmstat.c:895
+#: src/vmstat.c:903
 #, c-format
 msgid "%13lu pages swapped in\n"
 msgstr ""
 
-#: src/vmstat.c:896
+#: src/vmstat.c:904
 #, c-format
 msgid "%13lu pages swapped out\n"
 msgstr ""
 
-#: src/vmstat.c:897
+#: src/vmstat.c:905
 #, fuzzy, c-format
 msgid "%13lu interrupts\n"
 msgstr "%13u interrupciones\n"
 
-#: src/vmstat.c:898
+#: src/vmstat.c:906
 #, fuzzy, c-format
 msgid "%13lu CPU context switches\n"
 msgstr "%13lu escrituras\n"
 
-#: src/vmstat.c:899
+#: src/vmstat.c:907
 #, fuzzy, c-format
 msgid "%13lu boot time\n"
 msgstr "%13u tiempo de arranque\n"
 
-#: src/vmstat.c:900 src/vmstat.c:918
+#: src/vmstat.c:908 src/vmstat.c:926
 #, fuzzy, c-format
 msgid "%13lu forks\n"
 msgstr "%13u bifurcaciones\n"
 
 #. Translation Hint: do not change argument characters
-#: src/vmstat.c:1021
+#: src/vmstat.c:1029
 msgid "-S requires k, K, m or M (default is KiB)"
 msgstr ""
 
-#: src/watch.c:92
+#: src/watch.c:93
 #, c-format
 msgid " %s [options] command\n"
 msgstr ""
 
-#: src/watch.c:94
+#: src/watch.c:95
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
 msgstr ""
 
-#: src/watch.c:95
+#: src/watch.c:96
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
 msgstr ""
 
-#: src/watch.c:96
+#: src/watch.c:97
 msgid ""
 "  -d, --differences[=<permanent>]\n"
 "                         highlight changes between updates\n"
 msgstr ""
 
-#: src/watch.c:98
+#: src/watch.c:99
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
 msgstr ""
 
-#: src/watch.c:99
+#: src/watch.c:100
 msgid "  -g, --chgexit          exit when output from command changes\n"
 msgstr ""
 
-#: src/watch.c:100
+#: src/watch.c:101
 msgid ""
 "  -q, --equexit <cycles>\n"
 "                         exit when output from command does not change\n"
 msgstr ""
 
-#: src/watch.c:102
+#: src/watch.c:103
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr ""
 
-#: src/watch.c:103
+#: src/watch.c:104
 msgid "  -p, --precise          attempt run command in precise intervals\n"
 msgstr ""
 
-#: src/watch.c:104
-msgid "  -t, --no-title         turn off header\n"
-msgstr ""
-
 #: src/watch.c:105
-msgid "  -w, --no-wrap          turn off line wrapping\n"
+msgid "  -r, --no-rerun         do not rerun program on window resize\n"
 msgstr ""
 
 #: src/watch.c:106
+msgid "  -t, --no-title         turn off header\n"
+msgstr ""
+
+#: src/watch.c:107
+msgid "  -w, --no-wrap          turn off line wrapping\n"
+msgstr ""
+
+#: src/watch.c:108
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
 msgstr ""
 
-#: src/watch.c:109
+#: src/watch.c:111
 msgid " -v, --version  output version information and exit\n"
 msgstr ""
 
-#: src/watch.c:483
+#: src/watch.c:485
 #, c-format
 msgid "Every %.1fs: "
 msgstr "Cada %.1fs: "
 
-#: src/watch.c:484
+#: src/watch.c:486
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: src/watch.c:573
+#: src/watch.c:575
 msgid "unable to create IPC pipes"
 msgstr ""
 
-#: src/watch.c:583
+#: src/watch.c:585
 msgid "unable to fork process"
 msgstr ""
 
-#: src/watch.c:588
+#: src/watch.c:590
 msgid "dup2 failed"
 msgstr ""
 
-#: src/watch.c:595
+#: src/watch.c:597
 #, c-format
 msgid "unable to execute '%s'"
 msgstr "no se puede ejecutar «%s»"
 
-#: src/watch.c:612
+#: src/watch.c:614
 msgid "fdopen"
 msgstr ""
 
-#: src/watch.c:777
+#: src/watch.c:788
 msgid "waitpid"
 msgstr ""
 
-#: src/watch.c:785
+#: src/watch.c:796
 msgid "command exit with a non-zero status, press a key to exit"
 msgstr ""
 
-#: src/watch.c:845
+#: src/watch.c:858
 msgid "Could not parse interval from WATCH_INTERVAL"
 msgstr ""
 
-#: src/watch.c:930
+#: src/watch.c:946
 #, c-format
 msgid "unicode handling error\n"
 msgstr ""
 
-#: src/watch.c:936
+#: src/watch.c:952
 #, c-format
 msgid "unicode handling error (malloc)\n"
 msgstr ""
@@ -4444,43 +4474,49 @@ msgstr " %2lu:%02um"
 msgid " %2llu.%02us"
 msgstr " %2lu.%02us"
 
-#: src/w.c:524
+#: src/w.c:540
 #, fuzzy, c-format
 msgid " %s [options] [user]\n"
 msgstr " %s [opciones]\n"
 
-#: src/w.c:526
+#: src/w.c:542
 msgid " -h, --no-header     do not print header\n"
 msgstr ""
 
-#: src/w.c:527
+#: src/w.c:543
 msgid " -u, --no-current    ignore current process username\n"
 msgstr ""
 
-#: src/w.c:528
+#: src/w.c:544
 msgid " -s, --short         short format\n"
 msgstr ""
 
-#: src/w.c:529
+#: src/w.c:545
 msgid " -f, --from          show remote hostname field\n"
 msgstr ""
 
-#: src/w.c:530
+#: src/w.c:546
 msgid " -o, --old-style     old style output\n"
 msgstr ""
 
-#: src/w.c:531
+#: src/w.c:547
 msgid ""
 " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
 msgstr ""
 
-#: src/w.c:625
+# 'Listar' no existe con ese significado. Sugerencias: saca lista, enumera.
+#: src/w.c:548
+#, fuzzy
+msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
+msgstr " -l, --list-name           muestra el PID y el nombre del proceso\n"
+
+#: src/w.c:647
 #, c-format
 msgid ""
 "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
 msgstr ""
 
-#: src/w.c:635
+#: src/w.c:657
 #, c-format
 msgid ""
 "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
@@ -4488,21 +4524,21 @@ msgstr ""
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
-#: src/w.c:661
+#: src/w.c:683
 #, c-format
 msgid "%-*s TTY      "
 msgstr "%-*s TTY      "
 
-#: src/w.c:663
+#: src/w.c:685
 msgid "FROM"
 msgstr "DESDE"
 
-#: src/w.c:665
+#: src/w.c:687
 #, c-format
 msgid "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 msgstr ""
 
-#: src/w.c:667
+#: src/w.c:689
 #, c-format
 msgid "   IDLE WHAT\n"
 msgstr ""
