@@ -1,8 +1,8 @@
 /*
- * meminfo.c - memory related definitions for libprocps
+ * meminfo.c - memory related definitions for libproc2
  *
- * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
- * Copyright (C) 2016-2022 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2016-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

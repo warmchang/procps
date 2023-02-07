@@ -1,14 +1,29 @@
+/*
+ * readproc - interface to process table
+ *
+ * Copyright © 2002-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 1998-2010 Albert Cahalan
+ * Copyright © 1998      Michael K. Johnson
+ * Copyright © 1996      Charles L. Blake.
+ *
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+ *
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 #ifndef PROCPS_PROC_READPROC_H
 #define PROCPS_PROC_READPROC_H
-
-// New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
-// Copyright 1996 Charles L. Blake.
-// Copyright 1998 Michael K. Johnson
-// Copyright 1998-2003 Albert Cahalan
-// May be distributed under the terms of the
-// GNU Library General Public License, a copy of which is provided
-// in the file COPYING
-
 
 #include <sys/types.h>
 #include <dirent.h>

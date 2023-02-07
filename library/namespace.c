@@ -1,5 +1,8 @@
 /*
- * libprocps - Library to read proc filesystem
+ * namespace.c - Library API for Linux namespaces
+ *
+ * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

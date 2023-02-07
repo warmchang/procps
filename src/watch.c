@@ -1,14 +1,15 @@
 /*
- * watch -- execute a program repeatedly, displaying output fullscreen
+ * watch - execute a program repeatedly, displaying output fullscreen
+ *
+ * Copyright © 2010-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 2002-2007 Albert Cahalan
+ * Copyright © 1999      Mike Coleman <mkc@acm.org>.
  *
  * Based on the original 1991 'watch' by Tony Rems <rembo@unisoft.com>
  * (with mods and corrections by Francois Pinard).
  *
- * Substantially reworked, new features (differences option, SIGWINCH
- * handling, unlimited command length, long line handling) added Apr
- * 1999 by Mike Coleman <mkc@acm.org>.
- *
- * Changes by Albert Cahalan, 2002-2003.
  * stderr handling, exec, and beep option added by Morty Abzug, 2008
  * Unicode Support added by Jarrod Lowe <procps@rrod.net> in 2009.
  *

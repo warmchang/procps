@@ -1,14 +1,14 @@
 /*
- * libprocps - Library to read proc filesystem
+ * libproc2 - Library to read proc filesystem
  *
- * Copyright 1992-1998 Michael K. Johnson <johnsonm@redhat.com>
- * Copyright ???? Larry Greenfield <greenfie@gauss.rutgers.edu>
- * Copyright 1993 J. Cowley
- * Copyright 1995 Martin Schulze <joey@infodrom.north.de>
- * Copyright 1996 Charles Blake <cblake@bbn.com>
- * Copyright 1998-2003 Albert Cahalan
- * Copyright 2015 Craig Small <csmall@dropbear.xyz>
- * Copyright 2021-2022 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2021-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 1998-2003 Albert Cahalan
+ * Copyright © 1992-1998 Michael K. Johnson <johnsonm@redhat.com>
+ * Copyright © 1996      Charles Blake <cblake@bbn.com>
+ * Copyright © 1993      J. Cowley
+ * Copyright © 1995      Martin Schulze <joey@infodrom.north.de>
+ * Copyright © ????      Larry Greenfield <greenfie@gauss.rutgers.edu>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

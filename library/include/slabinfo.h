@@ -1,9 +1,9 @@
 /*
- * slabinfo.h - slab pools related declarations for libprocps
+ * slabinfo.h - slab pools related declarations for libproc2
  *
- * Copyright (C) 1998-2005 Albert Cahalan
- * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
- * Copyright (C) 2016-2022 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 1998-2006 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

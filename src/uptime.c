@@ -1,6 +1,10 @@
 /*
  * uptime.c - display system uptime
- * Copyright (C) 2012-2015 Craig Small <csmall@dropbear.xyz>
+ *
+ * Copyright © 2002-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2020-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ *
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

@@ -1,6 +1,10 @@
 /*
  * pmap.c - print process memory mapping
- * Copyright 2002 Albert Cahalan
+ *
+ * Copyright © 2010-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 2002-2009 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

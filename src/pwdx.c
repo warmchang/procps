@@ -1,6 +1,10 @@
 /*
  * pwdx.c - print process working directory
- * Copyright 2004 Nicholas Miell
+ *
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 2004-2006 Albert Cahalan
+ * Copyright © 2004      Nicholas Miell
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

@@ -1,8 +1,10 @@
 /*
  * File for parsing top-level /proc entities.
- * Copyright (C) 1992-1998 by Michael K. Johnson, johnsonm@redhat.com
- * Copyright 1998-2003 Albert Cahalan
- * June 2003, Fabian Frederick, slab info
+ *
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 1998-2008 Albert Cahalan
+ * Copyright © 1992-1998 Michael K. Johnson <johnsonm@redhat.com>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

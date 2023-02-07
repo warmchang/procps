@@ -1,11 +1,11 @@
 /*
  * tload.c	- terminal version of xload
  *
- * Options:
- *	-s initial scaling exponent (default = 6)
- *	-d delay
+ * Copyright © 2009-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 1992      Branko Lankester
  *
- * Copyright (c) 1992 Branko Lankester
  * /proc changes by David Engel (david@ods.com)
  * Made a little more efficient by Michael K. Johnson (johnsonm@sunsite.unc.edu)
  *

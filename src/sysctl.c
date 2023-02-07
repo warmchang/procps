@@ -1,7 +1,13 @@
 /*
- * Sysctl 1.01 - A utility to read and manipulate the sysctl parameters
+ * Sysctl - A utility to read and manipulate the sysctl parameters
  *
- * "Copyright 1999 George Staikos
+ * Copyright © 2009-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2012-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2017-2018 Werner Fink <werner@suse.de>
+ * Copyright © 2014      Jaromir Capik <jcapik@redhat.com>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 2002-2007 Albert Cahalan
+ * Copyright © 1999      George Staikos
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
@@ -24,7 +30,6 @@
  *            Horms:
  *                   - added -q to be quiet when modifying values
  *
- * Changes by Albert Cahalan, 2002.
  */
 
 #include <dirent.h>

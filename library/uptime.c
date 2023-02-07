@@ -1,11 +1,12 @@
 /*
- * uptime - uptime related functions - part of procps
+ * uptime - uptime related functions - part of libproc2
  *
- * Copyright (C) 1992-1998 Michael K. Johnson <johnsonm@redhat.com>
- * Copyright (C) ???? Larry Greenfield <greenfie@gauss.rutgers.edu>
- * Copyright (C) 1993 J. Cowley
- * Copyright (C) 1998-2003 Albert Cahalan
- * Copyright (C) 2015 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 1998-2003 Albert Cahalan
+ * Copyright © 1992-1998 Michael K. Johnson <johnsonm@redhat.com>
+ * Copyright © 1993      J. Cowley
+ * Copyright © ????      Larry Greenfield <greenfie@gauss.rutgers.edu>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

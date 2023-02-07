@@ -1,6 +1,8 @@
 /*
  * wchan.c - kernel symbol handling
- * Copyright 1998-2003 by Albert Cahalan
+ *
+ * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 1998-2003 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

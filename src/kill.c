@@ -1,6 +1,8 @@
 /*
  * kill.c - send a signal to process
- * Copyright 1998-2002 by Albert Cahalan
+ *
+ * Copyright © 1995-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 1998-2002 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

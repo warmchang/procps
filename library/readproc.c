@@ -1,8 +1,12 @@
 /*
- * New Interface to Process Table -- PROCTAB Stream (a la Directory streams)
- * Copyright (C) 1996 Charles L. Blake.
- * Copyright (C) 1998 Michael K. Johnson
- * Copyright 1998-2003 Albert Cahalan
+ * readproc - interface to process table
+ *
+ * Copyright © 2002-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 1998-2010 Albert Cahalan
+ * Copyright © 2010-2011 Jan Görig <jgorig@redhat.com>
+ * Copyright © 1998      Michael K. Johnson
+ * Copyright © 1996      Charles L. Blake.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

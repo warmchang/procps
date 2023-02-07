@@ -1,9 +1,13 @@
 /*
  * pgrep/pkill -- utilities to filter the process table
  *
- * Copyright 2000 Kjetil Torgrim Homme <kjetilho@ifi.uio.no>
- * Changes by Albert Cahalan, 2002,2006.
- * Changes by Roberto Polli <rpolli@babel.it>, 2012.
+ * Copyright © 2009-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2013-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 2012      Roberto Polli <rpolli@babel.it>
+ * Copyright © 2002-2007 Albert Cahalan
+ * Copyright © 2000      Kjetil Torgrim Homme <kjetilho@ifi.uio.no>
+ *
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License

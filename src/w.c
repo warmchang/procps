@@ -1,12 +1,15 @@
 /*
  * w - show what logged in users are doing.
  *
- * Almost entirely rewritten from scratch by Charles Blake circa
- * June 1996. Some vestigal traces of the original may exist.
- * That was done in 1993 by Larry Greenfield with some fixes by
- * Michael K. Johnson.
+ * Copyright © 2009-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 2002-2006 Albert Cahalan
+ * Copyright © 1996      Charles Blake
  *
- * Changes by Albert Cahalan, 2002.
+ * Rewritten, older version:
+ * Copyright © 1993      Larry Greenfield
+ *                       with some fixes by Michael K. Johnson.
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

@@ -1,17 +1,13 @@
 /*
- * old: "Copyright 1994 by Henry Ware <al172@yfn.ysu.edu>. Copyleft same year."
- * most code copyright 2002 Albert Cahalan
+ * vmstat - report memory statistics
  *
- * 27/05/2003 (Fabian Frederick) : Add unit conversion + interface
- *                                Export proc/stat access to libproc
- *                                Adapt vmstat helpfile
- * 31/05/2003 (Fabian) : Add diskstat support (/libproc)
- * June 2003 (Fabian)  : -S <x> -s & -s -S <x> patch
- * June 2003 (Fabian)  : Adding diskstat against 3.1.9, slabinfo
- *                      patching 'header' in disk & slab
- * July 2003 (Fabian)  : Adding disk partition output
- *                      Adding disk table
- *                      Syncing help / usage
+ * Copyright © 2011-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2012-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 2010      Jan Görig <jgorig@redhat.com>
+ * Copyright © 2003      Fabian Frederick
+ * Copyright © 1998-2002 Albert Cahalan
+ * Copyright © 1994      Henry Ware <al172@yfn.ysu.edu>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

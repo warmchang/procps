@@ -1,7 +1,9 @@
 /*
  * escape.h - printing handling
- * Copyright 1998-2002 by Albert Cahalan
- * Copyright 2020-2022 Jim Warner <james.warner@comcast.net>
+ *
+ * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2016-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 1998-2005 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

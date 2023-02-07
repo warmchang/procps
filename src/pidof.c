@@ -1,7 +1,10 @@
 /*
  * pidof.c - Utility for listing pids of running processes
  *
- * Copyright (C) 2013  Jaromir Capik <jcapik@redhat.com>
+ * Copyright © 2013-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2016-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2020 Jan Rybar <jrybar@redhat.com>
+ * Copyright © 2013      Jaromir Capik <jcapik@redhat.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License
