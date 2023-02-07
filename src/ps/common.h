@@ -1,5 +1,10 @@
 /*
- * Copyright 1998-2002 by Albert Cahalan; all rights resered.
+ * common.h - shared header file
+ *
+ * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net
+ * Copyright © 2004-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 1998-2002 Albert Cahalan
+ *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
  * at your option, as published by the Free Software Foundation.

@@ -1,6 +1,10 @@
 /*
  * help.c - ps help output
- * Copyright 1998-2004 by Albert Cahalan
+ *
+ * Copyright © 2012-2023 Jim Warner <james.warner@comcast.net
+ * Copyright © 2004-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2012-2014 Jaromir Capik <jcapik@redhat.com
+ * Copyright © 1998-2004 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

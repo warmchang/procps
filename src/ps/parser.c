@@ -1,6 +1,11 @@
 /*
  * parser.c - ps command options parser
- * Copyright 1998-2003 by Albert Cahalan
+ *
+ * Copyright © 2012-2023 Jim Warner <james.warner@comcast.net
+ * Copyright © 2004-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2012-2014 Jaromir Capik <jcapik@redhat.com>
+ * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
+ * Copyright © 1998-2003 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

@@ -1,9 +1,13 @@
 /*
  * stacktrace.c - ps debugging additions
+ *
  * Gnu debugger stack trace code provided by Peter Mattis
  * <petm@CSUA.Berkeley.EDU> on Thu, 2 Nov 1995
- *
  * Modified for easy use by Albert Cahalan.
+ *
+ * Copyright © 2004-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2016 Jim Warner <james.warner@comcast.net
+ * Copyright © 1998-2004 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

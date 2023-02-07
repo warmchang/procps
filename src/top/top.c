@@ -1,6 +1,6 @@
 /* top.c - Source file:         show Linux processes */
 /*
- * Copyright (c) 2002-2022, by: Jim Warner <james.warner@comcast.net
+ * Copyright © 2002-2023 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
