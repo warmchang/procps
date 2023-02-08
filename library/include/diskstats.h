@@ -1,10 +1,8 @@
 /*
- * diskstats.c - disk I/O related declarations for libprocps
+ * diskstats.h - disk I/O related declarations for libproc2
  *
- * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
- * Copyright © 2003      Albert Cahalan
- * Copyright © 2003      Fabian Frederick
+ * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public

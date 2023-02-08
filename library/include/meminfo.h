@@ -1,7 +1,7 @@
 /*
- * meminfo.h - memory related declarations for libprocps
+ * meminfo.h - memory related declarations for libproc2
  *
- * Copyright © 2016-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or

@@ -1,5 +1,5 @@
 /*
- * stat.h - cpu/numa related declarations for libprocps
+ * stat.h - cpu/numa related declarations for libproc2
  *
  * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>

@@ -1,9 +1,8 @@
 /*
  * vmstat.c - virtual memory related definitions for libproc2
  *
+ * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
- * Copyright © 2016-2023 Jim Warner <james.warner@comcast.net>
- * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
  * Copyright © 2003      Albert Cahalan
  * Copyright © 1996      Charles Blake <cblake@bbn.com>
  * Copyright © 1995      Martin Schulze <joey@infodrom.north.de>

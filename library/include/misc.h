@@ -1,5 +1,5 @@
 /*
- * libproc2 - Library to read proc filesystem
+ * misc.h - miscellaneous declarations for libproc2
  *
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2021-2023 Jim Warner <james.warner@comcast.net>

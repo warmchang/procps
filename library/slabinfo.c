@@ -1,7 +1,7 @@
 /*
  * slabinfo.c - slab pools related definitions for libproc2
  *
- * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2004-2006 Albert Cahalan
  * Copyright © 2003      Chris Rivera
