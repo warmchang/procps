@@ -1,5 +1,7 @@
-procps-ng-NEXT
+procps-ng-4.0.3
 ---------------
+  * library
+    Only changes were in copyright headers and tests
   * docs: Don't install English manpages twice
   * pgrep: Add -H match on userspace signal handler        merge #165
   * pgrep: make --terminal respect other criteria
