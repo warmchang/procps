@@ -1,3 +1,7 @@
+procps-ng-NEXT
+---------------
+  * tests: dont compare floats with ==                     issue #271
+
 procps-ng-4.0.3
 ---------------
   * library

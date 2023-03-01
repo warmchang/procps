@@ -1,6 +1,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 #include "strutils.h"
 
 struct strtod_tests {
@@ -25,6 +26,11 @@ struct strtod_tests tests[] = {
     {NULL, 0.0}
 };
 
+#define EPSILON 1.0  // Really not trying for precision here
+int dequal(const double d1, const double d2)
+{
+    return fabs(d1-d2) < EPSILON;
+}
 
 
 int main(int argc, char *argv[])
