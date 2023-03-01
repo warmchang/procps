@@ -163,6 +163,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
         fputs(_(" -w, --lightweight         list all TID\n"), fp);
         break;
     case PKILL:
+        fputs(_(" -<sig>                    signal to send (either number or name)\n"), fp);
         fputs(_(" -H, --require-handler     match only if signal handler is present\n"), fp);
         fputs(_(" -q, --queue <value>       integer value to be sent with the signal\n"), fp);
         fputs(_(" -e, --echo                display what is killed\n"), fp);
@@ -173,7 +174,6 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
         break;
 #endif
     }
-    fputs(_(" -<sig>, --signal <sig>    signal to send (either number or name)\n"), fp);
     fputs(_(" -c, --count               count of matching processes\n"), fp);
     fputs(_(" -f, --full                use full process name to match\n"), fp);
     fputs(_(" -g, --pgroup <PGID,...>   match listed process group IDs\n"), fp);
@@ -184,6 +184,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -O, --older <seconds>     select where older than seconds\n"), fp);
     fputs(_(" -P, --parent <PPID,...>   match only child processes of the given parent\n"), fp);
     fputs(_(" -s, --session <SID,...>   match session IDs\n"), fp);
+    fputs(_("     --signal <sig>        signal to send (either number or name)\n"), fp);
     fputs(_(" -t, --terminal <tty,...>  match by controlling terminal\n"), fp);
     fputs(_(" -u, --euid <ID,...>       match by effective IDs\n"), fp);
     fputs(_(" -U, --uid <ID,...>        match by real IDs\n"), fp);
@@ -823,7 +824,6 @@ static int pidfd_open (pid_t pid, unsigned int flags)
 static void parse_opts (int argc, char **argv)
 {
     char opts[64] = "";
-    int sig;
     int opt;
     int criteria_count = 0;
 
@@ -869,9 +869,6 @@ static void parse_opts (int argc, char **argv)
         {NULL, 0, NULL, 0}
     };
 
-    sig = signal_option(&argc, argv);
-    if (-1 < sig)
-        opt_signal = sig;
 
 #ifdef ENABLE_PIDWAIT
     if (strcmp (program_invocation_short_name, "pidwait") == 0 ||
@@ -882,7 +879,11 @@ static void parse_opts (int argc, char **argv)
 #endif
     if (strcmp (program_invocation_short_name, "pkill") == 0 ||
         strcmp (program_invocation_short_name, "lt-pkill") == 0) {
+        int sig;
         prog_mode = PKILL;
+        sig = signal_option(&argc, argv);
+        if (-1 < sig)
+            opt_signal = sig;
 	strcat (opts, "eq:");
     } else {
         strcat (opts, "lad:vw");
@@ -895,8 +896,14 @@ static void parse_opts (int argc, char **argv)
         switch (opt) {
         case SIGNAL_OPTION:
             opt_signal = signal_name_to_number (optarg);
-            if (opt_signal == -1 && isdigit (optarg[0]))
-                opt_signal = atoi (optarg);
+            if (opt_signal == -1) {
+                if (isdigit (optarg[0]))
+                    opt_signal = atoi (optarg);
+                else {
+                    fprintf(stderr, _("Unknown signal \"%s\"."), optarg);
+                    usage('?');
+                }
+            }
             break;
         case 'e':
             opt_echo = 1;

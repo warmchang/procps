@@ -1,5 +1,6 @@
 procps-ng-NEXT
 ---------------
+  * pgrep: Use only --signal option for signal             Debian #1031765
   * tests: dont compare floats with ==                     issue #271
 
 procps-ng-4.0.3
