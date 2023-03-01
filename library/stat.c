@@ -515,8 +515,9 @@ static int stat_cores_verify (
     int a_cpu, a_core;
     FILE *fp;
 
+    // be tolerant of a missing CORE_FILE ...
     if (!(fp = fopen(CORE_FILE, "r")))
-        return 0;
+        return 1;
     for (;;) {
         if (NULL == fgets(buf, sizeof(buf), fp))
             break;
@@ -525,12 +526,11 @@ static int stat_cores_verify (
             continue;
         sscanf(buf, "processor : %d", &a_cpu);
         for (;;) {
-            if (NULL == fgets(buf, sizeof(buf), fp)) {
-                fclose(fp);
-                errno = EIO;
-                return 0;
-            }
-            if (buf[0] == '\n') {     /* Entry for specific processor is finished */
+            // be tolerant of missing empty line on last processor entry ...
+            if (NULL == fgets(buf, sizeof(buf), fp))
+                goto wrap_up;
+            // be tolerant of a missing 'core id' on any processor entry ...
+            if (buf[0] == '\n') {
                 a_core = a_cpu;
                 break;
             }
@@ -545,6 +545,7 @@ static int stat_cores_verify (
             return 0;
         }
     }
+wrap_up:
     fclose(fp);
     stat_cores_check(info);
     return 1;
@@ -785,6 +786,8 @@ reap_em_again:
     cpu_ptr = info->cpus.hist.tics + i;   // adapt to relocated if reap_em_again
 
     do {
+        static int once_sw;
+
         bp = 1 + strchr(bp, '\n');
         // remember this cpu from last time around
         memcpy(&cpu_ptr->old, &cpu_ptr->new, sizeof(struct stat_jifs));
@@ -806,14 +809,17 @@ reap_em_again:
         }
         stat_derive_unique(cpu_ptr);
 
+        // force a one time core link for cpu0 (if possible) ...
+        if (!once_sw)
+            once_sw = cpu_ptr->saved_id = -1;
+
         /* this happens if cpus are taken offline/brought back online
            so we better force the proper current core association ... */
         if (cpu_ptr->saved_id != cpu_ptr->id) {
-           cpu_ptr->saved_id = cpu_ptr->id;
-           cpu_ptr->core = NULL;
-        }
-        if (!cpu_ptr->core)
+            cpu_ptr->saved_id = cpu_ptr->id;
+            cpu_ptr->core = NULL;
             stat_cores_link(info, cpu_ptr);
+        }
 
 #ifdef CPU_IDLE_FORCED
         // first time through (that priming read) sum_ptr->edge will be zero |
