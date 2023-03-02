@@ -556,7 +556,7 @@ static void bye_bye (const char *str) {
    }
 
    /* we'll only have a 'str' if called by error_exit() |
-      not ever from the sig_endpgm() signal handler ... | */
+      and parse_args(), never from a signal handler ... | */
    if (str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
@@ -4372,8 +4372,9 @@ static void parse_args (int argc, char **argv) {
             Width_mode = (int)tmp;
             continue;
          default:
-            // we'll rely on getopt for any error message ...
-            bye_bye(NULL);
+            /* we'll rely on getopt for any error message while
+               forcing an EXIT_FAILURE with an empty string ... */
+            bye_bye("");
       } // end: switch (ch)
 #ifndef GETOPTFIX_NO
       if (cp) error_exit(fmtmk(N_fmt(UNKNOWN_opts_fmt), cp));
