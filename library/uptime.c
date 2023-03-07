@@ -31,6 +31,12 @@
 #include <time.h>
 #include <unistd.h>
 #include <utmp.h>
+#ifdef WITH_SYSTEMD
+#include <systemd/sd-login.h>
+#endif
+#ifdef WITH_ELOGIND
+#include <elogind/sd-login.h>
+#endif
 
 #include "misc.h"
 #include "procps-private.h"
@@ -44,6 +50,13 @@ static int count_users(void)
 {
     int numuser = 0;
     struct utmp *ut;
+
+#if defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)
+    numuser = sd_get_sessions(NULL);
+
+    if (numuser >= 0 || numuser != ENOENT)
+      return numuser;
+#endif
 
     setutent();
     while ((ut = getutent())) {
@@ -136,8 +149,13 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
     users = count_users();
     procps_loadavg(&av1, &av5, &av15);
 
-    pos += sprintf(upbuf + pos, "%2d %s,  load average: %.2f, %.2f, %.2f",
-        users, users > 1 ? "users" : "user",
+    if (users < 0)
+      pos += sprintf(upbuf + pos, " ? ");
+    else
+      pos += sprintf(upbuf + pos, "%2d ", users);
+
+    pos += sprintf(upbuf + pos, "%s,  load average: %.2f, %.2f, %.2f",
+        users > 1 ? "users" : "user",
         av1, av5, av15);
 
     return upbuf;
@@ -248,4 +266,3 @@ PROCPS_EXPORT char *procps_uptime_sprint_short(void)
     }
     return shortbuf;
 }
-
