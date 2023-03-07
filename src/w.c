@@ -32,8 +32,6 @@
 #include <getopt.h>
 #include <limits.h>
 #include <locale.h>
-#include <locale.h>
-#include <pwd.h>
 #include <pwd.h>
 #include <signal.h>
 #include <stdio.h>
@@ -490,9 +488,10 @@ static void showinfo(
 
     /* force NUL term for printf */
     strncpy(uname, u->ut_user, UT_NAMESIZE);
+    uname[UT_NAMESIZE] = '\0';
 
     if (formtype) {
-        printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, u->ut_line);
+        printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, tty + 5);
         if (from)
             print_from(u, ip_addresses, fromlen);
 #ifdef HAVE_UTMPX_H
@@ -514,8 +513,7 @@ static void showinfo(
         else
             printf("   ?   ");
     } else {
-        printf("%-*.*s%-9.8s", userlen + 1, userlen, u->ut_user,
-               u->ut_line);
+        printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, tty + 5);
         if (from)
             print_from(u, ip_addresses, fromlen);
         if (*u->ut_line == ':')
