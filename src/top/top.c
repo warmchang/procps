@@ -2144,6 +2144,7 @@ static void adj_geometry (void) {
    Graph_mems->style  = Curwin->rc.graph_mems;
 
    fflush(stdout);
+   Frames_signal = BREAK_off;
 } // end: adj_geometry
 
 
@@ -2477,7 +2478,6 @@ static void fields_utility (void) {
 
    spewFI
 signify_that:
-   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -3306,7 +3306,6 @@ static int insp_view_choice (struct pids_stack *p) {
    int key, curlin = 0, curcol = 0;
 
 signify_that:
-   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -3429,7 +3428,6 @@ static void inspection_utility (int pid) {
    // must re-hide cursor since the prompt for a pid made it huge
    putp((Cursor_state = Cap_curs_hide));
 signify_that:
-   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -4613,7 +4611,6 @@ static void wins_colors (void) {
    wins_clrhlp(w, 1);
    putp((Cursor_state = Cap_curs_huge));
 signify_that:
-   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -5268,6 +5265,8 @@ static void bot_item_toggle (int what, const char *head, char sep) {
    if (Bot_what == what) {
       BOT_TOSS;
    } else {
+      // accommodate transition from larger to smaller window
+      Bot_rsvd = 0;
       switch (what) {
          case BOT_ITEM_NS:
             for (i = 0; i < MAXTBL(ns_tab); i++)
@@ -5363,7 +5362,6 @@ static void help_view (void) {
 
    putp((Cursor_state = Cap_curs_huge));
 signify_that:
-   Frames_signal = BREAK_off;
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -5388,7 +5386,6 @@ signify_that:
       case '?': case 'h': case 'H':
          do {
 signify_this:
-            Frames_signal = BREAK_off;
             putp(Cap_clr_scr);
             adj_geometry();
             show_special(1, fmtmk(N_unq(WINDOWS_help_fmt)
@@ -5582,8 +5579,6 @@ static void keys_global (int ch) {
             Winstk[i].begtask = Winstk[i].focus_pid = 0;
          // force an extra procs refresh to avoid %cpu distortions...
          Pseudo_row = PROC_XTRA;
-         // signal that we just corrupted entire screen
-         Frames_signal = BREAK_screen;
          break;
       case 'I':
          if (Cpu_cnt > 1) {
@@ -7360,7 +7355,6 @@ int main (int argc, char *argv[]) {
 
       if (0 < Loops) --Loops;
       if (!Loops) bye_bye(NULL);
-      if (Frames_signal) { Frames_signal = BREAK_off; zap_fieldstab(); continue; }
 
       ts.tv_sec = Rc.delay_time;
       ts.tv_nsec = (Rc.delay_time - (int)Rc.delay_time) * 1000000000;
