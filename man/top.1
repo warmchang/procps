@@ -527,6 +527,9 @@ Depending on your kernel version, the \fBst\fR field may not be shown.
     \fBst\fR : time stolen from this vm by the hypervisor
 .fi
 
+The `sy' value above also reflects the time running a virtual \*(Pu
+for guest operating systems, including those that have been niced.
+
 Beyond the first tasks/threads line, there are alternate \*(PU display
 modes available via the 4-way `t' \*(CT.
 They show an abbreviated summary consisting of these elements:
@@ -537,8 +540,8 @@ They show an abbreviated summary consisting of these elements:
 .fi
 
 Where: a) is the `user' (us + ni) percentage; b) is the `system'
-(sy + hi + si) percentage; c) is the total percentage; and d) is
-one of two visual graphs of those representations.
+(sy + hi + si + guests) percentage; c) is the total percentage;
+and d) is one of two visual graphs of those representations.
 Such graphs also reflect separate `user' and `system' portions.
 
 If the `4' \*(CT is used to yield more than two cpus per line,

@@ -286,6 +286,7 @@ static enum stat_item Stat_items[] = {
    STAT_TIC_DELTA_NICE,     STAT_TIC_DELTA_IDLE,
    STAT_TIC_DELTA_IOWAIT,   STAT_TIC_DELTA_IRQ,
    STAT_TIC_DELTA_SOFTIRQ,  STAT_TIC_DELTA_STOLEN,
+   STAT_TIC_DELTA_GUEST,    STAT_TIC_DELTA_GUEST_NICE,
    STAT_TIC_SUM_DELTA_USER, STAT_TIC_SUM_DELTA_SYSTEM,
 #ifdef CORE_TYPE_NO
    STAT_TIC_SUM_DELTA_TOTAL };
@@ -298,6 +299,7 @@ enum Rel_statitems {
    stat_NI, stat_IL,
    stat_IO, stat_IR,
    stat_SI, stat_ST,
+   stat_GU, stat_GN,
    stat_SUM_USR, stat_SUM_SYS,
 #ifdef CORE_TYPE_NO
    stat_SUM_TOT };
@@ -6339,6 +6341,11 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
    tot_frme = rSv(stat_SUM_TOT);
    if (1 > tot_frme) idl_frme = tot_frme = 1;
    scale = 100.0 / (float)tot_frme;
+
+   /* account for VM tics not otherwise provided for ...
+      ( with xtra-procps-debug.h, can't use PID_VAL w/ assignment ) */
+   this->head[stat_SY].result.sl_int += rSv(stat_GU) + rSv(stat_GN);
+   this->head[stat_SUM_SYS].result.sl_int += rSv(stat_GU) + rSv(stat_GN);
 
    /* display some kinda' cpu state percentages
       (who or what is explained by the passed prefix) */
