@@ -44,12 +44,12 @@ static void print_uptime_since()
     /* Get the current time and convert it to a double */
 	if (gettimeofday(&tim, NULL) != 0)
         xerr(EXIT_FAILURE, "gettimeofday");
-    now = tim.tv_sec + (tim.tv_usec / 1000000.0);
+    now = (tim.tv_sec * 1000000.0) + tim.tv_usec;
 
     /* Get the uptime and calculate when that was */
 	if (procps_uptime(&uptime_secs, &idle_secs) < 0)
 		xerr(EXIT_FAILURE, _("Cannot get system uptime"));
-    up_since_secs = (time_t) ((now - uptime_secs) + 0.5);
+    up_since_secs = (time_t) ((now/1000000.0) - uptime_secs);
 
     /* Show this */
 	if ((up_since = localtime(&up_since_secs)) == NULL)
