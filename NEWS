@@ -1,7 +1,7 @@
 procps-ng-NEXT
 ---------------
   * library (API & ABI unchanged)
-    tolerates all potential 'cpuinfo' formats
+    tolerates all potential 'cpuinfo' formats              issue #272
   * pgrep: Use only --signal option for signal             Debian #1031765
   * tests: dont compare floats with ==                     issue #271
   * top: bad command line arguments yield EXIT_FAILURE     issue #273
