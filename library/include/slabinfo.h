@@ -40,7 +40,7 @@ enum slabinfo_item {
     SLAB_ACTIVE_SLABS,          //    u_int         "
     SLAB_PAGES_PER_SLAB,        //    u_int         "
     SLAB_PERCENT_USED,          //    u_int        derived from ACTIVE_OBJS / NUM_OBJS
-    SLAB_SIZE_TOTAL,            //   ul_int        derived from page size * NUM_OBJS * PAGES_PER_SLAB
+    SLAB_SIZE_TOTAL,            //   ul_int        derived from page size * NUMS_SLABS * PAGES_PER_SLAB
 
     SLABS_CACHES_TOTAL,         //    u_int        derived from all caches
     SLABS_CACHES_ACTIVE,        //    u_int         "
