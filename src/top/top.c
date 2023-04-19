@@ -6396,6 +6396,8 @@ static int sum_unify (struct stat_stack *this, int nobuf) {
    stack[stat_IR].result.sl_int += rSv(stat_IR, sl_int);
    stack[stat_SI].result.sl_int += rSv(stat_SI, sl_int);
    stack[stat_ST].result.sl_int += rSv(stat_ST, sl_int);
+   stack[stat_GU].result.sl_int += rSv(stat_GU, sl_int);
+   stack[stat_GN].result.sl_int += rSv(stat_GN, sl_int);
    stack[stat_SUM_USR].result.sl_int += rSv(stat_SUM_USR, sl_int);
    stack[stat_SUM_SYS].result.sl_int += rSv(stat_SUM_SYS, sl_int);
    stack[stat_SUM_TOT].result.sl_int += rSv(stat_SUM_TOT, sl_int);
