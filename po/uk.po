@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-4.0.3-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2023-02-08 18:31+1100\n"
+"POT-Creation-Date: 2023-05-02 20:39+1000\n"
 "PO-Revision-Date: 2023-01-29 13:14+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -24,122 +24,149 @@ msgstr ""
 msgid "write error"
 msgstr "помилка під час спроби запису"
 
-#: src/free.c:73 src/slabtop.c:106 src/uptime.c:65
+#: src/free.c:74 src/slabtop.c:106 src/uptime.c:65
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [параметри]\n"
 
-#: src/free.c:75
+#: src/free.c:76
 msgid " -b, --bytes         show output in bytes\n"
 msgstr " -b, --bytes         вивести дані у байтах\n"
 
-#: src/free.c:76
+#: src/free.c:77
 msgid "     --kilo          show output in kilobytes\n"
 msgstr "     --kilo          вивести дані у кілобайтах\n"
 
-#: src/free.c:77
+#: src/free.c:78
 msgid "     --mega          show output in megabytes\n"
 msgstr "     --mega          вивести дані у мегабайтах\n"
 
-#: src/free.c:78
+#: src/free.c:79
 msgid "     --giga          show output in gigabytes\n"
 msgstr "     --giga          вивести дані у гігабайтах\n"
 
-#: src/free.c:79
+#: src/free.c:80
 msgid "     --tera          show output in terabytes\n"
 msgstr "     --tera          вивести дані у терабайтах\n"
 
-#: src/free.c:80
+#: src/free.c:81
 msgid "     --peta          show output in petabytes\n"
 msgstr "     --peta          вивести дані у петабайтах\n"
 
-#: src/free.c:81
+#: src/free.c:82
 msgid " -k, --kibi          show output in kibibytes\n"
 msgstr " -k, --kibi          вивести дані у кібібайтах\n"
 
-#: src/free.c:82
+#: src/free.c:83
 msgid " -m, --mebi          show output in mebibytes\n"
 msgstr " -m, --mebi          вивести дані у мебібайтах\n"
 
-#: src/free.c:83
+#: src/free.c:84
 msgid " -g, --gibi          show output in gibibytes\n"
 msgstr " -g, --gibi          вивести дані у гібібайтах\n"
 
-#: src/free.c:84
+#: src/free.c:85
 msgid "     --tebi          show output in tebibytes\n"
 msgstr "     --tebi          вивести дані у тебібайтах\n"
 
-#: src/free.c:85
+#: src/free.c:86
 msgid "     --pebi          show output in pebibytes\n"
 msgstr "     --pebi          вивести дані у пебібайтах\n"
 
-#: src/free.c:86
+#: src/free.c:87
 msgid " -h, --human         show human-readable output\n"
 msgstr " -h, --human         вивести дані у зручному для читання вигляді\n"
 
-#: src/free.c:87
+#: src/free.c:88
 msgid "     --si            use powers of 1000 not 1024\n"
 msgstr ""
 "     --si            використовувати одиниці з кратністю 1000, а не 1024\n"
 
-#: src/free.c:88
+#: src/free.c:89
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
 msgstr ""
 " -l, --lohi          вивести докладні дані щодо використання верхньої і "
 "нижньої областей пам’яті\n"
 
-#: src/free.c:89
+#: src/free.c:90
+#, fuzzy
+msgid " -L, --line          show output on a single line\n"
+msgstr " -k, --kibi          вивести дані у кібібайтах\n"
+
+#: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
 msgstr " -t, --total         вивести загальні дані для RAM + свопінґ\n"
 
-#: src/free.c:90
+#: src/free.c:92
 msgid " -v, --committed     show committed memory and commit limit\n"
 msgstr " -v, --committed     показати внесену пам'ять та обмеження внесення\n"
 
-#: src/free.c:91
+#: src/free.c:93
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
 msgstr " -s N, --seconds N   повторювати виведення кожні N секунд\n"
 
-#: src/free.c:92
+#: src/free.c:94
 msgid " -c N, --count N     repeat printing N times, then exit\n"
 msgstr ""
 " -c N, --count N     повторити виведення N разів, потім завершити роботу\n"
 
-#: src/free.c:93
+#: src/free.c:95
 msgid " -w, --wide          wide output\n"
 msgstr " -w, --wide          виведення у широкому форматі\n"
 
-#: src/free.c:95 src/w.c:553
+#: src/free.c:97 src/w.c:551
 msgid "     --help     display this help and exit\n"
 msgstr "     --help     показати цю довідку та вийти\n"
 
-#: src/free.c:170
+#: src/free.c:172
 msgid "Multiple unit options don't make sense."
 msgstr "Зазначення декількох параметрів одиниць не має сенсу."
 
-#: src/free.c:335
+#: src/free.c:341
 #, c-format
 msgid "seconds argument `%s' is not positive number"
 msgstr "аргумент секунд, «%s», не є додатним числом"
 
-#: src/free.c:341
+#: src/free.c:347
 msgid "failed to parse count argument"
 msgstr "не вдалося обробити аргумент кількості"
 
-#: src/free.c:344
+#: src/free.c:350
 #, c-format
 msgid "failed to parse count argument: '%s'"
 msgstr "не вдалося обробити аргумент кількості: «%s»"
 
-#: src/free.c:364
+#: src/free.c:370
 msgid "Memory information file /proc/meminfo does not exist"
 msgstr "Файла даних щодо пам'яті /proc/meminfo не існує"
 
-#: src/free.c:367 src/vmstat.c:379 src/vmstat.c:873
+#: src/free.c:373 src/vmstat.c:379 src/vmstat.c:873
 msgid "Unable to create meminfo structure"
 msgstr "Не вдалося створити структуру meminfo"
 
-#: src/free.c:374
+#. Translation Hint: These are shortened column headers
+#. * that are all 7 characters long. Use spaces and right
+#. * align if the translation is shorter.
+#.
+#: src/free.c:381
+#, fuzzy
+msgid "SwapUse"
+msgstr "Своп"
+
+#: src/free.c:382
+#, fuzzy
+msgid "CachUse"
+msgstr "Кеш"
+
+#: src/free.c:384
+msgid " MemUse"
+msgstr ""
+
+#: src/free.c:385
+msgid "MemFree"
+msgstr ""
+
+#: src/free.c:395
 #, c-format
 msgid ""
 "               total        used        free      shared     buffers       "
@@ -148,7 +175,7 @@ msgstr ""
 "               загалом      використ.   вільна    спільна    буфери        "
 "кеш     дост."
 
-#: src/free.c:376
+#: src/free.c:397
 #, c-format
 msgid ""
 "               total        used        free      shared  buff/cache   "
@@ -156,27 +183,27 @@ msgid ""
 msgstr ""
 "               загалом      використ.   вільна    спільна буфери/кеш   дост."
 
-#: src/free.c:379
+#: src/free.c:400
 msgid "Mem:"
 msgstr "Пам.:"
 
-#: src/free.c:402
+#: src/free.c:423
 msgid "Low:"
 msgstr "Нижня:"
 
-#: src/free.c:408
+#: src/free.c:429
 msgid "High:"
 msgstr "Верхня:"
 
-#: src/free.c:415
+#: src/free.c:436
 msgid "Swap:"
 msgstr "Своп.:"
 
-#: src/free.c:422
+#: src/free.c:443
 msgid "Total:"
 msgstr "Загалом:"
 
-#: src/free.c:435
+#: src/free.c:456
 msgid "Comm:"
 msgstr "Comm:"
 
@@ -228,7 +255,7 @@ msgstr "має бути цілим значенням, яке слід пере�
 msgid "invalid argument %c"
 msgstr "некоректний аргумент, %c"
 
-#: src/kill.c:146 src/pgrep.c:770 src/pidof.c:246 src/pidof.c:286
+#: src/kill.c:146 src/pgrep.c:771 src/pidof.c:246 src/pidof.c:286
 #: src/sysctl.c:870
 msgid "internal error"
 msgstr "внутрішня помилка"
@@ -270,30 +297,31 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         вивести список усіх TID\n"
 
 #: src/pgrep.c:166
+#, fuzzy
+msgid " -<sig>                    signal to send (either number or name)\n"
+msgstr ""
+" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
+"назви)\n"
+
+#: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
 msgstr ""
 " -H, --require-handler     встановлювати відповідність, лише якщо є обробник "
 "сигналу\n"
 
-#: src/pgrep.c:167
+#: src/pgrep.c:168
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr ""
 " -q, --queue <значення>    ціле значення, яке має бути надіслано із "
 "сигналом\n"
 
-#: src/pgrep.c:168
+#: src/pgrep.c:169
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                вивести дані щодо того, що було завершено\n"
 
-#: src/pgrep.c:172
+#: src/pgrep.c:173
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr " -e, --echo                вивести PID до очікування\n"
-
-#: src/pgrep.c:176
-msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr ""
-" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
-"назви)\n"
 
 #: src/pgrep.c:177
 msgid " -c, --count               count of matching processes\n"
@@ -346,50 +374,57 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   відповідність за ідентифікаторами сеансу\n"
 
 #: src/pgrep.c:187
+#, fuzzy
+msgid "     --signal <sig>        signal to send (either number or name)\n"
+msgstr ""
+" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
+"назви)\n"
+
+#: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty,...>  відповідність за терміналом керування\n"
 
-#: src/pgrep.c:188
+#: src/pgrep.c:189
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr ""
 " -u, --euid <ID,...>       відповідність за ефективними ідентифікаторами\n"
 
-#: src/pgrep.c:189
+#: src/pgrep.c:190
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr ""
 " -U, --uid <ID,...>        відповідність за справжніми ідентифікаторами\n"
 
-#: src/pgrep.c:190
+#: src/pgrep.c:191
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr ""
 " -x, --exact               встановити точну відповідність з назвою команди\n"
 
-#: src/pgrep.c:191
+#: src/pgrep.c:192
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <файл>      прочитати PID з файла\n"
 
-#: src/pgrep.c:192
+#: src/pgrep.c:193
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 " -L, --logpidfile          завершити з помилкою, якщо файл PID не "
 "заблоковано\n"
 
-#: src/pgrep.c:193
+#: src/pgrep.c:194
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr " -r, --runstates <стан>    пошук за станами запуску [D,S,Z,...]\n"
 
-#: src/pgrep.c:194
+#: src/pgrep.c:195
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
 msgstr ""
 " -A, --ignore-ancestors    виключити наших попередників з результатів\n"
 
-#: src/pgrep.c:195
+#: src/pgrep.c:196
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr ""
 " --cgroup <група,...>      встановити відповідність за назвами cgroup версії "
 "2\n"
 
-#: src/pgrep.c:196
+#: src/pgrep.c:197
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -397,7 +432,7 @@ msgstr ""
 " --ns <PID>                відповідність процесам, що належать тому самому\n"
 "                           простору назв, що і <PID>\n"
 
-#: src/pgrep.c:198
+#: src/pgrep.c:199
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -410,54 +445,54 @@ msgstr ""
 "                           Можливі простори назв: ipc, mnt, net, pid, user, "
 "uts\n"
 
-#: src/pgrep.c:223 src/pgrep.c:678 src/w.c:410
+#: src/pgrep.c:224 src/pgrep.c:679 src/w.c:408
 msgid "Unable to create pid info structure"
 msgstr "Не вдалося створити структуру відомостей щодо pid"
 
-#: src/pgrep.c:387
+#: src/pgrep.c:388
 #, c-format
 msgid "invalid user name: %s"
 msgstr "некоректна назва облікового запису користувача: %s"
 
-#: src/pgrep.c:404
+#: src/pgrep.c:405
 #, c-format
 msgid "invalid group name: %s"
 msgstr "некоректна назва групи: %s"
 
-#: src/pgrep.c:415
+#: src/pgrep.c:416
 #, c-format
 msgid "invalid process group: %s"
 msgstr "некоректна група процесу: %s"
 
-#: src/pgrep.c:427
+#: src/pgrep.c:428
 #, c-format
 msgid "invalid session id: %s"
 msgstr "некоректний ідентифікатор сеансу: %s"
 
-#: src/pgrep.c:439
+#: src/pgrep.c:440
 #, c-format
 msgid "not a number: %s"
 msgstr "не є числом: %s"
 
-#: src/pgrep.c:489
+#: src/pgrep.c:490
 #, c-format
 msgid "not a hex string: %s"
 msgstr "не є шістнадцятковим рядком: %s"
 
-#: src/pgrep.c:524 src/skill.c:162
+#: src/pgrep.c:525 src/skill.c:162
 msgid "Unable to read process namespace information"
 msgstr "Не вдалося прочитати дані щодо простору назв процесу"
 
-#: src/pgrep.c:611
+#: src/pgrep.c:612
 #, c-format
 msgid "regex error: %s"
 msgstr "помилка у формальному виразі: %s"
 
-#: src/pgrep.c:673
+#: src/pgrep.c:674
 msgid "Error reading reference namespace information\n"
 msgstr "Помилка під час спроби читання даних щодо еталонного простору назв\n"
 
-#: src/pgrep.c:787
+#: src/pgrep.c:788
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -468,7 +503,12 @@ msgstr ""
 "того, що нічого не буде знайдено\n"
 "Спробуйте параметр «%s -f», щоб виконати пошук за повним рядком команди."
 
-#: src/pgrep.c:1061
+#: src/pgrep.c:903
+#, fuzzy, c-format
+msgid "Unknown signal \"%s\"."
+msgstr "невідома назва сигналу, %s"
+
+#: src/pgrep.c:1068
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -477,7 +517,7 @@ msgstr ""
 "-L без -F позбавлений сенсу\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:1068
+#: src/pgrep.c:1075
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -486,7 +526,7 @@ msgstr ""
 "некоректний pidfile\n"
 "Спробуйте команду «%s --help», щоб дізнатися більше."
 
-#: src/pgrep.c:1077
+#: src/pgrep.c:1084
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -495,7 +535,7 @@ msgstr ""
 "можна вказувати лише один шаблон\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:1081
+#: src/pgrep.c:1088
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -504,31 +544,31 @@ msgstr ""
 "не вказано критеріїв відповідності\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:1133
+#: src/pgrep.c:1140
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "роботу %s завершено (pid %lu)\n"
 
-#: src/pgrep.c:1140
+#: src/pgrep.c:1147
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "не вдалося завершити роботу pid %ld"
 
-#: src/pgrep.c:1152
+#: src/pgrep.c:1159
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "очікуємо на %s (pid %lu)\n"
 
-#: src/pgrep.c:1156
+#: src/pgrep.c:1163
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr "pidfd_open() не реалізовано у Linux < 5.3"
 
-#: src/pgrep.c:1159
+#: src/pgrep.c:1166
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "не вдалося відкрити pid %ld"
 
-#: src/pgrep.c:1173
+#: src/pgrep.c:1180
 msgid "epoll_wait failed"
 msgstr "помилка epoll_wait"
 
@@ -1763,7 +1803,7 @@ msgstr "некоректний ідентифікатор процесу: %s"
 msgid "Unable to create pid Pids_info structure"
 msgstr "Unable to create pid Pids_info structure"
 
-#: src/skill.c:288 src/w.c:413
+#: src/skill.c:288 src/w.c:411
 msgid "Unable to load process information"
 msgstr "Не вдалося завантажити дані щодо процесу"
 
@@ -2341,7 +2381,7 @@ msgid "Effective User Id"
 msgstr "Ідентифікатор ефективного користувача"
 
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:161 src/w.c:686
+#: src/top/top_nls.c:161 src/w.c:684
 msgid "USER"
 msgstr "КОР."
 
@@ -4747,60 +4787,60 @@ msgstr "помилка обробки unicode\n"
 msgid "unicode handling error (malloc)\n"
 msgstr "помилка обробки unicode (malloc)\n"
 
-#: src/w.c:257 src/w.c:272
+#: src/w.c:255 src/w.c:270
 #, c-format
 msgid " %2lludays"
 msgstr " %2lluднів"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
-#: src/w.c:266 src/w.c:276
+#: src/w.c:264 src/w.c:274
 #, c-format
 msgid " %2llu:%02um"
 msgstr " %2llu:%02uхв"
 
 #. Translation Hint: Seconds:Centiseconds
-#: src/w.c:284
+#: src/w.c:282
 #, c-format
 msgid " %2llu.%02us"
 msgstr " %2llu.%02uс"
 
-#: src/w.c:543
+#: src/w.c:541
 #, c-format
 msgid " %s [options] [user]\n"
 msgstr " %s [параметри] [користувач]\n"
 
-#: src/w.c:545
+#: src/w.c:543
 msgid " -h, --no-header     do not print header\n"
 msgstr " -h, --no-header     не виводити заголовок\n"
 
-#: src/w.c:546
+#: src/w.c:544
 msgid " -u, --no-current    ignore current process username\n"
 msgstr " -u, --no-current    ігнорувати ім’я користувача поточного процесу\n"
 
-#: src/w.c:547
+#: src/w.c:545
 msgid " -s, --short         short format\n"
 msgstr " -s, --short         скорочений формат\n"
 
-#: src/w.c:548
+#: src/w.c:546
 msgid " -f, --from          show remote hostname field\n"
 msgstr " -f, --from          вивести поле назви віддаленого вузла\n"
 
-#: src/w.c:549
+#: src/w.c:547
 msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     виведення даних у застарілому форматі\n"
 
-#: src/w.c:550
+#: src/w.c:548
 msgid ""
 " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
 msgstr ""
 " -i, --ip-addr       виводити IP-адресу замість назви вузла (якщо можна)\n"
 
-#: src/w.c:551
+#: src/w.c:549
 msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          вивести ідентифікатори процесів у WHAT\n"
 
-#: src/w.c:650
+#: src/w.c:648
 #, c-format
 msgid ""
 "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
@@ -4808,7 +4848,7 @@ msgstr ""
 "Значення довжини для середовища користувача, PROCPS_USERLEN, має належати "
 "діапазону від 8 до %i, ігноруємо.\n"
 
-#: src/w.c:660
+#: src/w.c:658
 #, c-format
 msgid ""
 "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
@@ -4818,21 +4858,21 @@ msgstr ""
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
-#: src/w.c:686
+#: src/w.c:684
 #, c-format
 msgid "%-*s TTY      "
 msgstr "%-*s TTY      "
 
-#: src/w.c:688
+#: src/w.c:686
 msgid "FROM"
 msgstr "З"
 
-#: src/w.c:690
+#: src/w.c:688
 #, c-format
 msgid "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 msgstr "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 
-#: src/w.c:692
+#: src/w.c:690
 #, c-format
 msgid "   IDLE WHAT\n"
 msgstr "   IDLE WHAT\n"

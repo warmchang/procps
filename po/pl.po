@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-4.0.3-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2023-02-08 18:31+1100\n"
+"POT-Creation-Date: 2023-05-02 20:39+1000\n"
 "PO-Revision-Date: 2023-01-29 20:15+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
@@ -21,119 +21,146 @@ msgstr ""
 msgid "write error"
 msgstr "błąd zapisu"
 
-#: src/free.c:73 src/slabtop.c:106 src/uptime.c:65
+#: src/free.c:74 src/slabtop.c:106 src/uptime.c:65
 #, c-format
 msgid " %s [options]\n"
 msgstr " %s [opcje]\n"
 
-#: src/free.c:75
+#: src/free.c:76
 msgid " -b, --bytes         show output in bytes\n"
 msgstr " -b, --bytes         wyjście w bajtach\n"
 
-#: src/free.c:76
+#: src/free.c:77
 msgid "     --kilo          show output in kilobytes\n"
 msgstr "     --kilo          wyjście w kilobajtach\n"
 
-#: src/free.c:77
+#: src/free.c:78
 msgid "     --mega          show output in megabytes\n"
 msgstr "     --mega          wyjście w megabajtach\n"
 
-#: src/free.c:78
+#: src/free.c:79
 msgid "     --giga          show output in gigabytes\n"
 msgstr "     --giga          wyjście w gigabajtach\n"
 
-#: src/free.c:79
+#: src/free.c:80
 msgid "     --tera          show output in terabytes\n"
 msgstr "     --tera          wyjście w terabajtach\n"
 
-#: src/free.c:80
+#: src/free.c:81
 msgid "     --peta          show output in petabytes\n"
 msgstr "     --peta          wyjście w petabajtach\n"
 
-#: src/free.c:81
+#: src/free.c:82
 msgid " -k, --kibi          show output in kibibytes\n"
 msgstr " -k, --kibi          wyjście w kibibajtach\n"
 
-#: src/free.c:82
+#: src/free.c:83
 msgid " -m, --mebi          show output in mebibytes\n"
 msgstr " -m, --mebi          wyjście w mebibajtach\n"
 
-#: src/free.c:83
+#: src/free.c:84
 msgid " -g, --gibi          show output in gibibytes\n"
 msgstr " -g, --gibi          wyjście w gibibajtach\n"
 
-#: src/free.c:84
+#: src/free.c:85
 msgid "     --tebi          show output in tebibytes\n"
 msgstr "     --tebi          wyjście w tebibajtach\n"
 
-#: src/free.c:85
+#: src/free.c:86
 msgid "     --pebi          show output in pebibytes\n"
 msgstr "     --pebi          wyjście w pebibajtach\n"
 
-#: src/free.c:86
+#: src/free.c:87
 msgid " -h, --human         show human-readable output\n"
 msgstr " -h, --human         wyjście czytelne dla człowieka\n"
 
-#: src/free.c:87
+#: src/free.c:88
 msgid "     --si            use powers of 1000 not 1024\n"
 msgstr "     --si            użycie potęg 1000 zamiast 1024\n"
 
-#: src/free.c:88
+#: src/free.c:89
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
 msgstr ""
 " -l, --lohi          szczegółowe statystyki niskiej i wysokiej pamięci\n"
 
-#: src/free.c:89
+#: src/free.c:90
+#, fuzzy
+msgid " -L, --line          show output on a single line\n"
+msgstr " -k, --kibi          wyjście w kibibajtach\n"
+
+#: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
 msgstr " -t, --total         całkowity rozmiar RAM-u + obszaru wymiany\n"
 
-#: src/free.c:90
+#: src/free.c:92
 msgid " -v, --committed     show committed memory and commit limit\n"
 msgstr " -v, --committed     rozmiar i limit pamięci fizycznie zajętej\n"
 
-#: src/free.c:91
+#: src/free.c:93
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
 msgstr " -s N, --seconds N   powtarzanie wypisywania co N sekund\n"
 
-#: src/free.c:92
+#: src/free.c:94
 msgid " -c N, --count N     repeat printing N times, then exit\n"
 msgstr " -c N, --count N     powtórzenie wypisania N razy i zakończenie\n"
 
-#: src/free.c:93
+#: src/free.c:95
 msgid " -w, --wide          wide output\n"
 msgstr " -w, --wide          szeroki format wyjścia\n"
 
-#: src/free.c:95 src/w.c:553
+#: src/free.c:97 src/w.c:551
 msgid "     --help     display this help and exit\n"
 msgstr "     --help     wyświetlenie tego opisu i zakończenie\n"
 
-#: src/free.c:170
+#: src/free.c:172
 msgid "Multiple unit options don't make sense."
 msgstr "Podanie wielu opcji ustawiających jednostkę nie ma sensu."
 
-#: src/free.c:335
+#: src/free.c:341
 #, c-format
 msgid "seconds argument `%s' is not positive number"
 msgstr "argument liczby sekund `%s' nie jest liczbą dodatnią"
 
-#: src/free.c:341
+#: src/free.c:347
 msgid "failed to parse count argument"
 msgstr "niezrozumiały argument liczby powtórzeń"
 
-#: src/free.c:344
+#: src/free.c:350
 #, c-format
 msgid "failed to parse count argument: '%s'"
 msgstr "niezrozumiały argument liczby powtórzeń: '%s'"
 
-#: src/free.c:364
+#: src/free.c:370
 msgid "Memory information file /proc/meminfo does not exist"
 msgstr "Plik informacji o pamięci /proc/meminfo nie istnieje"
 
-#: src/free.c:367 src/vmstat.c:379 src/vmstat.c:873
+#: src/free.c:373 src/vmstat.c:379 src/vmstat.c:873
 msgid "Unable to create meminfo structure"
 msgstr "Nie można utworzyć struktury meminfo"
 
-#: src/free.c:374
+#. Translation Hint: These are shortened column headers
+#. * that are all 7 characters long. Use spaces and right
+#. * align if the translation is shorter.
+#.
+#: src/free.c:381
+#, fuzzy
+msgid "SwapUse"
+msgstr "Swap"
+
+#: src/free.c:382
+#, fuzzy
+msgid "CachUse"
+msgstr "Cache"
+
+#: src/free.c:384
+msgid " MemUse"
+msgstr ""
+
+#: src/free.c:385
+msgid "MemFree"
+msgstr ""
+
+#: src/free.c:395
 #, c-format
 msgid ""
 "               total        used        free      shared     buffers       "
@@ -142,7 +169,7 @@ msgstr ""
 "               razem       użyte       wolne    dzielone      bufory     w "
 "cache    dostępne"
 
-#: src/free.c:376
+#: src/free.c:397
 #, c-format
 msgid ""
 "               total        used        free      shared  buff/cache   "
@@ -151,27 +178,27 @@ msgstr ""
 "               razem       użyte       wolne    dzielone   buf/cache    "
 "dostępne"
 
-#: src/free.c:379
+#: src/free.c:400
 msgid "Mem:"
 msgstr "Pamięć:"
 
-#: src/free.c:402
+#: src/free.c:423
 msgid "Low:"
 msgstr "Niska:"
 
-#: src/free.c:408
+#: src/free.c:429
 msgid "High:"
 msgstr "Wysoka:"
 
-#: src/free.c:415
+#: src/free.c:436
 msgid "Swap:"
 msgstr "Wymiana:"
 
-#: src/free.c:422
+#: src/free.c:443
 msgid "Total:"
 msgstr "Razem:"
 
-#: src/free.c:435
+#: src/free.c:456
 msgid "Comm:"
 msgstr "Zajęta:"
 
@@ -223,7 +250,7 @@ msgstr "musi być liczbą całkowitą do przekazania z sygnałem."
 msgid "invalid argument %c"
 msgstr "błędny argument %c"
 
-#: src/kill.c:146 src/pgrep.c:770 src/pidof.c:246 src/pidof.c:286
+#: src/kill.c:146 src/pgrep.c:771 src/pidof.c:246 src/pidof.c:286
 #: src/sysctl.c:870
 msgid "internal error"
 msgstr "błąd wewnętrzny"
@@ -264,25 +291,26 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         wypisanie wszystkich TID-ów\n"
 
 #: src/pgrep.c:166
+#, fuzzy
+msgid " -<sig>                    signal to send (either number or name)\n"
+msgstr " -<sig>, --signal <sig>    sygnał do wysłania (numer lub nazwa)\n"
+
+#: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
 msgstr ""
 " -H, --require-handler     dopasowanie tylko, jeśli jest obsługa sygnału\n"
 
-#: src/pgrep.c:167
+#: src/pgrep.c:168
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
 msgstr " -q, --queue <wartość>     wartość całkowita do wysłania z sygnałem\n"
 
-#: src/pgrep.c:168
+#: src/pgrep.c:169
 msgid " -e, --echo                display what is killed\n"
 msgstr " -e, --echo                wyświetlenie, co jest zabijane\n"
 
-#: src/pgrep.c:172
+#: src/pgrep.c:173
 msgid " -e, --echo                display PIDs before waiting\n"
 msgstr " -e, --echo                wyświetlenie PIDów przed oczekiwaniem\n"
-
-#: src/pgrep.c:176
-msgid " -<sig>, --signal <sig>    signal to send (either number or name)\n"
-msgstr " -<sig>, --signal <sig>    sygnał do wysłania (numer lub nazwa)\n"
 
 #: src/pgrep.c:177
 msgid " -c, --count               count of matching processes\n"
@@ -331,44 +359,49 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   dopasowanie ID sesji\n"
 
 #: src/pgrep.c:187
+#, fuzzy
+msgid "     --signal <sig>        signal to send (either number or name)\n"
+msgstr " -<sig>, --signal <sig>    sygnał do wysłania (numer lub nazwa)\n"
+
+#: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
 msgstr " -t, --terminal <tty,...>  dopasowanie po terminalu sterującym\n"
 
-#: src/pgrep.c:188
+#: src/pgrep.c:189
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
 msgstr " -u, --euid <ID,...>       dopasowanie wg efektywnego ID\n"
 
-#: src/pgrep.c:189
+#: src/pgrep.c:190
 msgid " -U, --uid <ID,...>        match by real IDs\n"
 msgstr " -U, --uid <ID,...>        dopasowanie wg rzeczywistego ID\n"
 
-#: src/pgrep.c:190
+#: src/pgrep.c:191
 msgid " -x, --exact               match exactly with the command name\n"
 msgstr " -x, --exact               dokładne dopasowanie nazwy polecenia\n"
 
-#: src/pgrep.c:191
+#: src/pgrep.c:192
 msgid " -F, --pidfile <file>      read PIDs from file\n"
 msgstr " -F, --pidfile <plik>      odczyt PID-ów z pliku\n"
 
-#: src/pgrep.c:192
+#: src/pgrep.c:193
 msgid " -L, --logpidfile          fail if PID file is not locked\n"
 msgstr ""
 " -L, --logpidfile          niepowodzenie, jeśli plik PID nie jest "
 "zablokowany\n"
 
-#: src/pgrep.c:193
+#: src/pgrep.c:194
 msgid " -r, --runstates <state>   match runstates [D,S,Z,...]\n"
 msgstr " -r, --runstates <stan>    dopasowanie stanu procesu [D,S,Z,...]\n"
 
-#: src/pgrep.c:194
+#: src/pgrep.c:195
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
 msgstr " -A, --ignore-ancestors    wykluczenie naszych przodków z wyników\n"
 
-#: src/pgrep.c:195
+#: src/pgrep.c:196
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
 msgstr " --cgroup <grp,...>        dopasowanie po nazwach cgroup v2\n"
 
-#: src/pgrep.c:196
+#: src/pgrep.c:197
 msgid ""
 " --ns <PID>                match the processes that belong to the same\n"
 "                           namespace as <pid>\n"
@@ -376,7 +409,7 @@ msgstr ""
 " --ns <pid>                dopasowanie procesów należących do tej samej\n"
 "                           przestrzeni nazw, co <pid>\n"
 
-#: src/pgrep.c:198
+#: src/pgrep.c:199
 msgid ""
 " --nslist <ns,...>         list which namespaces will be considered for\n"
 "                           the --ns option.\n"
@@ -389,54 +422,54 @@ msgstr ""
 "                           Dostępne przestrzenie: ipc, mnt, net, pid, user, "
 "uts\n"
 
-#: src/pgrep.c:223 src/pgrep.c:678 src/w.c:410
+#: src/pgrep.c:224 src/pgrep.c:679 src/w.c:408
 msgid "Unable to create pid info structure"
 msgstr "Nie można utworzyć struktury informacji pid"
 
-#: src/pgrep.c:387
+#: src/pgrep.c:388
 #, c-format
 msgid "invalid user name: %s"
 msgstr "błędna nazwa użytkownika: %s"
 
-#: src/pgrep.c:404
+#: src/pgrep.c:405
 #, c-format
 msgid "invalid group name: %s"
 msgstr "błędna nazwa grupy: %s"
 
-#: src/pgrep.c:415
+#: src/pgrep.c:416
 #, c-format
 msgid "invalid process group: %s"
 msgstr "błędna grupa procesów: %s"
 
-#: src/pgrep.c:427
+#: src/pgrep.c:428
 #, c-format
 msgid "invalid session id: %s"
 msgstr "błędny identyfikator sesji: %s"
 
-#: src/pgrep.c:439
+#: src/pgrep.c:440
 #, c-format
 msgid "not a number: %s"
 msgstr "nie podano liczby: %s"
 
-#: src/pgrep.c:489
+#: src/pgrep.c:490
 #, c-format
 msgid "not a hex string: %s"
 msgstr "to nie łańcuch szesnastkowy: %s"
 
-#: src/pgrep.c:524 src/skill.c:162
+#: src/pgrep.c:525 src/skill.c:162
 msgid "Unable to read process namespace information"
 msgstr "Nie można odczytać informacji o przestrzeni nazw procesu"
 
-#: src/pgrep.c:611
+#: src/pgrep.c:612
 #, c-format
 msgid "regex error: %s"
 msgstr "błąd wyrażenia regularnego: %s"
 
-#: src/pgrep.c:673
+#: src/pgrep.c:674
 msgid "Error reading reference namespace information\n"
 msgstr "Błąd przy odczycie informacji o przestrzeni nazw odniesienia\n"
 
-#: src/pgrep.c:787
+#: src/pgrep.c:788
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -447,7 +480,12 @@ msgstr ""
 "dopasowany\n"
 "Aby dopasowywać do pełnej linii poleceń, można spróbować opcji `%s -f'."
 
-#: src/pgrep.c:1061
+#: src/pgrep.c:903
+#, fuzzy, c-format
+msgid "Unknown signal \"%s\"."
+msgstr "nieznana nazwa sygnału %s"
+
+#: src/pgrep.c:1068
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -456,7 +494,7 @@ msgstr ""
 "-L bez -F nie ma sensu\n"
 "`%s --help' pokaże więcej informacji."
 
-#: src/pgrep.c:1068
+#: src/pgrep.c:1075
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -465,7 +503,7 @@ msgstr ""
 "nieprawidłowy plik pid\n"
 "`%s --help' pokaże więcej informacji."
 
-#: src/pgrep.c:1077
+#: src/pgrep.c:1084
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -474,7 +512,7 @@ msgstr ""
 "można podać tylko jeden wzorzec\n"
 "`%s --help' pokaże więcej informacji."
 
-#: src/pgrep.c:1081
+#: src/pgrep.c:1088
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -483,31 +521,31 @@ msgstr ""
 "nie podano kryterium dopasowania\n"
 "`%s --help' pokaże więcej informacji."
 
-#: src/pgrep.c:1133
+#: src/pgrep.c:1140
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "zabito %s (pid %lu)\n"
 
-#: src/pgrep.c:1140
+#: src/pgrep.c:1147
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "zabicie PID-u %ld nie powiodło się"
 
-#: src/pgrep.c:1152
+#: src/pgrep.c:1159
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "odczekiwanie na %s (pid %lu)\n"
 
-#: src/pgrep.c:1156
+#: src/pgrep.c:1163
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr "pidfd_open() nie zaimplementowane w Linuksie < 5.3"
 
-#: src/pgrep.c:1159
+#: src/pgrep.c:1166
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "otwarcie pidu %ld nie powiodło się"
 
-#: src/pgrep.c:1173
+#: src/pgrep.c:1180
 msgid "epoll_wait failed"
 msgstr "epoll_wait nie powiodło się"
 
@@ -1736,7 +1774,7 @@ msgstr "błędny identyfikator procesu: %s"
 msgid "Unable to create pid Pids_info structure"
 msgstr "Nie można utworzyć struktury pid Pids_info"
 
-#: src/skill.c:288 src/w.c:413
+#: src/skill.c:288 src/w.c:411
 msgid "Unable to load process information"
 msgstr "Nie można załadować informacji o procesie"
 
@@ -2309,7 +2347,7 @@ msgid "Effective User Id"
 msgstr "Id. użytkownika efektywnego"
 
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:161 src/w.c:686
+#: src/top/top_nls.c:161 src/w.c:684
 msgid "USER"
 msgstr "UŻYTK."
 
@@ -4700,61 +4738,61 @@ msgstr "błąd obsługi unikodu\n"
 msgid "unicode handling error (malloc)\n"
 msgstr "błąd obsługi unikodu (malloc)\n"
 
-#: src/w.c:257 src/w.c:272
+#: src/w.c:255 src/w.c:270
 #, c-format
 msgid " %2lludays"
 msgstr " %2lludni"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
-#: src/w.c:266 src/w.c:276
+#: src/w.c:264 src/w.c:274
 #, c-format
 msgid " %2llu:%02um"
 msgstr " %2llu:%02um"
 
 #. Translation Hint: Seconds:Centiseconds
-#: src/w.c:284
+#: src/w.c:282
 #, c-format
 msgid " %2llu.%02us"
 msgstr " %2llu.%02us"
 
-#: src/w.c:543
+#: src/w.c:541
 #, c-format
 msgid " %s [options] [user]\n"
 msgstr " %s [opcje] [użytkownik]\n"
 
-#: src/w.c:545
+#: src/w.c:543
 msgid " -h, --no-header     do not print header\n"
 msgstr " -h, --no-header     bez wypisywania nagłówka\n"
 
-#: src/w.c:546
+#: src/w.c:544
 msgid " -u, --no-current    ignore current process username\n"
 msgstr " -u, --no-current    pominiecie użytkownika bieżącego procesu\n"
 
-#: src/w.c:547
+#: src/w.c:545
 msgid " -s, --short         short format\n"
 msgstr " -s, --short         format krótki\n"
 
-#: src/w.c:548
+#: src/w.c:546
 msgid " -f, --from          show remote hostname field\n"
 msgstr " -f, --from          wyświetlenie pola nazwy zdalnego hosta\n"
 
-#: src/w.c:549
+#: src/w.c:547
 msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     wyjście w starym stylu\n"
 
-#: src/w.c:550
+#: src/w.c:548
 msgid ""
 " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
 msgstr ""
 " -i, --ip-addr       wyświetlanie adresów IP zamiast nazw (jeśli to "
 "możliwe)\n"
 
-#: src/w.c:551
+#: src/w.c:549
 msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          wypisanie PID-ów procesów w CZYM\n"
 
-#: src/w.c:650
+#: src/w.c:648
 #, c-format
 msgid ""
 "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
@@ -4762,7 +4800,7 @@ msgstr ""
 "Zmienna długości użytkowników PROCS_USERLEN musi być pomiędzy 8 a %i, "
 "zignorowano.\n"
 
-#: src/w.c:660
+#: src/w.c:658
 #, c-format
 msgid ""
 "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
@@ -4772,21 +4810,21 @@ msgstr ""
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
-#: src/w.c:686
+#: src/w.c:684
 #, c-format
 msgid "%-*s TTY      "
 msgstr "%-*s TTY      "
 
-#: src/w.c:688
+#: src/w.c:686
 msgid "FROM"
 msgstr "Z   "
 
-#: src/w.c:690
+#: src/w.c:688
 #, c-format
 msgid "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 msgstr "  ZAL.OD   BEZCZ. JCPU   PCPU CO\n"
 
-#: src/w.c:692
+#: src/w.c:690
 #, c-format
 msgid "   IDLE WHAT\n"
 msgstr " BEZCZ. CO\n"
