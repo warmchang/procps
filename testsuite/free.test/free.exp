@@ -55,3 +55,7 @@ set test "free with positive repeat count"
 spawn $free -c 2
 expect_continue "$test" "^${free_header}"
 expect_pass "$test" "${free_header}"
+
+set test "free with single line"
+spawn $free -L
+expect_pass "$test" "^SwapUse\\s+\\d+\\s+CachUse\\s+\\d+\\s+MemUse\\s+\\d+\\s+MemFree\\s+\\d+\\s*$"

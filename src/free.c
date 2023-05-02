@@ -53,6 +53,7 @@
 #define FREE_REPEAT		(1 << 6)
 #define FREE_REPEATCOUNT	(1 << 7)
 #define FREE_COMMITTED		(1 << 8)
+#define FREE_LINE		(1 << 9)
 
 struct commandline_arguments {
 	int exponent;		/* demanded in kilos, magas... */
@@ -86,6 +87,7 @@ static void __attribute__ ((__noreturn__))
 	fputs(_(" -h, --human         show human-readable output\n"), out);
 	fputs(_("     --si            use powers of 1000 not 1024\n"), out);
 	fputs(_(" -l, --lohi          show detailed low and high memory statistics\n"), out);
+	fputs(_(" -L, --line          show output on a single line\n"), out);
 	fputs(_(" -t, --total         show total for RAM + swap\n"), out);
 	fputs(_(" -v, --committed     show committed memory and commit limit\n"), out);
 	fputs(_(" -s N, --seconds N   repeat printing every N seconds\n"), out);
@@ -237,6 +239,7 @@ int main(int argc, char **argv)
 		{  "human",	no_argument,	    NULL,  'h'		},
 		{  "si",	no_argument,	    NULL,  SI_OPTION	},
 		{  "lohi",	no_argument,	    NULL,  'l'		},
+		{  "line",	no_argument,	    NULL,  'L'		},
 		{  "total",	no_argument,	    NULL,  't'		},
 		{  "committed",	no_argument,	    NULL,  'v'		},
 		{  "seconds",	required_argument,  NULL,  's'		},
@@ -260,7 +263,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((c = getopt_long(argc, argv, "bkmghltvc:ws:V", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "bkmghlLtvc:ws:V", longopts, NULL)) != -1)
 		switch (c) {
 		case 'b':
 		        check_unit_set(&unit_set);
@@ -320,6 +323,9 @@ int main(int argc, char **argv)
 		case 'l':
 			flags |= FREE_LOHI;
 			break;
+		case 'L':
+			flags |= FREE_LINE;
+			break;
 		case 't':
 			flags |= FREE_TOTAL;
 			break;
@@ -367,6 +373,21 @@ int main(int argc, char **argv)
                   _("Unable to create meminfo structure"));
     }
 	do {
+	     if ( flags & FREE_LINE ) {
+                 /* Translation Hint: These are shortened column headers
+                  * that are all 7 characters long. Use spaces and right
+                  * align if the translation is shorter.
+                  */
+		printf("%s %11s ", _("SwapUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), flags, args));
+		printf("%s %11s ", _("CachUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_BUFFERS, ul_int) +
+                            MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int), flags, args));
+		printf("%s %11s ", _(" MemUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int), flags, args));
+		printf("%s %11s ", _("MemFree"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int), flags, args));
+		if ( (flags & FREE_REPEAT) == 0 )
+			printf("\n");
+		else if ( args.repeat_counter == 1 )
+			printf("\n");
+	     } else {
 		/* Translation Hint: You can use 9 character words in
 		 * the header, and the words need to be right align to
 		 * beginning of a number. */
@@ -441,6 +462,7 @@ int main(int argc, char **argv)
 			printf("\n");
 		}
 
+		} /* end else of if FREE_LINE */
 		fflush(stdout);
 		if (flags & FREE_REPEATCOUNT) {
 			args.repeat_counter--;

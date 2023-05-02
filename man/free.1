@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH FREE 1 "2023-01-16" "procps-ng" "User Commands"
+.TH FREE 1 "2023-05-02" "procps-ng" "User Commands"
 .SH NAME
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
@@ -119,6 +119,11 @@ option.
 .TP
 \fB\-l\fR, \fB\-\-lohi\fR
 Show detailed low and high memory statistics.
+.TP
+\fB\-L\fR, \fB\-\-line\fR
+Show output on a single line, often used with the
+.B \-s
+option to show memory statistics repeatedly.
 .TP
 \fB\-s\fR, \fB\-\-seconds\fR \fIdelay\fR
 Continuously display the result \fIdelay\fR  seconds
