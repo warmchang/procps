@@ -78,7 +78,6 @@ struct fetch_support {
 struct pids_info {
     int refcount;
     int maxitems;                      // includes 'logical_end' delimiter
-    int curitems;                      // includes 'logical_end' delimiter
     enum pids_item *items;             // includes 'logical_end' delimiter
     struct stacks_extent *extents;     // anchor for all resettable extents
     struct stacks_extent *otherexts;   // anchor for invariant extents // <=== currently unused
@@ -952,7 +951,7 @@ static void pids_itemize_stacks_all (
     while (ext) {
         int i;
         for (i = 0; ext->stacks[i]; i++)
-            pids_itemize_stack(ext->stacks[i]->head, info->curitems, info->items);
+            pids_itemize_stack(ext->stacks[i]->head, info->maxitems, info->items);
         ext = ext->next;
     };
 } // end: pids_itemize_stacks_all
@@ -995,7 +994,7 @@ static inline void pids_libflags_set (
     int i;
 
     info->oldflags = info->history_yes = 0;
-    for (i = 0; i < info->curitems; i++) {
+    for (i = 0; i < info->maxitems; i++) {
         if (((e = info->items[i])) >= PIDS_logical_end)
             break;
         info->oldflags |= Item_table[e].oldflags;
@@ -1124,7 +1123,7 @@ static struct stacks_extent *pids_stacks_alloc (
 
     for (i = 0; i < maxstacks; i++) {
         p_head = (struct pids_stack *)v_head;
-        p_head->head = pids_itemize_stack((struct pids_result *)v_list, info->curitems, info->items);
+        p_head->head = pids_itemize_stack((struct pids_result *)v_list, info->maxitems, info->items);
         p_blob->stacks[i] = p_head;
         v_list += list_size;
         v_head += head_size;
@@ -1273,7 +1272,6 @@ PROCPS_EXPORT int procps_pids_new (
         }
         memcpy(p->items, items, sizeof(enum pids_item) * numitems);
         p->items[numitems] = PIDS_logical_end;
-        p->curitems = p->maxitems;
         pids_libflags_set(p);
     }
 
@@ -1407,7 +1405,7 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
-    if (!info->curitems)
+    if (!info->maxitems)
         return NULL;
 
     if (!info->get_ext) {
@@ -1461,7 +1459,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
-    if (!info->curitems)
+    if (!info->maxitems)
         return NULL;
     errno = 0;
 
@@ -1497,7 +1495,7 @@ PROCPS_EXPORT int procps_pids_reset (
 
     /* shame on this caller, they didn't change anything. and unless they have
        altered the depth of the stacks we're not gonna change anything either! */
-    if (info->curitems == newnumitems + 1
+    if (info->maxitems == newnumitems + 1
     && !memcmp(info->items, newitems, sizeof(enum pids_item) * newnumitems))
         return 0;
 
@@ -1524,7 +1522,7 @@ PROCPS_EXPORT int procps_pids_reset (
     memcpy(info->items, newitems, sizeof(enum pids_item) * newnumitems);
     info->items[newnumitems] = PIDS_logical_end;
     // account for above PIDS_logical_end
-    info->curitems = newnumitems + 1;
+    info->maxitems = newnumitems + 1;
 
     // if extents were freed above, this next guy will have no effect
     // so we'll rely on pids_stacks_alloc() to itemize ...
@@ -1562,7 +1560,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         return NULL;
     /* with items & numitems technically optional at 'new' time, it's
        expected 'reset' will have been called -- but just in case ... */
-    if (!info->curitems)
+    if (!info->maxitems)
         return NULL;
     errno = 0;
 
@@ -1626,7 +1624,7 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
         if (p->item == sortitem)
             break;
         ++offset;
-        if (offset >= info->curitems)
+        if (offset >= info->maxitems)
             return NULL;
         if (p->item >= PIDS_logical_end)
             return NULL;
