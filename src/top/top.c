@@ -1993,24 +1993,25 @@ static struct {
    {     7,     -1,  A_right,  PIDS_UTILIZATION_C  },  // real     EU_CUC
    {    10,     -1,  A_right,  PIDS_NS_CGROUP      },  // ul_int   EU_NS7
    {    10,     -1,  A_right,  PIDS_NS_TIME        }   // ul_int   EU_NS8
-#define eu_LAST  EU_NS8
+#define eu_LAST        EU_NS8
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
 #define eu_ID_FUID     eu_LAST +3
-#define eu_TREE_HID    eu_LAST +4
-#define eu_TREE_LVL    eu_LAST +5
-#define eu_TREE_ADD    eu_LAST +6
-#define eu_CMDLINE_V   eu_LAST +7
-#define eu_ENVIRON_V   eu_LAST +8
+#define eu_CMDLINE_V   eu_LAST +4
+#define eu_ENVIRON_V   eu_LAST +5
+#define eu_TREE_HID    eu_LAST +6
+#define eu_TREE_LVL    eu_LAST +7
+#define eu_TREE_ADD    eu_LAST +8
+#define eu_RESET       eu_TREE_HID       // demarcation for reset to zero (PIDS_extra)
    , {  -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
    , {  -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
    , {  -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
+   , {  -1, -1, -1,  PIDS_CMDLINE_V   }  // strv     ( if Ctrlk,       eu_CMDLINE_V  )
+   , {  -1, -1, -1,  PIDS_ENVIRON_V   }  // strv     ( if CtrlN,       eu_ENVIRON_V  )
    , {  -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
    , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_LVL   )
    , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_ADD   )
-   , {  -1, -1, -1,  PIDS_CMDLINE_V   }  // strv     ( if Ctrlk,       eu_CMDLINE_V  )
-   , {  -1, -1, -1,  PIDS_ENVIRON_V   }  // strv     ( if CtrlN,       eu_ENVIRON_V  )
  #undef A_left
  #undef A_right
 };
@@ -2165,7 +2166,9 @@ static void build_headers (void) {
    int i;
 
    // ensure fields not visible incur no significant library costs
-   for (i = 0; i < MAXTBL(Fieldstab); i++)
+   for (i = 0; i < eu_RESET; i++)
+      Pids_itms[i] = PIDS_noop;
+   for ( ; i < MAXTBL(Fieldstab); i++)
       Pids_itms[i] = PIDS_extra;
 
    ckITEM(EU_PID);      // these 2 fields may not display,
