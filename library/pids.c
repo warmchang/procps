@@ -75,6 +75,8 @@ struct fetch_support {
     struct pids_counts counts;         // actual counts pointed to by 'results'
 };
 
+typedef void (*SET_t)(struct pids_info *, struct pids_result *, proc_t *);
+
 struct pids_info {
     int refcount;
     int maxitems;                      // includes 'logical_end' delimiter
@@ -96,6 +98,7 @@ struct pids_info {
     int seterr;                        // an ENOMEM encountered during assign
     proc_t get_proc;                   // the proc_t used by procps_pids_get
     proc_t fetch_proc;                 // the proc_t used by pids_stacks_fetch
+    SET_t *func_array;                 // extracted Item_table 'setsfunc' pointers
 };
 
 
@@ -403,7 +406,6 @@ srtDECL(noop) {
    // placed here so an 'f' prefix wouldn't make 'em first
 #define z_autogrp  PROC_FILLAUTOGRP
 
-typedef void (*SET_t)(struct pids_info *, struct pids_result *, proc_t *);
 typedef void (*FRE_t)(struct pids_result *);
 typedef int  (*QSR_t)(const void *, const void *, void *);
 
@@ -856,14 +858,13 @@ static inline int pids_assign_results (
         proc_t *p)
 {
     struct pids_result *this = stack->head;
+    SET_t *that = &info->func_array[0];
 
     info->seterr = 0;
-    for (;;) {
-        enum pids_item item = this->item;
-        if (item >= PIDS_logical_end)
-            break;
-        Item_table[item].setsfunc(info, this, p);
+    while (*that) {
+        (*that)(info, this, p);
         ++this;
+        ++that;
     }
     return !info->seterr;
 } // end: pids_assign_results
@@ -1039,6 +1040,20 @@ static inline int pids_oldproc_open (
     }
     return 1;
 } // end: pids_oldproc_open
+
+
+static int pids_prep_func_array (
+        struct pids_info *info)
+{
+    int i;
+
+    if (!(info->func_array = realloc(info->func_array, sizeof(SET_t) * info->maxitems)))
+        return 0;
+    for (i = 0; i < info->maxitems -1; i++)
+        info->func_array[i] = Item_table[info->items[i]].setsfunc;
+    info->func_array[i] = NULL;
+    return 1;
+} // end: pids_prep_func_array
 
 
 static inline int pids_proc_tally (
@@ -1273,6 +1288,8 @@ PROCPS_EXPORT int procps_pids_new (
         memcpy(p->items, items, sizeof(enum pids_item) * numitems);
         p->items[numitems] = PIDS_logical_end;
         pids_libflags_set(p);
+        if (!pids_prep_func_array(p))
+            return -ENOMEM;
     }
 
     if (!(p->hist = calloc(1, sizeof(struct history_info)))
@@ -1359,6 +1376,9 @@ PROCPS_EXPORT int procps_pids_unref (
 
         if ((*info)->get_ext)
            pids_oldproc_close(&(*info)->get_PT);
+
+        if ((*info)->func_array)
+            free((*info)->func_array);
 
         numa_uninit();
 
@@ -1528,6 +1548,8 @@ PROCPS_EXPORT int procps_pids_reset (
     // so we'll rely on pids_stacks_alloc() to itemize ...
     pids_itemize_stacks_all(info);
     pids_libflags_set(info);
+    if (!pids_prep_func_array(info))
+        return -ENOMEM;
 
     return 0;
 } // end: procps_pids_reset
