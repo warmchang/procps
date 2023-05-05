@@ -3735,6 +3735,9 @@ static void before (char *me) {
    Graph_cpus = alloc_c(sizeof(struct graph_parms));
    Graph_mems = alloc_c(sizeof(struct graph_parms));
  #undef doALL
+
+   // don't distort startup cpu(s) display ...
+   usleep(LIB_USLEEP);
 } // end: before
 
 

@@ -121,7 +121,7 @@ char *strcasestr(const char *haystack, const char *needle);
         /* Length of time a message is displayed and the duration
            of a 'priming' wait during library startup (in microseconds) */
 #define MSG_USLEEP  1250000
-#define LIB_USLEEP  150000
+#define LIB_USLEEP  100000
 
         /* Specific process id monitoring support (command line only) */
 #define MONPIDMAX  20
