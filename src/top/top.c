@@ -1167,6 +1167,7 @@ static int iokey (int action) {
       { NULL, kbd_PGDN  }, { NULL, kbd_PGUP  }, { NULL, kbd_END   }, { NULL, kbd_BTAB  },
          // remainder are alternatives for above, just in case...
          // ( the h,j,k,l entries are the vim cursor motion keys )
+      { "\b",       kbd_BKSP  }, { "\177",     kbd_BKSP  }, /* backspace      */
       { "\033h",    kbd_LEFT  }, { "\033j",    kbd_DOWN  }, /* meta+      h,j */
       { "\033k",    kbd_UP    }, { "\033l",    kbd_RIGHT }, /* meta+      k,l */
       { "\033\010", kbd_HOME  }, { "\033\012", kbd_PGDN  }, /* ctrl+meta+ h,j */
@@ -1177,6 +1178,7 @@ static int iokey (int action) {
       { "\xC2\x8B", kbd_PGUP  }, { "\xC2\x8C", kbd_END   }, /* ctrl+meta+ k,l (some xterms) */
       { "\033\011", kbd_BTAB  }
    };
+   static char erase[2];
 #ifdef TERMIOS_ONLY
    char buf[SMLBUFSIZ], *pb;
 #else
@@ -1187,24 +1189,31 @@ static int iokey (int action) {
    int i;
 
    if (action == IOKEY_INIT) {
-    #define tOk(s)  s ? s : ""
-      tinfo_tab[0].str  = tOk(key_backspace);
-      tinfo_tab[1].str  = tOk(key_ic);
-      tinfo_tab[2].str  = tOk(key_dc);
-      tinfo_tab[3].str  = tOk(key_left);
-      tinfo_tab[4].str  = tOk(key_down);
-      tinfo_tab[5].str  = tOk(key_up);
-      tinfo_tab[6].str  = tOk(key_right);
-      tinfo_tab[7].str  = tOk(key_home);
-      tinfo_tab[8].str  = tOk(key_npage);
-      tinfo_tab[9].str  = tOk(key_ppage);
-      tinfo_tab[10].str = tOk(key_end);
-      tinfo_tab[11].str = tOk(back_tab);
+#ifndef _POSIX_VDISABLE
+#define _POSIX_VDISABLE fpathconf(STDIN_FILENO, _PC_VDISABLE)
+#endif
+      if (Tty_original.c_cc[VERASE] == _POSIX_VDISABLE)
+         tinfo_tab[0].str = key_backspace;
+      else {
+         *erase           = Tty_original.c_cc[VERASE];
+         tinfo_tab[0].str = erase;
+      }
+      tinfo_tab[1].str  = key_ic;
+      tinfo_tab[2].str  = key_dc;
+      tinfo_tab[3].str  = key_left;
+      tinfo_tab[4].str  = key_down;
+      tinfo_tab[5].str  = key_up;
+      tinfo_tab[6].str  = key_right;
+      tinfo_tab[7].str  = key_home;
+      tinfo_tab[8].str  = key_npage;
+      tinfo_tab[9].str  = key_ppage;
+      tinfo_tab[10].str = key_end;
+      tinfo_tab[11].str = back_tab;
       // next is critical so returned results match bound terminfo keys
-      putp(tOk(keypad_xmit));
+      if (keypad_xmit)
+         putp(keypad_xmit);
       // ( converse keypad_local issued at pause/pgm end, just in case )
       return 0;
-    #undef tOk
    }
 
    if (action == IOKEY_ONCE) {
@@ -1234,7 +1243,7 @@ static int iokey (int action) {
    else if (pb > buf && '\033' == *(pb - 1)) --pb;
 
    for (i = 0; i < MAXTBL(tinfo_tab); i++)
-      if (!strcmp(tinfo_tab[i].str, pb))
+      if (tinfo_tab[i].str && !strcmp(tinfo_tab[i].str, pb))
          return tinfo_tab[i].key;
 
    // no match, so we'll return single non-escaped keystrokes only
@@ -4473,8 +4482,6 @@ static void whack_terminal (void) {
    tmptty.c_oflag &= ~TAB3;
    tmptty.c_iflag |= BRKINT;
    tmptty.c_iflag &= ~IGNBRK;
-   if (key_backspace && 1 == strlen(key_backspace))
-      tmptty.c_cc[VERASE] = *key_backspace;
 #ifdef TERMIOS_ONLY
    if (-1 == tcsetattr(STDIN_FILENO, TCSAFLUSH, &tmptty))
       error_exit(fmtmk(N_fmt(FAIL_tty_set_fmt), strerror(errno)));
