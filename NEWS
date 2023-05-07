@@ -8,6 +8,7 @@ procps-ng-NEXT
   * top: bad command line arguments yield EXIT_FAILURE     issue #273
   * top: avoids keystroke induced '%Cpu' distortions
   * top: includes VM (guest) tics in 'system' overhead     issue #274
+  * w: Fix musl UT_HOSTSIZE issue
 
 procps-ng-4.0.3
 ---------------

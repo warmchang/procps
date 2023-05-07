@@ -45,7 +45,10 @@
 #include <time.h>
 #include <unistd.h>
 #ifdef HAVE_UTMPX_H
-#	include <utmpx.h>
+#include <utmpx.h>
+#ifndef HAVE_UT_HOSTSIZE_IN_UTMPX
+#include <utmp.h>
+#endif
 #else
 #	include <utmp.h>
 #endif

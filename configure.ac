@@ -78,6 +78,16 @@ AC_TYPE_SSIZE_T
 AC_CHECK_MEMBERS([struct stat.st_rdev])
 AC_CHECK_MEMBERS([siginfo_t.si_int], [], [], [[#include <signal.h>]])
 
+dnl Needed for musl
+if test "x$ac_cv_header_utmpx_h" = xyes
+then :
+AC_CHECK_DECLS([__UT_HOSTSIZE],
+               [AC_DEFINE([HAVE_UT_HOSTSIZE_IN_UTMPX], [1],
+                          [Define if __UT_HOSTSIZE in utmpx.h])],
+               [],
+               [[#include <utmpx.h>]])
+fi
+
 dnl libtool
 LT_INIT
 
