@@ -600,6 +600,13 @@ static void finalize_stacks (void)
   // special items with 'extra' used as former pcpu
   chkREL(extra)
   chkREL(noop)
+  // lastly, any remaining needs ...
+  if (format_flags & FF_Uf)
+    chkREL(PROCESSOR);
+  if (thread_flags & TF_U_m) {
+    chkREL(PRIORITY);
+    chkREL(WCHAN_NAME);
+  }
 
   // now accommodate any results not yet satisfied
   f_node = format_list;
