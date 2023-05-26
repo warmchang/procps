@@ -600,13 +600,6 @@ static void finalize_stacks (void)
   // special items with 'extra' used as former pcpu
   chkREL(extra)
   chkREL(noop)
-  // lastly, any remaining needs ...
-  if (format_flags & FF_Uf)
-    chkREL(PROCESSOR);
-  if (thread_flags & TF_U_m) {
-    chkREL(PRIORITY);
-    chkREL(WCHAN_NAME);
-  }
 
   // now accommodate any results not yet satisfied
   f_node = format_list;
@@ -676,8 +669,8 @@ int main(int argc, char *argv[]){
 
   init_output(); /* must be between parser and output */
 
-  lists_and_needs();
   finalize_stacks();
+  lists_and_needs();
 
   if(forest_type || sort_list) fancy_spew(); /* sort or forest */
   else simple_spew(); /* no sort, no forest */
