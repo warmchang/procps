@@ -52,6 +52,15 @@ proc expect_pass { testname reg } {
     }
 }
 
+# Fail if we see this message, pass if we get to EOF
+proc expect_fail { testname reg } {
+    expect {
+        -re "$reg" { fail "$testname" }
+        timeout { fail "$testname" }
+        eof { pass "$testname" }
+    }
+}
+
 proc expect_pipeproc_pass { testname reg } {
     global pipeproc_spawnid
 
