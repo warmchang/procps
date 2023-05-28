@@ -4,10 +4,14 @@ procps-ng-NEXT
     tolerates all potential 'cpuinfo' formats              issue #272
   * free: -L one line output                               issue #156
   * pgrep: Use only --signal option for signal             Debian #1031765
+  * ps: fixed missing or corrupted fields with -m option   Debian #1036631, issue #279
   * tests: dont compare floats with ==                     issue #271
   * top: bad command line arguments yield EXIT_FAILURE     issue #273
   * top: avoids keystroke induced '%Cpu' distortions
   * top: includes VM (guest) tics in 'system' overhead     issue #274
+  * top: includes VM (guest) tics with '!' toggle          merge #179
+  * top: lessen summary cpu distortions on first display   merge #180
+  * top: better backspace handling wtth line edits         issue #278
   * w: Fix musl UT_HOSTSIZE issue
 
 procps-ng-4.0.3
