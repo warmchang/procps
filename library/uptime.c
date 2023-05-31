@@ -32,9 +32,11 @@
 #include <unistd.h>
 #include <utmp.h>
 #ifdef WITH_SYSTEMD
+#include <systemd/sd-daemon.h>
 #include <systemd/sd-login.h>
 #endif
 #ifdef WITH_ELOGIND
+#include <elogind/sd-daemon.h>
 #include <elogind/sd-login.h>
 #endif
 
@@ -52,10 +54,8 @@ static int count_users(void)
     struct utmp *ut;
 
 #if defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)
-    numuser = sd_get_sessions(NULL);
-
-    if (numuser >= 0 || numuser != ENOENT)
-      return numuser;
+    if (sd_booted() > 0)
+      return sd_get_sessions(NULL);
 #endif
 
     setutent();
