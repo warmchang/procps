@@ -1361,7 +1361,14 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLAUTOGRP)               // value the 2 autogroup fields
         autogroup_fill(path, t);
 
-    if (rc == 0) return t;
+    // openproc() ensured that a ppid will be present when needed ...
+    if (rc == 0) {
+        if (PT->hide_kernel && (t->ppid == 2 || t->tid == 2)) {
+           free_acquired(t);
+           return NULL;
+        }
+        return t;
+    }
     errno = ENOMEM;
 next_task:
     return NULL;
@@ -1463,7 +1470,6 @@ proc_t *readproc(PROCTAB *restrict const PT, proc_t *restrict p) {
   free_acquired(p);
 
   for(;;){
-    if (errno == ENOMEM) goto out;
     // fills in the path, plus p->tid and p->tgid
     if (!PT->finder(PT,p)) goto out;
 
@@ -1484,7 +1490,7 @@ out:
 proc_t *readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
     static __thread proc_t skel_p;    // skeleton proc_t, only uses tid + tgid
     static __thread proc_t *new_p;    // for process/task transitions
-    static __thread int canary, leader;
+    static __thread int canary;
     char path[PROCPATHLEN];
     proc_t *ret;
 
@@ -1498,23 +1504,18 @@ proc_t *readeither (PROCTAB *restrict const PT, proc_t *restrict x) {
 next_proc:
     new_p = NULL;
     for (;;) {
-        if (errno == ENOMEM) goto end_procs;
         // fills in the PT->path, plus skel_p.tid and skel_p.tgid
         if (!PT->finder(PT,&skel_p)) goto end_procs;       // simple_nextpid
-        leader = skel_p.tid;
         if (!task_dir_missing) break;
         if ((ret = PT->reader(PT,x))) return ret;          // simple_readproc
     }
 
 next_task:
     // fills in our path, plus x->tid and x->tgid
-    if (!(PT->taskfinder(PT,&skel_p,x,path)))              // simple_nexttid
+    if ((!(PT->taskfinder(PT,&skel_p,x,path)))             // simple_nexttid
+    || (!(ret = PT->taskreader(PT,x,path)))) {             // simple_readtask
         goto next_proc;
-    /* to avoid loss of some thread group leader data,
-       we must check its base dir, not its 'task' dir! */
-    if (x->tid == leader) ret = PT->reader(PT,x);          // simple_readproc
-    else ret = PT->taskreader(PT,x,path);                  // simple_readtask
-    if (!ret) goto next_proc;
+    }
     if (!new_p) {
         new_p = ret;
         canary = new_p->tid;

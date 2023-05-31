@@ -2,6 +2,7 @@ procps-ng-NEXT
 ---------------
   * library (API & ABI unchanged)
     tolerates all potential 'cpuinfo' formats              issue #272
+    restore the proper main thread tics valuations         issue #280
   * free: -L one line output                               issue #156
   * pgrep: Use only --signal option for signal             Debian #1031765
   * ps: fixed missing or corrupted fields with -m option   Debian #1036631, issue #279
