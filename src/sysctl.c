@@ -335,11 +335,6 @@ static int ReadSetting(const char *restrict const name)
 		return -1;
 	}
 
-	/* used to display the output */
-	outname = xstrdup(name);
-	/* change / to . */
-	slashdot(outname, '/', '.');
-
 	/* used to open the file */
 	tmpname = xmalloc(strlen(name) + strlen(PROC_PATH) + 2);
 	strcpy(tmpname, PROC_PATH);
