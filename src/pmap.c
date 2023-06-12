@@ -881,7 +881,11 @@ static int config_read (char *rc_filename)
 					}
 
 					/* add the field in the list */
-					cnf_listnode = calloc(1, sizeof *cnf_listnode);
+					if (!(cnf_listnode = calloc(1, sizeof *cnf_listnode))) {
+						xwarnx(_("memory allocation failed"));
+						fclose(f);
+						return 0;
+					}
 					snprintf(cnf_listnode -> description, sizeof(cnf_listnode -> description), "%s", token);
 					cnf_listnode -> next = cnf_listhead;
 					cnf_listhead = cnf_listnode;
