@@ -636,6 +636,27 @@ static size_t get_arg_max(void)
     return val;
 }
 
+/* 
+ * Check if we have a long simple (non-regex) match
+ * Returns true if the string:
+ *  1) is longer than 15 characters
+ *  2) Doesn't have | or [ which are used by regex
+ * This is not an exhaustive list but catches most instances
+ * It's only used to suppress the warning
+ */
+static bool is_long_match(const char *str)
+{
+    int i, len;
+
+    if (str == NULL)
+        return FALSE;
+    if (15 >= (len = strlen(str)))
+        return FALSE;
+    for (i=0; i<len; i++)
+        if (str[i] == '|' || str[i] == '[')
+            return FALSE;
+    return TRUE;
+}
 static struct el * select_procs (int *num)
 {
 #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack, info)
@@ -784,7 +805,7 @@ static struct el * select_procs (int *num)
 
     *num = matches;
 
-    if ((!matches) && (!opt_full) && opt_pattern && (strlen(opt_pattern) > 15))
+    if ((!matches) && (!opt_full) && is_long_match(opt_pattern))
         xwarnx(_("pattern that searches for process name longer than 15 characters will result in zero matches\n"
                  "Try `%s -f' option to match against the complete command line."),
                program_invocation_short_name);

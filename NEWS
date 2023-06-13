@@ -5,6 +5,7 @@ procps-ng-NEXT
     restore the proper main thread tics valuations         issue #280
   * free: -L one line output                               issue #156
   * pgrep: Use only --signal option for signal             Debian #1031765
+  * pgrep: suppress >15 warning if using regex             Debian #1037450
   * ps: fixed missing or corrupted fields with -m option   Debian #1036631, issue #279
   * tests: dont compare floats with ==                     issue #271
   * top: bad command line arguments yield EXIT_FAILURE     issue #273
