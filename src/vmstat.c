@@ -345,12 +345,12 @@ static void new_format(void)
 #define MEMv(E) MEMINFO_VAL(E, ul_int, mem_stack, mem_info)
 #define DSYSv(E) STAT_VAL(E, s_int, stat_stack, stat_info)
     const char format[] =
-        "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u %2u";
+        "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2lld %2lld %2lld %2lld %2lld %2lld";
     const char wide_format[] =
-        "%4lu %4lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u %3u";
+        "%4lu %4lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3lld %3lld %3lld %3lld %3lld %3lld";
 
     unsigned int tog = 0;    /* toggle switch for cleaner code */
-    unsigned int i;
+    unsigned long i;
     long long cpu_use, cpu_sys, cpu_idl, cpu_iow, cpu_sto, cpu_gue;
     long long Div, divo2;
     unsigned long pgpgin[2], pgpgout[2], pswpin[2] = {0,0}, pswpout[2];
@@ -431,12 +431,12 @@ static void new_format(void)
                (unsigned)( VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int) / uptime ),
                (unsigned)( SYSv(stat_INT) / uptime ),
                (unsigned)( SYSv(stat_CTX) / Div ),
-               (unsigned)( (100*cpu_use        + divo2) / Div ),
-               (unsigned)( (100*cpu_sys        + divo2) / Div ),
-               (unsigned)( (100*cpu_idl        + divo2) / Div ),
-               (unsigned)( (100*cpu_iow        + divo2) / Div ),
-               (unsigned)( (100*cpu_sto        + divo2) / Div ),
-               (unsigned)( (100*cpu_gue        + divo2) / Div )
+               (100*cpu_use + divo2) / Div,
+               (100*cpu_sys + divo2) / Div,
+               (100*cpu_idl + divo2) / Div,
+               (100*cpu_iow + divo2) / Div,
+               (100*cpu_sto + divo2) / Div,
+               (100*cpu_gue + divo2) / Div
         );
 
         if (t_option) {
@@ -462,7 +462,7 @@ static void new_format(void)
         cpu_idl = DTICv(stat_IDL);
         cpu_iow = DTICv(stat_IOW);
         cpu_sto = DTICv(stat_STO);
-        cpu_gue = TICv(stat_GST) + TICv(stat_GNI);
+        cpu_gue = DTICv(stat_GST) + DTICv(stat_GNI);
         pgpgin[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGIN, ul_int);
         pgpgout[tog] = VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int);
         pswpin[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int);
@@ -523,17 +523,17 @@ static void new_format(void)
                /* cs */
                (unsigned)( (  DSYSv(stat_CTX)           +sleep_half )/sleep_time ),
                /* us */
-               (unsigned)( (100*cpu_use+divo2)/Div ),
+               (100*cpu_use + divo2) / Div,
                /* sy */
-               (unsigned)( (100*cpu_sys+divo2)/Div ),
+               (100*cpu_sys + divo2) / Div,
                /* id */
-               (unsigned)( (100*cpu_idl+divo2)/Div ),
+               (100*cpu_idl + divo2) / Div,
                /* wa */
-               (unsigned)( (100*cpu_iow+divo2)/Div ),
+               (100*cpu_iow + divo2) / Div,
                /* st */
-               (unsigned)( (100*cpu_sto+divo2)/Div ),
-           /* gu */
-               (unsigned)( (100*cpu_gue+divo2)/Div )
+               (100*cpu_sto + divo2) / Div,
+               /* gu */
+               (100*cpu_gue + divo2) / Div
         );
 
         if (t_option) {
@@ -578,7 +578,7 @@ static void diskpartition_format(const char *partition_name)
     struct diskstats_stack *stack;
     struct diskstats_result *got;
     const char format[] = "%21lu  %16lu  %10lu  %16lu\n";
-    int i;
+    unsigned long i;
 
     if (procps_diskstats_new(&disk_stat) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
@@ -676,7 +676,8 @@ static void diskformat(void)
 #define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
     struct diskstats_info *disk_stat = NULL;
     struct diskstats_reaped *reap;
-    int i, j;
+    unsigned long i;
+    int j;
     time_t the_time;
     struct tm *tm_ptr;
     char timebuf[32];
@@ -755,7 +756,8 @@ static void slabformat (void)
  #define slabVAL(e,t) SLABINFO_VAL(e, t, p, slab_info)
     struct slabinfo_info *slab_info = NULL;
     struct slabinfo_reaped *reaped;
-    int i, j;
+    unsigned long i;
+    int j;
     enum slabinfo_item node_items[] = {
         SLAB_ACTIVE_OBJS, SLAB_NUM_OBJS,
         SLAB_OBJ_SIZE,    SLAB_OBJ_PER_SLAB,
@@ -1052,7 +1054,6 @@ int main(int argc, char *argv[])
         sleep_time = tmp;
         infinite_updates = 1;
     }
-    num_updates = 1;
     if (optind < argc) {
         num_updates = strtol_or_err(argv[optind++], _("failed to parse argument"));
         infinite_updates = 0;
