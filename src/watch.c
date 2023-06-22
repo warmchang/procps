@@ -446,34 +446,31 @@ static watch_usec_t get_time_usec()
 
 #ifdef WITH_WATCH8BIT
 /* read a wide character from a popen'd stream */
-wint_t my_getwc(FILE * s)
+wint_t my_getwc(FILE *s)
 {
-	char i[MB_CUR_MAX];
-	int byte = 0;
-	int convert;
+	int c;
+	unsigned char i[MB_CUR_MAX];
+	uint8_t byte = 0;
 	wchar_t rval;
-	while (1) {
-		i[byte] = getc(s);
-		if (i[byte] == EOF) {
-			return WEOF;
-		}
-		byte++;
-		errno = 0;
-		mbtowc(NULL, NULL, 0);
-		convert = mbtowc(&rval, i, byte);
-		if (convert > 0) {
-			/* legal conversion */
+	mbstate_t mbstate;
+
+	memset(&mbstate, 0, sizeof(mbstate));
+
+	while ((c = getc(s)) != EOF) {
+		i[byte] = c;
+		if (mbrtowc(&rval, i+byte, 1, &mbstate) <= 1)
+			/* legal conversion, may be L'\0' */
 			return rval;
-		}
-		if (byte == MB_CUR_MAX) {
-			while (byte > 1) {
+		if (++byte == MB_CUR_MAX) {
+			while (byte)
 				/* at least *try* to fix up */
 				ungetc(i[--byte], s);
-			}
-			errno = -EILSEQ;
-			return WEOF;
+			errno = EILSEQ;
+			break;
 		}
 	}
+
+	return WEOF;
 }
 #endif	/* WITH_WATCH8BIT */
 
@@ -814,6 +811,7 @@ int main(int argc, char *argv[])
 	char *command;
 	char **command_argv;
 	int command_length = 0;	/* not including final \0 */
+	int command_exit;
 	watch_usec_t last_run = 0;
 	watch_usec_t next_loop = 0;	/* next loop time in us, used for precise time
 	                           	 * keeping only */
@@ -838,7 +836,7 @@ int main(int argc, char *argv[])
 		{"equexit", required_argument, 0, 'q'},
 		{"exec", no_argument, 0, 'x'},
 		{"precise", no_argument, 0, 'p'},
-                {"no-rerun", no_argument, 0, 'r'},
+		{"no-rerun", no_argument, 0, 'r'},
 		{"no-title", no_argument, 0, 't'},
 		{"no-wrap", no_argument, 0, 'w'},
 		{"version", no_argument, 0, 'v'},
@@ -885,9 +883,9 @@ int main(int argc, char *argv[])
 			flags |= WATCH_EQUEXIT;
 			max_cycles = strtod_nol_or_err(optarg, _("failed to parse argument"));
 			break;
-                case 'r':
-                        flags |= WATCH_NORERUN;
-                        break;
+		case 'r':
+			flags |= WATCH_NORERUN;
+			break;
 		case 't':
 			show_title = 0;
 			break;
@@ -1003,25 +1001,23 @@ int main(int argc, char *argv[])
 			output_header(command, interval);
 #endif	/* WITH_WATCH8BIT */
 
-                if (!(flags & WATCH_NORERUN) ||
-                        get_time_usec() - last_run > interval * USECS_PER_SEC) {
-                    last_run = get_time_usec();
-                    int exit = run_command(command, command_argv);
+		if (!(flags & WATCH_NORERUN) ||
+		        get_time_usec() - last_run > interval * USECS_PER_SEC) {
+			last_run = get_time_usec();
+			command_exit = run_command(command, command_argv);
 
-		    if (flags & WATCH_EQUEXIT) {
-			    if (cycle_count == max_cycles && exit) {
-				    break;
-			    } else if (exit) {
-				    cycle_count++;
-			    } else {
-				    cycle_count = 0;
-			    }
-		    } else if (exit) {
-			    break;
-		    }
-                } else {
-                    refresh();
-                }
+			if (flags & WATCH_EQUEXIT) {
+				if (cycle_count == max_cycles && command_exit)
+					break;
+				else if (command_exit)
+					cycle_count++;
+				else
+					cycle_count = 0;
+			}
+		} else if (command_exit)
+			break;
+		else
+			refresh();
 
 		if (precise_timekeeping) {
 			watch_usec_t cur_time = get_time_usec();
