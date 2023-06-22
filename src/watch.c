@@ -75,6 +75,16 @@ static int flags;
 #define WATCH_EQUEXIT	(1 << 8)
 #define WATCH_NORERUN	(1 << 9)
 
+#ifdef WITH_WATCH8BIT
+#define XL(c) L ## c
+#define XEOF WEOF
+#define Xint wint_t
+#else
+#define XL(c) c
+#define XEOF EOF
+#define Xint int
+#endif
+
 static int curses_started = 0;
 static long height = 24, width = 80;
 static int screen_size_changed = 0;
@@ -436,12 +446,9 @@ static watch_usec_t get_time_usec()
 
 #ifdef WITH_WATCH8BIT
 /* read a wide character from a popen'd stream */
-#define MAX_ENC_BYTES 16
-wint_t my_getwc(FILE * s);
 wint_t my_getwc(FILE * s)
 {
-	/* assuming no encoding ever consumes more than 16 bytes */
-	char i[MAX_ENC_BYTES];
+	char i[MB_CUR_MAX];
 	int byte = 0;
 	int convert;
 	wchar_t rval;
@@ -458,7 +465,7 @@ wint_t my_getwc(FILE * s)
 			/* legal conversion */
 			return rval;
 		}
-		if (byte == MAX_ENC_BYTES) {
+		if (byte == MB_CUR_MAX) {
 			while (byte > 1) {
 				/* at least *try* to fix up */
 				ungetc(i[--byte], s);
@@ -552,18 +559,15 @@ static void output_header(char *restrict command, double interval)
 
 static void find_eol(FILE *p)
 {
-    int c;
+	Xint c;
+	do {
 #ifdef WITH_WATCH8BIT
-    do {
-	c = my_getwc(p);
-    } while (c != WEOF
-	    && c!= L'\n');
+		c = my_getwc(p);
 #else
-    do {
-	c = getc(p);
-    } while (c != EOF
-	    && c != '\n');
+		c = getc(p);
 #endif /* WITH_WATCH8BIT */
+    } while (c != XEOF
+	    && c != XL('\n'));
 }
 
 static int run_command(char *restrict command, char **restrict command_argv)
@@ -630,11 +634,7 @@ static int run_command(char *restrict command, char **restrict command_argv)
 		wint_t carry = WEOF;
 #endif
 		for (x = 0; x < width; x++) {
-#ifdef WITH_WATCH8BIT
-			wint_t c = ' ';
-#else
-			int c = ' ';
-#endif
+			Xint c = XL(' ');
 			int attr = 0;
 
 			if (tabwaspending && (flags & WATCH_COLOR))
@@ -657,35 +657,30 @@ static int run_command(char *restrict command, char **restrict command_argv)
 					} while (c != WEOF && !iswprint(c)
 						 && c < 128
 						 && wcwidth(c) == 0
-                                                 && c != L'\a'
-						 && c != L'\n'
-						 && c != L'\t'
-						 && (c != L'\033'
-						     || !(flags & WATCH_COLOR)));
 #else
 					do
 						c = getc(p);
 					while (c != EOF && !isprint(c)
-					       && c != '\a'
-					       && c != '\n'
-					       && c != '\t'
-					       && (c != L'\033'
-						   || !(flags & WATCH_COLOR)));
 #endif
-				if (c == L'\033' && (flags & WATCH_COLOR)) {
+					       && c != XL('\a')
+					       && c != XL('\n')
+					       && c != XL('\t')
+					       && (c != XL('\033')
+						   || !(flags & WATCH_COLOR)));
+				if (c == XL('\033') && (flags & WATCH_COLOR)) {
 					x--;
 					process_ansi(p);
 					continue;
 				}
-				if (c == L'\n')
+				if (c == XL('\n'))
 					if (!oldeolseen && x == 0) {
 						x = -1;
 						continue;
 					} else
 						eolseen = 1;
-				else if (c == L'\t')
+				else if (c == XL('\t'))
 					tabpending = 1;
-                                else if (c == L'\a') {
+                                else if (c == XL('\a')) {
                                     beep();
                                     continue;
                                 }
@@ -696,18 +691,12 @@ static int run_command(char *restrict command, char **restrict command_argv)
 					carry = c;	/* character on the next line */
 					continue;	/* because it won't fit here */
 				}
-				if (c == WEOF || c == L'\n' || c == L'\t') {
-					c = L' ';
-					if (flags & WATCH_COLOR)
-						attrset(A_NORMAL);
-				}
-#else
-				if (c == EOF || c == '\n' || c == '\t') {
-					c = ' ';
-					if (flags & WATCH_COLOR)
-						attrset(A_NORMAL);
-				}
 #endif
+				if (c == XEOF || c == XL('\n') || c == XL('\t')) {
+					c = XL(' ');
+					if (flags & WATCH_COLOR)
+						attrset(A_NORMAL);
+				}
 				if (tabpending && (((x + 1) % 8) == 0)) {
 					tabpending = 0;
 					tabwaspending = 1;
@@ -763,19 +752,17 @@ static int run_command(char *restrict command, char **restrict command_argv)
 				standout();
 #ifdef WITH_WATCH8BIT
 			addnwstr((wchar_t *) & c, 1);
-#else
-			addch(c);
-#endif
-			if (attr)
-				standend();
-#ifdef WITH_WATCH8BIT
 			if (wcwidth(c) == 0) {
 				x--;
 			}
 			if (wcwidth(c) == 2) {
 				x++;
 			}
+#else
+			addch(c);
 #endif
+			if (attr)
+				standend();
 		}
 		oldeolseen = eolseen;
 		if (!line_wrap) {
