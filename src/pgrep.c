@@ -932,6 +932,7 @@ static void parse_opts (int argc, char **argv)
 /*        case 'D':   / * FreeBSD: print info about non-matches for debugging * /
  *            break; */
         case 'F':   /* FreeBSD: the arg is a file containing a PID to match */
+            free(opt_pidfile);
             opt_pidfile = xstrdup (optarg);
             ++criteria_count;
             break;
