@@ -159,4 +159,8 @@ static void error_at_line(int status, int errnum, const char *filename,
 
 #define PROCPS_NG_VERSION _("%s from %s\n"), program_invocation_short_name, PACKAGE_STRING
 
+// Convenience shorts
+typedef uint_fast8_t uf8;
+typedef int_fast8_t sf8;
+
 #endif /* PROCPS_NG_C_H */
