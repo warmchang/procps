@@ -66,15 +66,15 @@
 
 /* Boolean command line options */
 static int flags;
-#define WATCH_DIFF	(1 << 1)
-#define WATCH_CUMUL	(1 << 2)
-#define WATCH_EXEC	(1 << 3)
-#define WATCH_BEEP	(1 << 4)
-#define WATCH_COLOR	(1 << 5)
-#define WATCH_ERREXIT	(1 << 6)
-#define WATCH_CHGEXIT	(1 << 7)
-#define WATCH_EQUEXIT	(1 << 8)
-#define WATCH_NORERUN	(1 << 9)
+#define WATCH_DIFF	(1 << 0)
+#define WATCH_CUMUL	(1 << 1)
+#define WATCH_EXEC	(1 << 2)
+#define WATCH_BEEP	(1 << 3)
+#define WATCH_COLOR	(1 << 4)
+#define WATCH_ERREXIT	(1 << 5)
+#define WATCH_CHGEXIT	(1 << 6)
+#define WATCH_EQUEXIT	(1 << 7)
+#define WATCH_NORERUN	(1 << 8)
 
 #ifdef WITH_WATCH8BIT
 #define XL(c) L ## c
@@ -567,15 +567,10 @@ static void find_eol(FILE *p)
 	    && c != XL('\n'));
 }
 
-static int run_command(const char *command, char *const *command_argv)
+static bool run_command(const char *command, char *const *command_argv)
 {
 	int pipefd[2], status;
 	pid_t child;
-	FILE *p;
-	int x, y;
-	bool oldeolseen = true;
-	bool exit_early = false;
-	int buffer_size = 0, unchanged_buffer = 0;
 
 	/* allocate pipes */
 	if (pipe(pipefd) < 0)
@@ -615,24 +610,29 @@ static int run_command(const char *command, char *const *command_argv)
 			}
 		}
 	}
-
 	/* otherwise, we're in parent */
 	close(pipefd[1]);	/* close write side of pipe */
+
+	FILE *p;
+	bool exit_early = false;
+	bool oldeolseen = true;
+	int buffer_size = 0, unchanged_buffer = 0;
+#ifdef WITH_WATCH8BIT
+	wint_t carry = WEOF;
+#endif
+
 	if ((p = fdopen(pipefd[0], "r")) == NULL)
 		xerr(5, _("fdopen"));
-
 	reset_ansi();
-	for (y = show_title; y < height; y++) {
+
+	for (int y = show_title; y < height; y++) {
 		bool eolseen = false, tabpending = false, tabwaspending = false;
 		if (flags & WATCH_COLOR)
 			set_ansi_attribute(-1, NULL);
-#ifdef WITH_WATCH8BIT
-		wint_t carry = WEOF;
-#endif
-		for (x = 0; x < width; x++) {
+
+		for (int x = 0; x < width; x++) {
 			Xint c = XL(' ');
 			bool attr = false;
-
 			if (tabwaspending && (flags & WATCH_COLOR))
 				set_ansi_attribute(-1, NULL);
 			tabwaspending = false;
@@ -641,7 +641,7 @@ static int run_command(const char *command, char *const *command_argv)
 				/* if there is a tab pending, just
 				 * spit spaces until the next stop
 				 * instead of reading characters */
-				if (!tabpending)
+				if (!tabpending) {
 					do {
 #ifdef WITH_WATCH8BIT
 						if (carry == WEOF) {
@@ -663,10 +663,12 @@ static int run_command(const char *command, char *const *command_argv)
 					    && c != XL('\t')
 					    && (c != XL('\033')
 					        || !(flags & WATCH_COLOR)));
+				}
 
 				switch (c) {
 				case XL('\a'):
 					beep();
+					--x;
 					continue;
 				case XL('\n'):
 					if (!oldeolseen && x == 0) {
@@ -686,17 +688,10 @@ static int run_command(const char *command, char *const *command_argv)
 					break;
 				}
 
-#ifdef WITH_WATCH8BIT
-				if (x == width - 1 && c != WEOF && wcwidth(c) == 2) {
-					y++;
-					x = -1;		/* process this double-width */
-					carry = c;	/* character on the next line */
-					continue;	/* because it won't fit here */
-				}
-#endif
-
 				if (c == XEOF || c == XL('\n') || c == XL('\t')) {
+					// TODO: why output ' ' in place of XEOF or '\n'?
 					c = XL(' ');
+					// TODO: isn't this only required for '\t'?
 					if (flags & WATCH_COLOR)
 						attrset(A_NORMAL);
 				}
@@ -704,9 +699,17 @@ static int run_command(const char *command, char *const *command_argv)
 					tabpending = false;
 					tabwaspending = true;
 				}
+				assert(c != XEOF);
+
+#ifdef WITH_WATCH8BIT
+				if (x == width-1 && wcwidth(c) == 2) {
+					carry = c;
+					continue;
+				}
+#endif
 			}
+
 			move(y, x);
-			assert(c != XEOF);
 
 			if (!first_screen && !exit_early && (flags & WATCH_CHGEXIT)) {
 #ifdef WITH_WATCH8BIT
@@ -776,14 +779,20 @@ static int run_command(const char *command, char *const *command_argv)
 #endif
 		}
 
-		oldeolseen = eolseen;
 		if (!line_wrap) {
 			reset_ansi();
 			if (flags & WATCH_COLOR)
 				attrset(A_NORMAL);
+			if (!eolseen) {
+				find_eol(p);
+				eolseen = true;
+			}
+#ifdef WITH_WATCH8BIT
+			carry = XEOF;
+#endif
 		}
-		if (!line_wrap && !eolseen)
-			find_eol(p);
+
+		oldeolseen = eolseen;
 	}
 
 	fclose(p);
@@ -836,7 +845,7 @@ int main(int argc, char *argv[])
         flags |= WATCH_COLOR;
 #endif /* WITH_COLORWATCH */
 
-	static struct option longopts[] = {
+	static const struct option longopts[] = {
 		{"color", no_argument, 0, 'c'},
 		{"no-color", no_argument, 0, 'C'},
 		{"differences", optional_argument, 0, 'd'},
