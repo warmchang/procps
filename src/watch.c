@@ -86,33 +86,31 @@ static int flags;
 #define Xint int
 #endif
 
-static int curses_started = 0;
+static bool curses_started = false;
 static long height = 24, width = 80;
-static int screen_size_changed = 0;
-static int first_screen = 1;
-static int show_title = 2;	/* number of lines used, 2 or 0 */
-static int precise_timekeeping = 0;
-static int line_wrap = 1;
+static bool screen_size_changed = false;
+static bool first_screen = true;
+static uf8 show_title = 2;	/* number of lines used, 2 or 0 */
+static bool precise_timekeeping = false;
+static bool line_wrap = true;
 
 #define min(x,y) ((x) > (y) ? (y) : (x))
 #define MAX_ANSIBUF 100
 
-static void __attribute__ ((__noreturn__))
-    usage(FILE * out)
+static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
-	fprintf(out,
-              _(" %s [options] command\n"), program_invocation_short_name);
+	fprintf(out, _(" %s [options] command\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
 	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"), out);
 	fputs(_("  -c, --color            interpret ANSI color and style sequences\n"), out);
 	fputs(_("  -C, --no-color         do not interpret ANSI color and style sequences\n"), out);
 	fputs(_("  -d, --differences[=<permanent>]\n"
-                "                         highlight changes between updates\n"), out);
+	        "                         highlight changes between updates\n"), out);
 	fputs(_("  -e, --errexit          exit if command has a non-zero exit\n"), out);
 	fputs(_("  -g, --chgexit          exit when output from command changes\n"), out);
 	fputs(_("  -q, --equexit <cycles>\n"
-				"                         exit when output from command does not change\n"), out);
+	        "                         exit when output from command does not change\n"), out);
 	fputs(_("  -n, --interval <secs>  seconds to wait between updates\n"), out);
 	fputs(_("  -p, --precise          attempt run command in precise intervals\n"), out);
 	fputs(_("  -r, --no-rerun         do not rerun program on window resize\n"), out);
@@ -143,11 +141,11 @@ static void reset_ansi(void)
 
 static void init_ansi_colors(void)
 {
-	short ncurses_colors[] = {
+	const short ncurses_colors[] = {
 		-1, COLOR_BLACK, COLOR_RED, COLOR_GREEN, COLOR_YELLOW,
 		COLOR_BLUE, COLOR_MAGENTA, COLOR_CYAN, COLOR_WHITE
 	};
-	nr_of_colors = sizeof(ncurses_colors) / sizeof(short);
+	nr_of_colors = sizeof(ncurses_colors) / sizeof(*ncurses_colors);
 
 	more_colors = (COLORS >= 16) && (COLOR_PAIRS >= 16 * 16);
 
@@ -187,9 +185,9 @@ static int process_ansi_color_escape_sequence(char** escape_sequence) {
 	// Eg 24-bit (not yet implemented)
 	// ESC[ 38;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB foreground color
 	// ESC[ 48;2;⟨r⟩;⟨g⟩;⟨b⟩ m Select RGB background color
-	int num;
+	long num;
 
-	if (!escape_sequence)
+	if (!escape_sequence || !*escape_sequence)
 		return 0; /* avoid NULLPTR dereference, return "not understood" */
 
 	if ((*escape_sequence)[0] != ';')
@@ -199,6 +197,7 @@ static int process_ansi_color_escape_sequence(char** escape_sequence) {
 		// 8 bit! ANSI specifies a predefined set of 256 colors here.
 		if ((*escape_sequence)[2] != ';')
 			return 0; /* not understood */
+		// TODO: not guaranteed to work (1st+2nd param. are the same array)
 		num = strtol((*escape_sequence) + 3, escape_sequence, 10);
 		if (num >= 0 && num <= 7) {
 			// 0-7 are standard colors  same as SGR 30-37
@@ -305,8 +304,8 @@ static void process_ansi(FILE * fp)
 {
 	int i, c;
 	char buf[MAX_ANSIBUF];
-	char *numstart, *endptr = buf;
-    int ansi_attribute;
+	char *numstart, *endptr;
+	int ansi_attribute;
 
 	c = getc(fp);
 
@@ -328,7 +327,8 @@ static void process_ansi(FILE * fp)
 		if ((c < '0' || c > '9') && c != ';') {
 			return;
 		}
-		buf[i] = (char)c;
+		assert(c >= 0 && c <= SCHAR_MAX);
+		buf[i] = c;
 	}
 	/*
 	 * buf now contains a semicolon-separated list of decimal integers,
@@ -366,7 +366,7 @@ static void die(int notused __attribute__ ((__unused__)))
 
 static void winch_handler(int notused __attribute__ ((__unused__)))
 {
-	screen_size_changed = 1;
+	screen_size_changed = true;
 }
 
 static char env_col_buf[24];
@@ -448,9 +448,10 @@ static watch_usec_t get_time_usec(void)
 /* read a multi-byte character from a byte-oriented stream */
 static wint_t my_getwc(FILE *s)
 {
-	int c;
+	assert(MB_CUR_MAX < 256);
 	unsigned char i[MB_CUR_MAX];
 	uf8 byte = 0;
+	int c;
 	wchar_t rval;
 	mbstate_t mbstate;
 
@@ -475,27 +476,33 @@ static wint_t my_getwc(FILE *s)
 #endif	/* WITH_WATCH8BIT */
 
 #ifdef WITH_WATCH8BIT
-static void output_header(wchar_t *restrict wcommand, int wcommand_characters, double interval)
+static void output_header(const wchar_t *wcommand, int wcommand_characters, double interval)
 #else
-static void output_header(char *restrict command, double interval)
+static void output_header(const char *command, double interval)
 #endif	/* WITH_WATCH8BIT */
 {
-	time_t t = time(NULL);
-	char *ts = ctime(&t);
+	static uf8 max_host_name_len = 0;
+	if (max_host_name_len == 0) {
+		long n = sysconf(_SC_HOST_NAME_MAX);
+		max_host_name_len = n>=10 && n<=255 ? n : 255;
+	}
+	char hostname[max_host_name_len + 1];
+	if (gethostname(hostname, sizeof(hostname)))
+		hostname[0] = '\0';
+	hostname[max_host_name_len] = '\0';
+
+	const time_t t = time(NULL);
 	char *header;
 	char *right_header;
-	int max_host_name_len = (int) sysconf(_SC_HOST_NAME_MAX);
-	char hostname[max_host_name_len + 1];
 	int command_columns = 0;	/* not including final \0 */
-
-	gethostname(hostname, sizeof(hostname));
 
 	/*
 	 * left justify interval and command, right justify hostname and time,
 	 * clipping all to fit window width
 	 */
 	int hlen = asprintf(&header, _("Every %.1fs: "), interval);
-	int rhlen = asprintf(&right_header, _("%s: %s"), hostname, ts);
+	// TODO: ctime() isn't locale-aware, replace with strftime()
+	int rhlen = asprintf(&right_header, _("%s: %s"), hostname, ctime(&t));
 
 	/*
 	 * the rules:
@@ -513,6 +520,7 @@ static void output_header(char *restrict command, double interval)
 		free(right_header);
 		return;
 	}
+
 	if (rhlen + hlen + 1 <= width) {
 		mvaddstr(0, 0, header);
 		if (rhlen + hlen + 2 <= width) {
@@ -567,7 +575,7 @@ static void find_eol(FILE *p)
 	    && c != XL('\n'));
 }
 
-static bool run_command(const char *command, char *const *command_argv)
+static bool run_command(const char *command, char *const *restrict command_argv)
 {
 	int pipefd[2], status;
 	pid_t child;
@@ -582,7 +590,6 @@ static bool run_command(const char *command, char *const *command_argv)
 
 	/* fork to prepare to run command */
 	child = fork();
-
 	if (child < 0) {		/* fork error */
 		xerr(2, _("unable to fork process"));
 	} else if (child == 0) {	/* in child */
@@ -632,7 +639,7 @@ static bool run_command(const char *command, char *const *command_argv)
 
 		for (int x = 0; x < width; x++) {
 			Xint c = XL(' ');
-			bool attr = false;
+			bool diff = false;
 			if (tabwaspending && (flags & WATCH_COLOR))
 				set_ansi_attribute(-1, NULL);
 			tabwaspending = false;
@@ -689,9 +696,7 @@ static bool run_command(const char *command, char *const *command_argv)
 				}
 
 				if (c == XEOF || c == XL('\n') || c == XL('\t')) {
-					// TODO: why output ' ' in place of XEOF or '\n'?
 					c = XL(' ');
-					// TODO: isn't this only required for '\t'?
 					if (flags & WATCH_COLOR)
 						attrset(A_NORMAL);
 				}
@@ -742,7 +747,7 @@ static bool run_command(const char *command, char *const *command_argv)
 #ifdef WITH_WATCH8BIT
 				cchar_t oldc;
 				in_wch(&oldc);
-				attr = !first_screen
+				diff = !first_screen
 				    && ((wchar_t) c != oldc.chars[0]
 				        ||
 				        ((flags & WATCH_CUMUL)
@@ -750,15 +755,15 @@ static bool run_command(const char *command, char *const *command_argv)
 #else
 				chtype oldch = inch();
 				unsigned char oldc = oldch & A_CHARTEXT;
-				attr = !first_screen
+				diff = !first_screen
 				    && ((unsigned char)c != oldc
-				    ||
-				    ((flags & WATCH_CUMUL)
-				        && (oldch & A_ATTRIBUTES)));
+				        ||
+				        ((flags & WATCH_CUMUL)
+				            && (oldch & A_ATTRIBUTES)));
 #endif
 			}
 
-			if (attr)
+			if (diff)
 				standout();
 #ifdef WITH_WATCH8BIT
 			wchar_t c2 = c;
@@ -766,7 +771,7 @@ static bool run_command(const char *command, char *const *command_argv)
 #else
 			addch(c);
 #endif
-			if (attr)
+			if (diff)
 				standend();
 
 #ifdef WITH_WATCH8BIT
@@ -788,7 +793,7 @@ static bool run_command(const char *command, char *const *command_argv)
 				eolseen = true;
 			}
 #ifdef WITH_WATCH8BIT
-			carry = XEOF;
+			carry = WEOF;
 #endif
 		}
 
@@ -817,7 +822,7 @@ static bool run_command(const char *command, char *const *command_argv)
 	if (unchanged_buffer == buffer_size && (flags & WATCH_EQUEXIT))
 		exit_early = true;
 
-	first_screen = 0;
+	first_screen = false;
 	refresh();
 	return exit_early;
 }
@@ -911,7 +916,7 @@ int main(int argc, char *argv[])
 			show_title = 0;
 			break;
 		case 'w':
-			line_wrap = 0;
+			line_wrap = false;
 			break;
 		case 'x':
 			flags |= WATCH_EXEC;
@@ -920,7 +925,7 @@ int main(int argc, char *argv[])
 			interval = strtod_nol_or_err(optarg, _("failed to parse argument"));
 			break;
 		case 'p':
-			precise_timekeeping = 1;
+			precise_timekeeping = true;
 			break;
 		case 'h':
 			usage(stdout);
@@ -933,11 +938,6 @@ int main(int argc, char *argv[])
 			break;
 		}
 	}
-
-	if (interval < 0.1)
-		interval = 0.1;
-	if (interval > UINT_MAX)
-		interval = UINT_MAX;
 
 	if (optind >= argc)
 		usage(stderr);
@@ -987,7 +987,7 @@ int main(int argc, char *argv[])
 	signal(SIGWINCH, winch_handler);
 
 	/* Set up tty for curses use.  */
-	curses_started = 1;
+	curses_started = true;
 	initscr();
 	if (flags & WATCH_COLOR) {
 		if (has_colors()) {
@@ -1002,6 +1002,10 @@ int main(int argc, char *argv[])
 	noecho();
 	cbreak();
 
+	if (interval < 0.1)
+		interval = 0.1;
+	if (interval > UINT_MAX)
+		interval = UINT_MAX;
 	if (precise_timekeeping)
 		next_loop = get_time_usec();
 
@@ -1011,11 +1015,12 @@ int main(int argc, char *argv[])
 			resizeterm(height, width);
 			clear();
 			/* redrawwin(stdscr); */
-			screen_size_changed = 0;
-			first_screen = 1;
+			screen_size_changed = false;
+			first_screen = true;
 		}
 
 		if (show_title)
+			// TODO: recompose header string only when screen_size_changed
 #ifdef WITH_WATCH8BIT
 			output_header(wcommand, wcommand_characters, interval);
 #else
@@ -1045,11 +1050,10 @@ int main(int argc, char *argv[])
 			next_loop += USECS_PER_SEC * interval;
 			if (cur_time < next_loop)
 				usleep(next_loop - cur_time);
-		} else
-			if (interval < UINT_MAX / USECS_PER_SEC)
-				usleep(interval * USECS_PER_SEC);
-			else
-				sleep(interval);
+		} else if (interval < UINT_MAX / USECS_PER_SEC)
+			usleep(interval * USECS_PER_SEC);
+		else
+			sleep(interval);
 	}
 
 	endwin();
