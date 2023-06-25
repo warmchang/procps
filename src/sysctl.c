@@ -235,6 +235,7 @@ static void __attribute__ ((__noreturn__))
 	      _(" %s [options] [variable[=value] ...]\n"),
 		program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
+	// TODO: other tools in src/ use one leading blank
 	fputs(_("  -a, --all            display all variables\n"), out);
 	fputs(_("  -A                   alias of -a\n"), out);
 	fputs(_("  -X                   alias of -a\n"), out);

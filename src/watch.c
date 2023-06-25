@@ -104,6 +104,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(USAGE_HEADER, out);
 	fprintf(out, _(" %s [options] command\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
+	// TODO: other tools in src/ use one leading blank
 	fputs(_("  -b, --beep             beep if command has a non-zero exit\n"), out);
 	fputs(_("  -c, --color            interpret ANSI color and style sequences\n"), out);
 	fputs(_("  -C, --no-color         do not interpret ANSI color and style sequences\n"), out);
@@ -488,13 +489,13 @@ static wint_t my_getwc(FILE *s)
 #ifdef WITH_WATCH8BIT
 static void output_header(const wchar_t *wcommand, int wcommand_characters, double interval)
 #else
-static void output_header(const char *command, double interval)
+static void output_header(const char *command, int command_characters, double interval)
 #endif	/* WITH_WATCH8BIT */
 {
 	static uf8 max_host_name_len = 0;
 	if (max_host_name_len == 0) {
 		long n = sysconf(_SC_HOST_NAME_MAX);
-		max_host_name_len = n>=10 && n<=255 ? n : 255;
+		max_host_name_len = n>0 && n<256 ? n : 255;
 	}
 	char hostname[max_host_name_len + 1];
 	if (gethostname(hostname, sizeof(hostname)))
@@ -504,12 +505,12 @@ static void output_header(const char *command, double interval)
 	const time_t t = time(NULL);
 	char *header;
 	char *right_header;
-	int command_columns = 0;	/* not including final \0 */
 
 	/*
 	 * left justify interval and command, right justify hostname and time,
 	 * clipping all to fit window width
 	 */
+	// TODO: ENOMEM not handled, just put on stack
 	// TODO: left header never changes, make static
 	int hlen = asprintf(&header, _("Every %.1fs: "), interval);
 	// TODO: ctime() isn't locale-aware, replace with strftime()
@@ -539,15 +540,14 @@ static void output_header(const char *command, double interval)
 				mvaddstr(0, width - rhlen - 4, "... ");
 			} else {
 #ifdef WITH_WATCH8BIT
-	            command_columns = wcswidth(wcommand, -1);
+	            int command_columns = wcswidth(wcommand, -1);
 				if (width < rhlen + hlen + command_columns) {
 					/* print truncated */
 					int available = width - rhlen - hlen;
-					int in_use = command_columns;
 					int wcomm_len = wcommand_characters;
-					while (available - 4 < in_use) {
+					while (available - 4 < command_columns) {
 						wcomm_len--;
-						in_use = wcswidth(wcommand, wcomm_len);
+						command_columns = wcswidth(wcommand, wcomm_len);
 					}
 					mvaddnwstr(0, hlen, wcommand, wcomm_len);
 					mvaddstr(0, width - rhlen - 4, "... ");
@@ -555,13 +555,12 @@ static void output_header(const char *command, double interval)
 					mvaddwstr(0, hlen, wcommand);
 				}
 #else
-                command_columns = strlen(command);
-                if (width < rhlen + hlen + command_columns) {
-                    /* print truncated */
-                    mvaddnstr(0, hlen, command, width - rhlen - hlen - 4);
-                    mvaddstr(0, width - rhlen - 4, "... ");
-                } else {
-                    mvaddnstr(0, hlen, command, width - rhlen - hlen);
+				if (width < rhlen + hlen + command_characters) {
+					/* print truncated */
+					mvaddnstr(0, hlen, command, width - rhlen - hlen - 4);
+					mvaddstr(0, width - rhlen - 4, "... ");
+				} else {
+					mvaddnstr(0, hlen, command, width - rhlen - hlen);
                 }
 #endif	/* WITH_WATCH8BIT */
 			}
@@ -607,6 +606,8 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		close(pipefd[1]);		/* once duped, the write fd isn't needed */
 		dup2(1, 2);			/* stderr should default to stdout */
 
+		// 0 untouched => application may think it's run interactively (see,
+		// e.g., ps). Intentional?
 		// TODO: using stdout/err (xerr(), exit()) is probably UB at this point
 		if (flags & WATCH_EXEC) {	/* pass command to exec instead of system */
 			if (execvp(command_argv[0], command_argv) == -1) {
@@ -629,79 +630,110 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 	FILE *p;
 	if ((p = fdopen(pipefd[0], "r")) == NULL)
 		xerr(5, _("fdopen"));
+	// TODO: make sure p is buffered
 
-	Xint c = XEOF;
+	Xint c = XEOF, carry = XEOF;
+	int x, y;
 	int cwid;  // width in term columns
-	bool tabpending = false;
+	bool inside_tab = false, inside_trailer = false;
 	bool exit_early = false;
 	bool diff = false;
 	int buffer_size = 0, unchanged_buffer = 0;
-	Xint carry = XEOF;
 
-	for (int y = show_title; y < height; y++) {
+	for (y = show_title; y < height; ++y) {
 		// For x==width, only characters with wcwidth()==0 are allowed to be
-		// output. Used for codepoints which modify a previous character and
-		// swallowing a newline which needs to be skipped on output (a move to
-		// next like will take place anyway).
-		for (int x = 0; x <= width; x++) {
-			// Carry first, then tabpending, then new read. Carry can contain a
-			// ' ' for a tab (when \t was beyond the end of the previous term
-			// line).
-			if (carry != XEOF) {
-				c = carry;
-				carry = XEOF;
-			}
-			else if (tabpending)
-				c = XL(' ');
-			else do c = Xgetc(p);
-			while (c != XEOF
-#ifdef WITH_WATCH8BIT
-			    && !iswprint(c)
-			    && c < 128  // TODO: not portable (wint_t may be signed)
-			    && wcwidth(c) <= 0
-#else
-			    && !isprint(c)
-#endif
-			    && c != XL('\n')
-			    && c != XL('\a')
-			    && c != XL('\t')
-			    && c != XL('\033'));
-
-			if (c == XL('\n') || c == XEOF)
-				break;
-			else if (c == XL('\t')) {
-				tabpending = true;
+		// output. Used, e.g., for codepoints which modify the preceding
+		// character and swallowing a newline beyond last column of term.
+		// TODO: bad cycle flow organization
+		for (x = 0; x <= width; ++x) {
+			// Inside_trailer overrides everything, preserves carry. Fill rest
+			// of line with spaces. clrtoeol()/clrtobot() can't be used, because
+			// diff detection in the blank space must be preserved (same idea
+			// applies to the tab).
+			if (inside_trailer) {
+				if (x == width) {
+					inside_trailer = false;
+					break;
+				}
 				c = XL(' ');
 			}
-			else if (c == XL('\033')) {
-				process_ansi(p);
-				--x;
-				continue;
-			}
-			else if (c == XL('\a')) {
-				beep();
-				--x;
-				continue;
-			}
-			assert(!tabpending || c == XL(' '));
-			// Here c is a non-special, printable char. It may have wcwidth 0.
-			// Assumption: c doesn't change through the rest of the x- and
-			// y-cycle.
+			else {
+				// Carry first, then inside_tab, then new read. Carry can
+				// contain a ' ' for a tab (when \t was beyond the end of the
+				// previous term line) and that space must be consumed.
+				if (carry != XEOF) {
+					c = carry;
+					carry = XEOF;
+				}
+				else if (inside_tab)
+					c = XL(' ');
+				else do c = Xgetc(p);
+				while (c != XEOF
+#ifdef WITH_WATCH8BIT
+				    && ! iswprint(c)
+				    && c < 128  // TODO: not portable (wint_t may be signed)
+				    && wcwidth(c) <= 0
+#else
+				    && ! isprint(c)
+#endif
+				    && c != XL('\n')
+				    && c != XL('\a')
+				    && c != XL('\t')
+				    && c != XL('\033'));
+
+				if (c == XL('\n') || c == XEOF) {
+					assert(carry == XEOF);
+					assert(! inside_tab);
+					--x;
+					inside_trailer = true;
+					continue;
+				}
+				else if (c == XL('\t')) {
+					inside_tab = true;
+					c = XL(' ');
+					// diff of tabs only highlights the first space of it.
+					// Intentional?
+				}
+				else if (c == XL('\033')) {
+					process_ansi(p);
+					--x;
+					continue;
+				}
+				else if (c == XL('\a')) {
+					beep();
+					--x;
+					continue;
+				}
+				assert(! inside_tab || c == XL(' '));
+				// Here c is a non-special, printable char. It may have wcwidth
+				// 0. Assumption: c doesn't change through the rest of the x-
+				// and y-cycle.
 
 #ifdef WITH_WATCH8BIT
-			cwid = wcwidth(c);
-			assert(cwid >= 0 && cwid <= 2);
+				cwid = wcwidth(c);
+				assert(cwid >= 0 && cwid <= 2);
 #else
-			cwid = 1;
+				cwid = 1;
 #endif
-			if (cwid > width-x) {
-				carry = c;
-				// throughout the function: carry!=XEOF => wcwidth(carry)>0
-				break;
+				if (cwid > width-x) {
+					assert(carry == XEOF);
+					assert(inside_tab || ! inside_tab);
+					carry = c;
+					assert(cwid > 0);
+					inside_trailer = true;
+					--x;
+					if (! line_wrap)
+						find_eol(p);
+					continue;
+				}
 			}
 
-			move(y, x);  // outside window => NOP
+			move(y, x);
 
+			// TODO: when cwid>1, check the diff of the second "slot" of the
+			// char. Verify (watch -d) on COLUMNS=40:
+			// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ日本\nb' > /tmp/del
+			// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZZ日本\nb' > /tmp/del
 			if (!first_screen && !exit_early && (flags & WATCH_CHGEXIT)) {
 #ifdef WITH_WATCH8BIT
 				cchar_t oldc;
@@ -760,24 +792,23 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			if (diff)
 				standend();
 
-			if (tabpending && ((x+1)%8 == 0 || x == width-1))
-				tabpending = false;
+			if (! inside_trailer) {
+				if (inside_tab && ((x+1)%8 == 0 || x == width-1))
+					inside_tab = false;
 
-			x += cwid-1;
+				x += cwid-1;
+			}
 		}
 
-		if (c == XEOF)
-			break;
-
-		if (!line_wrap) {
-			if (c != XL('\n'))
-				find_eol(p);
+		if (! line_wrap) {
 			carry = XEOF;
-			tabpending = false;
+			inside_tab = false;
 			reset_ansi();
 			set_ansi_attribute(-1, NULL);
 		}
 	}
+	// TODO: lines past max(last line with output, last line with output in
+	// previous command run) ca be done with clrtobot()
 
 	fclose(p);
 
@@ -792,10 +823,12 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		if (flags & WATCH_BEEP)
 			beep();
 		if (flags & WATCH_ERREXIT) {
+			// TODO: add a few spaces to the end of the string to separate it
+			// from the cmd output that may be on that line
 			mvaddstr(height - 1, 0,
 			    _("command exit with a non-zero status, press a key to exit"));
 			refresh();
-			fgetc(stdin);
+			getchar();
 			do_exit(8);
 		}
 	}
@@ -926,16 +959,15 @@ int main(int argc, char *argv[])
 	/* save for later */
 	command_argv = &(argv[optind]);
 
-	command = xstrdup(argv[optind++]);
-	command_length = strlen(command);
+	command_length = strlen(argv[optind]);
+	command = xmalloc(command_length+1);
+	memcpy(command, argv[optind++], command_length+1);
 	for (; optind < argc; optind++) {
-		char *endp;
 		int s = strlen(argv[optind]);
 		/* space and \0 */
 		command = xrealloc(command, command_length + s + 2);
-		endp = command + command_length;
-		*endp = ' ';
-		memcpy(endp + 1, argv[optind], s);
+		command[command_length] = ' ';
+		memcpy(command+command_length+1, argv[optind], s);
 		/* space then string length */
 		command_length += 1 + s;
 		command[command_length] = '\0';
@@ -1008,8 +1040,7 @@ int main(int argc, char *argv[])
 #ifdef WITH_WATCH8BIT
 			output_header(wcommand, wcommand_characters, interval);
 #else
-			// TODO: pass strlen of command to avoid recomputation
-			output_header(command, interval);
+			output_header(command, command_length, interval);
 #endif	/* WITH_WATCH8BIT */
 
 		if (!(flags & WATCH_NORERUN) ||
