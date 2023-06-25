@@ -80,10 +80,12 @@ static int flags;
 #define XL(c) L ## c
 #define XEOF WEOF
 #define Xint wint_t
+#define Xgetc(stream) my_getwc(stream)
 #else
 #define XL(c) c
 #define XEOF EOF
 #define Xint int
+#define Xgetc(stream) getc(stream)
 #endif
 
 static bool curses_started = false;
@@ -197,7 +199,7 @@ static int process_ansi_color_escape_sequence(char** escape_sequence) {
 		// 8 bit! ANSI specifies a predefined set of 256 colors here.
 		if ((*escape_sequence)[2] != ';')
 			return 0; /* not understood */
-		// TODO: not guaranteed to work (1st+2nd param. are the same array)
+		// TODO: not guaranteed to work with the same array
 		num = strtol((*escape_sequence) + 3, escape_sequence, 10);
 		if (num >= 0 && num <= 7) {
 			// 0-7 are standard colors  same as SGR 30-37
@@ -219,6 +221,9 @@ static int process_ansi_color_escape_sequence(char** escape_sequence) {
 
 static int set_ansi_attribute(const int attrib, char** escape_sequence)
 {
+	if (!(flags & WATCH_COLOR))
+		return 1;
+
 	switch (attrib) {
 	case -1:	/* restore last settings */
 		break;
@@ -302,6 +307,9 @@ static int set_ansi_attribute(const int attrib, char** escape_sequence)
 
 static void process_ansi(FILE * fp)
 {
+	if (!(flags & WATCH_COLOR))
+		return;
+
 	int i, c;
 	char buf[MAX_ANSIBUF];
 	char *numstart, *endptr;
@@ -353,8 +361,10 @@ static void process_ansi(FILE * fp)
 
 static void __attribute__ ((__noreturn__)) do_exit(int status)
 {
-	if (curses_started)
+	if (curses_started) {
 		endwin();
+		curs_set(1);
+	}
 	exit(status);
 }
 
@@ -500,6 +510,7 @@ static void output_header(const char *command, double interval)
 	 * left justify interval and command, right justify hostname and time,
 	 * clipping all to fit window width
 	 */
+	// TODO: left header never changes, make static
 	int hlen = asprintf(&header, _("Every %.1fs: "), interval);
 	// TODO: ctime() isn't locale-aware, replace with strftime()
 	int rhlen = asprintf(&right_header, _("%s: %s"), hostname, ctime(&t));
@@ -565,13 +576,8 @@ static void output_header(const char *command, double interval)
 static void find_eol(FILE *p)
 {
 	Xint c;
-	do {
-#ifdef WITH_WATCH8BIT
-		c = my_getwc(p);
-#else
-		c = getc(p);
-#endif
-    } while (c != XEOF
+	do c = Xgetc(p);
+	while (c != XEOF
 	    && c != XL('\n'));
 }
 
@@ -621,100 +627,80 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 	close(pipefd[1]);	/* close write side of pipe */
 
 	FILE *p;
-	bool exit_early = false;
-	bool oldeolseen = true;
-	int buffer_size = 0, unchanged_buffer = 0;
-#ifdef WITH_WATCH8BIT
-	wint_t carry = WEOF;
-#endif
-
 	if ((p = fdopen(pipefd[0], "r")) == NULL)
 		xerr(5, _("fdopen"));
-	reset_ansi();
+
+	Xint c = XEOF;
+	int cwid;  // width in term columns
+	bool tabpending = false;
+	bool exit_early = false;
+	bool diff = false;
+	int buffer_size = 0, unchanged_buffer = 0;
+	Xint carry = XEOF;
 
 	for (int y = show_title; y < height; y++) {
-		bool eolseen = false, tabpending = false, tabwaspending = false;
-		if (flags & WATCH_COLOR)
-			set_ansi_attribute(-1, NULL);
-
-		for (int x = 0; x < width; x++) {
-			Xint c = XL(' ');
-			bool diff = false;
-			if (tabwaspending && (flags & WATCH_COLOR))
-				set_ansi_attribute(-1, NULL);
-			tabwaspending = false;
-
-			if (!eolseen) {
-				/* if there is a tab pending, just
-				 * spit spaces until the next stop
-				 * instead of reading characters */
-				if (!tabpending) {
-					do {
+		// For x==width, only characters with wcwidth()==0 are allowed to be
+		// output. Used for codepoints which modify a previous character and
+		// swallowing a newline which needs to be skipped on output (a move to
+		// next like will take place anyway).
+		for (int x = 0; x <= width; x++) {
+			// Carry first, then tabpending, then new read. Carry can contain a
+			// ' ' for a tab (when \t was beyond the end of the previous term
+			// line).
+			if (carry != XEOF) {
+				c = carry;
+				carry = XEOF;
+			}
+			else if (tabpending)
+				c = XL(' ');
+			else do c = Xgetc(p);
+			while (c != XEOF
 #ifdef WITH_WATCH8BIT
-						if (carry == WEOF) {
-							c = my_getwc(p);
-						} else {
-							c = carry;
-							carry = WEOF;
-						}
-					} while (c != WEOF && !iswprint(c)
-					    // TODO: not portable (wint_t may be signed)
-					    && c < 128
-					    && wcwidth(c) <= 0
+			    && !iswprint(c)
+			    && c < 128  // TODO: not portable (wint_t may be signed)
+			    && wcwidth(c) <= 0
 #else
-						c = getc(p);
-					} while (c != EOF && !isprint(c)
+			    && !isprint(c)
 #endif
-					    && c != XL('\a')
-					    && c != XL('\n')
-					    && c != XL('\t')
-					    && (c != XL('\033')
-					        || !(flags & WATCH_COLOR)));
-				}
+			    && c != XL('\n')
+			    && c != XL('\a')
+			    && c != XL('\t')
+			    && c != XL('\033'));
 
-				switch (c) {
-				case XL('\a'):
-					beep();
-					--x;
-					continue;
-				case XL('\n'):
-					if (!oldeolseen && x == 0) {
-						x = -1;
-						continue;
-					} else eolseen = true;
-					break;
-				case XL('\t'):
-					tabpending = true;
-					break;
-				case XL('\033'):
-					if (flags & WATCH_COLOR) {
-						x--;
-						process_ansi(p);
-						continue;
-					}
-					break;
-				}
-
-				if (c == XEOF || c == XL('\n') || c == XL('\t')) {
-					c = XL(' ');
-					if (flags & WATCH_COLOR)
-						attrset(A_NORMAL);
-				}
-				if (tabpending && (((x + 1) % 8) == 0)) {
-					tabpending = false;
-					tabwaspending = true;
-				}
-				assert(c != XEOF);
+			if (c == XL('\n') || c == XEOF)
+				break;
+			else if (c == XL('\t')) {
+				tabpending = true;
+				c = XL(' ');
+			}
+			else if (c == XL('\033')) {
+				process_ansi(p);
+				--x;
+				continue;
+			}
+			else if (c == XL('\a')) {
+				beep();
+				--x;
+				continue;
+			}
+			assert(!tabpending || c == XL(' '));
+			// Here c is a non-special, printable char. It may have wcwidth 0.
+			// Assumption: c doesn't change through the rest of the x- and
+			// y-cycle.
 
 #ifdef WITH_WATCH8BIT
-				if (x == width-1 && wcwidth(c) == 2) {
-					carry = c;
-					continue;
-				}
+			cwid = wcwidth(c);
+			assert(cwid >= 0 && cwid <= 2);
+#else
+			cwid = 1;
 #endif
+			if (cwid > width-x) {
+				carry = c;
+				// throughout the function: carry!=XEOF => wcwidth(carry)>0
+				break;
 			}
 
-			move(y, x);
+			move(y, x);  // outside window => NOP
 
 			if (!first_screen && !exit_early && (flags & WATCH_CHGEXIT)) {
 #ifdef WITH_WATCH8BIT
@@ -774,34 +760,29 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			if (diff)
 				standend();
 
-#ifdef WITH_WATCH8BIT
-			switch (wcwidth(c)) {
-				case 0: --x; break;
-				case 1: break;
-				case 2: ++x; break;
-				default: assert(wcwidth(c) >= 0 && wcwidth(c) <= 2); break;
-			}
-#endif
+			if (tabpending && ((x+1)%8 == 0 || x == width-1))
+				tabpending = false;
+
+			x += cwid-1;
 		}
+
+		if (c == XEOF)
+			break;
 
 		if (!line_wrap) {
-			reset_ansi();
-			if (flags & WATCH_COLOR)
-				attrset(A_NORMAL);
-			if (!eolseen) {
+			if (c != XL('\n'))
 				find_eol(p);
-				eolseen = true;
-			}
-#ifdef WITH_WATCH8BIT
-			carry = WEOF;
-#endif
+			carry = XEOF;
+			tabpending = false;
+			reset_ansi();
+			set_ansi_attribute(-1, NULL);
 		}
-
-		oldeolseen = eolseen;
 	}
 
 	fclose(p);
 
+	// TODO: waitpid() getting interrupted by window size changes looks like
+	// a good potential source of children that'll never be waited for. Confirm.
 	/* harvest child process and get status, propagated from command */
 	if (waitpid(child, &status, 0) < 0)
 		xerr(8, _("waitpid"));
@@ -966,13 +947,13 @@ int main(int argc, char *argv[])
 	wcommand_characters = mbstowcs(NULL, command, 0);
 	if (wcommand_characters < 0) {
 		fprintf(stderr, _("unicode handling error\n"));
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	wcommand =
 	    (wchar_t *) malloc((wcommand_characters + 1) * sizeof(wcommand));
 	if (wcommand == NULL) {
 		fprintf(stderr, _("unicode handling error (malloc)\n"));
-		exit(EXIT_FAILURE);
+		return EXIT_FAILURE;
 	}
 	mbstowcs(wcommand, command, wcommand_characters + 1);
 #endif	/* WITH_WATCH8BIT */
@@ -1001,6 +982,7 @@ int main(int argc, char *argv[])
 	nonl();
 	noecho();
 	cbreak();
+	curs_set(0);
 
 	if (interval < 0.1)
 		interval = 0.1;
@@ -1010,6 +992,9 @@ int main(int argc, char *argv[])
 		next_loop = get_time_usec();
 
 	while (1) {
+		reset_ansi();
+		set_ansi_attribute(-1, NULL);
+
 		if (screen_size_changed) {
 			get_terminal_size();
 			resizeterm(height, width);
@@ -1020,10 +1005,10 @@ int main(int argc, char *argv[])
 		}
 
 		if (show_title)
-			// TODO: recompose header string only when screen_size_changed
 #ifdef WITH_WATCH8BIT
 			output_header(wcommand, wcommand_characters, interval);
 #else
+			// TODO: pass strlen of command to avoid recomputation
 			output_header(command, interval);
 #endif	/* WITH_WATCH8BIT */
 
@@ -1056,6 +1041,5 @@ int main(int argc, char *argv[])
 			sleep(interval);
 	}
 
-	endwin();
-	return EXIT_SUCCESS;
+	do_exit(EXIT_SUCCESS);
 }
