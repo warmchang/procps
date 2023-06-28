@@ -560,12 +560,14 @@ static int WriteSetting(
     slashdot(dotted_key, '/', '.');
 
     if ((ts.st_mode & S_IWUSR) == 0) {
+        errno = EPERM;
         xwarn(_("setting key \"%s\""), dotted_key);
 	free(dotted_key);
         return rc;
     }
 
     if (S_ISDIR(ts.st_mode)) {
+        errno = EISDIR;
         xwarn(_("setting key \"%s\""), dotted_key);
 	free(dotted_key);
         return rc;
