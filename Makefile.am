@@ -1,7 +1,6 @@
 
-CYGWINFLAGS =
+CYGWINFLAGS = $(LTLIBINTL)
 if CYGWIN
-CYGWINFLAGS += -lintl
 usrbin_exec_PROGRAMS =
 endif
 
@@ -136,7 +135,7 @@ bin_PROGRAMS += src/kill
 endif
 dist_man_MANS += man/kill.1
 src_kill_SOURCES = src/kill.c local/strutils.c local/fileutils.c local/signals.c
-src_kill_LDADD =
+src_kill_LDADD = $(LTLIBINTL)
 else
   EXTRA_DIST += man/kill.1
 endif
@@ -230,7 +229,7 @@ src_sysctl_SOURCES = \
 	src/sysctl.c \
 	local/fileutils.c \
 	local/procio.c
-src_sysctl_LDADD=
+src_sysctl_LDADD= $(LTLIBINTL)
 endif
 src_tload_SOURCES = src/tload.c local/strutils.c local/fileutils.c
 src_uptime_SOURCES = src/uptime.c local/fileutils.c
