@@ -20,7 +20,7 @@ watch \- execute a program periodically, showing output fullscreen
 .B watch
 runs
 .I command
-repeatedly, displaying its output and errors (the first screenfull).  This
+repeatedly, displaying its output and errors (the first screenful).  This
 allows you to watch the program output change over time.  By default,
 \fIcommand\fR is run every 2 seconds and \fBwatch\fR will run until interrupted.
 .SH OPTIONS
@@ -51,7 +51,7 @@ changes.
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval.  The command will not allow quicker than 0.1 second
 interval, in which the smaller values are converted. Both '.' and ',' work
-for any locales. The \fBWATCH_INTERVAL\fR environment can be used to persistently
+for any locale. The \fBWATCH_INTERVAL\fR environment variable can be used to persistently
 set a non-default interval (following the same rules and formatting).
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
@@ -86,11 +86,11 @@ Turn off line wrapping. Long lines will be truncated instead of wrapped to the n
 \fB\-x\fR, \fB\-\-exec\fR
 Pass
 .I command
-to
-.BR exec (2)
-instead of
+to an
+.BR exec (3)
+call instead of
 .B sh \-c
-which reduces the need to use extra quoting to get the desired effect.
+to avoid the side-effects of the shell (environment setup, variable and pathname expansion, etc.).
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
@@ -148,17 +148,14 @@ the first non\-option argument).  This means that flags after
 don't get interpreted by
 .BR watch
 itself.
-.sp
-.SH BUGS
-Upon terminal resize, the screen will not be correctly repainted until the
-next scheduled update.  All
-.B \-\-differences
-highlighting is lost on that update as well. When using the
-.B \-\-no\-rerun
-option, no output of will be visible.
 
 Non-printing characters are stripped from program output.  Use \fBcat -v\fR as
 part of the command pipeline if you want to see them.
+.sp
+.SH BUGS
+All
+.B \-\-differences
+highlighting is lost when the terminal dimensions change.
 
 Combining Characters that are supposed to display on the character at the
 last column on the screen may display one column early, or they may not
@@ -197,7 +194,7 @@ watch \-d ls \-l
 .PP
 If you're only interested in files owned by user joe, you might use
 .IP
-watch \-d 'ls \-l | fgrep joe'
+watch \-d 'ls \-l | grep joe'
 .PP
 To see the effects of quoting, try these out
 .IP

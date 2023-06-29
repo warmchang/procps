@@ -75,6 +75,11 @@ static int flags;
 #define WATCH_CHGEXIT	(1 << 6)
 #define WATCH_EQUEXIT	(1 << 7)
 #define WATCH_NORERUN	(1 << 8)
+// do we care about screen contents changes at all?
+#define WATCH_ALL_DIFF	(WATCH_DIFF | WATCH_CHGEXIT | WATCH_EQUEXIT)
+
+#define TAB_WIDTH 8  // TODO: parametrizable :)
+#define MAX_ANSIBUF 100
 
 #ifdef WITH_WATCH8BIT
 #define XL(c) L ## c
@@ -88,16 +93,14 @@ static int flags;
 #define Xgetc(stream) getc(stream)
 #endif
 
+// TODO: bools into flags above
 static bool curses_started = false;
-static long height = 24, width = 80;
+static long height = 24, width = 80;  // TODO: long?
 static bool screen_size_changed = false;
 static bool first_screen = true;
 static uf8 show_title = 2;	/* number of lines used, 2 or 0 */
 static bool precise_timekeeping = false;
 static bool line_wrap = true;
-
-#define min(x,y) ((x) > (y) ? (y) : (x))
-#define MAX_ANSIBUF 100
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
@@ -457,6 +460,8 @@ static watch_usec_t get_time_usec(void)
 
 #ifdef WITH_WATCH8BIT
 /* read a multi-byte character from a byte-oriented stream */
+// TODO: as long as process_ansi() is ok with wchar, this can be dropped
+// completely
 static wint_t my_getwc(FILE *s)
 {
 	assert(MB_CUR_MAX < 256);
@@ -572,14 +577,96 @@ static void output_header(const char *command, int command_characters, double in
 	return;
 }
 
-static void find_eol(FILE *p)
+// When first_screen, returns false. Otherwise, when WATCH_ALL_DIFF is false,
+// return value is unspecified. Otherwise, returns true <==> the character at
+// (y, x) changed.
+// In the future, to do things like #233, this may be well extended with an attr
+// parameter and an option to only change that, not the base char. The change
+// detection routine may have its uses as a separate function as well.
+static bool display_char(int y, int x, Xint c) {
+	assert(c != XEOF);
+	bool changed, diff;
+	move(y, x);
+
+	if (first_screen || ! (flags & WATCH_ALL_DIFF))
+		diff = changed = false;
+	else {
+		// TODO: when cwid>1, check the diff of the second "slot" of the
+		// char. Verify (watch -d) on COLUMNS=40:
+		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ日本\nb' > /tmp/del
+		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZZ日本\nb' > /tmp/del
+#ifdef WITH_WATCH8BIT
+		cchar_t oldc;
+		in_wch(&oldc);
+		changed = (wchar_t)c != oldc.chars[0];
+		if (flags & WATCH_DIFF)
+			diff = changed || (flags&WATCH_CUMUL && oldc.attr&A_STANDOUT);
+		else diff = false;
+#else
+		chtype oldc = inch();
+		changed = (unsigned char)c != (oldc & A_CHARTEXT);
+		if (flags & WATCH_DIFF)
+			diff = changed || (flags&WATCH_CUMUL && oldc&A_STANDOUT);
+		else diff = false;
+#endif
+	}
+
+	if (diff)
+		attron(A_STANDOUT);
+#ifdef WITH_WATCH8BIT
+	wchar_t c2 = c;
+	addnwstr(&c2, 1);  // TODO: isn't there something elementary?
+#else
+	addch(c);
+#endif
+	if (diff)
+		attroff(A_STANDOUT);
+
+	return changed;
+}
+
+static inline void find_eol(FILE *p)
 {
 	Xint c;
 	do c = Xgetc(p);
-	while (c != XEOF
-	    && c != XL('\n'));
+	while (c != XEOF && c != XL('\n'));
 }
 
+static inline bool my_clrtoeol(int y, int x)
+{
+	if (flags & WATCH_ALL_DIFF) {
+		bool screen_changed = false;
+		while (x < width)
+			screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
+		return screen_changed;
+	}
+
+	move(y, x);
+	clrtoeol();  // faster, presumably
+	return false;
+}
+
+static inline bool my_clrtobot(int y, int x)
+{
+	if (flags & WATCH_ALL_DIFF) {
+		bool screen_changed = false;
+		while (y < height) {
+			while (x < width)
+				screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
+			x = 0;
+			++y;
+		}
+		return screen_changed;
+	}
+
+	move(y, x);
+	clrtobot();  // faster, presumably
+	return false;
+}
+
+// When first_screen initially, returns false. Otherwise, when WATCH_ALL_DIFF is
+// false, return value is unspecified. Otherwise, returns true <==> the screen
+// changed.
 static bool run_command(const char *command, char *const *restrict command_argv)
 {
 	int pipefd[2], status;
@@ -600,7 +687,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 	} else if (child == 0) {	/* in child */
 		close(pipefd[0]);		/* child doesn't need read side of pipe */
 		close(1);			/* prepare to replace stdout with pipe */
-		if (dup2(pipefd[1], 1) < 0) {	/* replace stdout with write side of pipe */
+		if (dup2(pipefd[1], 1) < 0) {  // replace stdout with write side of pipe
 			xerr(3, _("dup2 failed"));
 		}
 		close(pipefd[1]);		/* once duped, the write fd isn't needed */
@@ -608,7 +695,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 
 		// 0 untouched => application may think it's run interactively (see,
 		// e.g., ps). Intentional?
-		// TODO: using stdout/err (xerr(), exit()) is probably UB at this point
+		// TODO: pretty sure using stdout/err (xerr(), exit()) is undefined now
 		if (flags & WATCH_EXEC) {	/* pass command to exec instead of system */
 			if (execvp(command_argv[0], command_argv) == -1) {
 				xerr(4, _("unable to execute '%s'"),
@@ -617,7 +704,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		} else {
 			status = system(command);	/* watch manpage promises sh quoting */
 			/* propagate command exit status as child exit status */
-			if (!WIFEXITED(status)) {	/* child exits nonzero if command does */
+			if (!WIFEXITED(status)) {  // child exits nonzero if command does
 				exit(EXIT_FAILURE);
 			} else {
 				exit(WEXITSTATUS(status));
@@ -632,183 +719,94 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		xerr(5, _("fdopen"));
 	// TODO: make sure p is buffered
 
-	Xint c = XEOF, carry = XEOF;
-	int x, y;
-	int cwid;  // width in term columns
-	bool inside_tab = false, inside_trailer = false;
-	bool exit_early = false;
-	bool diff = false;
-	int buffer_size = 0, unchanged_buffer = 0;
+	Xint c, carry = XEOF;
+	int y, x, cwid;  // cwid = character width in terminal columns
+	bool screen_changed = false;
 
 	for (y = show_title; y < height; ++y) {
-		// For x==width, only characters with wcwidth()==0 are allowed to be
-		// output. Used, e.g., for codepoints which modify the preceding
-		// character and swallowing a newline beyond last column of term.
-		// TODO: bad cycle flow organization
-		for (x = 0; x <= width; ++x) {
-			// Inside_trailer overrides everything, preserves carry. Fill rest
-			// of line with spaces. clrtoeol()/clrtobot() can't be used, because
-			// diff detection in the blank space must be preserved (same idea
-			// applies to the tab).
-			if (inside_trailer) {
-				if (x == width) {
-					inside_trailer = false;
-					break;
-				}
-				c = XL(' ');
+		x = 0;
+		while (true) {
+			// After printing to the last column only characters with
+			// wcwidth()==0 are output. Used, e.g., for codepoints which modify
+			// the preceding character and swallowing a newline and a color
+			// sequence beyond last column of term.
+			assert(x <= width);
+			assert(x == 0 || carry == XEOF);
+
+			if (carry != XEOF) {
+				c = carry;
+				carry = XEOF;
 			}
+			else c = Xgetc(p);
+			assert(carry == XEOF);
+
+			if (c == XEOF) {
+				screen_changed = my_clrtobot(y, x) || screen_changed;
+				y = height - 1;
+				break;
+			}
+			if (c == XL('\n')) {
+				screen_changed = my_clrtoeol(y, x) || screen_changed;
+				break;
+			}
+			if (c == XL('\033')) {
+				process_ansi(p);
+				continue;
+			}
+			if (c == XL('\a')) {
+				beep();
+				continue;
+			}
+			if (c == XL('\t'))
+				cwid = 1;  // at least one space
 			else {
-				// Carry first, then inside_tab, then new read. Carry can
-				// contain a ' ' for a tab (when \t was beyond the end of the
-				// previous term line) and that space must be consumed.
-				if (carry != XEOF) {
-					c = carry;
-					carry = XEOF;
-				}
-				else if (inside_tab)
-					c = XL(' ');
-				else do c = Xgetc(p);
-				while (c != XEOF
 #ifdef WITH_WATCH8BIT
-				    && ! iswprint(c)
-				    && c < 128  // TODO: not portable (wint_t may be signed)
-				    && wcwidth(c) <= 0
-#else
-				    && ! isprint(c)
-#endif
-				    && c != XL('\n')
-				    && c != XL('\a')
-				    && c != XL('\t')
-				    && c != XL('\033'));
-
-				if (c == XL('\n') || c == XEOF) {
-					assert(carry == XEOF);
-					assert(! inside_tab);
-					--x;
-					inside_trailer = true;
+				// TODO: Does the "c<128" really need to be there, or is it a
+				// case of "just to be sure"? It seems like a bad idea. There
+				// are non-printable >128 characters in unicode. I don't mean
+				// modifiers like diacritics, I mean the BOM, Delete, unused
+				// codepoint ranges, ...
+				// TODO: "c<128" not portable (wint_t may be signed)
+				if (! iswprint(c) && c < 128)
 					continue;
-				}
-				else if (c == XL('\t')) {
-					inside_tab = true;
-					c = XL(' ');
-					// diff of tabs only highlights the first space of it.
-					// Intentional?
-				}
-				else if (c == XL('\033')) {
-					process_ansi(p);
-					--x;
-					continue;
-				}
-				else if (c == XL('\a')) {
-					beep();
-					--x;
-					continue;
-				}
-				assert(! inside_tab || c == XL(' '));
-				// Here c is a non-special, printable char. It may have wcwidth
-				// 0. Assumption: c doesn't change through the rest of the x-
-				// and y-cycle.
-
-#ifdef WITH_WATCH8BIT
 				cwid = wcwidth(c);
-				assert(cwid >= 0 && cwid <= 2);
+				// this assert can't be made, because the c<128 is there
+				//assert(cwid >= 0 && cwid <= 2);
 #else
+				if (! isprint(c))
+					continue;
 				cwid = 1;
 #endif
-				if (cwid > width-x) {
-					assert(carry == XEOF);
-					assert(inside_tab || ! inside_tab);
+			}
+
+			// now c is something printable
+			// if it doesn't fit
+			if (cwid > width-x) {
+				assert(cwid > 0);
+				if (line_wrap)
 					carry = c;
-					assert(cwid > 0);
-					inside_trailer = true;
-					--x;
-					if (! line_wrap)
-						find_eol(p);
-					continue;
+				else {
+					find_eol(p);
+					reset_ansi();
+					set_ansi_attribute(-1, NULL);
 				}
+				// in case there is some space, but less than cwid
+				screen_changed = my_clrtoeol(y, x) || screen_changed;
+				break;
 			}
 
-			move(y, x);
-
-			// TODO: when cwid>1, check the diff of the second "slot" of the
-			// char. Verify (watch -d) on COLUMNS=40:
-			// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ日本\nb' > /tmp/del
-			// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZZ日本\nb' > /tmp/del
-			if (!first_screen && !exit_early && (flags & WATCH_CHGEXIT)) {
-#ifdef WITH_WATCH8BIT
-				cchar_t oldc;
-				in_wch(&oldc);
-				exit_early = (wchar_t) c != oldc.chars[0];
-#else
-				chtype oldch = inch();
-				unsigned char oldc = oldch & A_CHARTEXT;
-				exit_early = (unsigned char)c != oldc;
-#endif
+			// if it fits, print it
+			if (c == XL('\t')) {
+				while ((x+1) % TAB_WIDTH && x < width)
+					// TODO: diff of tabs only highlights the first space
+					screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
 			}
-
-			if (!first_screen && !exit_early && (flags & WATCH_EQUEXIT)) {
-				buffer_size++;
-#ifdef WITH_WATCH8BIT
-				cchar_t oldc;
-				in_wch(&oldc);
-				if ((wchar_t) c == oldc.chars[0])
-					unchanged_buffer++;
-#else
-				chtype oldch = inch();
-				unsigned char oldc = oldch & A_CHARTEXT;
-				if ((unsigned char)c == oldc)
-					unchanged_buffer++;
-#endif
+			else {
+				screen_changed = display_char(y, x, c) || screen_changed;
+				x += cwid;
 			}
-
-			if (flags & WATCH_DIFF) {
-#ifdef WITH_WATCH8BIT
-				cchar_t oldc;
-				in_wch(&oldc);
-				diff = !first_screen
-				    && ((wchar_t) c != oldc.chars[0]
-				        ||
-				        ((flags & WATCH_CUMUL)
-				            && (oldc.attr & A_ATTRIBUTES)));
-#else
-				chtype oldch = inch();
-				unsigned char oldc = oldch & A_CHARTEXT;
-				diff = !first_screen
-				    && ((unsigned char)c != oldc
-				        ||
-				        ((flags & WATCH_CUMUL)
-				            && (oldch & A_ATTRIBUTES)));
-#endif
-			}
-
-			if (diff)
-				standout();
-#ifdef WITH_WATCH8BIT
-			wchar_t c2 = c;
-			addnwstr(&c2, 1);
-#else
-			addch(c);
-#endif
-			if (diff)
-				standend();
-
-			if (! inside_trailer) {
-				if (inside_tab && ((x+1)%8 == 0 || x == width-1))
-					inside_tab = false;
-
-				x += cwid-1;
-			}
-		}
-
-		if (! line_wrap) {
-			carry = XEOF;
-			inside_tab = false;
-			reset_ansi();
-			set_ansi_attribute(-1, NULL);
 		}
 	}
-	// TODO: lines past max(last line with output, last line with output in
-	// previous command run) ca be done with clrtobot()
 
 	fclose(p);
 
@@ -824,7 +822,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			beep();
 		if (flags & WATCH_ERREXIT) {
 			// TODO: add a few spaces to the end of the string to separate it
-			// from the cmd output that may be on that line
+			// from the cmd output that may already be on the line
 			mvaddstr(height - 1, 0,
 			    _("command exit with a non-zero status, press a key to exit"));
 			refresh();
@@ -833,32 +831,25 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		}
 	}
 
-	if (unchanged_buffer == buffer_size && (flags & WATCH_EQUEXIT))
-		exit_early = true;
-
 	first_screen = false;
 	refresh();
-	return exit_early;
+	return screen_changed;
 }
 
 int main(int argc, char *argv[])
 {
 	int optc;
-	double interval = 2;
-	int max_cycles = 1;
-	int cycle_count = 0;
-	char *interval_string;
 	char *command;
 	char **command_argv;
 	int command_length = 0;	/* not including final \0 */
-	int command_exit = 0;
 	watch_usec_t last_run = 0;
-	watch_usec_t next_loop = 0;	/* next loop time in us, used for precise time
-	                           	 * keeping only */
-#ifdef WITH_WATCH8BIT
-	wchar_t *wcommand = NULL;
-	int wcommand_characters = 0;	/* not including final \0 */
-#endif	/* WITH_WATCH8BIT */
+	/* next loop time in us, used for precise time keeping only */
+	watch_usec_t next_loop = 0;
+	double interval = 2;
+	char *interval_string;
+	int max_cycles = 1;
+	int cycle_count = 0;
+	bool scr_contents_chg;
 
 #ifdef WITH_COLORWATCH
         flags |= WATCH_COLOR;
@@ -974,15 +965,16 @@ int main(int argc, char *argv[])
 	}
 
 #ifdef WITH_WATCH8BIT
+	wchar_t *wcommand;
 	/* convert to wide for printing purposes */
 	/*mbstowcs(NULL, NULL, 0); */
-	wcommand_characters = mbstowcs(NULL, command, 0);
+	/* not including final \0 */
+	int wcommand_characters = mbstowcs(NULL, command, 0);
 	if (wcommand_characters < 0) {
 		fprintf(stderr, _("unicode handling error\n"));
 		return EXIT_FAILURE;
 	}
-	wcommand =
-	    (wchar_t *) malloc((wcommand_characters + 1) * sizeof(wcommand));
+	wcommand = (wchar_t *)malloc((wcommand_characters + 1) * sizeof(*wcommand));
 	if (wcommand == NULL) {
 		fprintf(stderr, _("unicode handling error (malloc)\n"));
 		return EXIT_FAILURE;
@@ -992,8 +984,7 @@ int main(int argc, char *argv[])
 
 	get_terminal_size();
 
-	/* Catch keyboard interrupts so we can put tty back in a sane
-	 * state.  */
+	/* Catch keyboard interrupts so we can put tty back in a sane state.  */
 	signal(SIGINT, die);
 	signal(SIGTERM, die);
 	signal(SIGHUP, die);
@@ -1007,9 +998,8 @@ int main(int argc, char *argv[])
 			start_color();
 			use_default_colors();
 			init_ansi_colors();
-		} else {
-			flags &= ~WATCH_COLOR;
 		}
+		else flags &= ~WATCH_COLOR;
 	}
 	nonl();
 	noecho();
@@ -1034,6 +1024,7 @@ int main(int argc, char *argv[])
 			/* redrawwin(stdscr); */
 			screen_size_changed = false;
 			first_screen = true;
+			cycle_count = 0;
 		}
 
 		if (show_title)
@@ -1046,30 +1037,31 @@ int main(int argc, char *argv[])
 		if (!(flags & WATCH_NORERUN) ||
 		        get_time_usec() - last_run > interval * USECS_PER_SEC) {
 			last_run = get_time_usec();
-			command_exit = run_command(command, command_argv);
+			scr_contents_chg = run_command(command, command_argv);
 
+			if (flags & WATCH_CHGEXIT && scr_contents_chg)
+				break;
 			if (flags & WATCH_EQUEXIT) {
-				if (cycle_count == max_cycles && command_exit)
-					break;
-				else if (command_exit)
-					cycle_count++;
-				else
-					cycle_count = 0;
+				if (scr_contents_chg)
+					cycle_count = 1;
+				else {
+					if (cycle_count == max_cycles)
+						break;
+					++cycle_count;
+				}
 			}
-		} else if (command_exit)
-			break;
-		else
-			refresh();
+		}
+		else refresh();
 
 		if (precise_timekeeping) {
 			watch_usec_t cur_time = get_time_usec();
 			next_loop += USECS_PER_SEC * interval;
 			if (cur_time < next_loop)
 				usleep(next_loop - cur_time);
-		} else if (interval < UINT_MAX / USECS_PER_SEC)
+		}
+		else if (interval < UINT_MAX / USECS_PER_SEC)
 			usleep(interval * USECS_PER_SEC);
-		else
-			sleep(interval);
+		else sleep(interval);
 	}
 
 	do_exit(EXIT_SUCCESS);
