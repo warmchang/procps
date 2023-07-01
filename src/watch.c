@@ -66,17 +66,17 @@
 
 /* Boolean command line options */
 static int flags;
-#define WATCH_DIFF	(1 << 0)
-#define WATCH_CUMUL	(1 << 1)
-#define WATCH_EXEC	(1 << 2)
-#define WATCH_BEEP	(1 << 3)
-#define WATCH_COLOR	(1 << 4)
-#define WATCH_ERREXIT	(1 << 5)
-#define WATCH_CHGEXIT	(1 << 6)
-#define WATCH_EQUEXIT	(1 << 7)
-#define WATCH_NORERUN	(1 << 8)
-// do we care about screen contents changes at all?
-#define WATCH_ALL_DIFF	(WATCH_DIFF | WATCH_CHGEXIT | WATCH_EQUEXIT)
+#define WATCH_DIFF     (1 << 0)
+#define WATCH_CUMUL    (1 << 1)
+#define WATCH_EXEC     (1 << 2)
+#define WATCH_BEEP     (1 << 3)
+#define WATCH_COLOR    (1 << 4)
+#define WATCH_ERREXIT  (1 << 5)
+#define WATCH_CHGEXIT  (1 << 6)
+#define WATCH_EQUEXIT  (1 << 7)
+#define WATCH_NORERUN  (1 << 8)
+// Do we care about screen contents changes at all?
+#define WATCH_ALL_DIFF (WATCH_DIFF | WATCH_CHGEXIT | WATCH_EQUEXIT)
 
 #define TAB_WIDTH 8  // TODO: parametrizable :)
 #define MAX_ANSIBUF 100
@@ -548,13 +548,12 @@ static void output_header(const char *command, int command_characters, double in
 	            int command_columns = wcswidth(wcommand, -1);
 				if (width < rhlen + hlen + command_columns) {
 					/* print truncated */
-					int available = width - rhlen - hlen;
-					int wcomm_len = wcommand_characters;
+					const int available = width - rhlen - hlen;
 					while (available - 4 < command_columns) {
-						wcomm_len--;
-						command_columns = wcswidth(wcommand, wcomm_len);
+						wcommand_characters--;
+						command_columns = wcswidth(wcommand, wcommand_characters);
 					}
-					mvaddnwstr(0, hlen, wcommand, wcomm_len);
+					mvaddnwstr(0, hlen, wcommand, wcommand_characters);
 					mvaddstr(0, width - rhlen - 4, "... ");
 				} else {
 					mvaddwstr(0, hlen, wcommand);
@@ -566,7 +565,7 @@ static void output_header(const char *command, int command_characters, double in
 					mvaddstr(0, width - rhlen - 4, "... ");
 				} else {
 					mvaddnstr(0, hlen, command, width - rhlen - hlen);
-                }
+				}
 #endif	/* WITH_WATCH8BIT */
 			}
 		}
@@ -667,12 +666,13 @@ static inline bool my_clrtobot(int y, int x)
 // When first_screen initially, returns false. Otherwise, when WATCH_ALL_DIFF is
 // false, return value is unspecified. Otherwise, returns true <==> the screen
 // changed.
+// Make sure not to leak system resources (incl. fds, processes). Suggesting
+// -D_XOPEN_SOURCE=600 and an EINTR loop around every fclose() as well.
 static bool run_command(const char *command, char *const *restrict command_argv)
 {
 	int pipefd[2], status;
 	pid_t child;
 
-	/* allocate pipes */
 	if (pipe(pipefd) < 0)
 		xerr(7, _("unable to create IPC pipes"));
 
@@ -680,56 +680,65 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 	fflush(stdout);
 	fflush(stderr);
 
-	/* fork to prepare to run command */
 	child = fork();
 	if (child < 0) {		/* fork error */
 		xerr(2, _("unable to fork process"));
 	} else if (child == 0) {	/* in child */
-		close(pipefd[0]);		/* child doesn't need read side of pipe */
-		close(1);			/* prepare to replace stdout with pipe */
-		if (dup2(pipefd[1], 1) < 0) {  // replace stdout with write side of pipe
-			xerr(3, _("dup2 failed"));
-		}
-		close(pipefd[1]);		/* once duped, the write fd isn't needed */
-		dup2(1, 2);			/* stderr should default to stdout */
+		// stdout/err can't be used here. Avoid xerr(), close_stdout(), ...
+		fclose(stdout);  // so as not to confuse _Exit()
+		fclose(stderr);  // so as not to confuse _Exit()
+		/* child doesn't need output side of pipe */
+		while (close(pipefd[0]) == -1 && errno == EINTR) ;
+		/* replace stdout with pipe input */
+		while (dup2(pipefd[1], 1) == -1 && errno == EINTR) ;
+		/* once duped, the write fd isn't needed */
+		while (close(pipefd[1]) == -1 && errno == EINTR) ;
+		/* stderr should default to stdout */
+		while (dup2(1, 2) == -1 && errno == EINTR) ;
+		// TODO: 0 untouched. Is that intentional? I suppose the application
+		// might conclude it's run interactively (see ps). And hang if it
+		// should wait for input (watch 'read A; echo $A').
 
-		// 0 untouched => application may think it's run interactively (see,
-		// e.g., ps). Intentional?
-		// TODO: pretty sure using stdout/err (xerr(), exit()) is undefined now
 		if (flags & WATCH_EXEC) {	/* pass command to exec instead of system */
-			if (execvp(command_argv[0], command_argv) == -1) {
-				xerr(4, _("unable to execute '%s'"),
-				     command_argv[0]);
-			}
+			execvp(command_argv[0], command_argv);
+			const char *const errmsg = strerror(errno);
+			(void)!write(2, command_argv[0], strlen(command_argv[0]));
+			// TODO: gettext for the ": "?
+			(void)!write(2, ": ", 2);
+			(void)!write(2, errmsg, strlen(errmsg));
+			_Exit(4);
 		} else {
 			status = system(command);	/* watch manpage promises sh quoting */
 			/* propagate command exit status as child exit status */
+			// error msg is provided by sh
 			if (!WIFEXITED(status)) {  // child exits nonzero if command does
-				exit(EXIT_FAILURE);
+				_Exit(EXIT_FAILURE);
 			} else {
-				exit(WEXITSTATUS(status));
+				_Exit(WEXITSTATUS(status));
 			}
 		}
 	}
 	/* otherwise, we're in parent */
-	close(pipefd[1]);	/* close write side of pipe */
 
+	/* close write side of pipe */
+	while (close(pipefd[1]) == -1 && errno == EINTR) ;
 	FILE *p;
 	if ((p = fdopen(pipefd[0], "r")) == NULL)
 		xerr(5, _("fdopen"));
-	// TODO: make sure p is buffered
+	setvbuf(p, NULL, _IOFBF, BUFSIZ);  // We'll getc() from it. A lot.
 
 	Xint c, carry = XEOF;
-	int y, x, cwid;  // cwid = character width in terminal columns
+	int cwid, y, x;  // cwid = character width in terminal columns
 	bool screen_changed = false;
 
 	for (y = show_title; y < height; ++y) {
 		x = 0;
 		while (true) {
-			// After printing to the last column only characters with
-			// wcwidth()==0 are output. Used, e.g., for codepoints which modify
-			// the preceding character and swallowing a newline and a color
-			// sequence beyond last column of term.
+			// x is where the next char will be put. When x==width only
+			// characters with wcwidth()==0 are output. Used, e.g., for
+			// codepoints which modify the preceding character and swallowing a
+			// newline / a color sequence / ... after a printable character in
+			// the rightmost column.
 			assert(x <= width);
 			assert(x == 0 || carry == XEOF);
 
@@ -757,21 +766,22 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 				beep();
 				continue;
 			}
-			if (c == XL('\t'))
-				cwid = 1;  // at least one space
+			if (c == XL('\t'))  // not is(w)print()
+				// one space is enough to consider a \t printed, if there're no
+				// more columns
+				cwid = 1;
 			else {
 #ifdef WITH_WATCH8BIT
-				// TODO: Does the "c<128" really need to be there, or is it a
-				// case of "just to be sure"? It seems like a bad idea. There
-				// are non-printable >128 characters in unicode. I don't mean
-				// modifiers like diacritics, I mean the BOM, Delete, unused
-				// codepoint ranges, ...
-				// TODO: "c<128" not portable (wint_t may be signed)
-				if (! iswprint(c) && c < 128)
+				// There used to be (! iswprint(c) && c < 128) because of Debian
+				// #240989. Presumably because glibc of the time didn't
+				// recognize ä, ö, ü, Π, ά, λ, ς, ... as printable. Today,
+				// iswprint() in glibc works as expected and the "c<128" is
+				// letting all non-printables >=128 get through. Hence its
+				// removal. People with old libc likely have old procps.
+				if (! iswprint(c))
 					continue;
 				cwid = wcwidth(c);
-				// this assert can't be made, because the c<128 is there
-				//assert(cwid >= 0 && cwid <= 2);
+				assert(cwid >= 0 && cwid <= 2);
 #else
 				if (! isprint(c))
 					continue;
@@ -782,7 +792,8 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			// now c is something printable
 			// if it doesn't fit
 			if (cwid > width-x) {
-				assert(cwid > 0);
+				assert(cwid > 0 && cwid <= 2);
+				assert(width-x <= 1);
 				if (line_wrap)
 					carry = c;
 				else {
@@ -790,16 +801,15 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 					reset_ansi();
 					set_ansi_attribute(-1, NULL);
 				}
-				// in case there is some space, but less than cwid
 				screen_changed = my_clrtoeol(y, x) || screen_changed;
 				break;
 			}
 
-			// if it fits, print it
+			// it fits, print it
 			if (c == XL('\t')) {
-				while ((x+1) % TAB_WIDTH && x < width)
-					// TODO: diff of tabs only highlights the first space
-					screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
+				// TODO: diff of tabs only highlights the first space
+				do screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
+				while (x % TAB_WIDTH && x < width);
 			}
 			else {
 				screen_changed = display_char(y, x, c) || screen_changed;
@@ -810,11 +820,11 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 
 	fclose(p);
 
-	// TODO: waitpid() getting interrupted by window size changes looks like
-	// a good potential source of children that'll never be waited for. Confirm.
 	/* harvest child process and get status, propagated from command */
-	if (waitpid(child, &status, 0) < 0)
-		xerr(8, _("waitpid"));
+	while (waitpid(child, &status, 0) == -1) {
+		if (errno != EINTR)
+			xerr(8, _("waitpid"));
+	}
 
 	/* if child process exited in error, beep if option_beep is set */
 	if ((!WIFEXITED(status) || WEXITSTATUS(status))) {
@@ -840,13 +850,11 @@ int main(int argc, char *argv[])
 {
 	int optc;
 	char *command;
-	char **command_argv;
-	int command_length = 0;	/* not including final \0 */
+	int command_length;	/* not including final \0 */
 	watch_usec_t last_run = 0;
 	/* next loop time in us, used for precise time keeping only */
 	watch_usec_t next_loop = 0;
 	double interval = 2;
-	char *interval_string;
 	int max_cycles = 1;
 	int cycle_count = 0;
 	bool scr_contents_chg;
@@ -882,7 +890,7 @@ int main(int argc, char *argv[])
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	interval_string = getenv("WATCH_INTERVAL");
+	const char *const interval_string = getenv("WATCH_INTERVAL");
 	if(interval_string != NULL)
 		interval = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
 
@@ -948,7 +956,7 @@ int main(int argc, char *argv[])
 		usage(stderr);
 
 	/* save for later */
-	command_argv = &(argv[optind]);
+	char *const *const command_argv = argv + optind;
 
 	command_length = strlen(argv[optind]);
 	command = xmalloc(command_length+1);
@@ -1024,6 +1032,9 @@ int main(int argc, char *argv[])
 			/* redrawwin(stdscr); */
 			screen_size_changed = false;
 			first_screen = true;
+			// Prevent cycle_count from soaring while the terminal resizes.
+			// Not strictly necessary when WATCH_NORERUN, but the behavior of -q
+			// should be consistent over NORERUN and !NORERUN.
 			cycle_count = 0;
 		}
 

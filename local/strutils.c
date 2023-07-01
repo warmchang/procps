@@ -69,7 +69,7 @@ double strtod_or_err(const char *str, const char *errmesg)
  *
  * Exits on failure like its other _or_err cousins
  */
-double strtod_nol_or_err(char *str, const char *errmesg)
+double strtod_nol_or_err(const char *str, const char *errmesg)
 {
     double num;
     const char *cp, *radix;

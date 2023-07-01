@@ -55,17 +55,18 @@ for any locale. The \fBWATCH_INTERVAL\fR environment variable can be used to per
 set a non-default interval (following the same rules and formatting).
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
-Make
-.BR watch
-attempt to run
+Start
 .I command
 every
 .B \-\-interval
-.IR seconds .
-Try it with
-.B ntptime
-(if present) and notice how the fractional seconds stays (nearly) the same, as opposed to
-normal mode where they continuously increase.
+seconds, regardless of how long it took to complete the previous run (unless it
+was longer than
+.B \-\-interval
+seconds). Without this parameter,
+.I command
+is executed
+.B \-\-interval
+seconds after its previous run finished.
 .TP
 \fB\-q\fR, \fB\-\-equexit\fR <cycles>
 Exit when output of
@@ -130,6 +131,7 @@ failed, or command exited up on error.
 .TP
 .B other
 The watch will propagate command exit status as child exit status.
+.sp
 .SH ENVIRONMENT
 The behavior of
 .B watch
@@ -140,6 +142,15 @@ is affected by the following environment variables.
 Update interval, follows the same rules as the
 .B \-\-interval
 command line option.
+
+.TP
+.B COLUMNS
+Terminal screen character width. It's usually set up automatically and changing
+it manually will confuse some programs.
+
+.TP
+.B LINES
+Terminal screen character height.
 .sp
 .SH NOTES
 POSIX option processing is used (i.e., option processing stops at
@@ -152,10 +163,39 @@ itself.
 Non-printing characters are stripped from program output.  Use \fBcat -v\fR as
 part of the command pipeline if you want to see them.
 .sp
+.SH EXAMPLES
+.PP
+To watch the contents of a directory change, you could use
+.IP
+watch \-d ls \-l
+
+.PP
+If you have CPUs with a dynamic frequency and want to observe it change, try the
+following. The command is passed to the shell, which allows you to make the
+pipeline. The quotes are a feature of the shell too.
+.IP
+watch \-n1 'grep "^cpu MHz" /proc/cpuinfo | sort -nrk4'
+
+.PP
+To monitor the up status of your servers, saving a copy of the output of each
+run to a file, you may use this. The
+.B \-p
+makes the command execute every 10 seconds regardless of how long it took to
+complete the previous run.
+.IP
+watch \-n10 \-p \-d '{ date; for i in 10.0.0.31 10.0.0.32 10.0.0.33; do R=OK; ping \-c2 \-W2 "$i" &>/dev/null || R=FAIL; echo "$i: $R"; done } | tee \-a ~/log'
+
+.PP
+You can watch for your administrator to install the latest kernel with
+.IP
+watch uname \-r
+.sp
 .SH BUGS
-All
+When the terminal dimensions change, all
 .B \-\-differences
-highlighting is lost when the terminal dimensions change.
+highlighting is lost and the
+.B \-\-equexit
+countdown is restarted.
 
 Combining Characters that are supposed to display on the character at the
 last column on the screen may display one column early, or they may not
@@ -181,44 +221,6 @@ as it can to catch up from a previous executions running longer than
 (for example,
 .BR netstat (8)
 taking ages on a DNS lookup).
-.sp
-.SH EXAMPLES
-.PP
-To watch for mail, you might do
-.IP
-watch \-n 60 from
-.PP
-To watch the contents of a directory change, you could use
-.IP
-watch \-d ls \-l
-.PP
-If you're only interested in files owned by user joe, you might use
-.IP
-watch \-d 'ls \-l | grep joe'
-.PP
-To see the effects of quoting, try these out
-.IP
-watch echo $$
-.br
-watch echo '$$'
-.br
-watch echo "'"'$$'"'"
-.PP
-To see the effect of precision time keeping, try adding
-.B \-p
-to
-.IP
-watch \-n 10 sleep 1
-.PP
-You can watch for your administrator to install the latest kernel with
-.IP
-watch uname \-r
-.PP
-(Note that
-.B \-p
-isn't guaranteed to work across reboots, especially in the face of
-.B ntpdate
-(if present) or other bootup time-changing mechanisms)
 .sp
 .SH "REPORTING BUGS"
 Please send bug reports to
