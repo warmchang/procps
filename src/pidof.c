@@ -214,7 +214,7 @@ static void select_procs (void)
 				cmd_arg1 = *(p_cmdline+1);
 
 				/* get the arg1 base name */
-                cmd_arg1base = get_basename(cmd_arg1);
+				cmd_arg1base = get_basename(cmd_arg1);
 
 				/* if script, then cmd = argv1, otherwise cmd = argv0 */
 				if (p_cmd &&
@@ -226,12 +226,12 @@ static void select_procs (void)
 					match = 1;
 				}
 			}
-            /* If there is a space in arg0 then process probably has
-             * setproctitle so use the cmdline
-             */
-            if (!match && strchr(cmd_arg0, ' ')) {
-                match = (strcmp(program, p_cmd)==0);
-            }
+			/* If there is a space in arg0 then process probably has
+			 * setproctitle so use the cmdline
+			 */
+			if (!match && strchr(cmd_arg0, ' ')) {
+				match = (strcmp(program, p_cmd)==0);
+			}
 
 			safe_free(exe_link);
 
@@ -346,7 +346,7 @@ int main (int argc, char **argv)
 		case 'c':
 			if (geteuid() == 0) {
 				opt_rootdir_check = 1;
-                safe_free(pidof_root);
+				safe_free(pidof_root);
 				pidof_root = pid_link(getpid(), "root");
 			}
 			break;
