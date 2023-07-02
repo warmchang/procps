@@ -22,6 +22,7 @@ pidof \- find the process ID of a running program
 .RB [ \-x ]
 .RB [ \-o
 .IR omitpid[,omitpid...]... ]
+.RB [ \-t ]
 .RB [ \-S
 .IR separator ]
 .I program
@@ -49,6 +50,8 @@ shells running the named scripts.
 Tells \fBpidof\fP to omit processes with that process id. The special
 pid \fB%PPID\fP can be used to name the parent process of the \fBpidof\fP
 program, in other words the calling shell or shell script.
+.IP \fB\-t\fP
+Shows all thread ids instead of pids.
 .IP "\fB-S\fP \fIseparator\fP"
 Use \fIseparator\fP as a separator put between pids. Used only when
 more than one pids are printed for the program.

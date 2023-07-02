@@ -61,6 +61,7 @@ static int opt_single_shot    = 0;  /* -s */
 static int opt_scripts_too    = 0;  /* -x */
 static int opt_rootdir_check  = 0;  /* -c */
 static int opt_with_workers   = 0;  /* -w */
+static int opt_threads = 0;	    /* -t */
 static int opt_quiet          = 0;  /* -q */
 
 static char *pidof_root = NULL;
@@ -79,6 +80,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 	fputs(_(" -w, --with-workers        show kernel workers too\n"), fp);
 	fputs(_(" -x                        also find shells running the named scripts\n"), fp);
 	fputs(_(" -o, --omit-pid <PID,...>  omit processes with PID\n"), fp);
+	fputs(_(" -t, --lightweight         list threads too\n"), fp);
 	fputs(_(" -S, --separator SEP       use SEP as separator put between PIDs"), fp);
 	fputs(USAGE_SEPARATOR, fp);
 	fputs(USAGE_HELP, fp);
@@ -164,7 +166,9 @@ static void select_procs (void)
 	procps_pids_new(&info, items, 3);
 
 	exe_link = root_link = NULL;
-	while ((stack = procps_pids_get(info, PIDS_FETCH_TASKS_ONLY))) {
+	while ((stack = procps_pids_get(info, (opt_threads
+					       ? PIDS_FETCH_THREADS_TOO
+					       : PIDS_FETCH_TASKS_ONLY)))) {
 		char  *p_cmd     = PIDS_VAL(rel_cmd,     str,   stack, info),
 		     **p_cmdline = PIDS_VAL(rel_cmdline, strv,  stack, info);
 		int    tid       = PIDS_VAL(rel_pid,     s_int, stack, info);
@@ -303,7 +307,7 @@ int main (int argc, char **argv)
 	int first_pid = 1;
 
 	const char *separator = " ";
-	const char *opts = "scnqxwmo:S:?Vh";
+	const char *opts = "scnqxwtmo:S:?Vh";
 
 	static const struct option longopts[] = {
 		{"check-root", no_argument, NULL, 'c'},
@@ -312,6 +316,7 @@ int main (int argc, char **argv)
 		{"separator", required_argument, NULL, 'S'},
 		{"quiet", no_argument, NULL, 'q'},
 		{"with-workers", no_argument, NULL, 'w'},
+		{"lightweight", no_argument, NULL, 't'},
 		{"help", no_argument, NULL, 'h'},
 		{"version", no_argument, NULL, 'V'},
 		{NULL, 0, NULL, 0}
@@ -349,6 +354,9 @@ int main (int argc, char **argv)
 				safe_free(pidof_root);
 				pidof_root = pid_link(getpid(), "root");
 			}
+			break;
+		case 't':   // Linux: show threads (lightweight process) too
+			opt_threads = 1;
 			break;
 		case 'd': /* sysv pidof uses this for S */
 		case 'S':
