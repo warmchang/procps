@@ -162,5 +162,7 @@ static void error_at_line(int status, int errnum, const char *filename,
 // Convenience shorts
 typedef uint_fast8_t uf8;
 typedef int_fast8_t sf8;
+typedef uint_fast16_t uf16;
+typedef int_fast16_t sf16;
 
 #endif /* PROCPS_NG_C_H */

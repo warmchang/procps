@@ -99,59 +99,28 @@ Display help text and exit.
 \fB\-v\fR, \fB\-\-version\fR
 Display version information and exit.
 .SH "EXIT STATUS"
-.PP
-.RS
-.PD 0
 .TP
 .B 0
 Success.
 .TP
-.B 1
-Various failures.
-.TP
-.B 2
-Forking the process to watch failed.
-.TP
-.B 3
-Replacing child process stdout with write side pipe failed.
-.TP
-.B 4
-Command execution failed.
-.TP
-.B 5
-Closing child process write pipe failed.
-.TP
-.B 7
-IPC pipe creation failed.
-.TP
-.B 8
-Getting child process return value with
-.BR waitpid (2)
-failed, or command exited up on error.
-.TP
 .B other
-The watch will propagate command exit status as child exit status.
-.sp
+Various failures.
 .SH ENVIRONMENT
 The behavior of
 .B watch
 is affected by the following environment variables.
-
 .TP
 .B WATCH_INTERVAL
 Update interval, follows the same rules as the
 .B \-\-interval
 command line option.
-
 .TP
 .B COLUMNS
 Terminal screen character width. It's usually set up automatically and changing
 it manually will confuse some programs.
-
 .TP
 .B LINES
 Terminal screen character height.
-.sp
 .SH NOTES
 POSIX option processing is used (i.e., option processing stops at
 the first non\-option argument).  This means that flags after
@@ -162,7 +131,6 @@ itself.
 
 Non-printing characters are stripped from program output.  Use \fBcat -v\fR as
 part of the command pipeline if you want to see them.
-.sp
 .SH EXAMPLES
 .PP
 To watch the contents of a directory change, you could use
@@ -189,39 +157,39 @@ watch \-n10 \-p \-d '{ date; for i in 10.0.0.31 10.0.0.32 10.0.0.33; do R=OK; pi
 You can watch for your administrator to install the latest kernel with
 .IP
 watch uname \-r
-.sp
 .SH BUGS
-When the terminal dimensions change, all
-.B \-\-differences
-highlighting is lost and the
+When the terminal dimensions change, its contents changes are not registered on the next
+.I command
+run.
+.B \-\-chgexit
+will not trigger that turn and the counter of
 .B \-\-equexit
-countdown is restarted.
-
-Combining Characters that are supposed to display on the character at the
-last column on the screen may display one column early, or they may not
-display at all.
-
-Combining Characters never count as different in
+will not restart even if
+.I command
+output changes meanwhile.
 .B \-\-differences
-mode.  Only the base character counts.
+highlighting is reset.
 
+Combining characters never count as different in
+.B \-\-differences
+mode. Only the base character counts.
+
+When using
 .B \-\-precise
-mode doesn't yet have advanced temporal distortion technology to compensate
-for a
+with a
 .I command
-that takes more than
+which takes longer than
 .B \-\-interval
-.I seconds
-to execute.
+to complete and later
+.I command's
+running time shortens to be within
+.B \-\-interval,
 .B watch
-also can get into a state where it rapid-fires as many executions of
+will do
 .I command
-as it can to catch up from a previous executions running longer than
-.B \-\-interval
-(for example,
-.BR netstat (8)
-taking ages on a DNS lookup).
-.sp
+re-runs back to back for some time, disregarding
+.B \-\-interval,
+to make up for the time lost waiting.
 .SH "REPORTING BUGS"
 Please send bug reports to
 .UR procps@freelists.org

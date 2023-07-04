@@ -78,14 +78,14 @@ static int flags;
 // Do we care about screen contents changes at all?
 #define WATCH_ALL_DIFF (WATCH_DIFF | WATCH_CHGEXIT | WATCH_EQUEXIT)
 
-#define TAB_WIDTH 8  // TODO: parametrizable :)
+#define TAB_WIDTH 8
 #define MAX_ANSIBUF 100
 
 #ifdef WITH_WATCH8BIT
 #define XL(c) L ## c
 #define XEOF WEOF
 #define Xint wint_t
-#define Xgetc(stream) my_getwc(stream)
+#define Xgetc(stream) getmb(stream)
 #else
 #define XL(c) c
 #define XEOF EOF
@@ -444,7 +444,7 @@ static void get_terminal_size(void)
 /* get current time in usec */
 typedef unsigned long long watch_usec_t;
 #define USECS_PER_SEC (1000000ull)
-static watch_usec_t get_time_usec(void)
+static inline watch_usec_t get_time_usec(void)
 {
 	struct timeval now;
 #if defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_TIMERS)
@@ -459,12 +459,13 @@ static watch_usec_t get_time_usec(void)
 }
 
 #ifdef WITH_WATCH8BIT
-/* read a multi-byte character from a byte-oriented stream */
+// Read a multi-byte character from a byte-oriented stream. libc only provides
+// getc() and getwc().
 // TODO: as long as process_ansi() is ok with wchar, this can be dropped
 // completely
-static wint_t my_getwc(FILE *s)
+// TODO: -> strutils
+static wint_t getmb(FILE *s)
 {
-	assert(MB_CUR_MAX < 256);
 	unsigned char i[MB_CUR_MAX];
 	uf8 byte = 0;
 	int c;
@@ -492,36 +493,128 @@ static wint_t my_getwc(FILE *s)
 #endif	/* WITH_WATCH8BIT */
 
 #ifdef WITH_WATCH8BIT
+// Returns column width of a multi-byte string. libc only provides strlen() and
+// wcswidth().
+// s is valid, '\0'-term.
+// pwcs is optional (NULL or valid) output param., will be L'\0'-term., no
+// additional cost in receiving it, caller free()s.
+// Value returned doesn't count the L'\0', can be 0. Error => -1 and nothing is
+// returned in *pwcs.
+// TODO -> strutils
+static int mbswidth(const char *restrict s, wchar_t *restrict *const restrict pwcs)
+{
+	size_t wclen = mbstowcs(NULL, s, 0);  // wclen doesn't incl. L'\0'
+	if (wclen == (size_t)-1) {
+		errno = EILSEQ;
+		return -1;
+	}
+	++wclen;  // ok, it's !=SIZE_MAX
+	if ((uintmax_t)wclen * sizeof(wchar_t) / sizeof(wchar_t) != wclen) {
+		errno = EOVERFLOW;
+		return -1;
+	}
+
+	wchar_t *wcs = malloc(wclen * sizeof(*wcs));
+	if (! wcs)
+		return -1;
+	mbstowcs(wcs, s, wclen);
+
+	// wcswidth() is useless. POSIX 2001 doesn't say what it does when the width
+	// is > INT_MAX. May be some UB.
+	int ret = 0;
+	int curwid;
+	for (--wclen; wclen; --wclen) {
+		curwid = wcwidth(wcs[wclen-1]);
+		if (curwid == -1) {
+			free(wcs);
+			errno = EILSEQ;
+			return -1;
+		}
+		if (INT_MAX - ret < curwid) {
+			free(wcs);
+			errno = EOVERFLOW;
+			return -1;
+		}
+		ret += curwid;
+	}
+
+	if (pwcs) {
+		*pwcs = wcs;
+	} else free(wcs);
+	return ret;
+}
+#endif
+
+#ifdef WITH_WATCH8BIT
 static void output_header(const wchar_t *wcommand, int wcommand_characters, double interval)
 #else
 static void output_header(const char *command, int command_characters, double interval)
-#endif	/* WITH_WATCH8BIT */
+#endif
 {
-	static uf8 max_host_name_len = 0;
-	if (max_host_name_len == 0) {
-		long n = sysconf(_SC_HOST_NAME_MAX);
-		max_host_name_len = n>0 && n<256 ? n : 255;
+	static char *lheader;
+	static int lheader_len = 0;  // tell-tale
+#ifdef WITH_WATCH8BIT
+	static wchar_t *wlheader;
+	static int wlheader_wid;
+#endif
+
+	static char rheader[256+128];  // hostname and timestamp
+	static int rheader_lenmid = 0;  // just before timestamp
+	int rheader_len;
+#ifdef WITH_WATCH8BIT
+	wchar_t *wrheader;
+	int wrheader_wid;
+
+	static int wcommandwid;
+	static sf8 ellipsiswid;
+#endif
+
+	if (! lheader_len) {
+		// my glibc says HOST_NAME_MAX is 64, but as soon as it updates it to be
+		// at least POSIX.1-2001-compliant, it will be one of: 255, very large,
+		// unspecified
+		if (gethostname(rheader, 256))
+			rheader[0] = '\0';
+		rheader[255] = '\0';
+		rheader_lenmid = strlen(rheader);
+		rheader[rheader_lenmid++] = ':';
+		rheader[rheader_lenmid++] = ' ';
+
+		// never freed for !WATCH8BIT
+		lheader_len = asprintf(&lheader, _("Every %.1fs: "), interval);
+		if (lheader_len == -1)
+			xerr(EXIT_FAILURE, "cannot allocate memory");  // TODO: gettext
+#ifdef WITH_WATCH8BIT
+		// never freed
+		wlheader_wid = mbswidth(lheader, &wlheader);
+		if (wlheader_wid == -1) {
+			wlheader = L"";
+			wlheader_wid = 0;
+		}
+		free(lheader);
+
+		wcommandwid = wcswidth(wcommand, wcommand_characters);
+		ellipsiswid = wcwidth(L'\u2026');
+#endif
 	}
-	char hostname[max_host_name_len + 1];
-	if (gethostname(hostname, sizeof(hostname)))
-		hostname[0] = '\0';
-	hostname[max_host_name_len] = '\0';
 
+	// TODO: a gettext string for rheader no longer used
 	const time_t t = time(NULL);
-	char *header;
-	char *right_header;
+	rheader_len = rheader_lenmid + strftime(rheader+rheader_lenmid, sizeof(rheader)-rheader_lenmid, "%X", localtime(&t));
+	if (rheader_len == rheader_lenmid)
+		rheader[rheader_len] = '\0';
+#ifdef WITH_WATCH8BIT
+	wrheader_wid = mbswidth(rheader, &wrheader);
+	if (wrheader_wid == -1) {
+		wrheader = xmalloc(sizeof(*wrheader));
+		wrheader[0] = L'\0';
+		wrheader_wid = 0;
+	}
+#endif
 
-	/*
-	 * left justify interval and command, right justify hostname and time,
+	/* left justify interval and command, right justify hostname and time,
 	 * clipping all to fit window width
-	 */
-	// TODO: ENOMEM not handled, just put on stack
-	// TODO: left header never changes, make static
-	int hlen = asprintf(&header, _("Every %.1fs: "), interval);
-	// TODO: ctime() isn't locale-aware, replace with strftime()
-	int rhlen = asprintf(&right_header, _("%s: %s"), hostname, ctime(&t));
-
-	/*
+	 *
 	 * the rules:
 	 *   width < rhlen : print nothing
 	 *   width < rhlen + hlen + 1: print hostname, ts
@@ -530,50 +623,50 @@ static void output_header(const char *command, int command_characters, double in
 	 *   width < rhlen + hlen + wcommand_columns: print header,
 	 *                           truncated wcommand, ..., hostname, ts
 	 *   width > "": print header, wcomand, hostname, ts
-	 * this is slightly different from how it used to be
-	 */
-	if (width < rhlen) {
-		free(header);
-		free(right_header);
-		return;
-	}
+	 * this is slightly different from how it used to be */
 
-	if (rhlen + hlen + 1 <= width) {
-		mvaddstr(0, 0, header);
-		if (rhlen + hlen + 2 <= width) {
-			if (width < rhlen + hlen + 4) {
-				mvaddstr(0, width - rhlen - 4, "... ");
-			} else {
 #ifdef WITH_WATCH8BIT
-	            int command_columns = wcswidth(wcommand, -1);
-				if (width < rhlen + hlen + command_columns) {
-					/* print truncated */
-					const int available = width - rhlen - hlen;
-					while (available - 4 < command_columns) {
-						wcommand_characters--;
-						command_columns = wcswidth(wcommand, wcommand_characters);
-					}
-					mvaddnwstr(0, hlen, wcommand, wcommand_characters);
-					mvaddstr(0, width - rhlen - 4, "... ");
-				} else {
-					mvaddwstr(0, hlen, wcommand);
-				}
-#else
-				if (width < rhlen + hlen + command_characters) {
-					/* print truncated */
-					mvaddnstr(0, hlen, command, width - rhlen - hlen - 4);
-					mvaddstr(0, width - rhlen - 4, "... ");
-				} else {
-					mvaddnstr(0, hlen, command, width - rhlen - hlen);
-				}
-#endif	/* WITH_WATCH8BIT */
+	if (width >= wrheader_wid) {
+		mvaddwstr(0, width - wrheader_wid, wrheader);
+		const int avail4cmd = width - wlheader_wid - wrheader_wid;
+		if (avail4cmd >= 0) {
+			mvaddwstr(0, 0, wlheader);
+			int cmdwid = wcommandwid;
+			if (cmdwid == -1) {
+				wcommand = L"";
+				cmdwid = 0;
+			}
+			// All of cmd fits, 1 = delimiting space
+			if (avail4cmd >= cmdwid + 1)
+				addwstr(wcommand);
+			// Else print truncated cmd (to 0 chars, possibly) + ellipsis. If
+			// there's too little space even for the ellipsis, print nothing.
+			else if (avail4cmd >= ellipsiswid + 1) {
+				assert(wcommand_characters);
+				// from the back
+				do cmdwid = wcswidth(wcommand, --wcommand_characters);
+				while (cmdwid == -1 || cmdwid > avail4cmd-ellipsiswid-1);
+					addnwstr(wcommand, wcommand_characters);
+				addwstr(L"\u2026");
 			}
 		}
 	}
-	mvaddstr(0, width - rhlen + 1, right_header);
-	free(header);
-	free(right_header);
-	return;
+	free(wrheader);
+#else
+	if (width >= rheader_len) {
+		mvaddstr(0, width - rheader_len, rheader);
+		const int avail4cmd = width - lheader_len - rheader_len;
+		if (avail4cmd >= 0) {
+			mvaddstr(0, 0, lheader);
+			if (avail4cmd >= command_characters + 1)
+				addstr(command);
+			else if (avail4cmd >= 3 + 1) {
+				addnstr(command, avail4cmd - 3 - 1);
+				addstr("...");
+			}
+		}
+	}
+#endif
 }
 
 // When first_screen, returns false. Otherwise, when WATCH_ALL_DIFF is false,
@@ -590,8 +683,8 @@ static bool display_char(int y, int x, Xint c) {
 	if (first_screen || ! (flags & WATCH_ALL_DIFF))
 		diff = changed = false;
 	else {
-		// TODO: when cwid>1, check the diff of the second "slot" of the
-		// char. Verify (watch -d) on COLUMNS=40:
+		// TODO: when cwid>1, check the diff of the second and other "slots" of
+		// the char. With COLUMNS=40:
 		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ日本\nb' > /tmp/del
 		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZZ日本\nb' > /tmp/del
 #ifdef WITH_WATCH8BIT
@@ -614,7 +707,7 @@ static bool display_char(int y, int x, Xint c) {
 		attron(A_STANDOUT);
 #ifdef WITH_WATCH8BIT
 	wchar_t c2 = c;
-	addnwstr(&c2, 1);  // TODO: isn't there something elementary?
+	addnwstr(&c2, 1);
 #else
 	addch(c);
 #endif
@@ -640,6 +733,7 @@ static inline bool my_clrtoeol(int y, int x)
 		return screen_changed;
 	}
 
+	// make sure color is preserved
 	move(y, x);
 	clrtoeol();  // faster, presumably
 	return false;
@@ -658,6 +752,7 @@ static inline bool my_clrtobot(int y, int x)
 		return screen_changed;
 	}
 
+	// make sure color is preserved
 	move(y, x);
 	clrtobot();  // faster, presumably
 	return false;
@@ -703,20 +798,16 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			execvp(command_argv[0], command_argv);
 			const char *const errmsg = strerror(errno);
 			(void)!write(2, command_argv[0], strlen(command_argv[0]));
-			// TODO: gettext for the ": "?
+			// TODO: gettext?
 			(void)!write(2, ": ", 2);
 			(void)!write(2, errmsg, strlen(errmsg));
 			_Exit(4);
-		} else {
-			status = system(command);	/* watch manpage promises sh quoting */
-			/* propagate command exit status as child exit status */
-			// error msg is provided by sh
-			if (!WIFEXITED(status)) {  // child exits nonzero if command does
-				_Exit(EXIT_FAILURE);
-			} else {
-				_Exit(WEXITSTATUS(status));
-			}
 		}
+		status = system(command);
+		/* propagate command exit status as child exit status */
+		/* child exits nonzero if command does */
+		// error msg is provided by sh
+		_Exit(WIFEXITED(status) ? WEXITSTATUS(status) : EXIT_FAILURE);
 	}
 	/* otherwise, we're in parent */
 
@@ -776,8 +867,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 				// #240989. Presumably because glibc of the time didn't
 				// recognize ä, ö, ü, Π, ά, λ, ς, ... as printable. Today,
 				// iswprint() in glibc works as expected and the "c<128" is
-				// letting all non-printables >=128 get through. Hence its
-				// removal. People with old libc likely have old procps.
+				// letting all non-printables >=128 get through.
 				if (! iswprint(c))
 					continue;
 				cwid = wcwidth(c);
@@ -841,8 +931,6 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		}
 	}
 
-	first_screen = false;
-	refresh();
 	return screen_changed;
 }
 
@@ -855,8 +943,8 @@ int main(int argc, char *argv[])
 	/* next loop time in us, used for precise time keeping only */
 	watch_usec_t next_loop = 0;
 	double interval = 2;
-	int max_cycles = 1;
-	int cycle_count = 0;
+	int max_cycles = 0;
+	int cycle_count = 1;
 	bool scr_contents_chg;
 
 #ifdef WITH_COLORWATCH
@@ -885,6 +973,7 @@ int main(int argc, char *argv[])
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
 	program_invocation_name = program_invocation_short_name;
 #endif
+	// TODO: when !WATCH8BIT, setlocale() should be omitted or initd as "C".
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -919,8 +1008,10 @@ int main(int argc, char *argv[])
 			flags |= WATCH_CHGEXIT;
 			break;
 		case 'q':
-			flags |= WATCH_EQUEXIT;
+			// TODO: strtod isn't int
 			max_cycles = strtod_nol_or_err(optarg, _("failed to parse argument"));
+			if (max_cycles >= 1)
+				flags |= WATCH_EQUEXIT;
 			break;
 		case 'r':
 			flags |= WATCH_NORERUN;
@@ -1001,6 +1092,7 @@ int main(int argc, char *argv[])
 	/* Set up tty for curses use.  */
 	curses_started = true;
 	initscr();
+	// TODO: we want color by default and an option to turn it off
 	if (flags & WATCH_COLOR) {
 		if (has_colors()) {
 			start_color();
@@ -1014,6 +1106,7 @@ int main(int argc, char *argv[])
 	cbreak();
 	curs_set(0);
 
+	tzset();
 	if (interval < 0.1)
 		interval = 0.1;
 	if (interval > UINT_MAX)
@@ -1026,16 +1119,12 @@ int main(int argc, char *argv[])
 		set_ansi_attribute(-1, NULL);
 
 		if (screen_size_changed) {
+			screen_size_changed = false;  // "atomic" test-and-set
 			get_terminal_size();
 			resizeterm(height, width);
 			clear();
 			/* redrawwin(stdscr); */
-			screen_size_changed = false;
 			first_screen = true;
-			// Prevent cycle_count from soaring while the terminal resizes.
-			// Not strictly necessary when WATCH_NORERUN, but the behavior of -q
-			// should be consistent over NORERUN and !NORERUN.
-			cycle_count = 0;
 		}
 
 		if (show_title)
@@ -1050,19 +1139,26 @@ int main(int argc, char *argv[])
 			last_run = get_time_usec();
 			scr_contents_chg = run_command(command, command_argv);
 
-			if (flags & WATCH_CHGEXIT && scr_contents_chg)
-				break;
-			if (flags & WATCH_EQUEXIT) {
-				if (scr_contents_chg)
-					cycle_count = 1;
-				else {
-					if (cycle_count == max_cycles)
-						break;
-					++cycle_count;
+			// [BUG] When screen resizes, its contents change, but not
+			// necessarily because cmd output's changed. It may have, but that
+			// event is lost. Prevents cycle_count from soaring while resizing.
+			if (! first_screen) {
+				if (flags & WATCH_CHGEXIT && scr_contents_chg)
+					break;
+				if (flags & WATCH_EQUEXIT) {
+					if (scr_contents_chg)
+						cycle_count = 1;
+					else {
+						if (cycle_count == max_cycles)
+							break;
+						++cycle_count;
+					}
 				}
 			}
+			first_screen = false;
 		}
-		else refresh();
+
+		refresh();
 
 		if (precise_timekeeping) {
 			watch_usec_t cur_time = get_time_usec();
