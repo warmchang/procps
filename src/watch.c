@@ -38,6 +38,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <locale.h>
+#include <fcntl.h>
 #include <limits.h>
 #include <signal.h>
 #include <stdio.h>
@@ -921,6 +922,12 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		if (flags & WATCH_BEEP)
 			beep();
 		if (flags & WATCH_ERREXIT) {
+			int stdinfl = fcntl(0, F_GETFL);
+			if (stdinfl >= 0 && fcntl(0, F_SETFL, stdinfl|O_NONBLOCK) >= 0) {
+				while (getchar() != EOF) ;
+				fcntl(0, F_SETFL, stdinfl);
+			}
+
 			// TODO: add a few spaces to the end of the string to separate it
 			// from the cmd output that may already be on the line
 			mvaddstr(height - 1, 0,
