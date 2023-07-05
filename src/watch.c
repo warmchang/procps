@@ -553,14 +553,14 @@ static void output_header(const char *command, int command_characters, double in
 #endif
 {
 	static char *lheader;
-	static int lheader_len = 0;  // tell-tale
+	static int lheader_len;
 #ifdef WITH_WATCH8BIT
 	static wchar_t *wlheader;
 	static int wlheader_wid;
 #endif
 
 	static char rheader[256+128];  // hostname and timestamp
-	static int rheader_lenmid = 0;  // just before timestamp
+	static int rheader_lenmid;  // just before timestamp
 	int rheader_len;
 #ifdef WITH_WATCH8BIT
 	wchar_t *wrheader;
@@ -672,48 +672,109 @@ static void output_header(const char *command, int command_characters, double in
 
 // When first_screen, returns false. Otherwise, when WATCH_ALL_DIFF is false,
 // return value is unspecified. Otherwise, returns true <==> the character at
-// (y, x) changed.
-// In the future, to do things like #233, this may be well extended with an attr
-// parameter and an option to only change that, not the base char. The change
-// detection routine may have its uses as a separate function as well.
-static bool display_char(int y, int x, Xint c) {
-	assert(c != XEOF);
-	bool changed, diff;
+// (y, x) changed. After return, cursor position is indeterminate.
+//
+// The change detection algorithm assumes that all characters (spacing and
+// non-spacing) belonging to a set of coords are display_char()d one after
+// another. That occurs naturally when writing out text from beginning to end.
+//
+// The function emulates the behavior ncurses claims to have according to
+// curs_add_wch(3x) in that a non-spacing c is added to the spacing character
+// already present at (y, x). In reality, ncurses (as of 6.4-20230401) adds it
+// to the character at (y, x-1). This affects add_wch() as well as addwstr() et
+// al.
+static bool display_char(int y, int x, Xint c, int cwid) {
+	assert(c != XEOF && c != XL('\0'));  // among other things
+	bool changed = false;
+	static attr_t old_standout;
+
 	move(y, x);
 
-	if (first_screen || ! (flags & WATCH_ALL_DIFF))
-		diff = changed = false;
-	else {
+#ifdef WITH_WATCH8BIT
+#if (CCHARW_MAX < 3 || CCHARW_MAX > 256)
+#error "ncurses' CCHARW_MAX has an unexpected value!"
+#endif
+	if (! first_screen && flags&WATCH_ALL_DIFF) {
 		// TODO: when cwid>1, check the diff of the second and other "slots" of
 		// the char. With COLUMNS=40:
 		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ日本\nb' > /tmp/del
 		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZZ日本\nb' > /tmp/del
-#ifdef WITH_WATCH8BIT
-		cchar_t oldc;
-		in_wch(&oldc);
-		changed = (wchar_t)c != oldc.chars[0];
-		if (flags & WATCH_DIFF)
-			diff = changed || (flags&WATCH_CUMUL && oldc.attr&A_STANDOUT);
-		else diff = false;
-#else
-		chtype oldc = inch();
-		changed = (unsigned char)c != (oldc & A_CHARTEXT);
-		if (flags & WATCH_DIFF)
-			diff = changed || (flags&WATCH_CUMUL && oldc&A_STANDOUT);
-		else diff = false;
-#endif
+		static int curx = -1, cury = -1;
+		static wchar_t oldcc[CCHARW_MAX];
+		static uf8 oldcclen;
+		// This wouldm't work properly if cmd output had a single character and
+		// we weren't manually printing ' 's to empty the rest of screen. But
+		// when flags&WATCH_ALL_DIFF we are printing the ' 's.
+		if (y != cury || x != curx) {
+			cchar_t cc;
+			short dummy;
+			attr_t oldcc_attr;
+			cury = y; curx = x;
+			in_wch(&cc);
+			getcchar(&cc, oldcc, &oldcc_attr, &dummy, NULL);
+			old_standout = oldcc_attr;
+			oldcclen = wcslen(oldcc);
+		}
+
+		uf8 i;
+		for (i=0; i<oldcclen; ++i) {
+			if (oldcc[i] == (wchar_t)c) {
+				oldcc[i] = L'\0';
+				break;
+			}
+		}
+		// when oldcc's empty or already known different from a previous run
+		if (i == oldcclen) {
+			oldcclen = 0;
+			oldcc[0] = 1;  // just !=0
+			changed = true;
+		}
+		else {
+			assert(oldcclen);
+			for (i=0; i<oldcclen && !oldcc[i]; ++i) ;
+			changed = i < oldcclen;
+		}
 	}
 
-	if (diff)
-		attron(A_STANDOUT);
-#ifdef WITH_WATCH8BIT
-	wchar_t c2 = c;
-	addnwstr(&c2, 1);
+	if (cwid > 0) {
+		wchar_t c2 = c;
+		addnwstr(&c2, 1);
+	}
+	else {
+		// slow
+		cchar_t cc;
+		wchar_t wcs[CCHARW_MAX];
+		short dummy;
+		attr_t dummy2;
+		in_wch(&cc);
+		getcchar(&cc, wcs, &dummy2, &dummy, NULL);
+		uf8 len = wcslen(wcs);
+		if (len < CCHARW_MAX - 1) {
+			wcs[len] = c;
+			wcs[len+1] = L'\0';
+		}
+		setcchar(&cc, wcs, dummy2, dummy, NULL);
+		add_wch(&cc);
+	}
 #else
+	if (! first_screen && flags&WATCH_ALL_DIFF) {
+		chtype oldc = inch();
+		changed = (unsigned char)c != (oldc & A_CHARTEXT);
+		old_standout = oldc & A_STANDOUT;
+	}
+
 	addch(c);
 #endif
-	if (diff)
-		attroff(A_STANDOUT);
+
+	if (flags & WATCH_DIFF) {
+		attr_t newattr;
+		short newcolor;
+		attr_get(&newattr, &newcolor, NULL);
+		if (changed || (flags&WATCH_CUMUL && old_standout&A_STANDOUT))
+			mvchgat(y, x, 1, newattr | A_STANDOUT, newcolor, NULL);
+		else
+			mvchgat(y, x, 1, newattr & ~(attr_t)A_STANDOUT, newcolor, NULL);
+	}
 
 	return changed;
 }
@@ -730,7 +791,7 @@ static inline bool my_clrtoeol(int y, int x)
 	if (flags & WATCH_ALL_DIFF) {
 		bool screen_changed = false;
 		while (x < width)
-			screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
+			screen_changed = display_char(y, x++, XL(' '), 1) || screen_changed;
 		return screen_changed;
 	}
 
@@ -746,7 +807,7 @@ static inline bool my_clrtobot(int y, int x)
 		bool screen_changed = false;
 		while (y < height) {
 			while (x < width)
-				screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
+				screen_changed = display_char(y, x++, XL(' '), 1) || screen_changed;
 			x = 0;
 			++y;
 		}
@@ -777,7 +838,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 	fflush(stderr);
 
 	child = fork();
-	if (child < 0) {		/* fork error */
+	if (child < 0) {
 		xerr(2, _("unable to fork process"));
 	} else if (child == 0) {	/* in child */
 		// stdout/err can't be used here. Avoid xerr(), close_stdout(), ...
@@ -787,7 +848,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		while (close(pipefd[0]) == -1 && errno == EINTR) ;
 		/* replace stdout with pipe input */
 		while (dup2(pipefd[1], 1) == -1 && errno == EINTR) ;
-		/* once duped, the write fd isn't needed */
+		/* once duped, pipe input isn't needed */
 		while (close(pipefd[1]) == -1 && errno == EINTR) ;
 		/* stderr should default to stdout */
 		while (dup2(1, 2) == -1 && errno == EINTR) ;
@@ -795,7 +856,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 		// might conclude it's run interactively (see ps). And hang if it
 		// should wait for input (watch 'read A; echo $A').
 
-		if (flags & WATCH_EXEC) {	/* pass command to exec instead of system */
+		if (flags & WATCH_EXEC) {  /* pass command to exec instead of system */
 			execvp(command_argv[0], command_argv);
 			const char *const errmsg = strerror(errno);
 			(void)!write(2, command_argv[0], strlen(command_argv[0]));
@@ -805,7 +866,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			_Exit(4);
 		}
 		status = system(command);
-		/* propagate command exit status as child exit status */
+		/* TODO: propagate command exit status as child exit status */
 		/* child exits nonzero if command does */
 		// error msg is provided by sh
 		_Exit(WIFEXITED(status) ? WEXITSTATUS(status) : EXIT_FAILURE);
@@ -884,7 +945,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			// if it doesn't fit
 			if (cwid > width-x) {
 				assert(cwid > 0 && cwid <= 2);
-				assert(width-x <= 1);
+				assert(width-x <= 1);  // !!
 				if (line_wrap)
 					carry = c;
 				else {
@@ -899,11 +960,13 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			// it fits, print it
 			if (c == XL('\t')) {
 				// TODO: diff of tabs only highlights the first space
-				do screen_changed = display_char(y, x++, XL(' ')) || screen_changed;
+				do screen_changed = display_char(y, x++, XL(' '), 1) || screen_changed;
 				while (x % TAB_WIDTH && x < width);
 			}
 			else {
-				screen_changed = display_char(y, x, c) || screen_changed;
+				// cwid=0 => non-spacing char modifying the preceding spacing
+				// char
+				screen_changed = display_char(y, x-!cwid, c, cwid) || screen_changed;
 				x += cwid;
 			}
 		}
