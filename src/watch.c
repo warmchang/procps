@@ -366,10 +366,8 @@ static void process_ansi(FILE * fp)
 
 static void __attribute__ ((__noreturn__)) do_exit(int status)
 {
-	if (curses_started) {
+	if (curses_started)
 		endwin();
-		curs_set(1);
-	}
 	exit(status);
 }
 
@@ -685,63 +683,86 @@ static void output_header(const char *command, int command_characters, double in
 // al.
 static bool display_char(int y, int x, Xint c, int cwid) {
 	assert(c != XEOF && c != XL('\0'));  // among other things
+	assert(cwid >= 0);
+	assert(width-x >= cwid);  // fits
 	bool changed = false;
-	static attr_t old_standout;
-
-	move(y, x);
+	bool old_standout = false;
 
 #ifdef WITH_WATCH8BIT
-#if (CCHARW_MAX < 3 || CCHARW_MAX > 256)
+#if (CCHARW_MAX < 3 || CCHARW_MAX > 15)  // 5 most likely
 #error "ncurses' CCHARW_MAX has an unexpected value!"
 #endif
 	if (! first_screen && flags&WATCH_ALL_DIFF) {
-		// TODO: when cwid>1, check the diff of the second and other "slots" of
-		// the char. With COLUMNS=40:
-		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZ日本\nb' > /tmp/del
-		// echo -e 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaZZ日本\nb' > /tmp/del
+		assert(cwid <= 15);
+		static wchar_t oldcc[15][CCHARW_MAX];
+		static uf8 oldcclen[15];  // each in [1, CCHARW_MAX)
+		static uf8 oldccwid;
+		static bool oldstnd;
 		static int curx = -1, cury = -1;
-		static wchar_t oldcc[CCHARW_MAX];
-		static uf8 oldcclen;
+		uf8 i, j;
 		// This wouldm't work properly if cmd output had a single character and
 		// we weren't manually printing ' 's to empty the rest of screen. But
 		// when flags&WATCH_ALL_DIFF we are printing the ' 's.
 		if (y != cury || x != curx) {
 			cchar_t cc;
 			short dummy;
-			attr_t oldcc_attr;
+			attr_t attr;
 			cury = y; curx = x;
-			in_wch(&cc);
-			getcchar(&cc, oldcc, &oldcc_attr, &dummy, NULL);
-			old_standout = oldcc_attr;
-			oldcclen = wcslen(oldcc);
+			oldstnd = false;
+			// If cwid=0, do anything. It shouldn't happen in a proper string.
+			oldccwid = cwid;
+			// Check every column the new c will occupy. Takes care of
+			// 日a -> a日a (日 highlighted because of its 2nd column).
+			for (i=0; i<cwid; ++i) {
+				mvin_wch(y, x+i, &cc);  // c fits => ok
+				getcchar(&cc, oldcc[i], &attr, &dummy, NULL);
+				oldstnd |= attr & A_STANDOUT;
+				oldcclen[i] = wcslen(oldcc[i]);
+				// if nothing else, there is the ' ' there
+				assert(oldcclen[i] > 0);
+			}
 		}
 
-		uf8 i;
-		for (i=0; i<oldcclen; ++i) {
-			if (oldcc[i] == (wchar_t)c) {
-				oldcc[i] = L'\0';
+		// If there's no change, then c must be a component of each of the
+		// characters. A component not found yet. Find it and mark as found
+		// (L'\0').
+		for (i=0; i<oldccwid; ++i) {
+			for (j=0; j<oldcclen[i]; ++j) {
+				if (oldcc[i][j] == (wchar_t)c) {
+					oldcc[i][j] = L'\0';
+					break;
+				}
+			}
+			if (j == oldcclen[i]) {
+				oldccwid = 0;  // mark as changed for good
 				break;
 			}
 		}
-		// when oldcc's empty or already known different from a previous run
-		if (i == oldcclen) {
-			oldcclen = 0;
-			oldcc[0] = 1;  // just !=0
+		if (! oldccwid)
 			changed = true;
-		}
 		else {
-			assert(oldcclen);
-			for (i=0; i<oldcclen && !oldcc[i]; ++i) ;
-			changed = i < oldcclen;
+			changed = false;
+			for (i=0; i<oldccwid; ++i) {
+				for (j=0; j<oldcclen[i]; ++j) {
+					if (oldcc[i][j]) {
+						changed = true;
+						break;
+					}
+				}
+				if (j < oldcclen[i])
+					break;
+			}
 		}
+
+		old_standout = oldstnd;
 	}
 
+	move(y, x);
 	if (cwid > 0) {
 		wchar_t c2 = c;
 		addnwstr(&c2, 1);
 	}
 	else {
-		// slow
 		cchar_t cc;
 		wchar_t wcs[CCHARW_MAX];
 		short dummy;
@@ -758,11 +779,12 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 	}
 #else
 	if (! first_screen && flags&WATCH_ALL_DIFF) {
-		chtype oldc = inch();
+		chtype oldc = mvinch(y, x);
 		changed = (unsigned char)c != (oldc & A_CHARTEXT);
 		old_standout = oldc & A_STANDOUT;
 	}
 
+	move(y, x);
 	addch(c);
 #endif
 
@@ -770,7 +792,8 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 		attr_t newattr;
 		short newcolor;
 		attr_get(&newattr, &newcolor, NULL);
-		if (changed || (flags&WATCH_CUMUL && old_standout&A_STANDOUT))
+		// standout can flip on/off as the components of a compound char arrive
+		if (changed || (flags&WATCH_CUMUL && old_standout))
 			mvchgat(y, x, 1, newattr | A_STANDOUT, newcolor, NULL);
 		else
 			mvchgat(y, x, 1, newattr & ~(attr_t)A_STANDOUT, newcolor, NULL);
@@ -866,7 +889,7 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 			_Exit(4);
 		}
 		status = system(command);
-		/* TODO: propagate command exit status as child exit status */
+		/* propagate command exit status as child exit status */
 		/* child exits nonzero if command does */
 		// error msg is provided by sh
 		_Exit(WIFEXITED(status) ? WEXITSTATUS(status) : EXIT_FAILURE);
@@ -959,7 +982,6 @@ static bool run_command(const char *command, char *const *restrict command_argv)
 
 			// it fits, print it
 			if (c == XL('\t')) {
-				// TODO: diff of tabs only highlights the first space
 				do screen_changed = display_char(y, x++, XL(' '), 1) || screen_changed;
 				while (x % TAB_WIDTH && x < width);
 			}
