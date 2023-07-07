@@ -1,6 +1,6 @@
 /*
  * strutils.c - various string routines shared by commands
- * This file was copied from util-linux at fall 2011.
+ * This file was originally copied from util-linux at fall 2011.
  *
  * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
  * Copyright (C) 2010 Davidlohr Bueso <dave@gnu.org>
@@ -22,7 +22,9 @@
 
 #include <stdlib.h>
 #include <ctype.h>
-
+#include <assert.h>
+#include <wchar.h>
+#include "xalloc.h"
 #include "c.h"
 #include "strutils.h"
 
@@ -71,53 +73,101 @@ double strtod_or_err(const char *str, const char *errmesg)
  */
 double strtod_nol_or_err(const char *str, const char *errmesg)
 {
-    double num;
-    const char *cp, *radix;
-    double mult;
-    int negative = 0;
+	double num;
+	const char *cp, *radix;
+	double mult;
+	int negative = 0;
 
-    if (str != NULL && *str != '\0') {
-        num = 0.0;
-        cp = str;
-        /* strip leading spaces */
-        while (isspace(*cp))
-            cp++;
+	if (str != NULL && *str != '\0') {
+		num = 0.0;
+		cp = str;
+		/* strip leading spaces */
+		while (isspace(*cp))
+			cp++;
 
-        /* get sign */
-        if (*cp == '-') {
-            negative = 1;
-            cp++;
-        } else if (*cp == '+')
-            cp++;
+		/* get sign */
+		if (*cp == '-') {
+			negative = 1;
+			cp++;
+		} else if (*cp == '+')
+			cp++;
 
-        /* find radix */
-        radix = cp;
-        mult=0.1;
-        while(isdigit(*radix)) {
-            radix++;
-            mult *= 10;
-        }
-        while(isdigit(*cp)) {
-            num += (*cp - '0') * mult;
-            mult /= 10;
-            cp++;
-        }
-        /* got the integers */
-        if (*cp == '\0')
-            return (negative?-num:num);
-        if (*cp != '.' && *cp != ',')
-            error(EXIT_FAILURE, EINVAL, "%s: '%s'", errmesg, str);
+		/* find radix */
+		radix = cp;
+		mult=0.1;
+		while(isdigit(*radix)) {
+			radix++;
+			mult *= 10;
+		}
+		while(isdigit(*cp)) {
+			num += (*cp - '0') * mult;
+			mult /= 10;
+			cp++;
+		}
+		/* got the integers */
+		if (*cp == '\0')
+			return (negative?-num:num);
+		if (*cp != '.' && *cp != ',')
+			error(EXIT_FAILURE, EINVAL, "%s: '%s'", errmesg, str);
 
-        cp++;
-        mult = 0.1;
-        while(isdigit(*cp)) {
-            num += (*cp - '0') * mult;
-            mult /= 10;
-            cp++;
-        }
-        if (*cp == '\0')
-            return (negative?-num:num);
-    }
-    error(EXIT_FAILURE, errno, "%s: '%s'", errmesg, str);
-    return 0;
+		cp++;
+		mult = 0.1;
+		while(isdigit(*cp)) {
+			num += (*cp - '0') * mult;
+			mult /= 10;
+			cp++;
+		}
+		if (*cp == '\0')
+			return (negative?-num:num);
+	}
+	error(EXIT_FAILURE, errno, "%s: '%s'", errmesg, str);
+	return 0;
+}
+
+// column width of a multi-byte string
+// s is \0-term.
+// pwcs !=NULL => address of s converted to wide string is stored in *pwcs, will
+// be \0-term., no additional cost in receiving it, caller free()s.
+// Error => -1 and *pwcs is unchanged.
+int mbswidth(const char *restrict s, wchar_t *restrict *const restrict pwcs)
+{
+	assert(s);
+
+	size_t wclen = mbstowcs(NULL, s, 0);  // wclen doesn't incl. \0
+	if (wclen == (size_t)-1) {
+		errno = EILSEQ;
+		return -1;
+	}
+	++wclen;  // ok, it's !=SIZE_MAX
+	if ((uintmax_t)wclen * sizeof(wchar_t) / sizeof(wchar_t) != wclen) {
+		errno = EOVERFLOW;
+		return -1;
+	}
+
+	wchar_t *wcs = xmalloc(wclen * sizeof(*wcs));
+	mbstowcs(wcs, s, wclen);
+
+	// wcswidth() is useless. POSIX 2001 doesn't say what it does when the width
+	// is > INT_MAX. May be some UB.
+	int ret = 0;
+	int curwid;
+	for (--wclen; wclen; --wclen) {
+		curwid = wcwidth(wcs[wclen-1]);
+		if (curwid == -1) {
+			free(wcs);
+			errno = EILSEQ;
+			return -1;
+		}
+		if (INT_MAX - ret < curwid) {
+			free(wcs);
+			errno = EOVERFLOW;
+			return -1;
+		}
+		ret += curwid;
+	}
+
+	if (pwcs) {
+		*pwcs = wcs;
+	} else free(wcs);
+	return ret;
 }

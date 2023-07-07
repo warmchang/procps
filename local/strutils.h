@@ -8,5 +8,6 @@
 extern long strtol_or_err(const char *str, const char *errmesg);
 extern double strtod_or_err(const char *str, const char *errmesg);
 double strtod_nol_or_err(const char *str, const char *errmesg);
+int mbswidth(const char *restrict s, wchar_t *restrict *const restrict pwcs);
 
 #endif

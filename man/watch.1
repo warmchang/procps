@@ -55,18 +55,16 @@ for any locale. The \fBWATCH_INTERVAL\fR environment variable can be used to per
 set a non-default interval (following the same rules and formatting).
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
-Start
+Execute
 .I command
-every
 .B \-\-interval
-seconds, regardless of how long it took to complete the previous run (unless it
-was longer than
+seconds after its previous run started, instead of
 .B \-\-interval
-seconds). Without this parameter,
+seconds after its previous run finished. If it's taking longer than
+.B \-\-interval
+seconds for
 .I command
-is executed
-.B \-\-interval
-seconds after its previous run finished.
+to complete, it is waited for in either case.
 .TP
 \fB\-q\fR, \fB\-\-equexit\fR <cycles>
 Exit when output of
@@ -116,11 +114,10 @@ Update interval, follows the same rules as the
 command line option.
 .TP
 .B COLUMNS
-Terminal screen character width. It's usually set up automatically and changing
-it manually will confuse some programs.
+Terminal screen character width. Set to override autodetection.
 .TP
 .B LINES
-Terminal screen character height.
+Terminal screen character height. Set to override autodetection.
 .SH NOTES
 POSIX option processing is used (i.e., option processing stops at
 the first non\-option argument).  This means that flags after
@@ -169,23 +166,6 @@ will not restart even if
 output changes meanwhile.
 .B \-\-differences
 highlighting is reset.
-
-When using
-.B \-\-precise
-with a
-.I command
-which takes longer than
-.B \-\-interval
-to complete and later
-.I command's
-running time shortens to be within
-.B \-\-interval,
-.B watch
-will do
-.I command
-re-runs back to back for some time, disregarding
-.B \-\-interval,
-to make up for the time lost waiting.
 .SH "REPORTING BUGS"
 Please send bug reports to
 .UR procps@freelists.org

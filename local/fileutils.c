@@ -14,9 +14,7 @@
 
 #include "nls.h"
 #include "fileutils.h"
-#ifndef HAVE_ERROR_H
-# include "c.h" /* for error() emulation */
-#endif
+#include "c.h"
 
 int close_stream(FILE * stream)
 {
@@ -42,4 +40,26 @@ void close_stdout(void)
 
 	if (close_stream(stderr) != 0)
 		_exit(EXIT_FAILURE);
+}
+
+// read a multi-byte character from a byte-oriented stream
+wint_t getmb(FILE *f)
+{
+	unsigned char c2;
+	uf8 byte = 0;
+	int c;
+	wchar_t rval;
+	mbstate_t mbstate;
+
+	memset(&mbstate, 0, sizeof(mbstate));
+
+	while ((c = getc(f)) != EOF) {
+		c2 = c;
+		if (mbrtowc(&rval, (char *)&c2, 1, &mbstate) <= 1)
+			return rval;
+		if (++byte == MB_CUR_MAX)
+			break;
+	}
+
+	return WEOF;
 }
