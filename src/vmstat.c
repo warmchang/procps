@@ -250,13 +250,13 @@ static void new_header(void)
      * that follow (marked with max x chars) might not work,
      * unless manual page is translated as well.  */
     const char *header =
-        _("procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----");
+        _("procs -----------memory---------- ---swap-- -----io---- -system-- -------cpu-------");
     const char *wide_header =
         _("--procs-- -----------------------memory---------------------- ---swap-- -----io---- -system-- ----------cpu----------");
     const char *timestamp_header = _(" -----timestamp-----");
 
     const char format[] =
-        "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s";
+        "%2s %2s %6s %6s %6s %6s %4s %4s %5s %5s %4s %4s %2s %2s %2s %2s %2s %2s";
     const char wide_format[] =
         "%4s %4s %12s %12s %12s %12s %4s %4s %5s %5s %4s %4s %3s %3s %3s %3s %3s %3s";
 
@@ -345,7 +345,7 @@ static void new_format(void)
 #define MEMv(E) MEMINFO_VAL(E, ul_int, mem_stack, mem_info)
 #define DSYSv(E) STAT_VAL(E, s_int, stat_stack, stat_info)
     const char format[] =
-        "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u";
+        "%2lu %2lu %6lu %6lu %6lu %6lu %4u %4u %5u %5u %4u %4u %2u %2u %2u %2u %2u %2u";
     const char wide_format[] =
         "%4lu %4lu %12lu %12lu %12lu %12lu %4u %4u %5u %5u %4u %4u %3u %3u %3u %3u %3u %3u";
 

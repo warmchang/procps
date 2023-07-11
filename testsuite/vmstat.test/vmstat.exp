@@ -12,11 +12,11 @@ if { [ file readable "/proc/vmstat" ] == 0 } {
 } else {
     set test "vmstat with no arguments"
     spawn $vmstat
-    expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+buff\\s+cache\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st\\s*\(\\s+\\d+\){17}\\s*$"
+    expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+buff\\s+cache\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st gu\\s*\(\\s+\\d+\){18}\\s*$"
 
     set test "vmstat with -a flag"
     spawn $vmstat -a
-    expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+inact\\s+active\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st\\s*\(\\s+\\d+\){17}\\s*$"
+    expect_pass "$test" "^procs\[ -\]+memory\[ -\]+swap\[ -\]+io\[ -\]+system\[ -\]+cpu\[ -\]+\\s*r\\s+b\\s+swpd\\s+free\\s+inact\\s+active\\s+si\\s+so\\s+bi\\s+bo\\s+in\\s+cs us sy id wa st gu\\s*\(\\s+\\d+\){18}\\s*$"
 
     set test "vmstat fork option"
     spawn $vmstat -f
