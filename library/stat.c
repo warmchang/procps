@@ -886,6 +886,8 @@ reap_em_again:
     llnum = 0;
     if ((b = strstr(bp, "procs_running ")))
         sscanf(b,  "procs_running %llu", &llnum);
+    if (llnum)
+        llnum--; //exclude itself
     info->sys_hist.new.procs_running = llnum;
 
     return 0;
