@@ -941,9 +941,9 @@ static void get_terminal_size(void)
 
 
 
-#define USECS_PER_SEC 1000000U
-#define NSECS_PER_USEC 1000U
 typedef uf64 watch_usec_t;
+#define USECS_PER_SEC ((watch_usec_t)1000000)
+#define NSECS_PER_USEC ((watch_usec_t)1000)
 
 /* get current time in usec */
 static inline watch_usec_t get_time_usec(void)
