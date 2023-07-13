@@ -296,8 +296,8 @@ static void print_details (struct slabinfo_stack *stack)
 
 int main(int argc, char *argv[])
 {
-    int is_tty, rc = EXIT_SUCCESS;
-    unsigned short old_rows;
+    int is_tty = 0, rc = EXIT_SUCCESS;
+    unsigned short old_rows = 0;
 
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
     program_invocation_name = program_invocation_short_name;

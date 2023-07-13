@@ -351,7 +351,6 @@ static void new_format(void)
 
     unsigned int tog = 0;    /* toggle switch for cleaner code */
     unsigned int i;
-    long hz;
     long long cpu_use, cpu_sys, cpu_idl, cpu_iow, cpu_sto, cpu_gue;
     long long Div, divo2;
     unsigned long pgpgin[2], pgpgout[2], pswpin[2] = {0,0}, pswpout[2];
@@ -369,7 +368,7 @@ static void new_format(void)
     struct meminfo_stack *mem_stack;
 
     sleep_half = (sleep_time / 2);
-    hz = procps_hertz_get();
+    // long hz = procps_hertz_get();
 
     if (procps_vmstat_new(&vm_info) < 0)
         xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));

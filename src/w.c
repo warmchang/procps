@@ -467,7 +467,7 @@ static void showinfo(
     char uname[UT_NAMESIZE + 1] = "", tty[5 + UT_LINESIZE + 1] = "/dev/";
     long hertz;
     char cmdline[MAX_CMD_WIDTH + 1];
-    pid_t best_pid;
+    pid_t best_pid = -1;
     int pids_length = 0;
 
     strcpy(cmdline, "-");
