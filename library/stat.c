@@ -183,8 +183,8 @@ struct stat_info {
     (void)T; R->result. t = S->new. x; }
 // delta assignment
 #define TICsetH(e,t,x) setDECL(e) { \
-    (void)S; R->result. t = ( T->new. x - T->old. x ); \
-    if (R->result. t < 0) R->result. t = 0; }
+    (void)S; R->result. t = 0; \
+    if ( T->new. x > T->old. x ) R->result. t = ( T->new. x - T->old. x ); }
 #define SYSsetH(e,t,x) setDECL(e) { \
     (void)T; R->result. t = ( S->new. x - S->old. x ); }
 
