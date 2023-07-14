@@ -403,7 +403,7 @@ static void output_header(void)
 
 	static char rheader[256+128];  // hostname and timestamp
 	static int rheader_lenmid;  // just before timestamp
-	int rheader_len = rheader_lenmid;
+	int rheader_len;
 #ifdef WITH_WATCH8BIT
 	wchar_t *wrheader;
 	int wrheader_wid;
@@ -453,6 +453,7 @@ static void output_header(void)
 
 	// TODO: a gettext string for rheader no longer used
 	const time_t t = time(NULL);
+	rheader_len = rheader_lenmid;
 	rheader_len += strftime(rheader+rheader_lenmid, sizeof(rheader)-rheader_lenmid, "%X", localtime(&t));
 	if (rheader_len == rheader_lenmid)
 		rheader[rheader_len] = '\0';
@@ -507,7 +508,7 @@ static void output_header(void)
 		const int avail4cmd = width - lheader_len - rheader_len;
 		if (avail4cmd >= 0) {
 			mvaddstr(0, 0, lheader);
-			if (avail4cmd >= command_characters + 1)
+			if (avail4cmd >= command_len + 1)
 				addstr(command);
 			else if (avail4cmd >= 3 + 1) {
 				addnstr(command, avail4cmd - 3 - 1);
