@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH WATCH 1 "2023-01-17" "procps-ng" "User Commands"
+.TH WATCH 1 "2023-07-14" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -27,7 +27,9 @@ allows you to watch the program output change over time.  By default,
 .SH OPTIONS
 .TP
 \fB\-b\fR, \fB\-\-beep\fR
-Beep if command has a non-zero exit.
+Beep if
+.I command
+has a non-zero exit.
 .TP
 \fB\-c\fR, \fB\-\-color\fR
 Interpret ANSI color and style sequences.
@@ -42,7 +44,19 @@ Highlight the differences between successive updates. If the optional
 will show all changes since the first iteration.
 .TP
 \fB\-e\fR, \fB\-\-errexit\fR
-Freeze updates on command error, and exit after a key press.
+Freeze updates on
+.I command
+error, and exit after a key press. The exit code of
+.B watch
+will be the code
+.I command
+exits with. If signal
+.B n
+is the cause of
+.I command
+termination, the exit code will be
+.B n
++ 128.
 .TP
 \fB\-g\fR, \fB\-\-chgexit\fR
 Exit when the output of
@@ -50,7 +64,9 @@ Exit when the output of
 changes.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
-Specify update interval.  The command will not allow quicker than 0.1 second
+Specify update interval.
+.B watch
+will not allow quicker than 0.1 second
 interval, in which the smaller values are converted. Both '.' and ',' work
 for any locale. The \fBWATCH_INTERVAL\fR environment variable can be used to persistently
 set a non-default interval (following the same rules and formatting).
@@ -88,8 +104,9 @@ Pass
 to an
 .BR exec (3)
 call instead of
-.B sh \-c
-to avoid the side-effects of the shell (environment setup, variable and pathname expansion, etc.).
+.B sh \-c .
+The program will start a bit quicker. Shell features
+(environment setup, variable and pathname expansion, etc.) will be unavailable.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
@@ -99,10 +116,26 @@ Display version information and exit.
 .SH "EXIT STATUS"
 .TP
 .B 0
-Success.
+Success. Does not represent
+.I command
+exit code.
 .TP
-.B other
-Various failures.
+.B 1
+Errors unrelated to
+.I command
+operation.
+.TP
+.B 2
+Errors related to
+.I command
+execution and management (not its exit code).
+.TP
+.B any (\-\-errexit)
+With
+.B \-\-errexit
+the last exit code of
+.I command
+is returned.
 .SH ENVIRONMENT
 The behavior of
 .B watch

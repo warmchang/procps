@@ -35,6 +35,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "xalloc.h"
+#include "signals.h"
 #include <ctype.h>
 #include <errno.h>
 #include <getopt.h>
@@ -124,7 +125,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("  -q, --equexit <cycles>\n"
 	        "                         exit when output from command does not change\n"), out);
 	fputs(_("  -n, --interval <secs>  seconds to wait between updates\n"), out);
-	fputs(_("  -p, --precise          attempt run command in precise intervals\n"), out);
+	fputs(_("  -p, --precise          -n includes command running time\n"), out);  // TODO: gettext
 	fputs(_("  -r, --no-rerun         do not rerun program on window resize\n"), out);
 	fputs(_("  -t, --no-title         turn off header\n"), out);
 	fputs(_("  -w, --no-wrap          turn off line wrapping\n"), out);
@@ -134,9 +135,11 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -v, --version  output version information and exit\n"), out);
 	fprintf(out, USAGE_MAN_TAIL("watch(1)"));
 
-	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+	exit(out == stderr ? 1 : EXIT_SUCCESS);
 }
 
+// don't use EXIT_FAILURE, it can be anything and manpage makes guarantees about
+// exitcodes
 static void __attribute__ ((__noreturn__)) endwin_exit(int status)
 {
 	endwin();
@@ -453,8 +456,10 @@ static void output_header(void)
 
 		// never freed for !WATCH8BIT
 		lheader_len = asprintf(&lheader, _("Every %.1Lfs: "), interval_real);
-		if (lheader_len == -1)
-			xerr(EXIT_FAILURE, "%s()", __func__);
+		if (lheader_len == -1) {
+			xerr(0, "%s()", __func__);
+			endwin_exit(1);
+		}
 #ifdef WITH_WATCH8BIT
 		// never freed
 		wlheader_wid = mbswidth(lheader, &wlheader);
@@ -490,6 +495,11 @@ static void output_header(void)
 		wrheader_wid = 0;
 	}
 #endif
+
+	if (first_screen) {
+		move(0, 0);
+		clrtoeol();
+	}
 
 	/* left justify interval and command, right justify hostname and time,
 	 * clipping all to fit window width
@@ -550,20 +560,18 @@ static void output_lowheader(watch_usec_t span) {
 	if (flags & WATCH_NOTITLE)
 		return;
 
-	if (! first_screen) {
-		move(1, 0);
-		clrtoeol();
-	}
-
 	char s[64];
 	int skip;
 	// TODO: gettext everywhere
 	if (span > USECS_PER_SEC * 24 * 60 * 60)
-		snprintf(s, sizeof(s), "%s >1 %s", "in", "day");
-	// f-p for localized decimal point
+		snprintf(s, sizeof(s), "%s >1 %s", "ran", "day");
+	// for the localized decimal point
 	else if (span < 1000)
-		snprintf(s, sizeof(s), "%s <%.3f%s", "in", 0.001, "s");
-	else snprintf(s, sizeof(s), "%s %.3Lf%s", "in", (long double)span/USECS_PER_SEC, "s");
+		snprintf(s, sizeof(s), "%s <%.3f%s", "ran", 0.001, "s");
+	else snprintf(s, sizeof(s), "%s %.3Lf%s", "ran", (long double)span/USECS_PER_SEC, "s");
+
+	move(1, 0);
+	clrtoeol();
 
 #ifdef WITH_WATCH8BIT
 	wchar_t *ws;
@@ -604,7 +612,7 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 	bool old_standout = false;
 
 #ifdef WITH_WATCH8BIT
-#if (CCHARW_MAX < 3 || CCHARW_MAX > 15)  // 5 most likely
+#if (CCHARW_MAX < 3 || CCHARW_MAX > 15)  // probably 5
 #error "ncurses' CCHARW_MAX has an unexpected value!"
 #endif
 	if (! first_screen && flags&WATCH_ALL_DIFF) {
@@ -772,18 +780,18 @@ static inline bool my_clrtobot(int y, int x)
 static bool run_command(void)
 {
 	int pipefd[2], status;
-	pid_t child;
-
-	if (pipe(pipefd) < 0)
-		xerr(7, _("unable to create IPC pipes"));
-
-	/* flush stdout and stderr, since we're about to do fd stuff */
+	if (pipe(pipefd) < 0) {
+		xerr(0, _("unable to create IPC pipes"));
+		endwin_exit(2);
+	}
+	// child will share buffered data, will print it at fclose()
 	fflush(stdout);
 	fflush(stderr);
 
-	child = fork();
+	pid_t child = fork();
 	if (child < 0) {
-		xerr(2, _("unable to fork process"));
+		xerr(0, _("unable to fork process"));
+		endwin_exit(2);
 	} else if (child == 0) {	/* in child */
 		// stdout/err can't be used here. Avoid xerr(), close_stdout(), ...
 		fclose(stdout);  // so as not to confuse _Exit()
@@ -796,32 +804,46 @@ static bool run_command(void)
 		while (close(pipefd[1]) == -1 && errno == EINTR) ;
 		/* stderr should default to stdout */
 		while (dup2(STDOUT_FILENO, STDERR_FILENO) == -1 && errno == EINTR) ;
-		// TODO: 0 untouched. Is that intentional? I suppose the application
-		// might conclude it's run interactively (see ps). And hang if it
-		// should wait for input (watch 'read A; echo $A').
+		// TODO: 0 left open. Is that intentional? I suppose the application
+		// might conclude it's run interactively (see ps). And hang if it should
+		// wait for input (watch 'read A; echo $A').
 
-		if (flags & WATCH_EXEC) {  /* pass command to exec instead of system */
+		if (flags & WATCH_EXEC) {
 			execvp(command_argv[0], command_argv);
 			const char *const errmsg = strerror(errno);
 			(void)!write(STDERR_FILENO, command_argv[0], strlen(command_argv[0]));
 			// TODO: gettext?
 			(void)!write(STDERR_FILENO, ": ", 2);
 			(void)!write(STDERR_FILENO, errmsg, strlen(errmsg));
-			_Exit(4);
+			_Exit(0x7f);  // sort of like sh
 		}
 		status = system(command);
+		// error from system() (exec(), wait(), ...), not command
+		// errno not guaranteed
+		if (status == -1) {
+			(void)!write(STDERR_FILENO, command, command_len);
+			// TODO: gettext
+			(void)!write(STDERR_FILENO, ": unable to run", 15);
+			_Exit(0x7f);
+		}
 		/* propagate command exit status as child exit status */
-		/* child exits nonzero if command does */
-		// error msg is provided by sh
-		_Exit(WIFEXITED(status) ? WEXITSTATUS(status) : EXIT_FAILURE);
+		// error msg on stderr provided by sh
+		if (WIFEXITED(status))
+			_Exit(WEXITSTATUS(status));
+		if (WIFSIGNALED(status))
+			_Exit(0x80 + (WTERMSIG(status) & 0x7f));
+		// else stopped by signal
+		_Exit(0x80 + (signal_name_to_number("STOP") & 0x7f));
 	}
 	/* otherwise, we're in parent */
 
 	/* close write side of pipe */
 	while (close(pipefd[1]) == -1 && errno == EINTR) ;
 	FILE *p;
-	if ((p = fdopen(pipefd[0], "r")) == NULL)
-		xerr(5, _("fdopen"));
+	if ((p = fdopen(pipefd[0], "r")) == NULL) {
+		xerr(0, _("fdopen"));
+		endwin_exit(2);
+	}
 	setvbuf(p, NULL, _IOFBF, BUFSIZ);  // We'll getc() from it. A lot.
 
 	Xint c, carry = XEOF;
@@ -915,16 +937,44 @@ static bool run_command(void)
 		}
 	}
 
+	// TODO: works:
+	// watch -e -x sh -c 'dd if=/dev/urandom bs=1000 count=10|base64'
+	// for large enough output -e is triggered:
+	// watch -e -x sh -c 'dd if=/dev/urandom bs=10000 count=10|base64'
+	// most likely because the screen and the read buffer in 'p' are only so
+	// large and the pending output causes SIGPIPE in child
 	fclose(p);
 
 	/* harvest child process and get status, propagated from command */
 	while (waitpid(child, &status, 0) == -1) {
-		if (errno != EINTR)
-			xerr(8, _("waitpid"));
+		if (errno != EINTR) {
+			xerr(0, _("waitpid"));
+			endwin_exit(2);
+		}
 	}
 
-	/* if child process exited in error, beep if option_beep is set */
-	if ((!WIFEXITED(status) || WEXITSTATUS(status))) {
+	// The possibilities we're covering:
+	// 1. with -x: execvp() never happens or fails
+	// 2. with -x: execvp() succeeds
+	// 3. without -x: the immediate child terminates, but not because it's
+	//    reporting result from system()
+	// 4. without -x: the immediate child is reporting result from system()
+	//
+	// When without -x and cmd is stopped, we replace the actual stopping signal
+	// with SIGSTOP. There's no way to pass the signal number from the immediate
+	// child and identify it as a stopping one. Any signal may stop, the cmd
+	// can react as it will to signals. SIGSTOP always stops, though.
+	if ( ( WIFEXITED(status) &&
+	       WEXITSTATUS(status) == 0x80+(signal_name_to_number("STOP")&0x7f) &&
+	       (status |= 0x100)  // stopped
+	     ) ||
+	     (WIFEXITED(status) && (status = WEXITSTATUS(status))) ||
+	     (WIFSIGNALED(status) && (status = 0x80+(WTERMSIG(status)&0x7f))) ||
+	     ( WIFSTOPPED(status) &&
+	       (status = 0x80+(WSTOPSIG(status)&0x7f)) &&
+	       (status |= 0x100)  // stopped
+	     )
+	   ) {
 		if (flags & WATCH_BEEP)
 			beep();
 		if (flags & WATCH_ERREXIT) {
@@ -938,11 +988,15 @@ static bool run_command(void)
 
 			// TODO: add a few spaces to the end of the string to separate it
 			// from the cmd output that may already be on the line
-			mvaddstr(height - 1, 0,
-			    _("command exit with a non-zero status, press a key to exit"));
+			mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
 			refresh();
 			getchar();
-			endwin_exit(8);
+			endwin_exit(status & 0xff);
+		}
+		if (status & 0x100) {
+			// TODO: gettext
+			xerr(0, "recovery from a paused sub-process not supported");
+			endwin_exit(2);
 		}
 	}
 
@@ -1133,14 +1187,15 @@ int main(int argc, char *argv[])
 	tzset();
 	if (interval_real < 0.1)
 		interval_real = 0.1;
-	// Interval [s] must fit in time_t (in struct timespec), which might be 32b
-	// signed.
+	// interval [s] must fit in time_t (in struct timespec), which might be 32b
+	// signed
 	if (interval_real >= 1UL << 31)
 		interval_real = (1UL << 31) - 1;
 	interval = interval_real * USECS_PER_SEC;
 	t = get_time_usec();
+	// make sure to start
 	if (interval > t)
-		interval = t;  // make sure to start
+		interval = t;
 
 	get_terminal_size();
 	initscr();
@@ -1174,8 +1229,6 @@ int main(int argc, char *argv[])
 			screen_size_changed = false;  // "atomic" test-and-set
 			get_terminal_size();
 			resizeterm(height, width);
-			clear();
-			/* redrawwin(stdscr); */
 			first_screen = true;
 		}
 

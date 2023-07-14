@@ -183,7 +183,7 @@ src_slabtop_SOURCES = src/slabtop.c local/strutils.c local/fileutils.c
 src_slabtop_CFLAGS = @NCURSES_CFLAGS@
 src_slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
-src_watch_SOURCES = src/watch.c local/strutils.c local/fileutils.c
+src_watch_SOURCES = src/watch.c local/strutils.c local/fileutils.c local/signals.c
 src_watch_CFLAGS = @NCURSES_CFLAGS@
 src_watch_LDADD = @NCURSES_LIBS@ $(CYGWINFLAGS)
 src_top_top_SOURCES = \

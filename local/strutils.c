@@ -132,6 +132,10 @@ double strtod_nol_or_err(const char *str, const char *errmesg)
 // pwcs !=NULL => address of s converted to wide string is stored in *pwcs, will
 // be \0-term., no additional cost in receiving it, caller free()s.
 // Error => -1 and *pwcs is unchanged.
+//
+// When addstr()ing in ncurses, make use of pwcs and addwstr() it, cause else
+// ncurses will do the whole conversion and validation of the sequences in s
+// again.
 int mbswidth(const char *restrict s, wchar_t *restrict *const restrict pwcs)
 {
 	assert(s);
