@@ -393,8 +393,32 @@ static void process_ansi(FILE * fp)
 
 
 
+typedef uf64 watch_usec_t;
+#define USECS_PER_SEC ((watch_usec_t)1000000)  // same type intentional
+#define NSECS_PER_USEC ((watch_usec_t)1000)
+
+/* get current time in usec */
+static inline watch_usec_t get_time_usec(void)
+{
+	struct timeval now;
+#if defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_TIMERS)
+	struct timespec ts;
+	if (0 > clock_gettime(CLOCK_MONOTONIC, &ts))
+		xerr(EXIT_FAILURE, "Cannot get monotonic clock");
+	TIMESPEC_TO_TIMEVAL(&now, &ts);
+#else
+	gettimeofday(&now, NULL);
+#endif /* HAVE_CLOCK_GETTIME */
+	return USECS_PER_SEC * now.tv_sec + now.tv_usec;
+}
+
+
+
 static void output_header(void)
 {
+	if (flags & WATCH_NOTITLE)
+		return;
+
 	static char *lheader;
 	static int lheader_len;
 #ifdef WITH_WATCH8BIT
@@ -517,6 +541,43 @@ static void output_header(void)
 			}
 		}
 	}
+#endif
+}
+
+
+
+static void output_lowheader(watch_usec_t span) {
+	if (flags & WATCH_NOTITLE)
+		return;
+
+	if (! first_screen) {
+		move(1, 0);
+		clrtoeol();
+	}
+
+	char s[64];
+	int skip;
+	// TODO: gettext everywhere
+	if (span > USECS_PER_SEC * 24 * 60 * 60)
+		snprintf(s, sizeof(s), "%s >1 %s", "in", "day");
+	// f-p for localized decimal point
+	else if (span < 1000)
+		snprintf(s, sizeof(s), "%s <%.3f%s", "in", 0.001, "s");
+	else snprintf(s, sizeof(s), "%s %.3Lf%s", "in", (long double)span/USECS_PER_SEC, "s");
+
+#ifdef WITH_WATCH8BIT
+	wchar_t *ws;
+	skip = mbswidth(s, &ws);
+	if (skip == -1)
+		return;
+	skip = width - skip;
+	if (skip >= 0)
+		mvaddwstr(1, skip, ws);
+	free(ws);
+#else
+	skip = width - strlen(s);
+	if (skip >= 0)
+		mvaddstr(1, skip, s);
 #endif
 }
 
@@ -943,27 +1004,6 @@ static void get_terminal_size(void)
 
 
 
-typedef uf64 watch_usec_t;
-#define USECS_PER_SEC ((watch_usec_t)1000000)
-#define NSECS_PER_USEC ((watch_usec_t)1000)
-
-/* get current time in usec */
-static inline watch_usec_t get_time_usec(void)
-{
-	struct timeval now;
-#if defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_TIMERS)
-	struct timespec ts;
-	if (0 > clock_gettime(CLOCK_MONOTONIC, &ts))
-		xerr(EXIT_FAILURE, "Cannot get monotonic clock");
-	TIMESPEC_TO_TIMEVAL(&now, &ts);
-#else
-	gettimeofday(&now, NULL);
-#endif /* HAVE_CLOCK_GETTIME */
-	return USECS_PER_SEC * now.tv_sec + now.tv_usec;
-}
-
-
-
 int main(int argc, char *argv[])
 {
 	int optc;
@@ -995,7 +1035,8 @@ int main(int argc, char *argv[])
 	program_invocation_name = program_invocation_short_name;
 #endif
 	// TODO: when !WATCH8BIT, setlocale() should be omitted or initd as "C",
-	// shouldn't it?
+	// shouldn't it? Also, everywhere we rely on the fact that with !8BIT
+	// strlen(s) is the col width of s, for instance.
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -1138,16 +1179,18 @@ int main(int argc, char *argv[])
 			first_screen = true;
 		}
 
-		if (! (flags & WATCH_NOTITLE))
-			output_header();
+		output_header();
 
 		t = get_time_usec();
 		if (! (flags & WATCH_NORERUN) || t - last_tick >= interval) {
 			if (flags & WATCH_PRECISE)
 				last_tick = t;
 			scr_contents_chg = run_command();
-			if (! (flags & WATCH_PRECISE))
+			if (! (flags & WATCH_PRECISE)) {
 				last_tick = get_time_usec();
+				output_lowheader(last_tick - t);
+			}
+			else output_lowheader(get_time_usec() - t);
 
 			// [BUG] When screen resizes, its contents change, but not
 			// necessarily because cmd output's changed. It may have, but that
