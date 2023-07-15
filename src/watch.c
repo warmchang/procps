@@ -556,7 +556,7 @@ static void output_header(void)
 
 
 
-static void output_lowheader(watch_usec_t span) {
+static void output_lowheader(watch_usec_t span, uint8_t exitcode) {
 	if (flags & WATCH_NOTITLE)
 		return;
 
@@ -564,11 +564,11 @@ static void output_lowheader(watch_usec_t span) {
 	int skip;
 	// TODO: gettext everywhere
 	if (span > USECS_PER_SEC * 24 * 60 * 60)
-		snprintf(s, sizeof(s), "%s >1 %s", "ran", "day");
+		snprintf(s, sizeof(s), "%s >1 %s (%u)", "in", "day", (unsigned)exitcode);
 	// for the localized decimal point
 	else if (span < 1000)
-		snprintf(s, sizeof(s), "%s <%.3f%s", "ran", 0.001, "s");
-	else snprintf(s, sizeof(s), "%s %.3Lf%s", "ran", (long double)span/USECS_PER_SEC, "s");
+		snprintf(s, sizeof(s), "%s <%.3f%s (%u)", "in", 0.001, "s", (unsigned)exitcode);
+	else snprintf(s, sizeof(s), "%s %.3Lf%s (%u)", "in", (long double)span/USECS_PER_SEC, "s", (unsigned)exitcode);
 
 	move(1, 0);
 	clrtoeol();
@@ -772,14 +772,21 @@ static inline bool my_clrtobot(int y, int x)
 
 
 
-// When first_screen initially, returns false. Otherwise, when WATCH_ALL_DIFF is
-// false, return value is unspecified. Otherwise, returns true <==> the screen
-// changed.
+#define RUNCMD_EXITCODE 0xff
+#define RUNCMD_SCRCHANGED 0x100
+
+// Returns an integer comprising 1. cmd exitcode in (& RUNCMD_EXITCODE), 2.
+// screen change status in (& RUNCMD_SCRCHANGED).
+//
+// When first_screen initially, SCRCHANGED returns false. Otherwise, when
+// WATCH_ALL_DIFF is false, return value is unspecified. Otherwise, returns
+// true <==> the screen changed.
+//
 // Make sure not to leak system resources (incl. fds, processes). Suggesting
 // -D_XOPEN_SOURCE=600 and an EINTR loop around every fclose() as well.
-static bool run_command(void)
+static uf16 run_command(void)
 {
-	int pipefd[2], status;
+	int pipefd[2], status;  // [0] = output, [1] = input
 	if (pipe(pipefd) < 0) {
 		xerr(0, _("unable to create IPC pipes"));
 		endwin_exit(2);
@@ -794,15 +801,13 @@ static bool run_command(void)
 		endwin_exit(2);
 	} else if (child == 0) {	/* in child */
 		// stdout/err can't be used here. Avoid xerr(), close_stdout(), ...
-		fclose(stdout);  // so as not to confuse _Exit()
-		fclose(stderr);  // so as not to confuse _Exit()
-		/* child doesn't need output side of pipe */
+		// fclose() so as not to confuse _Exit().
+		fclose(stdout);
+		fclose(stderr);
+		// connect out/err up with pipe input
 		while (close(pipefd[0]) == -1 && errno == EINTR) ;
-		/* replace stdout with pipe input */
 		while (dup2(pipefd[1], STDOUT_FILENO) == -1 && errno == EINTR) ;
-		/* once duped, pipe input isn't needed */
 		while (close(pipefd[1]) == -1 && errno == EINTR) ;
-		/* stderr should default to stdout */
 		while (dup2(STDOUT_FILENO, STDERR_FILENO) == -1 && errno == EINTR) ;
 		// TODO: 0 left open. Is that intentional? I suppose the application
 		// might conclude it's run interactively (see ps). And hang if it should
@@ -819,7 +824,6 @@ static bool run_command(void)
 		}
 		status = system(command);
 		// error from system() (exec(), wait(), ...), not command
-		// errno not guaranteed
 		if (status == -1) {
 			(void)!write(STDERR_FILENO, command, command_len);
 			// TODO: gettext
@@ -837,7 +841,6 @@ static bool run_command(void)
 	}
 	/* otherwise, we're in parent */
 
-	/* close write side of pipe */
 	while (close(pipefd[1]) == -1 && errno == EINTR) ;
 	FILE *p;
 	if ((p = fdopen(pipefd[0], "r")) == NULL) {
@@ -986,8 +989,9 @@ static bool run_command(void)
 				fcntl(STDIN_FILENO, F_SETFL, stdinfl);
 			}
 
-			// TODO: add a few spaces to the end of the string to separate it
-			// from the cmd output that may already be on the line
+			// TODO: Add a few spaces to the end of the string to separate it
+			// from the cmd output that may already be on the line. Or write it
+			// to lowheader.
 			mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
 			refresh();
 			getchar();
@@ -998,9 +1002,14 @@ static bool run_command(void)
 			xerr(0, "recovery from a paused sub-process not supported");
 			endwin_exit(2);
 		}
+		assert(status > 0 && status <= 0xff);
+	}
+	else {
+		assert(WIFEXITED(status) && WEXITSTATUS(status) == 0);
+		status = 0;
 	}
 
-	return screen_changed;
+	return screen_changed << 8 | status;
 }
 
 
@@ -1063,8 +1072,8 @@ int main(int argc, char *argv[])
 	int optc;
 	watch_usec_t last_tick = 0, interval, t;
 	struct timespec tosleep;
-	bool scr_contents_chg;
 	long max_cycles = 1, cycle_count = 1;
+	uf16 cmd_status;
 
 	const struct option longopts[] = {
 		{"color", no_argument, 0, 'c'},
@@ -1238,21 +1247,21 @@ int main(int argc, char *argv[])
 		if (! (flags & WATCH_NORERUN) || t - last_tick >= interval) {
 			if (flags & WATCH_PRECISE)
 				last_tick = t;
-			scr_contents_chg = run_command();
+			cmd_status = run_command();
 			if (! (flags & WATCH_PRECISE)) {
 				last_tick = get_time_usec();
-				output_lowheader(last_tick - t);
+				output_lowheader(last_tick - t, cmd_status & RUNCMD_EXITCODE);
 			}
-			else output_lowheader(get_time_usec() - t);
+			else output_lowheader(get_time_usec() - t, cmd_status & RUNCMD_EXITCODE);
 
 			// [BUG] When screen resizes, its contents change, but not
 			// necessarily because cmd output's changed. It may have, but that
 			// event is lost. Prevents cycle_count from soaring while resizing.
 			if (! first_screen) {
-				if (flags & WATCH_CHGEXIT && scr_contents_chg)
+				if (flags & WATCH_CHGEXIT && cmd_status & RUNCMD_SCRCHANGED)
 					break;
 				if (flags & WATCH_EQUEXIT) {
-					if (scr_contents_chg)
+					if (cmd_status & RUNCMD_SCRCHANGED)
 						cycle_count = 1;
 					else {
 						if (cycle_count == max_cycles)

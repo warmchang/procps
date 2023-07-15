@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH WATCH 1 "2023-07-14" "procps-ng" "User Commands"
+.TH WATCH 1 "2023-07-15" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -21,15 +21,15 @@ watch \- execute a program periodically, showing output fullscreen
 .B watch
 runs
 .I command
-repeatedly, displaying its output and errors (the first screenful).  This
-allows you to watch the program output change over time.  By default,
+repeatedly, displaying its output and errors (the first screenful). This
+allows you to watch the program output change over time. By default,
 \fIcommand\fR is run every 2 seconds and \fBwatch\fR will run until interrupted.
+A header informs of the start and running time of \fIcommand\fR as well as its
+exit code.
 .SH OPTIONS
 .TP
 \fB\-b\fR, \fB\-\-beep\fR
-Beep if
-.I command
-has a non-zero exit.
+Beep if \fIcommand\fR has a non-zero exit.
 .TP
 \fB\-c\fR, \fB\-\-color\fR
 Interpret ANSI color and style sequences.
@@ -39,74 +39,51 @@ Do not interpret ANSI color and style sequences.
 .TP
 \fB\-d\fR, \fB\-\-differences\fR[=\fIpermanent\fR]
 Highlight the differences between successive updates. If the optional
-\fIpermanent\fR argument is specified then
-.B watch
-will show all changes since the first iteration.
+\fIpermanent\fR argument is specified then \fBwatch\fR will show all changes
+since the first iteration.
 .TP
 \fB\-e\fR, \fB\-\-errexit\fR
-Freeze updates on
-.I command
-error, and exit after a key press. The exit code of
-.B watch
-will be the code
-.I command
-exits with. If signal
-.B n
-is the cause of
-.I command
-termination, the exit code will be
-.B n
-+ 128.
+Freeze updates on \fIcommand\fR error, and exit after a key press. The exit code
+of \fBwatch\fR will be the code \fIcommand\fR exits with. If signal \fBn\fR is
+the cause of \fIcommand\fR termination, the exit code will be 128 + \fBn\fR.
 .TP
 \fB\-g\fR, \fB\-\-chgexit\fR
-Exit when the output of
-.I command
-changes.
+Exit when the output of \fIcommand\fR changes.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
-Specify update interval.
-.B watch
-will not allow quicker than 0.1 second
-interval, in which the smaller values are converted. Both '.' and ',' work
-for any locale. The \fBWATCH_INTERVAL\fR environment variable can be used to persistently
-set a non-default interval (following the same rules and formatting).
+Specify update interval. \fBwatch\fR will not allow quicker than 0.1 second
+interval, in which the smaller values are converted. Both '.' and ',' work for
+any locale. The \fBWATCH_INTERVAL\fR environment variable can be used to
+persistently set a non-default interval (following the same rules and
+formatting).
 .TP
 \fB\-p\fR, \fB\-\-precise\fR
-Execute
-.I command
-.B \-\-interval
-seconds after its previous run started, instead of
-.B \-\-interval
-seconds after its previous run finished. If it's taking longer than
-.B \-\-interval
-seconds for
-.I command
-to complete, it is waited for in either case.
+Execute \fIcommand\fR \fB\-\-interval\fR seconds after its previous run started,
+instead of \fB\-\-interval\fR seconds after its previous run finished. If it's
+taking longer than \fB\-\-interval\fR seconds for \fIcommand\fR to complete, it
+is waited for in either case.
 .TP
 \fB\-q\fR, \fB\-\-equexit\fR <cycles>
-Exit when output of
-.I command
-does not change for the given number of cycles.
+Exit when output of \fIcommand\fR does not change for the given number of
+cycles.
 .TP
 \fB\-r\fR, \fB\-\-no-rerun\fR
-Do not run the program on terminal resize, the output of the program will re-appear at the next
-regular run time.
+Do not run the program on terminal resize, the output of the program will
+re-appear at the next regular run time.
 .TP
 \fB\-t\fR, \fB\-\-no\-title\fR
-Turn off the header showing the interval, command, and last start and running time at the top of the display.
+Turn off the header normally shown at the top of the screen.
 .TP
 \fB\-w\fR, \fB\-\-no\-wrap\fR
-Turn off line wrapping. Long lines will be truncated instead of wrapped to the next line.
+Turn off line wrapping. Long lines will be truncated instead of wrapped to the
+next line.
 .TP
 \fB\-x\fR, \fB\-\-exec\fR
-Pass
-.I command
-to an
+Pass \fIcommand\fR to an
 .BR exec (3)
-call instead of
-.B sh \-c .
-The program will start a bit quicker. Shell features
-(environment setup, variable and pathname expansion, etc.) will be unavailable.
+call instead of \fBsh \-c\fR. The program will start a bit quicker. Shell
+features (environment setup, variable and pathname expansion, etc.) will be
+unavailable.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help text and exit.
@@ -116,35 +93,22 @@ Display version information and exit.
 .SH "EXIT STATUS"
 .TP
 .B 0
-Success. Does not represent
-.I command
-exit code.
+Success. Does not represent \fIcommand\fR exit code.
 .TP
 .B 1
-Errors unrelated to
-.I command
-operation.
+Errors unrelated to \fIcommand\fR operation.
 .TP
 .B 2
-Errors related to
-.I command
-execution and management (not its exit code).
+Errors related to \fIcommand\fR execution and management (not its exit code).
 .TP
-.B any (\-\-errexit)
-With
-.B \-\-errexit
-the last exit code of
-.I command
-is returned.
+.B any non-zero (\-\-errexit)
+With \fB\-\-errexit\fR the last exit code of \fIcommand\fR is returned.
 .SH ENVIRONMENT
-The behavior of
-.B watch
-is affected by the following environment variables.
+The behavior of \fBwatch\fR is affected by the following environment variables.
 .TP
 .B WATCH_INTERVAL
-Update interval, follows the same rules as the
-.B \-\-interval
-command line option.
+Update interval, follows the same rules as the \fB\-\-interval\fR command line
+option.
 .TP
 .B COLUMNS
 Terminal screen character width. Set to override autodetection.
@@ -152,14 +116,11 @@ Terminal screen character width. Set to override autodetection.
 .B LINES
 Terminal screen character height. Set to override autodetection.
 .SH NOTES
-POSIX option processing is used (i.e., option processing stops at
-the first non\-option argument).  This means that flags after
-.I command
-don't get interpreted by
-.BR watch
-itself.
+POSIX option processing is used (i.e., option processing stops at the first
+non\-option argument). This means that flags after \fIcommand\fR don't get
+interpreted by \fBwatch\fR itself.
 
-Non-printing characters are stripped from program output.  Use \fBcat -v\fR as
+Non-printing characters are stripped from program output. Use \fBcat -v\fR as
 part of the command pipeline if you want to see them.
 .SH EXAMPLES
 .PP
@@ -176,10 +137,8 @@ watch \-n1 'grep "^cpu MHz" /proc/cpuinfo | sort -nrk4'
 
 .PP
 To monitor the up status of your servers, saving a copy of the output of each
-run to a file, you may use this. The
-.B \-p
-makes the command execute every 10 seconds regardless of how long it took to
-complete the previous run.
+run to a file, you may use this. The \fB\-p\fR makes the command execute every
+10 seconds regardless of how long it took to complete the previous run.
 .IP
 watch \-n10 \-p \-d '{ date; for i in 10.0.0.31 10.0.0.32 10.0.0.33; do R=OK; ping \-c2 \-W2 "$i" &>/dev/null || R=FAIL; echo "$i: $R"; done } | tee \-a ~/log'
 
@@ -188,17 +147,10 @@ You can watch for your administrator to install the latest kernel with
 .IP
 watch uname \-r
 .SH BUGS
-When the terminal dimensions change, its contents changes are not registered on the next
-.I command
-run.
-.B \-\-chgexit
-will not trigger that turn and the counter of
-.B \-\-equexit
-will not restart even if
-.I command
-output changes meanwhile.
-.B \-\-differences
-highlighting is reset.
+When the terminal dimensions change, its contents changes are not registered on
+the next \fIcommand\fR run. \fB\-\-chgexit\fR will not trigger that turn and the
+counter of \fB\-\-equexit\fR will not restart even if \fIcommand\fR output
+changes meanwhile. \fB\-\-differences\fR highlighting is reset.
 .SH "REPORTING BUGS"
 Please send bug reports to
 .UR procps@freelists.org
