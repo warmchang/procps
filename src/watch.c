@@ -727,11 +727,17 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 
 
 
-static inline void find_eol(FILE *p)
+static inline void skiptoeol(FILE *f)
 {
 	Xint c;
-	do c = Xgetc(p);
+	do c = Xgetc(f);
 	while (c != XEOF && c != XL('\n'));
+}
+
+static inline void skiptoeof(FILE *f) {
+	unsigned char dummy[4096];
+	while (! feof(f) && ! ferror(f))
+		(void)!fread(dummy, sizeof(dummy), 1, f);
 }
 
 
@@ -775,8 +781,8 @@ static inline bool my_clrtobot(int y, int x)
 #define RUNCMD_EXITCODE 0xff
 #define RUNCMD_SCRCHANGED 0x100
 
-// Returns an integer comprising 1. cmd exitcode in (& RUNCMD_EXITCODE), 2.
-// screen change status in (& RUNCMD_SCRCHANGED).
+// Returns n, where n&RUNCMD_EXITCODE = cmd exitcode, n&RUNCMD_SCRCHANGED =
+// screen change status.
 //
 // When first_screen initially, SCRCHANGED returns false. Otherwise, when
 // WATCH_ALL_DIFF is false, return value is unspecified. Otherwise, returns
@@ -804,7 +810,7 @@ static uf16 run_command(void)
 		// fclose() so as not to confuse _Exit().
 		fclose(stdout);
 		fclose(stderr);
-		// connect out/err up with pipe input
+		// connect out and err up with pipe input
 		while (close(pipefd[0]) == -1 && errno == EINTR) ;
 		while (dup2(pipefd[1], STDOUT_FILENO) == -1 && errno == EINTR) ;
 		while (close(pipefd[1]) == -1 && errno == EINTR) ;
@@ -918,7 +924,7 @@ static uf16 run_command(void)
 				if (! (flags & WATCH_NOWRAP))
 					carry = c;
 				else {
-					find_eol(p);
+					skiptoeol(p);
 					reset_ansi();
 					set_ansi_attribute(-1, NULL);
 				}
@@ -940,19 +946,16 @@ static uf16 run_command(void)
 		}
 	}
 
-	// TODO: works:
-	// watch -e -x sh -c 'dd if=/dev/urandom bs=1000 count=10|base64'
-	// for large enough output -e is triggered:
-	// watch -e -x sh -c 'dd if=/dev/urandom bs=10000 count=10|base64'
-	// most likely because the screen and the read buffer in 'p' are only so
-	// large and the pending output causes SIGPIPE in child
+	skiptoeof(p);  // avoid SIGPIPE in child
 	fclose(p);
 
 	/* harvest child process and get status, propagated from command */
+	// TODO: gettext string no longer used
+	bool childgone = false;
 	while (waitpid(child, &status, 0) == -1) {
 		if (errno != EINTR) {
-			xerr(0, _("waitpid"));
-			endwin_exit(2);
+			childgone = true;
+			break;
 		}
 	}
 
@@ -967,7 +970,8 @@ static uf16 run_command(void)
 	// with SIGSTOP. There's no way to pass the signal number from the immediate
 	// child and identify it as a stopping one. Any signal may stop, the cmd
 	// can react as it will to signals. SIGSTOP always stops, though.
-	if ( ( WIFEXITED(status) &&
+	if ( (childgone && (status = 0x7f)) ||
+	     ( WIFEXITED(status) &&
 	       WEXITSTATUS(status) == 0x80+(signal_name_to_number("STOP")&0x7f) &&
 	       (status |= 0x100)  // stopped
 	     ) ||
@@ -989,14 +993,14 @@ static uf16 run_command(void)
 				fcntl(STDIN_FILENO, F_SETFL, stdinfl);
 			}
 
-			// TODO: Add a few spaces to the end of the string to separate it
-			// from the cmd output that may already be on the line. Or write it
-			// to lowheader.
+			// TODO: Hard to see when there's cmd output around it. Add spaces
+			// or move to lowheader.
 			mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
 			refresh();
 			getchar();
 			endwin_exit(status & 0xff);
 		}
+
 		if (status & 0x100) {
 			// TODO: gettext
 			xerr(0, "recovery from a paused sub-process not supported");
