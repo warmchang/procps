@@ -236,11 +236,14 @@ These options accept a single argument in the form of a blank\-separated or
 comma\-separated list.  They can be used multiple times.  For example:
 \fBps\ \-p\ "1\ 2"\ \-p\ 3,4\fR
 .TP
-.RI \- 123
-Identical to \fB\-\-pid\ \fI123\fR.
-.TP
 .I 123
 Identical to \fB\-\-pid\ \fI123\fR.
+.TP
+.RI \+ 123
+Identical to \fB\-\-sid\ \fI123\fR.
+.TP
+.RI \- 123
+Select by process group ID (PGID).
 .TP
 .BI \-C \ cmdlist
 Select by command name.  This selects the processes whose executable name is
