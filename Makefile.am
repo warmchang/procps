@@ -174,9 +174,11 @@ bin_PROGRAMS += \
 dist_man_MANS += \
 	man/slabtop.1
 src_slabtop_SOURCES = src/slabtop.c local/strutils.c local/fileutils.c
+src_slabtop_CFLAGS = @NCURSES_CFLAGS@
 src_slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
 src_watch_SOURCES = src/watch.c local/strutils.c local/fileutils.c
+src_watch_CFLAGS = @NCURSES_CFLAGS@
 src_watch_LDADD = @NCURSES_LIBS@ $(CYGWINFLAGS)
 src_top_top_SOURCES = \
 	src/top/top.h \
@@ -189,6 +191,7 @@ if CYGWIN
 src_top_top_SOURCES += local/strverscmp.c
 endif
 
+src_top_top_CFLAGS = @NCURSES_CFLAGS@
 src_top_top_LDADD = $(LDADD) @NCURSES_LIBS@ $(DL_LIB)
 endif
 
