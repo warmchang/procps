@@ -59,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "January 2023" "procps-ng" "User Commands"
+.TH TOP 1 "July 2023" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -557,16 +557,22 @@ and `4' \*(CTs.
 .\" ----------------------------------------------------------------------
 This portion consists of two lines which may express values in kibibytes (KiB)
 through exbibytes (EiB) depending on the scaling factor enforced
-with the `E' \*(CI.
+with the `E' \*(CI. The /proc/meminfo source fields are shown in parentheses.
 
-As a default, Line 1 reflects \*(MP, classified as:
+Line 1 reflects \*(MP, classified as:
 .nf
-    total, free, used and buff/cache
+    total          ( MemTotal )
+    free           ( MemFree )
+    used           ( MemTotal - MemAvailable )
+    buff/cache     ( Buffers + Cached + SReclaimable )
 .fi
 
 Line 2 reflects mostly \*(MV, classified as:
 .nf
-    total, free, used and avail (which is \*(MP)
+    total          ( SwapTotal )
+    free           ( SwapFree )
+    used           ( SwapTotal - SwapFree )
+    avail          ( MemAvailable, which is \*(MP )
 .fi
 
 The \fBavail\fR number on line 2 is an estimation of \*(MP available for
