@@ -45,26 +45,30 @@ set test "pmap device output quiet (qd)"
 spawn $pmap -qd $mypid
 expect_table $test $pmap_procname $pmap_device_items "\$"
 
-set test "pmap extended output"
-spawn $pmap -x $mypid
-expect_table $test $pmap_ext_header $pmap_ext_items $pmap_ext_footer
+if  { [ file readable "/proc/self/smaps" ] == 0 } {
+    unsupported "Skipping test which require pmap to access /proc/<pid>/smaps, because kernel seems to be compiled without CONFIG_PROC_PAGE_MONITOR."
+} else {
+    set test "pmap extended output"
+    spawn $pmap -x $mypid
+    expect_table $test $pmap_ext_header $pmap_ext_items $pmap_ext_footer
 
-# -X and -XX have no real format as its dependent on smaps
-set test "pmap extra extended output"
-spawn $pmap -X $mypid
-expect_table $test $pmap_generic_header "\[^=\]+" "\[= \]+"
+    # -X and -XX have no real format as its dependent on smaps
+    set test "pmap extra extended output"
+    spawn $pmap -X $mypid
+    expect_table $test $pmap_generic_header "\[^=\]+" "\[= \]+"
 
-set test "pmap double extra extended output"
-spawn $pmap -XX $mypid
-expect_table $test $pmap_generic_header "\[^=\]+" "\[= \]+"
+    set test "pmap double extra extended output"
+    spawn $pmap -XX $mypid
+    expect_table $test $pmap_generic_header "\[^=\]+" "\[= \]+"
 
-set test "pmap X with unreachable process"
-spawn $pmap -X 1
-expect_pass $test "$pmap_initname\$"
+    set test "pmap X with unreachable process"
+    spawn $pmap -X 1
+    expect_pass $test "$pmap_initname\$"
 
-set test "pmap XX with unreachable process"
-spawn $pmap -XX 1
-expect_pass $test "$pmap_initname\$"
+    set test "pmap XX with unreachable process"
+    spawn $pmap -XX 1
+    expect_pass $test "$pmap_initname\$"
+}
 
 set test "pmap finding shm"
 make_testshm_proc
