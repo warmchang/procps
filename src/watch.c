@@ -637,6 +637,7 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 			// Check every column the new c will occupy. Takes care of, e.g.,
 			// 日a -> a日a (日 highlighted because of change in its 2nd column).
 			for (i=0; i<cwid; ++i) {
+				// terrible interface, so much copying
 				mvin_wch(y, x+i, &cc);  // c fits => ok
 				getcchar(&cc, oldcc[i], &attr, &dummy, NULL);
 				oldstnd |= attr & A_STANDOUT;
@@ -805,7 +806,7 @@ static uf16 run_command(void)
 	if (child < 0) {
 		xerr(0, _("unable to fork process"));
 		endwin_exit(2);
-	} else if (child == 0) {	/* in child */
+	} else if (child == 0) {  /* in child */
 		// stdout/err can't be used here. Avoid xerr(), close_stdout(), ...
 		// fclose() so as not to confuse _Exit().
 		fclose(stdout);
@@ -840,10 +841,9 @@ static uf16 run_command(void)
 		// error msg on stderr provided by sh
 		if (WIFEXITED(status))
 			_Exit(WEXITSTATUS(status));
-		if (WIFSIGNALED(status))
-			_Exit(0x80 + (WTERMSIG(status) & 0x7f));
-		// else stopped by signal
-		_Exit(0x80 + (signal_name_to_number("STOP") & 0x7f));
+		// Else terminated by signal. system() ignores the stopping of children.
+		assert(WIFSIGNALED(status));
+		_Exit(0x80 + (WTERMSIG(status) & 0x7f));
 	}
 	/* otherwise, we're in parent */
 
@@ -959,29 +959,21 @@ static uf16 run_command(void)
 		}
 	}
 
-	// The possibilities we're covering:
+	// The possibilities:
 	// 1. with -x: execvp() never happens or fails
 	// 2. with -x: execvp() succeeds
 	// 3. without -x: the immediate child terminates, but not because it's
 	//    reporting result from system()
 	// 4. without -x: the immediate child is reporting result from system()
-	//
-	// When without -x and cmd is stopped, we replace the actual stopping signal
-	// with SIGSTOP. There's no way to pass the signal number from the immediate
-	// child and identify it as a stopping one. Any signal may stop, the cmd
-	// can react as it will to signals. SIGSTOP always stops, though.
-	if ( (childgone && (status = 0x7f)) ||
-	     ( WIFEXITED(status) &&
-	       WEXITSTATUS(status) == 0x80+(signal_name_to_number("STOP")&0x7f) &&
-	       (status |= 0x100)  // stopped
-	     ) ||
-	     (WIFEXITED(status) && (status = WEXITSTATUS(status))) ||
-	     (WIFSIGNALED(status) && (status = 0x80+(WTERMSIG(status)&0x7f))) ||
-	     ( WIFSTOPPED(status) &&
-	       (status = 0x80+(WSTOPSIG(status)&0x7f)) &&
-	       (status |= 0x100)  // stopped
-	     )
-	   ) {
+	if (childgone)
+		status = 0x7f;
+	else if (WIFEXITED(status))
+		status = WEXITSTATUS(status);
+	else {
+		assert(WIFSIGNALED(status));
+		status = 0x80 + (WTERMSIG(status)&0x7f);
+	}
+	if (status) {
 		if (flags & WATCH_BEEP)
 			beep();
 		if (flags & WATCH_ERREXIT) {
@@ -998,19 +990,8 @@ static uf16 run_command(void)
 			mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
 			refresh();
 			getchar();
-			endwin_exit(status & 0xff);
+			endwin_exit(status);
 		}
-
-		if (status & 0x100) {
-			// TODO: gettext
-			xerr(0, "recovery from a paused sub-process not supported");
-			endwin_exit(2);
-		}
-		assert(status > 0 && status <= 0xff);
-	}
-	else {
-		assert(WIFEXITED(status) && WEXITSTATUS(status) == 0);
-		status = 0;
 	}
 
 	return screen_changed << 8 | status;
