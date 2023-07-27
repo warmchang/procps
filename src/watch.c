@@ -29,37 +29,33 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-#include "c.h"
-#include "config.h"
-#include "fileutils.h"
-#include "nls.h"
-#include "strutils.h"
-#include "xalloc.h"
-#include "signals.h"
-#include <ctype.h>
-#include <errno.h>
-#include <getopt.h>
-#include <locale.h>
+#ifdef WITH_WATCH8BIT
+# define _XOPEN_SOURCE_EXTENDED 1
+# include <wctype.h>
+# include <ncursesw/ncurses.h>
+#else
+# include <ctype.h>
+# include <ncurses.h>
+#endif
+#include <assert.h>
 #include <fcntl.h>
-#include <limits.h>
+#include <getopt.h>
+#include <inttypes.h>
+#include <locale.h>
 #include <signal.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/wait.h>
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
-#include <assert.h>
-#ifdef WITH_WATCH8BIT
-# define _XOPEN_SOURCE_EXTENDED 1
-# include <wctype.h>
-# include <ncursesw/ncurses.h>
-#else
-# include <ncurses.h>
-#endif	/* WITH_WATCH8BIT */
+#include "c.h"
+#include "config.h"
+#include "fileutils.h"
+#include "nls.h"
+#include "signals.h"
+#include "strutils.h"
+#include "xalloc.h"
 
 #ifdef FORCE_8BIT
 # undef isprint
@@ -101,14 +97,17 @@
 
 static uf16 flags;
 static int height, width;
-static bool first_screen = true, screen_size_changed;
+static bool first_screen = true, screen_size_changed, screen_changed;
 static long double interval_real = 2;
 static char *command;
 static int command_len;
 static char *const *command_argv;
+static const char *dumpfile = "watch-dump";
 
 
 
+// don't use EXIT_FAILURE, it can be anything and manpage makes guarantees about
+// exitcodes
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
 	fputs(USAGE_HEADER, out);
@@ -138,13 +137,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? 1 : EXIT_SUCCESS);
 }
 
-// don't use EXIT_FAILURE, it can be anything and manpage makes guarantees about
-// exitcodes
-static void __attribute__ ((__noreturn__)) endwin_exit(int status)
-{
-	endwin();
-	exit(status);
-}
+#define endwin_xerr(...) do { endwin(); xerr(__VA_ARGS__); } while (0)
+#define endwin_xerrx(...) do { endwin(); xerrx(__VA_ARGS__); } while (0)
+#define endwin_exit(status) do { endwin(); exit(status); } while (0)
 
 static void die(int notused __attribute__ ((__unused__)))
 {
@@ -396,11 +391,44 @@ static void process_ansi(FILE * fp)
 
 
 
-typedef uf64 watch_usec_t;
-#define USECS_PER_SEC ((watch_usec_t)1000000)  // same type intentional
-#define NSECS_PER_USEC ((watch_usec_t)1000)
+// TODO: gettext everywhere
+static void screenshot(void) {
+	const int f = open(dumpfile, O_WRONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR);
+	if (f == -1)
+		endwin_xerr(1, "open(%s)", dumpfile);
 
-/* get current time in usec */
+// TODO: range checks
+#ifdef WITH_WATCH8BIT
+	const size_t bufsize = width*CCHARW_MAX*MB_CUR_MAX + 1;
+#else
+	const size_t bufsize = width + 1;
+#endif
+	char *const buf = xmalloc(bufsize);
+	int yin, xout;
+	for (int y=0; y<height; ++y) {
+		yin = mvinnstr(y, 0, buf, bufsize-1);
+		if (yin == ERR)  // screen resized
+			yin = 0;
+		buf[yin] = '\n';
+		for (int x=0; x<yin+1; x+=xout) {
+			xout = write(f, buf+x, (yin+1)-x);
+			if (xout == -1)
+				endwin_xerr(1, "write(%s)", dumpfile);
+		}
+	}
+	free(buf);
+
+	if (close(f) == -1)
+		endwin_xerr(1, "close(%s)", dumpfile);
+	if (screen_size_changed)
+		endwin_xerrx(1, "error taking screenshot");
+}
+
+
+
+typedef uf64 watch_usec_t;
+#define USECS_PER_SEC ((watch_usec_t)1000000)  // same type
+
 static inline watch_usec_t get_time_usec(void)
 {
 	struct timeval now;
@@ -456,10 +484,8 @@ static void output_header(void)
 
 		// never freed for !WATCH8BIT
 		lheader_len = asprintf(&lheader, _("Every %.1Lfs: "), interval_real);
-		if (lheader_len == -1) {
-			xerr(0, "%s()", __func__);
-			endwin_exit(1);
-		}
+		if (lheader_len == -1)
+			endwin_xerr(1, "%s()", __func__);
 #ifdef WITH_WATCH8BIT
 		// never freed
 		wlheader_wid = mbswidth(lheader, &wlheader);
@@ -564,11 +590,11 @@ static void output_lowheader(watch_usec_t span, uint8_t exitcode) {
 	int skip;
 	// TODO: gettext everywhere
 	if (span > USECS_PER_SEC * 24 * 60 * 60)
-		snprintf(s, sizeof(s), "%s >1 %s (%u)", "in", "day", (unsigned)exitcode);
+		snprintf(s, sizeof(s), "%s >1 %s (%" PRIu8 ")", "in", "day", exitcode);
 	// for the localized decimal point
 	else if (span < 1000)
-		snprintf(s, sizeof(s), "%s <%.3f%s (%u)", "in", 0.001, "s", (unsigned)exitcode);
-	else snprintf(s, sizeof(s), "%s %.3Lf%s (%u)", "in", (long double)span/USECS_PER_SEC, "s", (unsigned)exitcode);
+		snprintf(s, sizeof(s), "%s <%.3f%s (%" PRIu8 ")", "in", 0.001, "s", exitcode);
+	else snprintf(s, sizeof(s), "%s %.3Lf%s (%" PRIu8 ")", "in", (long double)span/USECS_PER_SEC, "s", exitcode);
 
 	move(1, 0);
 	clrtoeol();
@@ -728,28 +754,26 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 
 
 
-static inline void skiptoeol(FILE *f)
+static void skiptoeol(FILE *f)
 {
 	Xint c;
 	do c = Xgetc(f);
 	while (c != XEOF && c != XL('\n'));
 }
 
-static inline void skiptoeof(FILE *f) {
+static void skiptoeof(FILE *f) {
 	unsigned char dummy[4096];
 	while (! feof(f) && ! ferror(f))
 		(void)!fread(dummy, sizeof(dummy), 1, f);
 }
 
-
-
-static inline bool my_clrtoeol(int y, int x)
+static bool my_clrtoeol(int y, int x)
 {
 	if (flags & WATCH_ALL_DIFF) {
-		bool screen_changed = false;
+		bool changed = false;
 		while (x < width)
-			screen_changed = display_char(y, x++, XL(' '), 1) || screen_changed;
-		return screen_changed;
+			changed = display_char(y, x++, XL(' '), 1) || changed;
+		return changed;
 	}
 
 	// make sure color is preserved
@@ -758,17 +782,17 @@ static inline bool my_clrtoeol(int y, int x)
 	return false;
 }
 
-static inline bool my_clrtobot(int y, int x)
+static bool my_clrtobot(int y, int x)
 {
 	if (flags & WATCH_ALL_DIFF) {
-		bool screen_changed = false;
+		bool changed = false;
 		while (y < height) {
 			while (x < width)
-				screen_changed = display_char(y, x++, XL(' '), 1) || screen_changed;
+				changed = display_char(y, x++, XL(' '), 1) || changed;
 			x = 0;
 			++y;
 		}
-		return screen_changed;
+		return changed;
 	}
 
 	// make sure color is preserved
@@ -779,34 +803,25 @@ static inline bool my_clrtobot(int y, int x)
 
 
 
-#define RUNCMD_EXITCODE 0xff
-#define RUNCMD_SCRCHANGED 0x100
-
-// Returns n, where n&RUNCMD_EXITCODE = cmd exitcode, n&RUNCMD_SCRCHANGED =
-// screen change status.
-//
-// When first_screen initially, SCRCHANGED returns false. Otherwise, when
-// WATCH_ALL_DIFF is false, return value is unspecified. Otherwise, returns
-// true <==> the screen changed.
+// Sets screen_changed: when first_screen, screen_changed=false. Otherwise, when
+// ! WATCH_ALL_DIFF, screen_changed will be unspecified. Otherwise,
+// screen_changed=true <==> the screen changed.
 //
 // Make sure not to leak system resources (incl. fds, processes). Suggesting
 // -D_XOPEN_SOURCE=600 and an EINTR loop around every fclose() as well.
-static uf16 run_command(void)
+static uint8_t run_command(void)
 {
 	int pipefd[2], status;  // [0] = output, [1] = input
-	if (pipe(pipefd) < 0) {
-		xerr(0, _("unable to create IPC pipes"));
-		endwin_exit(2);
-	}
+	if (pipe(pipefd) < 0)
+		endwin_xerr(2, _("unable to create IPC pipes"));
 	// child will share buffered data, will print it at fclose()
 	fflush(stdout);
 	fflush(stderr);
 
 	pid_t child = fork();
-	if (child < 0) {
-		xerr(0, _("unable to fork process"));
-		endwin_exit(2);
-	} else if (child == 0) {  /* in child */
+	if (child < 0)
+		endwin_xerr(2, _("unable to fork process"));
+	else if (child == 0) {  /* in child */
 		// stdout/err can't be used here. Avoid xerr(), close_stdout(), ...
 		// fclose() so as not to confuse _Exit().
 		fclose(stdout);
@@ -848,16 +863,14 @@ static uf16 run_command(void)
 	/* otherwise, we're in parent */
 
 	while (close(pipefd[1]) == -1 && errno == EINTR) ;
-	FILE *p;
-	if ((p = fdopen(pipefd[0], "r")) == NULL) {
-		xerr(0, _("fdopen"));
-		endwin_exit(2);
-	}
+	FILE *p = fdopen(pipefd[0], "r");
+	if (! p)
+		endwin_xerr(2, _("fdopen"));
 	setvbuf(p, NULL, _IOFBF, BUFSIZ);  // We'll getc() from it. A lot.
 
 	Xint c, carry = XEOF;
 	int cwid, y, x;  // cwid = character width in terminal columns
-	bool screen_changed = false;
+	screen_changed = false;
 
 	for (y = flags&WATCH_NOTITLE?0:2; y < height; ++y) {
 		x = 0;
@@ -951,30 +964,14 @@ static uf16 run_command(void)
 
 	/* harvest child process and get status, propagated from command */
 	// TODO: gettext string no longer used
-	bool childgone = false;
 	while (waitpid(child, &status, 0) == -1) {
-		if (errno != EINTR) {
-			childgone = true;
-			break;
-		}
+		if (errno != EINTR)
+			return 0x7f;
 	}
-
-	// The possibilities:
-	// 1. with -x: execvp() never happens or fails
-	// 2. with -x: execvp() succeeds
-	// 3. without -x: the immediate child terminates, but not because it's
-	//    reporting result from system()
-	// 4. without -x: the immediate child is reporting result from system()
-	if (childgone)
-		status = 0x7f;
-	else if (WIFEXITED(status))
-		status = WEXITSTATUS(status);
-	else {
-		assert(WIFSIGNALED(status));
-		status = 0x80 + (WTERMSIG(status)&0x7f);
-	}
-
-	return screen_changed << 8 | status;
+	if (WIFEXITED(status))
+		return WEXITSTATUS(status);
+	assert(WIFSIGNALED(status));
+	return 0x80 + (WTERMSIG(status) & 0x7f);
 }
 
 
@@ -1028,18 +1025,21 @@ static void get_terminal_size(void)
 			putenv(env_col_buf);
 		}
 	}
+
+	assert(width > 0 && height > 0);
 }
 
 
 
 int main(int argc, char *argv[])
 {
-	int optc;
-	watch_usec_t last_tick = 0, interval, t;
-	struct timespec tosleep;
+	int i;
+	watch_usec_t interval, last_tick = 0, t;
 	long max_cycles = 1, cycle_count = 1;
-	uf16 cmd_status;
-
+	fd_set select_stdin;
+	uint8_t cmdexit;
+	struct timeval tosleep;
+	bool dontsleep, scrdumped;
 	const struct option longopts[] = {
 		{"color", no_argument, 0, 'c'},
 		{"no-color", no_argument, 0, 'C'},
@@ -1059,6 +1059,8 @@ int main(int argc, char *argv[])
 		{0}
 	};
 
+	atexit(close_stdout);
+	setbuf(stdin, NULL);  // for select()
 #ifdef HAVE_PROGRAM_INVOCATION_NAME
 	program_invocation_name = program_invocation_short_name;
 #endif
@@ -1068,7 +1070,6 @@ int main(int argc, char *argv[])
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	atexit(close_stdout);
 
 #ifdef WITH_COLORWATCH
 	flags |= WATCH_COLOR;
@@ -1078,10 +1079,8 @@ int main(int argc, char *argv[])
 	if(interval_string != NULL)
 		interval_real = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
 
-	while ((optc =
-		getopt_long(argc, argv, "+bCced::ghq:n:prtwvx", longopts, (int *)0))
-	       != EOF) {
-		switch (optc) {
+	while ((i = getopt_long(argc,argv,"+bCced::ghq:n:prtwvx",longopts,NULL)) != EOF) {
+		switch (i) {
 		case 'b':
 			flags |= WATCH_BEEP;
 			break;
@@ -1141,9 +1140,7 @@ int main(int argc, char *argv[])
 	if (optind >= argc)
 		usage(stderr);
 
-	/* save for later */
-	command_argv = argv + optind;
-
+	command_argv = argv + optind;  // for exec*()
 	command_len = strlen(argv[optind]);
 	command = xmalloc(command_len+1);
 	memcpy(command, argv[optind++], command_len+1);
@@ -1158,30 +1155,27 @@ int main(int argc, char *argv[])
 		command[command_len] = '\0';
 	}
 
-	tzset();
+	// interval_real must
+	// * be >= 0.1 (program design)
+	// * fit in time_t (in struct timeval), which may be 32b signed
+	// * be <=31 days (limitation of select(), as per POSIX 2001)
 	if (interval_real < 0.1)
 		interval_real = 0.1;
-	// interval [s] must fit in time_t (in struct timespec), which might be 32b
-	// signed
-	if (interval_real >= 1UL << 31)
-		interval_real = (1UL << 31) - 1;
+	if (interval_real > 60L * 60 * 24 * 31)
+		interval_real = 60L * 60 * 24 * 31;
 	interval = interval_real * USECS_PER_SEC;
-	t = get_time_usec();
-	// make sure to start
-	if (interval > t)
-		interval = t;
+	tzset();
 
-	get_terminal_size();
-	initscr();
+	FD_ZERO(&select_stdin);
 
 	// Catch keyboard interrupts so we can put tty back in a sane state.
-	// After initscr(). It may replace handlers.
 	signal(SIGINT, die);
 	signal(SIGTERM, die);
 	signal(SIGHUP, die);
 	signal(SIGWINCH, winch_handler);
-
 	/* Set up tty for curses use.  */
+	get_terminal_size();
+	initscr();  // succeeds or exit()s, may install sig handlers
 	if (flags & WATCH_COLOR) {
 		if (has_colors()) {
 			start_color();
@@ -1198,7 +1192,6 @@ int main(int argc, char *argv[])
 	while (1) {
 		reset_ansi();
 		set_ansi_attribute(-1, NULL);
-
 		if (screen_size_changed) {
 			screen_size_changed = false;  // "atomic" test-and-set
 			get_terminal_size();
@@ -1206,67 +1199,94 @@ int main(int argc, char *argv[])
 			first_screen = true;
 		}
 
+		output_header();
 		t = get_time_usec();
-		if (! (flags & WATCH_NORERUN) || t - last_tick >= interval) {
-			output_header();
-			if (flags & WATCH_PRECISE)
-				last_tick = t;
-			cmd_status = run_command();
-			if (! (flags & WATCH_PRECISE)) {
-				last_tick = get_time_usec();
-				output_lowheader(last_tick - t, cmd_status & RUNCMD_EXITCODE);
+		if (flags & WATCH_PRECISE)
+			last_tick = t;
+		cmdexit = run_command();
+		if (flags & WATCH_PRECISE)
+			output_lowheader(get_time_usec() - t, cmdexit);
+		else {
+			last_tick = get_time_usec();
+			output_lowheader(last_tick - t, cmdexit);
+		}
+
+		if (cmdexit) {
+			if (flags & WATCH_BEEP)
+				beep();  // doesn't require refresh()
+			if (flags & WATCH_ERREXIT) {
+				// TODO: Hard to see when there's cmd output around it. Add
+				// spaces or move to lowheader.
+				mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
+				i = fcntl(STDIN_FILENO, F_GETFL);
+				if (i >= 0 && fcntl(STDIN_FILENO, F_SETFL, i|O_NONBLOCK) >= 0) {
+					while (getchar() != EOF) ;
+					fcntl(STDIN_FILENO, F_SETFL, i);
+				}
+				refresh();
+				getchar();
+				endwin_exit(cmdexit);
 			}
-			else output_lowheader(get_time_usec() - t, cmd_status & RUNCMD_EXITCODE);
+		}
 
-			if (cmd_status & RUNCMD_EXITCODE) {
-				if (flags & WATCH_BEEP)
-					beep();
-				if (flags & WATCH_ERREXIT) {
-					int stdinfl = fcntl(STDIN_FILENO, F_GETFL);
-					if ( stdinfl >= 0 &&
-					     fcntl(STDIN_FILENO, F_SETFL, stdinfl|O_NONBLOCK) >= 0
-					   ) {
-						while (getchar() != EOF) ;
-						fcntl(STDIN_FILENO, F_SETFL, stdinfl);
-					}
-
-					// TODO: Hard to see when there's cmd output around it. Add spaces
-					// or move to lowheader.
-					mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
-					refresh();
-					getchar();
-					endwin_exit(cmd_status & RUNCMD_EXITCODE);
+		// [BUG] When screen resizes, its contents change, but not
+		// necessarily because cmd output's changed. It may have, but that
+		// event is lost. Prevents cycle_count from soaring while resizing.
+		if (! first_screen) {
+			if (flags & WATCH_CHGEXIT && screen_changed)
+				break;
+			if (flags & WATCH_EQUEXIT) {
+				if (screen_changed)
+					cycle_count = 1;
+				else {
+					if (cycle_count == max_cycles)
+						break;
+					++cycle_count;
 				}
 			}
+		}
 
-			// [BUG] When screen resizes, its contents change, but not
-			// necessarily because cmd output's changed. It may have, but that
-			// event is lost. Prevents cycle_count from soaring while resizing.
-			if (! first_screen) {
-				if (flags & WATCH_CHGEXIT && cmd_status & RUNCMD_SCRCHANGED)
+		refresh();
+		first_screen = false;
+
+		// first process all available input, then respond to
+		// screen_size_changed, then sleep and repeat
+		dontsleep = screen_size_changed && ! (flags & WATCH_NORERUN);
+		scrdumped = false;
+		do {
+			if (! dontsleep && (t = get_time_usec()-last_tick) < interval) {
+				tosleep.tv_sec = (interval-t) / USECS_PER_SEC;
+				tosleep.tv_usec = (interval-t) % USECS_PER_SEC;
+			}
+			else memset(&tosleep, 0, sizeof(tosleep));
+			assert(FD_SETSIZE >= STDIN_FILENO && FD_SETSIZE >= 1);
+			FD_SET(STDIN_FILENO, &select_stdin);
+			i = select(1, &select_stdin, NULL, NULL, &tosleep);
+			if (i == -1) {
+				assert(errno == EINTR);
+				dontsleep |= ! (flags & WATCH_NORERUN);
+			}
+			if (i > 0) {
+				switch (getchar()) {
+				case EOF:
+					if (errno != EINTR)
+						endwin_exit(1);
+					dontsleep |= ! (flags & WATCH_NORERUN);
 					break;
-				if (flags & WATCH_EQUEXIT) {
-					if (cmd_status & RUNCMD_SCRCHANGED)
-						cycle_count = 1;
-					else {
-						if (cycle_count == max_cycles)
-							break;
-						++cycle_count;
+				case 'q':  // overrides all remaining keys
+					endwin_exit(EXIT_SUCCESS);
+				case ' ':  // idempotent
+					dontsleep = true;
+					break;
+				case 's':  // idempotent
+					if (! scrdumped) {
+						screenshot();
+						scrdumped = true;
 					}
+					break;
 				}
 			}
-
-			refresh();
-			first_screen = false;
-		}
-
-		t = get_time_usec() - last_tick;
-		if (t < interval) {
-			t = interval - t;
-			tosleep.tv_sec = t / USECS_PER_SEC;
-			tosleep.tv_nsec = t % USECS_PER_SEC * NSECS_PER_USEC;
-			nanosleep(&tosleep, NULL);
-		}
+		} while (i);
 	}
 
 	endwin_exit(EXIT_SUCCESS);

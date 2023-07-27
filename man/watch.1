@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH WATCH 1 "2023-07-15" "procps-ng" "User Commands"
+.TH WATCH 1 "2023-07-28" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -51,9 +51,9 @@ the cause of \fIcommand\fR termination, the exit code will be 128 + \fBn\fR.
 Exit when the output of \fIcommand\fR changes.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
-Specify update interval. \fBwatch\fR will not allow quicker than 0.1 second
-interval, in which the smaller values are converted. Both '.' and ',' work for
-any locale. The \fBWATCH_INTERVAL\fR environment variable can be used to
+Specify update interval. Values smaller than 0.1 and larger than 2678400 (31
+days) are converted into these respective bounds. Both '.' and ',' work for any
+locale. The \fBWATCH_INTERVAL\fR environment variable can be used to
 persistently set a non-default interval (following the same rules and
 formatting).
 .TP
@@ -90,6 +90,19 @@ Display help text and exit.
 .TP
 \fB\-v\fR, \fB\-\-version\fR
 Display version information and exit.
+.SH "KEY CONTROL"
+.TP
+.B spacebar
+Issue \fIcommand\fR immediately. If it's running at the moment, it is not
+interrupted and its next round will start without delay.
+.TP
+.B q
+Quit \fBwatch\fR. It currently does not interrupt a running \fIcommand\fR (as
+opposed to terminating signals, such as the SIGKILL following Ctrl+C).
+.TP
+.B s
+Take a screenshot. It is saved in the file \fBwatch-dump\fR in the working
+directory.
 .SH "EXIT STATUS"
 .TP
 .B 0
