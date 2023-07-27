@@ -973,26 +973,6 @@ static uf16 run_command(void)
 		assert(WIFSIGNALED(status));
 		status = 0x80 + (WTERMSIG(status)&0x7f);
 	}
-	if (status) {
-		if (flags & WATCH_BEEP)
-			beep();
-		if (flags & WATCH_ERREXIT) {
-			int stdinfl = fcntl(STDIN_FILENO, F_GETFL);
-			if ( stdinfl >= 0 &&
-			     fcntl(STDIN_FILENO, F_SETFL, stdinfl|O_NONBLOCK) >= 0
-			   ) {
-				while (getchar() != EOF) ;
-				fcntl(STDIN_FILENO, F_SETFL, stdinfl);
-			}
-
-			// TODO: Hard to see when there's cmd output around it. Add spaces
-			// or move to lowheader.
-			mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
-			refresh();
-			getchar();
-			endwin_exit(status);
-		}
-	}
 
 	return screen_changed << 8 | status;
 }
@@ -1226,10 +1206,9 @@ int main(int argc, char *argv[])
 			first_screen = true;
 		}
 
-		output_header();
-
 		t = get_time_usec();
 		if (! (flags & WATCH_NORERUN) || t - last_tick >= interval) {
+			output_header();
 			if (flags & WATCH_PRECISE)
 				last_tick = t;
 			cmd_status = run_command();
@@ -1238,6 +1217,27 @@ int main(int argc, char *argv[])
 				output_lowheader(last_tick - t, cmd_status & RUNCMD_EXITCODE);
 			}
 			else output_lowheader(get_time_usec() - t, cmd_status & RUNCMD_EXITCODE);
+
+			if (cmd_status & RUNCMD_EXITCODE) {
+				if (flags & WATCH_BEEP)
+					beep();
+				if (flags & WATCH_ERREXIT) {
+					int stdinfl = fcntl(STDIN_FILENO, F_GETFL);
+					if ( stdinfl >= 0 &&
+					     fcntl(STDIN_FILENO, F_SETFL, stdinfl|O_NONBLOCK) >= 0
+					   ) {
+						while (getchar() != EOF) ;
+						fcntl(STDIN_FILENO, F_SETFL, stdinfl);
+					}
+
+					// TODO: Hard to see when there's cmd output around it. Add spaces
+					// or move to lowheader.
+					mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
+					refresh();
+					getchar();
+					endwin_exit(cmd_status & RUNCMD_EXITCODE);
+				}
+			}
 
 			// [BUG] When screen resizes, its contents change, but not
 			// necessarily because cmd output's changed. It may have, but that
@@ -1255,10 +1255,10 @@ int main(int argc, char *argv[])
 					}
 				}
 			}
+
+			refresh();
 			first_screen = false;
 		}
-
-		refresh();
 
 		t = get_time_usec() - last_tick;
 		if (t < interval) {
