@@ -76,20 +76,33 @@ static inline void esc_all (unsigned char *str) {
 }
 
 static inline void esc_ctl (unsigned char *str, int len) {
-   int i, n;
+ #define setQ  { *str = '?'; n = 1; goto next_up; }
+   int i, n, x;
 
    for (i = 0; i < len; ) {
-      // even with a proper locale, strings might be corrupt
-      if ((n = UTF_tab[*str]) < 0 || i + n > len) {
-         esc_all(str);
-         return;
+      n = UTF_tab[*str];
+      /* even with a proper locale, strings might be corrupt or we
+         might encounter one of those 32 unicode multibyte control
+         characters which begin at U+0080 (0xc280) */
+      if (n < 0 || i + n > len
+      || (*str == 0xc2 && str[1] >= 0x80 && str[1] <= 0x9f)) {
+         setQ
+      }
+      /* let's validate those utf-8 continuation bytes too, all of
+         which must take the binary form of 10xxxxxx */
+      for (x = 1; x < n; x++) {
+         if (str[x] < 0x80 || str[x] > 0xbf) {
+            setQ
+         }
       }
       // and eliminate those non-printing control characters
       if (*str < 0x20 || *str == 0x7f)
          *str = '?';
+next_up:
       str += n;
       i += n;
    }
+ #undef setQ
 }
 
 int escape_str (char *dst, const char *src, int bufsize) {
