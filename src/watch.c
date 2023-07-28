@@ -125,6 +125,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("  -n, --interval <secs>  seconds to wait between updates\n"), out);
 	fputs(_("  -p, --precise          -n includes command running time\n"), out);  // TODO: gettext
 	fputs(_("  -r, --no-rerun         do not rerun program on window resize\n"), out);
+	fputs(_("  -s, --shotsdir         directory to store screenshots\n"), out);  // TODO: gettext
 	fputs(_("  -t, --no-title         turn off header\n"), out);
 	fputs(_("  -w, --no-wrap          turn off line wrapping\n"), out);
 	fputs(_("  -x, --exec             pass command to exec instead of \"sh -c\"\n"), out);
