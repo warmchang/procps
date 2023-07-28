@@ -71,6 +71,9 @@ cycles.
 Do not run the program on terminal resize, the output of the program will
 re-appear at the next regular run time.
 .TP
+\fB-s\fR, \fB--shotsdir\fR
+Directory to save screenshots into.
+.TP
 \fB\-t\fR, \fB\-\-no\-title\fR
 Turn off the header normally shown at the top of the screen.
 .TP
@@ -101,8 +104,8 @@ Quit \fBwatch\fR. It currently does not interrupt a running \fIcommand\fR (as
 opposed to terminating signals, such as the SIGKILL following Ctrl+C).
 .TP
 .B s
-Take a screenshot. It is saved in the file \fBwatch-dump\fR in the working
-directory.
+Take a screenshot. It will be saved in the working directory, unless specified
+otherwise by \fB\-\-shotsdir\fR.
 .SH "EXIT STATUS"
 .TP
 .B 0

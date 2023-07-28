@@ -102,7 +102,6 @@ static long double interval_real = 2;
 static char *command;
 static int command_len;
 static char *const *command_argv;
-static const char *dumpfile = "watch-dump";
 
 
 
@@ -391,19 +390,92 @@ static void process_ansi(FILE * fp)
 
 
 
-// TODO: gettext everywhere
-static void screenshot(void) {
-	const int f = open(dumpfile, O_WRONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR);
+typedef uf64 watch_usec_t;
+#define USECS_PER_SEC ((watch_usec_t)1000000)  // same type
+
+static inline watch_usec_t get_time_usec(void)
+{
+	struct timeval now;
+#if defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_TIMERS)
+	struct timespec ts;
+	if (0 > clock_gettime(CLOCK_MONOTONIC, &ts))
+		endwin_xerr(1, "clock_gettime(CLOCK_MONOTONIC)");
+	TIMESPEC_TO_TIMEVAL(&now, &ts);
+#else
+	gettimeofday(&now, NULL);
+#endif /* HAVE_CLOCK_GETTIME */
+	return USECS_PER_SEC * now.tv_sec + now.tv_usec;
+}
+
+
+
+static void screenshot(const char *shotsdir) {
+	static time_t last;
+	static uf8 last_nr;
+	static char *dumpfile;
+	static size_t dumpfile_mark;
+	static uf8 dumpfile_avail = 128;
+
+	if (! dumpfile) {
+		dumpfile_mark = strlen(shotsdir);  // can be empty
+		if (SIZE_MAX - dumpfile_mark < dumpfile_avail) {
+			errno = ENAMETOOLONG;
+			endwin_xerr(1, "%s", shotsdir);
+		}
+		dumpfile = xmalloc(dumpfile_mark + dumpfile_avail);  // never freed
+		if (dumpfile_mark) {
+			memcpy(dumpfile, shotsdir, dumpfile_mark);
+			if (dumpfile[dumpfile_mark-1] != '/') {
+				dumpfile[dumpfile_mark++] = '/';
+				--dumpfile_avail;
+			}
+		}
+		memcpy(dumpfile+dumpfile_mark, "watch_", 6);
+		dumpfile_mark += 6;
+		dumpfile_avail -= 6;
+	}
+
+	const time_t now = time(NULL);
+	if (! strftime(dumpfile+dumpfile_mark, dumpfile_avail, "%Y%m%d-%H%M%S", localtime(&now))) {
+		assert(false);
+		dumpfile[dumpfile_mark] = '\0';
+	}
+	if (now == last) {
+		const uf8 l = strlen(dumpfile+dumpfile_mark);
+		assert(dumpfile_avail - l >= 5);
+		snprintf(dumpfile+dumpfile_mark+l, dumpfile_avail-l, "-%03" PRIuFAST8, last_nr);
+		assert(last_nr < UINT_FAST8_MAX);
+		if (last_nr < UINT_FAST8_MAX)
+			++last_nr;
+	}
+	else {
+		last = now;
+		last_nr = 0;
+	}
+
+	const int f = open(dumpfile, O_WRONLY|O_CREAT|O_EXCL, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH);
 	if (f == -1)
 		endwin_xerr(1, "open(%s)", dumpfile);
 
-// TODO: range checks
+	int bufsize = 0;  // int because of mvinnstr()
 #ifdef WITH_WATCH8BIT
-	const size_t bufsize = width*CCHARW_MAX*MB_CUR_MAX + 1;
+	if ( INT_MAX / width >= CCHARW_MAX &&
+	     MB_CUR_MAX <= INT_MAX &&
+	     INT_MAX / (width*CCHARW_MAX) >= (int)MB_CUR_MAX &&
+	     width * CCHARW_MAX * MB_CUR_MAX < INT_MAX
+	   ) {
+		bufsize = width*CCHARW_MAX*MB_CUR_MAX + 1;
+	}
 #else
-	const size_t bufsize = width + 1;
+	if (width < INT_MAX)
+		bufsize = width + 1;
 #endif
+	if (! bufsize || (uintmax_t)bufsize > SIZE_MAX) {
+		errno = EOVERFLOW;
+		endwin_xerr(1, "%s(%s)", __func__, dumpfile);
+	}
 	char *const buf = xmalloc(bufsize);
+
 	int yin, xout;
 	for (int y=0; y<height; ++y) {
 		yin = mvinnstr(y, 0, buf, bufsize-1);
@@ -420,27 +492,11 @@ static void screenshot(void) {
 
 	if (close(f) == -1)
 		endwin_xerr(1, "close(%s)", dumpfile);
-	if (screen_size_changed)
-		endwin_xerrx(1, "error taking screenshot");
-}
 
-
-
-typedef uf64 watch_usec_t;
-#define USECS_PER_SEC ((watch_usec_t)1000000)  // same type
-
-static inline watch_usec_t get_time_usec(void)
-{
-	struct timeval now;
-#if defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_TIMERS)
-	struct timespec ts;
-	if (0 > clock_gettime(CLOCK_MONOTONIC, &ts))
-		xerr(EXIT_FAILURE, "Cannot get monotonic clock");
-	TIMESPEC_TO_TIMEVAL(&now, &ts);
-#else
-	gettimeofday(&now, NULL);
-#endif /* HAVE_CLOCK_GETTIME */
-	return USECS_PER_SEC * now.tv_sec + now.tv_usec;
+	if (screen_size_changed) {
+		errno = ECANCELED;
+		endwin_xerrx(1, "%s(%s)", __func__, dumpfile);
+	}
 }
 
 
@@ -1040,6 +1096,7 @@ int main(int argc, char *argv[])
 	uint8_t cmdexit;
 	struct timeval tosleep;
 	bool dontsleep, scrdumped;
+	const char *shotsdir = "";
 	const struct option longopts[] = {
 		{"color", no_argument, 0, 'c'},
 		{"no-color", no_argument, 0, 'C'},
@@ -1053,6 +1110,7 @@ int main(int argc, char *argv[])
 		{"exec", no_argument, 0, 'x'},
 		{"precise", no_argument, 0, 'p'},
 		{"no-rerun", no_argument, 0, 'r'},
+		{"shotsdir", required_argument, 0, 's'},
 		{"no-title", no_argument, 0, 't'},
 		{"no-wrap", no_argument, 0, 'w'},
 		{"version", no_argument, 0, 'v'},
@@ -1067,6 +1125,10 @@ int main(int argc, char *argv[])
 	// TODO: when !WATCH8BIT, setlocale() should be omitted or initd as "C",
 	// shouldn't it? Also, everywhere we rely on the fact that with !8BIT
 	// strlen(s) is the col width of s, for instance.
+	// Also, the build system doesn't honor WATCH8BIT when linking. On my system
+	// it links against libncursesw even when !WATCH8BIT. That results in half
+	// of the program working in wchars, half in chars. On the other hand,
+	// people with libncursesw.so probably configure with WATCH8BIT.
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -1076,10 +1138,10 @@ int main(int argc, char *argv[])
 #endif /* WITH_COLORWATCH */
 
 	const char *const interval_string = getenv("WATCH_INTERVAL");
-	if(interval_string != NULL)
+	if (interval_string != NULL)
 		interval_real = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
 
-	while ((i = getopt_long(argc,argv,"+bCced::ghq:n:prtwvx",longopts,NULL)) != EOF) {
+	while ((i = getopt_long(argc,argv,"+bCced::ghq:n:prs:twvx",longopts,NULL)) != EOF) {
 		switch (i) {
 		case 'b':
 			flags |= WATCH_BEEP;
@@ -1109,6 +1171,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'r':
 			flags |= WATCH_NORERUN;
+			break;
+		case 's':
+			shotsdir = optarg;
 			break;
 		case 't':
 			flags |= WATCH_NOTITLE;
@@ -1159,6 +1224,7 @@ int main(int argc, char *argv[])
 	// * be >= 0.1 (program design)
 	// * fit in time_t (in struct timeval), which may be 32b signed
 	// * be <=31 days (limitation of select(), as per POSIX 2001)
+	// * fit in watch_usec_t, even when multiplied by USECS_PER_SEC
 	if (interval_real < 0.1)
 		interval_real = 0.1;
 	if (interval_real > 60L * 60 * 24 * 31)
@@ -1246,7 +1312,7 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		refresh();
+		refresh();  // takes some time
 		first_screen = false;
 
 		// first process all available input, then respond to
@@ -1280,7 +1346,7 @@ int main(int argc, char *argv[])
 					break;
 				case 's':  // idempotent
 					if (! scrdumped) {
-						screenshot();
+						screenshot(shotsdir);
 						scrdumped = true;
 					}
 					break;
