@@ -102,6 +102,7 @@ static long double interval_real = 2;
 static char *command;
 static int command_len;
 static char *const *command_argv;
+static const char *shotsdir = "";
 
 
 
@@ -410,7 +411,7 @@ static inline watch_usec_t get_time_usec(void)
 
 
 
-static void screenshot(const char *shotsdir) {
+static void screenshot(void) {
 	static time_t last;
 	static uf8 last_nr;
 	static char *dumpfile;
@@ -1096,8 +1097,7 @@ int main(int argc, char *argv[])
 	fd_set select_stdin;
 	uint8_t cmdexit;
 	struct timeval tosleep;
-	bool dontsleep, scrdumped;
-	const char *shotsdir = "";
+	bool sleep_dontsleep, sleep_scrdumped, sleep_exit;
 	const struct option longopts[] = {
 		{"color", no_argument, 0, 'c'},
 		{"no-color", no_argument, 0, 'C'},
@@ -1317,43 +1317,47 @@ int main(int argc, char *argv[])
 		first_screen = false;
 
 		// first process all available input, then respond to
-		// screen_size_changed, then sleep and repeat
-		dontsleep = screen_size_changed && ! (flags & WATCH_NORERUN);
-		scrdumped = false;
+		// screen_size_changed, then sleep
+		sleep_dontsleep = screen_size_changed && ! (flags & WATCH_NORERUN);
+		sleep_scrdumped = sleep_exit = false;
 		do {
-			if (! dontsleep && (t = get_time_usec()-last_tick) < interval) {
+			if (! sleep_dontsleep && (t=get_time_usec()-last_tick) < interval) {
 				tosleep.tv_sec = (interval-t) / USECS_PER_SEC;
 				tosleep.tv_usec = (interval-t) % USECS_PER_SEC;
 			}
 			else memset(&tosleep, 0, sizeof(tosleep));
-			assert(FD_SETSIZE >= STDIN_FILENO && FD_SETSIZE >= 1);
+			assert(FD_SETSIZE > STDIN_FILENO);
 			FD_SET(STDIN_FILENO, &select_stdin);
-			i = select(1, &select_stdin, NULL, NULL, &tosleep);
+			i = select(STDIN_FILENO+1, &select_stdin, NULL, NULL, &tosleep);
 			if (i == -1) {
 				assert(errno == EINTR);
-				dontsleep |= ! (flags & WATCH_NORERUN);
+				sleep_dontsleep |= ! (flags & WATCH_NORERUN);
 			}
 			if (i > 0) {
+				// all keys idempotent
 				switch (getchar()) {
 				case EOF:
 					if (errno != EINTR)
 						endwin_exit(1);
-					dontsleep |= ! (flags & WATCH_NORERUN);
+					sleep_dontsleep |= ! (flags & WATCH_NORERUN);
 					break;
-				case 'q':  // overrides all remaining keys
-					endwin_exit(EXIT_SUCCESS);
-				case ' ':  // idempotent
-					dontsleep = true;
+				case 'q':
+					sleep_dontsleep = sleep_exit = true;
 					break;
-				case 's':  // idempotent
-					if (! scrdumped) {
-						screenshot(shotsdir);
-						scrdumped = true;
+				case ' ':
+					sleep_dontsleep = true;
+					break;
+				case 's':
+					if (! sleep_scrdumped) {
+						screenshot();
+						sleep_scrdumped = true;
 					}
 					break;
 				}
 			}
 		} while (i);
+		if (sleep_exit)
+			break;
 	}
 
 	endwin_exit(EXIT_SUCCESS);
