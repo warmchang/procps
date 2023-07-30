@@ -8,7 +8,9 @@ procps-ng-NEXT
   * pgrep: Use only --signal option for signal             Debian #1031765
   * pgrep: suppress >15 warning if using regex             Debian #1037450
   * ps: fixed missing or corrupted fields with -m option   Debian #1036631, issue #279
+  * sysctl: -N show names                                  merge #198, RH #2222056
   * tests: dont compare floats with ==                     issue #271
+  * tests: skips tests if maps missing                     merge #197, Gentoo #583036
   * top: bad command line arguments yield EXIT_FAILURE     issue #273
   * top: avoids keystroke induced '%Cpu' distortions
   * top: includes VM (guest) tics in 'system' overhead     issue #274
