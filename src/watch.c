@@ -98,9 +98,9 @@
 static uf16 flags;
 static int height, width;
 static bool first_screen = true, screen_size_changed, screen_changed;
-static long double interval_real = 2;
+static double interval_real = 2;
 static char *command;
-static int command_len;
+static size_t command_len;
 static char *const *command_argv;
 static const char *shotsdir = "";
 
@@ -139,7 +139,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 }
 
 #define endwin_xerr(...) do { endwin(); xerr(__VA_ARGS__); } while (0)
-#define endwin_xerrx(...) do { endwin(); xerrx(__VA_ARGS__); } while (0)
+#define endwin_error(...) do { endwin(); error(__VA_ARGS__); } while (0)
 #define endwin_exit(status) do { endwin(); exit(status); } while (0)
 
 static void die(int notused __attribute__ ((__unused__)))
@@ -420,10 +420,8 @@ static void screenshot(void) {
 
 	if (! dumpfile) {
 		dumpfile_mark = strlen(shotsdir);  // can be empty
-		if (SIZE_MAX - dumpfile_mark < dumpfile_avail) {
-			errno = ENAMETOOLONG;
-			endwin_xerr(1, "%s", shotsdir);
-		}
+		if (SIZE_MAX - dumpfile_mark < dumpfile_avail)
+			endwin_error(1, ENAMETOOLONG, "%s", shotsdir);
 		dumpfile = xmalloc(dumpfile_mark + dumpfile_avail);  // never freed
 		if (dumpfile_mark) {
 			memcpy(dumpfile, shotsdir, dumpfile_mark);
@@ -472,10 +470,8 @@ static void screenshot(void) {
 	if (width < INT_MAX)
 		bufsize = width + 1;
 #endif
-	if (! bufsize || (uintmax_t)bufsize > SIZE_MAX) {
-		errno = EOVERFLOW;
-		endwin_xerr(1, "%s(%s)", __func__, dumpfile);
-	}
+	if (! bufsize || (uintmax_t)bufsize > SIZE_MAX)
+		endwin_error(1, EOVERFLOW, "%s(%s)", __func__, dumpfile);
 	char *const buf = xmalloc(bufsize);
 
 	int yin, xout;
@@ -495,10 +491,8 @@ static void screenshot(void) {
 	if (close(f) == -1)
 		endwin_xerr(1, "close(%s)", dumpfile);
 
-	if (screen_size_changed) {
-		errno = ECANCELED;
-		endwin_xerrx(1, "%s(%s)", __func__, dumpfile);
-	}
+	if (screen_size_changed)
+		endwin_error(1, ECANCELED, "%s(%s)", __func__, dumpfile);
 }
 
 
@@ -523,7 +517,7 @@ static void output_header(void)
 	int wrheader_wid;
 
 	static wchar_t *wcommand;
-	static int wcommand_len;
+	static size_t wcommand_len;
 	static int wcommand_wid;
 
 	static sf8 ellipsis_wid;
@@ -541,7 +535,7 @@ static void output_header(void)
 		rheader[rheader_lenmid++] = ' ';
 
 		// never freed for !WATCH8BIT
-		lheader_len = asprintf(&lheader, _("Every %.1Lfs: "), interval_real);
+		lheader_len = asprintf(&lheader, _("Every %.1fs: "), interval_real);
 		if (lheader_len == -1)
 			endwin_xerr(1, "%s()", __func__);
 #ifdef WITH_WATCH8BIT
@@ -598,24 +592,26 @@ static void output_header(void)
 	 *   width > "": print header, wcomand, hostname, ts
 	 * this is slightly different from how it used to be */
 
+// (w)command_* can be large, *header_* are relatively small
 #ifdef WITH_WATCH8BIT
 	if (width >= wrheader_wid) {
 		mvaddwstr(0, width - wrheader_wid, wrheader);
 		const int avail4cmd = width - wlheader_wid - wrheader_wid;
 		if (avail4cmd >= 0) {
 			mvaddwstr(0, 0, wlheader);
-			// All of cmd fits, 1 = delimiting space
-			if (avail4cmd >= wcommand_wid + 1)
+			// All of cmd fits, +1 for delimiting space
+			if (avail4cmd > wcommand_wid)
 				addwstr(wcommand);
 			// Else print truncated cmd (to 0 chars, possibly) + ellipsis. If
 			// there's too little space even for the ellipsis, print nothing.
-			else if (avail4cmd >= ellipsis_wid + 1) {
+			else if (avail4cmd > ellipsis_wid) {
 				assert(wcommand_len > 0);
-				int newwcmdwid, newwcmdlen = wcommand_len;
+				int newwcmdwid;
+				size_t newwcmdlen = wcommand_len;
 				// from the back
 				do newwcmdwid = wcswidth(wcommand, --newwcmdlen);
 				while (newwcmdwid > avail4cmd-ellipsis_wid-1);
-				addnwstr(wcommand, newwcmdlen);
+				addnwstr(wcommand, newwcmdlen&INT_MAX);
 				addwstr(L"\u2026");
 			}
 		}
@@ -627,9 +623,9 @@ static void output_header(void)
 		const int avail4cmd = width - lheader_len - rheader_len;
 		if (avail4cmd >= 0) {
 			mvaddstr(0, 0, lheader);
-			if (avail4cmd >= command_len + 1)
+			if ((uintmax_t)avail4cmd > command_len)
 				addstr(command);
-			else if (avail4cmd >= 3 + 1) {
+			else if (avail4cmd > 3) {
 				addnstr(command, avail4cmd - 3 - 1);
 				addstr("...");
 			}
@@ -667,7 +663,7 @@ static void output_lowheader(watch_usec_t span, uint8_t exitcode) {
 		mvaddwstr(1, skip, ws);
 	free(ws);
 #else
-	skip = width - strlen(s);
+	skip = width - (int)strlen(s);
 	if (skip >= 0)
 		mvaddstr(1, skip, s);
 #endif
@@ -696,7 +692,8 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 	bool old_standout = false;
 
 #ifdef WITH_WATCH8BIT
-#if (CCHARW_MAX < 3 || CCHARW_MAX > 15)  // probably 5
+// there's an array on stack the size of a function of this
+#if (CCHARW_MAX < 3 || CCHARW_MAX > 15)
 #error "ncurses' CCHARW_MAX has an unexpected value!"
 #endif
 	if (! first_screen && flags&WATCH_ALL_DIFF) {
@@ -903,7 +900,8 @@ static uint8_t run_command(void)
 			_Exit(0x7f);  // sort of like sh
 		}
 		status = system(command);
-		// error from system() (exec(), wait(), ...), not command
+		// errno from system() not guaranteed
+		// -1 = error from system() (exec(), wait(), ...), not command
 		if (status == -1) {
 			(void)!write(STDERR_FILENO, command, command_len);
 			// TODO: gettext
@@ -1208,10 +1206,10 @@ int main(int argc, char *argv[])
 
 	command_argv = argv + optind;  // for exec*()
 	command_len = strlen(argv[optind]);
-	command = xmalloc(command_len+1);
+	command = xmalloc(command_len+1);  // never freed
 	memcpy(command, argv[optind++], command_len+1);
 	for (; optind < argc; optind++) {
-		int s = strlen(argv[optind]);
+		size_t s = strlen(argv[optind]);
 		/* space and \0 */
 		command = xrealloc(command, command_len + s + 2);
 		command[command_len] = ' ';
@@ -1230,7 +1228,7 @@ int main(int argc, char *argv[])
 		interval_real = 0.1;
 	if (interval_real > 60L * 60 * 24 * 31)
 		interval_real = 60L * 60 * 24 * 31;
-	interval = interval_real * USECS_PER_SEC;
+	interval = (long double)interval_real * USECS_PER_SEC;
 	tzset();
 
 	FD_ZERO(&select_stdin);
@@ -1318,28 +1316,24 @@ int main(int argc, char *argv[])
 
 		// first process all available input, then respond to
 		// screen_size_changed, then sleep
-		sleep_dontsleep = screen_size_changed && ! (flags & WATCH_NORERUN);
-		sleep_scrdumped = sleep_exit = false;
+		sleep_dontsleep = sleep_scrdumped = sleep_exit = false;
 		do {
+			assert(FD_SETSIZE > STDIN_FILENO);
+			FD_SET(STDIN_FILENO, &select_stdin);
+			sleep_dontsleep |= screen_size_changed && ! (flags & WATCH_NORERUN);
 			if (! sleep_dontsleep && (t=get_time_usec()-last_tick) < interval) {
 				tosleep.tv_sec = (interval-t) / USECS_PER_SEC;
 				tosleep.tv_usec = (interval-t) % USECS_PER_SEC;
 			}
 			else memset(&tosleep, 0, sizeof(tosleep));
-			assert(FD_SETSIZE > STDIN_FILENO);
-			FD_SET(STDIN_FILENO, &select_stdin);
 			i = select(STDIN_FILENO+1, &select_stdin, NULL, NULL, &tosleep);
-			if (i == -1) {
-				assert(errno == EINTR);
-				sleep_dontsleep |= ! (flags & WATCH_NORERUN);
-			}
+			assert(i != -1 || errno == EINTR);
 			if (i > 0) {
 				// all keys idempotent
 				switch (getchar()) {
 				case EOF:
 					if (errno != EINTR)
-						endwin_exit(1);
-					sleep_dontsleep |= ! (flags & WATCH_NORERUN);
+						endwin_xerr(1, "getchar()");
 					break;
 				case 'q':
 					sleep_dontsleep = sleep_exit = true;
