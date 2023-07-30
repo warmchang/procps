@@ -607,7 +607,7 @@ static int WriteSetting(
     }
     if ((rc == EXIT_SUCCESS && !Quiet) || DryRun) {
         if (NameOnly) {
-            printf("%s\n", value);
+            printf("%s\n", dotted_key);
         } else {
             if (PrintName) {
                 printf("%s = %s\n", dotted_key, value);
