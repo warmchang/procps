@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH WATCH 1 "2023-07-28" "procps-ng" "User Commands"
+.TH WATCH 1 "2023-07-31" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -105,7 +105,8 @@ opposed to terminating signals, such as the SIGKILL following Ctrl+C).
 .TP
 .B s
 Take a screenshot. It will be saved in the working directory, unless specified
-otherwise by \fB\-\-shotsdir\fR.
+otherwise by \fB\-\-shotsdir\fR. If \fIcommand\fR is running at the moment, the
+screenshot will be taken as soon as it finishes.
 .SH "EXIT STATUS"
 .TP
 .B 0

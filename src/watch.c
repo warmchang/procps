@@ -154,10 +154,8 @@ static void winch_handler(int notused __attribute__ ((__unused__)))
 
 
 
-static int nr_of_colors;
 static int attributes;  // TODO: attr_t likely has more value digits than int
-static int fg_col;
-static int bg_col;
+static int nr_of_colors, fg_col, bg_col;
 static bool more_colors;
 
 static void reset_ansi(void)
@@ -635,6 +633,14 @@ static void output_header(void)
 }
 
 
+
+static void output_lowheader_pre(void) {
+	if (flags & WATCH_NOTITLE)
+		return;
+
+	move(1, 0);
+	clrtoeol();
+}
 
 static void output_lowheader(watch_usec_t span, uint8_t exitcode) {
 	if (flags & WATCH_NOTITLE)
@@ -1264,6 +1270,8 @@ int main(int argc, char *argv[])
 			first_screen = true;
 		}
 
+		output_lowheader_pre();
+		refresh();
 		output_header();
 		t = get_time_usec();
 		if (flags & WATCH_PRECISE)
