@@ -60,7 +60,7 @@
 //#define SCALE_POSTFX            /* scale_tics() try without a 'h,d' suffix */
 //#define SCROLLVAR_NO            /* disable intra-column horizontal scrolls */
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
-//#define STRINGCASENO            /* case insenstive compare/locate versions */
+//#define STRINGCASENO            /* case insensitive compare/locate version */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
 //#define THREADED_CPU            /* separate background thread for cpu updt */
 //#define THREADED_MEM            /* separate background thread for mem updt */
@@ -131,7 +131,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define W_MIN_ROW  3
 
         /* Miscellaneous buffers with liberal values and some other defines
-           -- mostly just to pinpoint source code usage/dependancies */
+           -- mostly just to pinpoint source code usage/dependencies */
 #define SCREENMAX   512
    /* the above might seem pretty stingy, until you consider that with every
       field displayed the column header would be approximately 250 bytes
@@ -639,14 +639,14 @@ typedef struct WIN_t {
 /*######  Some Prototypes (ha!)  #########################################*/
 
    /* These 'prototypes' are here exclusively for documentation purposes. */
-   /* ( see the find_string function for the one true required protoype ) */
+   /* ( see the find_string routine for the one true required prototype ) */
 /*------  Tiny useful routine(s)  ----------------------------------------*/
 //atic const char   *fmtmk (const char *fmts, ...);
 //atic inline int    mlen (const int *mem);
 //atic inline int   *msch (const int *mem, int obj, int max);
 //atic inline char  *scat (char *dst, const char *src);
 //atic const char   *tg2 (int x, int y);
-/*------  Exit/Interrput routines  ---------------------------------------*/
+/*------  Exit/Interrupt routines  ---------------------------------------*/
 //atic void          at_eoj (void);
 //atic void          bye_bye (const char *str);
 //atic void          error_exit (const char *str);

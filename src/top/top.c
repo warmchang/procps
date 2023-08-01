@@ -369,7 +369,7 @@ static const char *fmtmk (const char *fmts, ...) {
 
 
         /*
-         * Interger based fieldscur version of 'strlen' */
+         * Integer based fieldscur version of 'strlen' */
 static inline int mlen (const int *mem) {
    int i;
 
@@ -380,7 +380,7 @@ static inline int mlen (const int *mem) {
 
 
         /*
-         * Interger based fieldscur version of 'strchr' */
+         * Integer based fieldscur version of 'strchr' */
 static inline int *msch (const int *mem, int obj, int max) {
    int i;
 
@@ -409,7 +409,7 @@ static const char *tg2 (int x, int y) {
    return Cap_can_goto ? tgoto(cursor_address, x, y) : "";
 } // end: tg2
 
-/*######  Exit/Interrput routines  #######################################*/
+/*######  Exit/Interrupt routines  #######################################*/
 
         /*
          * Reset the tty, if necessary */
@@ -1093,7 +1093,7 @@ static char *alloc_s (const char *str) {
         /*
          * An 'I/O available' routine which will detect raw single byte |
          * unsolicited keyboard input which was susceptible to SIGWINCH |
-         * interrupts (or any other signal).  He'll also support timout |
+         * interrupt (or any other signal).  He'll also support timeout |
          * in the absence of any user keystrokes or a signal interrupt. | */
 static inline int ioa (struct timespec *ts) {
    fd_set fs;
@@ -1118,7 +1118,7 @@ static inline int ioa (struct timespec *ts) {
 
         /*
          * This routine isolates ALL user INPUT and ensures that we
-         * wont be mixing I/O from stdio and low-level read() requests */
+         * won't be mixing I/O from stdio and low-level read() requests */
 static int ioch (int ech, char *buf, unsigned cnt) {
    int rc = -1;
 
@@ -1266,7 +1266,7 @@ static char *ioline (const char *prompt) {
    ioch(1, buf, sizeof(buf)-1);
 
    if ((p = strpbrk(buf, ws))) *p = '\0';
-   // note: we DO produce a vaid 'string'
+   // note: we DO produce a valid 'string'
    return buf;
 } // end: ioline
 
@@ -1295,8 +1295,8 @@ static char *ioline (const char *prompt) {
  #define savMAX  50
  #define bufNXT  ( pos + 4 )           // four equals longest utf8 str
  #define scrNXT  ( beg + len + 2 )     // two due to multi-column char
- #define bufMAX  ((int)sizeof(buf)-2)  // -1 for '\0' string delimeter
-   static char buf[MEDBUFSIZ+1];       // +1 for '\0' string delimeter
+ #define bufMAX  ((int)sizeof(buf)-2)  // -1 for '\0' string delimiter
+   static char buf[MEDBUFSIZ+1];       // +1 for '\0' string delimiter
    static int ovt;
    int beg,           // the physical column where input began, buf[0]
        cur,           // the logical current column/insertion position
@@ -1841,7 +1841,7 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
    secs = (nt /= 100);                          // total secs
    mins = (nt /= 60);                           // total mins
    hour = (nt /= 60);                           // total hour
-   days = (nt /=  24);                          // totat days
+   days = (nt /=  24);                          // total days
    week = (nt / 7);                             // total week
 
    if (Rc.tics_scaled > target)
@@ -2387,7 +2387,7 @@ static void calibrate_fields (void) {
          * The first 4 screen rows are reserved for explanatory text, and
          * the maximum number of columns is Screen_cols / xPRFX + 1 space
          * between columns.  Thus, for example, with 42 fields a tty will
-         * still remain useable under these extremes:
+         * still remain usable under these extremes:
          *       rows       columns     what's
          *       tty  top   tty  top    displayed
          *       ---  ---   ---  ---    ------------------
@@ -2410,7 +2410,7 @@ static void display_fields (int focus, int extend) {
    int smax;                           // printable width of xSUFX
    int xadd = 0;                       // spacing between data columns
    int cmax = Screen_cols;             // total data column width
-   int rmax = Screen_rows - yRSVD;     // total useable rows
+   int rmax = Screen_rows - yRSVD;     // total usable rows
 
    i = (EU_MAXPFLGS % mxCOL) ? 1 : 0;
    if (rmax < i + (EU_MAXPFLGS / mxCOL)) mkERR;
@@ -2889,7 +2889,7 @@ static void *tasks_refresh (void *unused) {
          *     pipe ^I Log ^I tail -n100 /var/log/syslog | sort -Mr
          *
          * Caution:  If the output contains unprintable characters they will
-         * be displayed in either the ^I notation or hexidecimal <FF> form.
+         * be displayed in either the ^I notation or hexadecimal <FF> form.
          * This applies to tab characters as well.  So if one wants a more
          * accurate display, any tabs should be expanded within the 'fmts'.
          *
@@ -3500,7 +3500,7 @@ signify_that:
 /*######  Other Filtering  ###############################################*/
 
         /*
-         * This sructure is hung from a WIN_t when other filtering is active */
+         * This structure is hung from a WIN_t when other filtering is active */
 struct osel_s {
    struct osel_s *nxt;                         // the next criteria or NULL.
    int (*rel)(const char *, const char *);     // relational strings compare
@@ -3751,7 +3751,7 @@ static void before (char *me) {
 
 
         /*
-         * A configs_file *Helper* function responsible for transorming
+         * A configs_file *Helper* function responsible for transforming
          * a 3.2.8 - 3.3.17 format 'fieldscur' into our integer based format */
 static int cfg_xform (WIN_t *q, char *flds, const char *defs) {
  #define CVTon(c) ((c) |= 0x80)
@@ -5201,7 +5201,7 @@ static struct {
 
         /*
          * A helper function that will gather various |
-         * stuff for dislay by the bot_item_show guy. | */
+         * stuff for display by the bot_item_show guy. | */
 static void *bot_item_hlp (struct pids_stack *p) {
    static char buf[BIGBUFSIZ];
    char tmp[SMLBUFSIZ], *b;
@@ -6899,7 +6899,7 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_TPG:        // PIDS_ID_TPGID
             cp = make_num(rSv(i, s_int), W, Jn, AUTOX_NO, 0);
             break;
-   /* s_int, make_num without auto width, but with zero supression */
+   /* s_int, make_num without auto width, but with zero suppression */
          case EU_AGN:        // PIDS_AUTOGRP_NICE
          case EU_NCE:        // PIDS_NICE
          case EU_OOA:        // PIDS_OOM_ADJ
@@ -6961,7 +6961,7 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_USD:        // PIDS_ID_SUID
             cp = make_num(rSv(i, u_int), W, Jn, i, 0);
             break;
-   /* ul_int, make_num with auto width and zero supression */
+   /* ul_int, make_num with auto width and zero suppression */
          case EU_NS1:        // PIDS_NS_IPC
          case EU_NS2:        // PIDS_NS_MNT
          case EU_NS3:        // PIDS_NS_NET
@@ -7044,7 +7044,7 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_USN:        // PIDS_ID_SUSER
             cp = make_str_utf8(rSv(i, str), W, Js, i);
             break;
-   /* str, make_str_utf8 with varialbe width */
+   /* str, make_str_utf8 with variable width */
          case EU_CGN:        // PIDS_CGNAME
          case EU_CGR:        // PIDS_CGROUP
          case EU_ENV:        // PIDS_ENVIRON
@@ -7052,11 +7052,11 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_SGN:        // PIDS_SUPGROUPS
             varUTF8(rSv(i, str))
             break;
-   /* str, make_str with varialbe width */
+   /* str, make_str with variable width */
          case EU_SGD:        // PIDS_SUPGIDS
             makeVAR(rSv(EU_SGD, str))
             break;
-   /* str, make_str with varialbe width + additional decoration */
+   /* str, make_str with variable width + additional decoration */
          case EU_CMD:        // PIDS_CMD or PIDS_CMDLINE
             varUTF8(forest_display(q, idx))
             break;

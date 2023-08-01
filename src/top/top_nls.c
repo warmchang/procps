@@ -746,7 +746,7 @@ static void build_uniq_nlstab (void) {
       "   'a' or 'w' to commit & change another, <Enter> to commit and end ");
 
 /* Translation Hint: As is true for the text above, the "keys" shown to the left and
-   .                 also imbedded in the translatable text (along with escape seqs)
+   .                 also embedded in the translatable text (along with escape seqs)
    .                 should never themselves be translated. */
    Uniq_nlstab[KEYS_helpext_fmt] = _(""
       "  d,k,r,^R '~1d~2' set delay; '~1k~2' kill; '~1r~2' renice; ~1Ctrl~2+'~1R~2' renice autogroup\n");
@@ -754,7 +754,7 @@ static void build_uniq_nlstab (void) {
 /* Translation Hint:
    .  This Fields Management header should be 3 lines long so as
    .  to allow 1 blank line before the fields & descriptions.
-   .  If absoultely necessary, 4 lines could be used (but never more).
+   .  If absolutely necessary, 4 lines could be used (but never more).
    . */
    Uniq_nlstab[FIELD_header_fmt] = _(""
       "Fields Management~2 for window ~1%s~6, whose current sort field is ~1%s~2\n"
