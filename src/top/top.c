@@ -5761,7 +5761,7 @@ static void keys_summary (int ch) {
          if (CHKw(w, View_CPUSUM) || CHKw(w, View_CPUNOD))
             show_msg(N_txt(XTRA_modebad_txt));
          else {
-            if (!w->rc.combine_cpus) w->rc.combine_cpus = 1;
+            if (!w->rc.combine_cpus) w->rc.combine_cpus = 2;
             else w->rc.combine_cpus *= 2;
             if (w->rc.combine_cpus >= Cpu_cnt) w->rc.combine_cpus = 0;
             w->rc.core_types = 0;
@@ -6416,7 +6416,7 @@ static int sum_unify (struct stat_stack *this, int nobuf) {
    stack[stat_SUM_TOT].result.sl_int += rSv(stat_SUM_TOT, sl_int);
 
    if (!ix) beg = rSv(stat_ID, s_int);
-   if (nobuf || ix >= Curwin->rc.combine_cpus) {
+   if (nobuf || ix >= (Curwin->rc.combine_cpus - 1)) {
       snprintf(pfx, sizeof(pfx), "%-7.7s:", fmtmk("%d-%d", beg, rSv(stat_ID, s_int)));
       n = sum_tics(&accum, pfx, nobuf);
       memset(&stack, 0, sizeof(stack));

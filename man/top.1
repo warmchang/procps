@@ -1735,16 +1735,15 @@ not present, this \*(CT will have no effect.
 \ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode\fR toggle \fR
 This \*(CT is intended for massively parallel SMP environments where,
 even with the `4' \*(CT, not all processors can be displayed.
-With each press of `!' the number of additional \*(Pus combined is
-doubled thus reducing the total number of \*(Pu lines displayed.
+With each press of `!' the number of \*(Pus combined is doubled thus
+reducing the total number of \*(Pu lines displayed.
 
-For example, with the first press of `!' one additional \*(Pu will be
-combined and displayed as `0-1, 2-3, ...' instead of the normal
-`%Cpu0, %Cpu1, %Cpu2, %Cpu3, ...'.
-With a second `!' \*(CT two additional \*(Pus are combined and shown
-as `0-2, 3-5, ...'.
-Then the third `!' press, combining four additional \*(Pus, shows
-as `0-4, 5-9, ...', etc.
+For example, with the first press of `!' two \*(Pus will be combined and
+displayed as `0-1, 2-3, ...' instead of the normal `%Cpu0, %Cpu1, %Cpu2,
+%Cpu3, ...'. With a second `!' \*(CT four \*(Pus are combined and shown
+as `0-3, 4-7, ...'.
+Then the third `!' press, combining eight \*(Pus, shows as `0-7, 8-15, ...',
+etc.
 
 Such progression continues until individual \*(Pus are again displayed
 and impacts both the `1' and `4' toggles (one or multiple columns).
