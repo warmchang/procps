@@ -189,7 +189,6 @@ static const char *parse_list(const char *arg, const char *(*parse_fn)(char *, s
   const char *err;       /* error code that could or did happen */
   /*** prepare to operate ***/
   node = xmalloc(sizeof(selection_node));
-  node->u = xmalloc(strlen(arg)*sizeof(sel_union)); /* waste is insignificant */
   node->n = 0;
   buf = strdup(arg);
   /*** sanity check and count items ***/
@@ -210,6 +209,7 @@ static const char *parse_list(const char *arg, const char *(*parse_fn)(char *, s
   } while (*++walk);
   if(need_item) goto parse_error;
   node->n = items;
+  node->u = xcalloc(items, sizeof(sel_union));
   /*** actually parse the list ***/
   walk = buf;
   while(items--){
@@ -1050,15 +1050,15 @@ static const char *parse_trailing_pids(void){
   thisarg = ps_argc - 1;   /* we must be at the end now */
 
   pidnode = xmalloc(sizeof(selection_node));
-  pidnode->u = xmalloc(i*sizeof(sel_union)); /* waste is insignificant */
+  pidnode->u = xcalloc(i, sizeof(sel_union)); /* waste is insignificant */
   pidnode->n = 0;
 
   grpnode = xmalloc(sizeof(selection_node));
-  grpnode->u = xmalloc(i*sizeof(sel_union)); /* waste is insignificant */
+  grpnode->u = xcalloc(i,sizeof(sel_union)); /* waste is insignificant */
   grpnode->n = 0;
 
   sidnode = xmalloc(sizeof(selection_node));
-  sidnode->u = xmalloc(i*sizeof(sel_union)); /* waste is insignificant */
+  sidnode->u = xcalloc(i, sizeof(sel_union)); /* waste is insignificant */
   sidnode->n = 0;
 
   while(i--){
