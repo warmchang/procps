@@ -42,7 +42,7 @@ void *xcalloc(const size_t nelems, const size_t size)
 {
 	void *ret = calloc(nelems, size);
 	if (!ret && size && nelems)
-		xerrx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
+		xerrx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", nelems*size);
 	return ret;
 }
 

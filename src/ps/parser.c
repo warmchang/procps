@@ -191,6 +191,7 @@ static const char *parse_list(const char *arg, const char *(*parse_fn)(char *, s
   /*** prepare to operate ***/
   node = xmalloc(sizeof(selection_node));
   node->n = 0;
+  node->u = NULL;
   buf = strdup(arg);
   /*** sanity check and count items ***/
   need_item = 1; /* true */
@@ -204,7 +205,7 @@ static const char *parse_list(const char *arg, const char *(*parse_fn)(char *, s
       need_item=1;
       break;
     default:
-      if(need_item) items++;
+      if(need_item && items<INT_MAX) items++;
       need_item=0;
     }
   } while (*++walk);
