@@ -280,6 +280,13 @@ AS_IF([test "x$with_systemd" != "xno"], [
     [PKG_CHECK_MODULES([SYSTEMD], [libsystemd-login])]
   )
   AC_DEFINE(WITH_SYSTEMD, 1, [enable systemd support])
+
+  # The functions needed to replace utmp with logind are only available
+  # with systemd v254 or later.
+  old_LIBS="$LIBS"
+  LIBS="$LIBS $SYSTEMD_LIBS"
+  AC_CHECK_FUNCS([sd_session_get_leader])
+  LIBS="$old_LIBS"
 ])
 AM_CONDITIONAL([WITH_SYSTEMD], [test x$with_systemd != xno])
 

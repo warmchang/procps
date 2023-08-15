@@ -53,6 +53,14 @@
 #	include <utmp.h>
 #endif
 #include <arpa/inet.h>
+#ifdef WITH_SYSTEMD
+#      include <systemd/sd-login.h>
+#      include <systemd/sd-daemon.h>
+#endif
+#ifdef WITH_ELOGIND
+#      include <elogind/sd-login.h>
+#      include <elogind/sd-daemon.h>
+#endif
 
 #include "c.h"
 #include "fileutils.h"
@@ -196,7 +204,25 @@ static void print_display_or_interface(const char *restrict host, int len, int r
 
 
 /* This routine prints either the hostname or the IP address of the remote */
-static void print_from(const utmp_t *restrict const u, const int ip_addresses, const int fromlen) {
+static void print_from(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+		       const char *session,
+#endif
+		       const utmp_t *restrict const u, const int ip_addresses, const int fromlen) {
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        if (session) {
+	    char *host = NULL;
+	    int r;
+
+	    r = sd_session_get_remote_host(session, &host);
+	    if (r < 0 || host == NULL)
+	        print_host("", 0, fromlen);
+	    else {
+	        print_host(host, strlen(host), fromlen);
+		free(host);
+	    }
+	} else {
+#endif
 	char buf[fromlen + 1];
 	char buf_ipv6[INET6_ADDRSTRLEN];
 	int len;
@@ -240,6 +266,9 @@ static void print_from(const utmp_t *restrict const u, const int ip_addresses, c
 	}
 #else
 	print_host(u->ut_host, UT_HOSTSIZE, fromlen);
+#endif
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+	}
 #endif
 }
 
@@ -343,7 +372,7 @@ static int get_tty_device(const char *restrict const name)
 
     for (i=0; dev_paths[i] != NULL; i++) {
         snprintf(buf, 32, dev_paths[i], name);
-        if (stat(buf, &st) == 0)
+        if (stat(buf, &st) == 0 && (st.st_mode & S_IFMT) == S_IFCHR)
             return st.st_rdev;
     }
     return -1;
@@ -357,6 +386,9 @@ static int get_tty_device(const char *restrict const name)
  * essential core of 'w'.
  */
 static int find_best_proc(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        const char *session,
+#endif
         const utmp_t * restrict const u,
         const char *restrict const tty,
         unsigned long long *restrict const jcpu,
@@ -369,6 +401,7 @@ static int find_best_proc(
 #define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i], info)
 #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], info)
     unsigned uid = ~0U;
+    pid_t ut_pid = -1;
     int found_utpid = 0;
     int i, total_procs, line;
     unsigned long long best_time = 0;
@@ -394,6 +427,12 @@ static int find_best_proc(
     *jcpu = 0;
     *pcpu = 0;
     if (!ignoreuser) {
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        if (session) {
+            if (sd_session_get_uid(session, &uid) < 0)
+                return 0;
+        } else {
+#endif
         char buf[UT_NAMESIZE + 1];
         struct passwd *passwd_data;
         strncpy(buf, u->ut_user, UT_NAMESIZE);
@@ -402,6 +441,9 @@ static int find_best_proc(
             return 0;
         uid = passwd_data->pw_uid;
         /* OK to have passwd_data go out of scope here */
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+	}
+#endif
     }
 
     line = get_tty_device(tty);
@@ -414,9 +456,16 @@ static int find_best_proc(
               _("Unable to load process information"));
     total_procs = reap->counts->total;
 
+    if (u)
+        ut_pid = u->ut_pid;
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+    else
+        sd_session_get_leader(session, &ut_pid);
+#endif
+
     for (i=0; i < total_procs; i++) {
         /* is this the login process? */
-        if (PIDS_GETINT(TGID) == u->ut_pid) {
+        if (PIDS_GETINT(TGID) == ut_pid) {
             found_utpid = 1;
             if (!best_time) {
                 best_time = PIDS_GETULL(START);
@@ -458,6 +507,9 @@ static int find_best_proc(
 }
 
 static void showinfo(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+            const char *session, const char *name,
+#endif
             utmp_t * u, int formtype, int maxcmd, int from,
             const int userlen, const int fromlen, const int ip_addresses,
             const int pids)
@@ -473,14 +525,37 @@ static void showinfo(
     strcpy(cmdline, "-");
 
     hertz = procps_hertz_get();
+
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+    if (session) {
+        char *sd_tty;
+
+        if (sd_session_get_tty(session, &sd_tty) >= 0) {
+            for (i = 0; i < strlen (sd_tty); i++)
+                /* clean up tty if garbled */
+	        if (isalnum(sd_tty[i]) || (sd_tty[i] == '/'))
+		    tty[i + 5] = sd_tty[i];
+		else
+		    tty[i + 5] = '\0';
+	    free(sd_tty);
+	}
+    } else {
+#endif
     for (i = 0; i < UT_LINESIZE; i++)
         /* clean up tty if garbled */
         if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
             tty[i + 5] = u->ut_line[i];
         else
             tty[i + 5] = '\0';
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+    }
+#endif
 
-    if (find_best_proc(u, tty + 5, &jcpu, &pcpu, cmdline, &best_pid) == 0)
+    if (find_best_proc(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+		       session,
+#endif
+		       u, tty + 5, &jcpu, &pcpu, cmdline, &best_pid) == 0)
     /*
      * just skip if stale utmp entry (i.e. login proc doesn't
      * exist). If there is a desire a cmdline flag could be
@@ -489,20 +564,44 @@ static void showinfo(
      */
         return;
 
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+    if (name)
+      strncpy(uname, name, UT_NAMESIZE);
+    else
+#endif
+      strncpy(uname, u->ut_user, UT_NAMESIZE);
     /* force NUL term for printf */
-    strncpy(uname, u->ut_user, UT_NAMESIZE);
     uname[UT_NAMESIZE] = '\0';
 
     if (formtype) {
         printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, tty + 5);
-        if (from)
-            print_from(u, ip_addresses, fromlen);
-#ifdef HAVE_UTMPX_H
-        print_logintime(u->ut_tv.tv_sec, stdout);
-#else
-        print_logintime(u->ut_time, stdout);
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        if (session) {
+            uint64_t ltime;
+
+            if (from)
+              print_from(session, NULL, ip_addresses, fromlen);
+
+            sd_session_get_start_time(session, &ltime);
+            print_logintime(ltime/((uint64_t) 1000000ULL), stdout);
+        } else {
 #endif
-        if (*u->ut_line == ':')
+            if (from)
+                print_from(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+			   NULL,
+#endif
+			   u, ip_addresses, fromlen);
+
+#ifdef HAVE_UTMPX_H
+            print_logintime(u->ut_tv.tv_sec, stdout);
+#else
+            print_logintime(u->ut_time, stdout);
+#endif
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        }
+#endif
+        if (u && *u->ut_line == ':')
             /* idle unknown for xdm logins */
             printf(" ?xdm? ");
         else
@@ -518,15 +617,26 @@ static void showinfo(
     } else {
         printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, tty + 5);
         if (from)
-            print_from(u, ip_addresses, fromlen);
-        if (*u->ut_line == ':')
+	    print_from(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+		       NULL,
+#endif
+		       u, ip_addresses, fromlen);
+        if (u && *u->ut_line == ':')
             /* idle unknown for xdm logins */
             printf(" ?xdm? ");
         else
             print_time_ival7(idletime(tty), 0, stdout);
     }
     if (pids) {
-        pids_length = printf(" %d/%d", u->ut_pid, best_pid);
+        pid_t ut_pid = -1;
+        if (u)
+	    ut_pid = u->ut_pid;
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+	else
+	    sd_session_get_leader(session, &ut_pid);
+#endif
+        pids_length = printf(" %d/%d", ut_pid, best_pid);
         if (pids_length > maxcmd) {
             maxcmd = 0;
         } else if (pids_length > 0) {
@@ -692,7 +802,40 @@ int main(int argc, char **argv)
 		else
 			printf(_("   IDLE WHAT\n"));
 	}
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+	if (sd_booted() > 0) {
+		char **sessions_list;
+		int sessions;
+		int i;
 
+		sessions = sd_get_sessions (&sessions_list);
+		if (sessions < 0 && sessions != -ENOENT)
+			error(EXIT_FAILURE, -sessions, _("error getting sessions"));
+
+		if (sessions >= 0) {
+			for (int i = 0; i < sessions; i++) {
+				char *name;
+				int r;
+
+				if ((r = sd_session_get_username(sessions_list[i], &name)) < 0)
+					error(EXIT_FAILURE, -r, _("get user name failed"));
+
+				if (user) {
+					if (!strcmp(name, user))
+						showinfo(sessions_list[i], name, NULL, longform,
+							 maxcmd, from, userlen, fromlen,
+							 ip_addresses, pids);
+				} else {
+					showinfo(sessions_list[i], name, NULL, longform, maxcmd,
+						 from, userlen, fromlen, ip_addresses, pids);
+				}
+				free(name);
+				free(sessions_list[i]);
+			}
+			free(sessions_list);
+		}
+	} else {
+#endif
 #ifdef HAVE_UTMPX_H
 	setutxent();
 #else
@@ -711,7 +854,11 @@ int main(int argc, char **argv)
 			if (u->ut_type != USER_PROCESS)
 				continue;
 			if (!strncmp(u->ut_user, user, UT_NAMESIZE))
-				showinfo(u, longform, maxcmd, from, userlen,
+				showinfo(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+					 NULL, NULL,
+#endif
+					 u, longform, maxcmd, from, userlen,
 					 fromlen, ip_addresses, pids);
 		}
 	} else {
@@ -726,7 +873,11 @@ int main(int argc, char **argv)
 			if (u->ut_type != USER_PROCESS)
 				continue;
 			if (*u->ut_user)
-				showinfo(u, longform, maxcmd, from, userlen,
+				showinfo(
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+					 NULL, NULL,
+#endif
+					 u, longform, maxcmd, from, userlen,
 					 fromlen, ip_addresses, pids);
 		}
 	}
@@ -734,6 +885,9 @@ int main(int argc, char **argv)
 	endutxent();
 #else
 	endutent();
+#endif
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+	}
 #endif
 
 	return EXIT_SUCCESS;
