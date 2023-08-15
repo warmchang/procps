@@ -7,6 +7,7 @@ procps-ng-NEXT
   * free: -L one line output                               issue #156
   * pgrep: Use only --signal option for signal             Debian #1031765
   * pgrep: suppress >15 warning if using regex             Debian #1037450
+  * pidof: Add -t option to show threads                   merge #190
   * pmap: Reset totals between processes                   issue #298
   * ps: fixed missing or corrupted fields with -m option   Debian #1036631, issue #279
   * ps: Fix buffer overflow in -C option CVE-2023-4016     Debian #1042887, issue #297
