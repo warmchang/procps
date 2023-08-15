@@ -1,6 +1,7 @@
 /*
  * watch - execute a program repeatedly, displaying output fullscreen
  *
+ * Copyright © 2023 Roman Žilka <roman.zilka@gmail.com>
  * Copyright © 2010-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
@@ -429,7 +430,7 @@ static void output_header(void)
 		// never freed for !WATCH8BIT
 		lheader_len = asprintf(&lheader, _("Every %.1Lfs: "), interval_real);
 		if (lheader_len == -1)
-			xerr(EXIT_FAILURE, "cannot allocate memory");  // TODO: gettext
+			xerr(EXIT_FAILURE, "%s()", __func__);
 #ifdef WITH_WATCH8BIT
 		// never freed
 		wlheader_wid = mbswidth(lheader, &wlheader);
@@ -1111,7 +1112,6 @@ int main(int argc, char *argv[])
 	signal(SIGWINCH, winch_handler);
 
 	/* Set up tty for curses use.  */
-	// TODO: we want color by default and an option to turn it off
 	if (flags & WATCH_COLOR) {
 		if (has_colors()) {
 			start_color();
