@@ -22,6 +22,7 @@ procps-ng-NEXT
   * top: better backspace handling wtth line edits         issue #278
   * vmstat: Print guest time in non-wide mode
   * w: Fix musl UT_HOSTSIZE issue
+  * watch: Add color support at compile time               issue #296
 
 procps-ng-4.0.3
 ---------------
