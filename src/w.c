@@ -78,10 +78,12 @@ typedef struct utmpx utmp_t;
 typedef struct utmp utmp_t;
 #endif
 
+#ifdef __GLIBC__
 #if !defined(UT_HOSTSIZE) || defined(__UT_HOSTSIZE)
 #	define UT_HOSTSIZE __UT_HOSTSIZE
 #	define UT_LINESIZE __UT_LINESIZE
 #	define UT_NAMESIZE __UT_NAMESIZE
+#endif
 #endif
 
 #ifdef W_SHOWFROM
