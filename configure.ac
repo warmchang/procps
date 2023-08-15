@@ -195,6 +195,17 @@ if test "$enable_watch8bit" = "yes"; then
   AC_DEFINE([WITH_WATCH8BIT], [1], [Enable 8 bit clean watch])
 fi
 
+AC_SUBST([WITH_COLORWATCH])
+AC_ARG_ENABLE([colorwatch],
+  AS_HELP_STRING([--enable-colorwatch], [enable watch to use color by default]),
+  [], [enable_colorwatch=no]
+)
+if test "$enable_colorwatch" = "yes"; then
+  AC_DEFINE([WITH_COLORWATCH], [1], [Enable color watch by default])
+fi
+
+
+
 AC_ARG_ENABLE([libselinux],
   AS_HELP_STRING([--enable-libselinux], [enable libselinux]),
   [], [enable_libselinux=no]
