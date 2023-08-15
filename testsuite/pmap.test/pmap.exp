@@ -70,6 +70,31 @@ if  { [ file readable "/proc/self/smaps" ] == 0 } {
     expect_pass $test "$pmap_initname\$"
 }
 
+
+proc expect_twice_total { test } {
+    set totkb 0
+    expect {
+        -re "\r\n\\s+(\\d+)\[0-9 \]*KB" {
+            set totkb $expect_out(1,string)
+            expect {
+                -re "\r\n\\s+$totkb\[0-9 \]*KB" { pass "$test" }
+                eof { fail "$test" }
+                timeout { fail "$test" }
+            }
+        }
+        eof { fail "$test" }
+        timeout { fail "$test" }
+    }
+}
+
+set test "pmap X pid pid has same total"
+spawn $pmap -X $mypid $mypid
+expect_twice_total "$test"
+
+set test "pmap XX pid pid has same total"
+spawn $pmap -XX $mypid $mypid
+expect_twice_total "$test"
+
 set test "pmap finding shm"
 make_testshm_proc
 if { $shmid == "" } {

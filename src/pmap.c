@@ -519,8 +519,10 @@ loop_end:
 
 		for (i=0; i<footer_gap; i++) putc(' ', stdout);
 
-		for (listnode=listhead; listnode!=NULL; listnode=listnode->next)
+		for (listnode=listhead; listnode!=NULL; listnode=listnode->next) {
 			printf("%*lu ", listnode->max_width, listnode->total);
+                        listnode->total = 0;
+                }
 
 		fputs("KB \n", stdout);
 	}
