@@ -157,6 +157,7 @@ void do_help (const char *opt, int rc) {
       "                      set screen width\n"), out);
     fputs(_("     --rows, --lines <num>\n"
       "                      set screen height\n"), out);
+    fputs(_("     --signames       display signal masks using signal names\n"), out);
   }
   if (section == HELP_THD || section == HELP_ALL) {
     fputs(_("\nShow threads:\n"), out);

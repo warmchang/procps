@@ -32,6 +32,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -831,6 +832,7 @@ static const char *parse_gnu_option(void){
   {"quick-pid",     &&case_pid_quick},
   {"rows",          &&case_rows},
   {"sid",           &&case_sid},
+  {"signames",      &&case_signames},
   {"sort",          &&case_sort},
   {"tty",           &&case_tty},
   {"user",          &&case_user},        /* euid */
@@ -1001,6 +1003,10 @@ static const char *parse_gnu_option(void){
     err=parse_list(arg, parse_pid);
     if(err) return err;
     selection_list->typecode = SEL_SESS;
+    return NULL;
+  case_signames:
+    trace("--signames\n");
+    signal_names = TRUE;
     return NULL;
   case_sort:
     trace("--sort\n");

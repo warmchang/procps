@@ -28,6 +28,7 @@
 #include <string.h>
 #include <termios.h>
 #include <unistd.h>
+#include <stdbool.h>
 
 #include <sys/ioctl.h>
 #include <sys/stat.h>
@@ -206,6 +207,7 @@ int             unix_f_option = -1;
 int             user_is_number = -1;
 int             wchan_is_number = -1;
 const char     *the_word_help;
+bool            signal_names = FALSE;
 
 static void reset_selection_list(void){
   selection_node *old;

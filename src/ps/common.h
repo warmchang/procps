@@ -17,6 +17,8 @@
 #ifndef PROCPS_PS_H
 #define PROCPS_PS_H
 
+#include <stdbool.h>
+
 #include "nls.h"
 #include "meminfo.h"
 #include "misc.h"
@@ -477,6 +479,7 @@ extern int             unix_f_option;
 extern int             user_is_number;
 extern int             wchan_is_number;
 extern const char     *the_word_help;
+extern bool            signal_names;
 
 /************************* PS GLOBALS *********************/
 
@@ -491,6 +494,9 @@ extern void reset_sortformat(void);
 /* select.c */
 extern int want_this_proc(proc_t *buf);
 extern const char *select_bits_setup(void);
+
+/* signames.c */
+int print_signame(char *restrict const outbuf, const char *restrict const sig, const size_t len);
 
 /* help.c */
 extern void __attribute__ ((__noreturn__)) do_help(const char *opt, int rc);

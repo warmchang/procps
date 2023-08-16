@@ -81,6 +81,7 @@
  */
 
 #define COLWID 240 /* satisfy snprintf, which is faster than sprintf */
+#define SIGNAL_NAME_WIDTH 27
 
 static unsigned max_rightward = OUTBUF_SIZE-1; /* space for RIGHT stuff */
 static unsigned max_leftward = OUTBUF_SIZE-1; /* space for LEFT stuff */
@@ -1112,7 +1113,16 @@ setREL1(TICS_BEGAN)
 }
 
 static int help_pr_sig(char *restrict const outbuf, const char *restrict const sig){
+  int ret;
   const size_t len = strlen(sig);
+
+  if (signal_names) {
+    int rightward;
+    rightward = max_rightward;
+    if ( (ret = print_signame(outbuf, sig, rightward)) > 0)
+        return ret;
+  }
+
   if(wide_signals){
     if(len>8) return snprintf(outbuf, COLWID, "%s", sig);
     return snprintf(outbuf, COLWID, "00000000%s", sig);
@@ -2118,7 +2128,17 @@ static void check_header_width(void){
       break;
     case CF_SIGNAL:
       sigs++;
-      total += walk->width;
+      if (signal_names) {
+          if (walk->width < SIGNAL_NAME_WIDTH)
+              walk->width = SIGNAL_NAME_WIDTH;
+          walk->flags = CF_UNLIMITED;
+          if (walk->next)
+              total += walk->width;
+          else
+              total += 3;
+      } else {
+          total += walk->width;
+      }
       total += was_normal;
       was_normal = 1;
       break;

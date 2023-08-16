@@ -316,6 +316,7 @@ src_ps_pscommand_SOURCES =  \
 	src/ps/output.c \
 	src/ps/parser.c \
 	src/ps/select.c \
+	src/ps/signames.c \
 	src/ps/sortformat.c \
 	src/ps/stacktrace.c \
 	local/fileutils.c \

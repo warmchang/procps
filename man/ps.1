@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH PS "1" "2023-01-18" "procps-ng" "User Commands"
+.TH PS "1" "2023-08-16" "procps-ng" "User Commands"
 .\"
 .\" To render this page:
 .\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
@@ -728,6 +728,11 @@ or lexicographic order.  Identical to
 .BR k .
 For example:
 .B ps jax \-\-sort=\:uid,\:\-ppid,\:+pid
+.TP
+.B \-\-signames
+Show signal masks using abbreviated signal names and expands the collumn.
+If the column width cannot show all signals, the column will end with a plus "\fI+\fR".
+Columns with only a hyphen have no signals.
 .TP
 .B w
 Wide output.  Use this option twice for unlimited width.
