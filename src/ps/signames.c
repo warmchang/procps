@@ -1,4 +1,4 @@
-/* 
+/*
  * signames.c - ps signal names
  *
  * Copyright © 2023      Craig Small <csmall@dropbear.xyz>
@@ -80,7 +80,7 @@ static const char *sigstat_strsignal_abbrev(int sig, char *abbrev, size_t len)
 		return abbrev;
 	}
 
-	/* 
+	/*
 	 * The standard lower signals we can count on this being the kernel
 	 * specific SIGRTMIN.
 	 */
@@ -103,7 +103,7 @@ static const char *sigstat_strsignal_abbrev(int sig, char *abbrev, size_t len)
 		return abbrev;
 	}
 
-	/* 
+	/*
 	 * If we're dealing with a libc real time signal start counting
 	 * after libc's version of SIGRTMIN
 	 */

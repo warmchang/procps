@@ -437,7 +437,7 @@ static int parse_slabinfo20 (
         /* cache_size is not accurate, it's the upper limit of memory used by this slab.
          * When system using slub(most common case) is under high memory pressure, there
          * are slab order fallbacks, which means pages_per_slab is not constant and may decrease.
-         */ 
+         */
         node->cache_size = (unsigned long)node->nr_slabs * node->pages_per_slab * page_size;
 
         if (node->nr_objs) {

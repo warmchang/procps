@@ -636,7 +636,7 @@ static size_t get_arg_max(void)
     return val;
 }
 
-/* 
+/*
  * Check if we have a long simple (non-regex) match
  * Returns true if the string:
  *  1) is longer than 15 characters
