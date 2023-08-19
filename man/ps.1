@@ -56,17 +56,6 @@ implementations that this
 .B ps
 is compatible with.
 .P
-Note that \fBps \-aux\fR is distinct from \fBps\ aux\fR.  The POSIX and
-UNIX standards require that \fBps\ \-aux\fR print all processes owned by a
-user named \fIx\fR, as well as printing all processes that would be selected by
-the
-.B \-a
-option.  If the user named \fIx\fR does not exist, this
-.B ps
-may interpret the command as \fBps\ aux\fR instead and print a warning.
-This behavior is intended to aid in transitioning old scripts and habits.  It
-is fragile, subject to change, and thus should not be relied upon.
-.P
 By default,
 .B ps
 selects all processes with the same effective user ID (euid=EUID) as the
