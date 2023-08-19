@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH SYSCTL "8" "2023-01-16" "procps-ng" "System Administration"
+.TH SYSCTL "8" "2023-08-19" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -59,7 +59,8 @@ have programmable completion.
 Use this option to not display the values set to stdout.
 .TP
 \fB\-w\fR, \fB\-\-write\fR
-Use this option when all arguments prescribe a key to be set.
+Force all arguments to be write arguments and print an error if
+they cannot be parsed this way.
 .TP
 \fB\-p\fR[\fIFILE\fR], \fB\-\-load\fR[=\fIFILE\fR]
 Load in \fBsysctl\fR settings from the file specified or \fI/etc/sysctl.conf\fR
