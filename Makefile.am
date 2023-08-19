@@ -238,7 +238,7 @@ src_vmstat_SOURCES = src/vmstat.c local/strutils.c local/fileutils.c
 
 # See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
 LIBproc2_CURRENT=0
-LIBproc2_REVISION=1
+LIBproc2_REVISION=2
 LIBproc2_AGE=0
 
 library_libproc2_la_LIBADD = $(LIB_KPARTS)

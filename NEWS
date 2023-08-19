@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ---------------
   * library (API & ABI unchanged)
+    increment revision: 0:2:0
     tolerates all potential 'cpuinfo' formats              issue #272
     restore the proper main thread tics valuations         issue #280
     Remove myself from proc count                          merge #193
