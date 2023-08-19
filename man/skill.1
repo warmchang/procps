@@ -9,7 +9,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH SKILL 1 "October 2011" "procps-ng" "User Commands"
+.TH SKILL 1 "2023-08-19" "procps-ng" "User Commands"
 .SH NAME
 skill, snice \- send a signal or report process status
 .SH SYNOPSIS
@@ -88,7 +88,7 @@ The next expression is a command name.
 \fB\-\-ns \fIpid\fR
 Match the processes that belong to the same namespace as pid.
 .TP
-\fB\-\-nslist \fIns,...\fR
+\fB\-\-nslist \fIns\/\fR,\,\fI...\/\fR
 list which namespaces will be considered for the \fB\-\-ns\fP option.
 Available namespaces: ipc, mnt, net, pid, user, uts.
 .PD
@@ -98,7 +98,7 @@ The behavior of signals is explained in
 manual page.
 .SH EXAMPLES
 .TP
-.B snice -c seti -c crack +7
+.B snice \-c seti \-c crack +7
 +Slow down \fBseti\fP and \fBcrack\fP commands.
 .TP
 .B skill \-KILL \-t /dev/pts/*
@@ -117,9 +117,9 @@ Stop three users.
 .SH STANDARDS
 No standards apply.
 .SH AUTHOR
-.UR albert@users.sf.net
+.MT albert@users.sf.net
 Albert Cahalan
-.UE
+.ME
 wrote skill and snice in 1999 as a replacement for a non-free
 version.
 .SH "REPORTING BUGS"
