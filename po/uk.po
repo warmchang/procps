@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-4.0.3-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2023-05-02 20:39+1000\n"
+"POT-Creation-Date: 2023-08-19 17:38+1000\n"
 "PO-Revision-Date: 2023-01-29 13:14+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -114,7 +114,7 @@ msgstr ""
 msgid " -w, --wide          wide output\n"
 msgstr " -w, --wide          виведення у широкому форматі\n"
 
-#: src/free.c:97 src/w.c:551
+#: src/free.c:97 src/w.c:666
 msgid "     --help     display this help and exit\n"
 msgstr "     --help     показати цю довідку та вийти\n"
 
@@ -140,7 +140,7 @@ msgstr "не вдалося обробити аргумент кількості
 msgid "Memory information file /proc/meminfo does not exist"
 msgstr "Файла даних щодо пам'яті /proc/meminfo не існує"
 
-#: src/free.c:373 src/vmstat.c:379 src/vmstat.c:873
+#: src/free.c:373 src/vmstat.c:378 src/vmstat.c:872
 msgid "Unable to create meminfo structure"
 msgstr "Не вдалося створити структуру meminfo"
 
@@ -255,14 +255,14 @@ msgstr "має бути цілим значенням, яке слід пере�
 msgid "invalid argument %c"
 msgstr "некоректний аргумент, %c"
 
-#: src/kill.c:146 src/pgrep.c:771 src/pidof.c:246 src/pidof.c:286
-#: src/sysctl.c:870
+#: src/kill.c:146 src/pgrep.c:792 src/pidof.c:250 src/pidof.c:290
+#: src/sysctl.c:867
 msgid "internal error"
 msgstr "внутрішня помилка"
 
-#: src/kill.c:158 src/pmap.c:769 src/pmap.c:784 src/skill.c:381 src/skill.c:465
-#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1048 src/vmstat.c:1058
-#: src/watch.c:884 src/watch.c:899
+#: src/kill.c:158 src/pmap.c:771 src/pmap.c:786 src/skill.c:381 src/skill.c:465
+#: src/tload.c:135 src/tload.c:140 src/vmstat.c:1047 src/vmstat.c:1057
+#: src/watch.c:891 src/watch.c:906
 msgid "failed to parse argument"
 msgstr "не вдалося обробити аргумент"
 
@@ -445,7 +445,7 @@ msgstr ""
 "                           Можливі простори назв: ipc, mnt, net, pid, user, "
 "uts\n"
 
-#: src/pgrep.c:224 src/pgrep.c:679 src/w.c:408
+#: src/pgrep.c:224 src/pgrep.c:700 src/w.c:455
 msgid "Unable to create pid info structure"
 msgstr "Не вдалося створити структуру відомостей щодо pid"
 
@@ -488,11 +488,11 @@ msgstr "Не вдалося прочитати дані щодо простор�
 msgid "regex error: %s"
 msgstr "помилка у формальному виразі: %s"
 
-#: src/pgrep.c:674
+#: src/pgrep.c:695
 msgid "Error reading reference namespace information\n"
 msgstr "Помилка під час спроби читання даних щодо еталонного простору назв\n"
 
-#: src/pgrep.c:788
+#: src/pgrep.c:809
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -503,12 +503,12 @@ msgstr ""
 "того, що нічого не буде знайдено\n"
 "Спробуйте параметр «%s -f», щоб виконати пошук за повним рядком команди."
 
-#: src/pgrep.c:903
+#: src/pgrep.c:924
 #, fuzzy, c-format
 msgid "Unknown signal \"%s\"."
 msgstr "невідома назва сигналу, %s"
 
-#: src/pgrep.c:1068
+#: src/pgrep.c:1090
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -517,7 +517,7 @@ msgstr ""
 "-L без -F позбавлений сенсу\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:1075
+#: src/pgrep.c:1097
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -526,7 +526,7 @@ msgstr ""
 "некоректний pidfile\n"
 "Спробуйте команду «%s --help», щоб дізнатися більше."
 
-#: src/pgrep.c:1084
+#: src/pgrep.c:1106
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -535,7 +535,7 @@ msgstr ""
 "можна вказувати лише один шаблон\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:1088
+#: src/pgrep.c:1110
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -544,75 +544,80 @@ msgstr ""
 "не вказано критеріїв відповідності\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/pgrep.c:1140
+#: src/pgrep.c:1162
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "роботу %s завершено (pid %lu)\n"
 
-#: src/pgrep.c:1147
+#: src/pgrep.c:1169
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "не вдалося завершити роботу pid %ld"
 
-#: src/pgrep.c:1159
+#: src/pgrep.c:1181
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "очікуємо на %s (pid %lu)\n"
 
-#: src/pgrep.c:1163
+#: src/pgrep.c:1185
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr "pidfd_open() не реалізовано у Linux < 5.3"
 
-#: src/pgrep.c:1166
+#: src/pgrep.c:1188
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "не вдалося відкрити pid %ld"
 
-#: src/pgrep.c:1180
+#: src/pgrep.c:1202
 msgid "epoll_wait failed"
 msgstr "помилка epoll_wait"
 
-#: src/pidof.c:74
+#: src/pidof.c:75
 #, c-format
 msgid " %s [options] [program [...]]\n"
 msgstr " %s [параметри] [програма [...]]\n"
 
-#: src/pidof.c:76
+#: src/pidof.c:77
 msgid " -s, --single-shot         return one PID only\n"
 msgstr " -s, --single-shot         вивести лише один PID\n"
 
-#: src/pidof.c:77
+#: src/pidof.c:78
 msgid " -c, --check-root          omit processes with different root\n"
 msgstr ""
 " -c, --check-root          пропускати процеси з іншим кореневим каталогом\n"
 
-#: src/pidof.c:78
+#: src/pidof.c:79
 msgid " -q,                       quiet mode, only set the exit code\n"
 msgstr ""
 " -q,                       режим без повідомлень, лише встановити код "
 "виходу\n"
 
-#: src/pidof.c:79
+#: src/pidof.c:80
 msgid " -w, --with-workers        show kernel workers too\n"
 msgstr " -w, --with-workers        показувати і обробники з ядра\n"
 
-#: src/pidof.c:80
+#: src/pidof.c:81
 msgid " -x                        also find shells running the named scripts\n"
 msgstr ""
 " -x                        знайти також оболонки, у яких запущено вказані за "
 "назвами скрипти\n"
 
-#: src/pidof.c:81
+#: src/pidof.c:82
 msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,...>  пропускати процеси із вказаним PID\n"
 
-#: src/pidof.c:82
+#: src/pidof.c:83
+#, fuzzy
+msgid " -t, --lightweight         list threads too\n"
+msgstr " -w, --lightweight         вивести список усіх TID\n"
+
+#: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
 msgstr ""
 " -S, --separator РОЗД      використовувати РОЗД як роздільник між записами "
 "PID"
 
-#: src/pidof.c:289
+#: src/pidof.c:293
 #, c-format
 msgid "illegal omit pid value (%s)!\n"
 msgstr "некоректне значення pid для пропускання (%s)!\n"
@@ -749,105 +754,105 @@ msgstr "ПОМИЛКА: не вдалося отримати місце у па�
 msgid "inconsistent detail field in smaps file, line:\n"
 msgstr "неповне поле подробиць у файлі smaps, рядок:\n"
 
-#: src/pmap.c:729
+#: src/pmap.c:731
 msgid "total kB"
 msgstr "кБ загалом"
 
-#: src/pmap.c:740
+#: src/pmap.c:742
 #, c-format
 msgid "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"
 msgstr "пов'язано: %ldК  записуване/приватне: %ldК спільне: %ldК\n"
 
 #. Translation Hint: keep total string length
 #. * as 24 characters. Adjust %16 if needed
-#: src/pmap.c:749
+#: src/pmap.c:751
 #, c-format
 msgid " total %16ldK\n"
 msgstr " загалом %16ld К\n"
 
 #. Translation Hint: keep total string length
 #. * as 16 characters. Adjust %8 if needed
-#: src/pmap.c:755
+#: src/pmap.c:757
 #, c-format
 msgid " total %8ldK\n"
 msgstr " загалом %8ld К\n"
 
-#: src/pmap.c:830
+#: src/pmap.c:832
 #, c-format
 msgid "config line too long - line %d"
 msgstr "рядок налаштувань є надто довгим, номер рядка %d"
 
-#: src/pmap.c:855
+#: src/pmap.c:857
 #, c-format
 msgid "unsupported section found in the config - line %d"
 msgstr "у файлі налаштувань виявлено непідтримуваний розділ, рядок %d"
 
-#: src/pmap.c:858 src/pmap.c:869 src/pmap.c:880 src/pmap.c:899 src/pmap.c:911
+#: src/pmap.c:860 src/pmap.c:871 src/pmap.c:882 src/pmap.c:905 src/pmap.c:917
 #, c-format
 msgid "syntax error found in the config - line %d"
 msgstr "виявлено синтаксичну помилку у налаштуваннях, рядок %d"
 
-#: src/pmap.c:933
-msgid "the file already exists - delete or rename it first"
-msgstr "файл вже існує, спочатку його слід вилучити або перейменувати"
-
-#: src/pmap.c:996
-msgid "HOME variable undefined"
-msgstr "змінну HOME не визначено"
-
-#: src/pmap.c:1004
+#: src/pmap.c:887 src/pmap.c:1010
 msgid "memory allocation failed"
 msgstr "не вдалося отримати місце у пам'яті"
 
-#: src/pmap.c:1055
+#: src/pmap.c:939
+msgid "the file already exists - delete or rename it first"
+msgstr "файл вже існує, спочатку його слід вилучити або перейменувати"
+
+#: src/pmap.c:1002
+msgid "HOME variable undefined"
+msgstr "змінну HOME не визначено"
+
+#: src/pmap.c:1061
 msgid "option -r is ignored as SunOS compatibility"
 msgstr "параметр -r ігнорується з міркувань сумісності з SunOS"
 
-#: src/pmap.c:1102
+#: src/pmap.c:1108
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
 msgstr ""
 "параметри -c, -C, -d, -n, -N, -x, -X не можна використовувати одночасно"
 
-#: src/pmap.c:1105
+#: src/pmap.c:1111
 msgid "options -p, -q are mutually exclusive with -n, -N"
 msgstr "параметри -p, -q не можна поєднувати з параметрами -n, -N"
 
-#: src/pmap.c:1108 src/pmap.c:1157
+#: src/pmap.c:1114 src/pmap.c:1163
 msgid "too many arguments"
 msgstr "забагато аргументів"
 
-#: src/pmap.c:1112
+#: src/pmap.c:1118
 msgid "rc file successfully created, feel free to edit the content"
 msgstr "файл rc успішно створено, тепер можна редагувати його вміст"
 
-#: src/pmap.c:1115
+#: src/pmap.c:1121
 msgid "couldn't create the rc file"
 msgstr "не вдалося створити файл rc"
 
-#: src/pmap.c:1127
+#: src/pmap.c:1133
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
 msgstr "файл ~/.%src успішно створено, тепер ви можете редагувати його вміст"
 
-#: src/pmap.c:1130
+#: src/pmap.c:1136
 #, c-format
 msgid "couldn't create ~/.%src"
 msgstr "не вдалося створити ~/.%src"
 
-#: src/pmap.c:1135
+#: src/pmap.c:1141
 msgid "argument missing"
 msgstr "не вистачає аргументу"
 
-#: src/pmap.c:1148
+#: src/pmap.c:1154
 msgid "couldn't read the rc file"
 msgstr "не вдалося прочитати файл rc"
 
-#: src/pmap.c:1150
+#: src/pmap.c:1156
 #, c-format
 msgid "couldn't read ~/.%src"
 msgstr "не вдалося прочитати ~/.%src"
 
-#: src/pmap.c:1159 src/pmap.c:1184
+#: src/pmap.c:1165 src/pmap.c:1190
 msgid "library failed pids statistics"
 msgstr "статистика щодо помилкових pid бібліотеки"
 
@@ -857,7 +862,7 @@ msgid "Signal %d (%s) caught by %s (%s).\n"
 msgstr "%3$s (%4$s) отримано сигнал %1$d (%2$s).\n"
 
 #: src/ps/display.c:75 src/ps/display.c:252 src/ps/display.c:407
-#: src/ps/output.c:2339 src/ps/parser.c:507 src/ps/parser.c:754
+#: src/ps/output.c:2359 src/ps/parser.c:509 src/ps/parser.c:756
 #: src/ps/select.c:95 src/ps/sortformat.c:263 src/ps/sortformat.c:301
 #: src/ps/sortformat.c:549
 msgid "please report this bug"
@@ -878,27 +883,27 @@ msgstr "не вдалося знайти ppid\n"
 msgid "could not find start_time\n"
 msgstr "не вдалося знайти start_time\n"
 
-#: src/ps/global.c:285
+#: src/ps/global.c:287
 #, c-format
 msgid "your %dx%d screen size is bogus. expect trouble\n"
 msgstr ""
 "ваш розмір екрана, %dx%d символів, є несправжнім. Очікуємо на проблеми.\n"
 
-#: src/ps/global.c:358 src/ps/global.c:370
+#: src/ps/global.c:360 src/ps/global.c:372
 msgid "environment specified an unknown personality"
 msgstr "у середовищі вказано невідому особистість (personality)"
 
-#: src/ps/global.c:362
+#: src/ps/global.c:364
 #, c-format
 msgid "cannot strdup() personality text\n"
 msgstr "не вдалося обробити текст запису особистості за допомогою strdup()\n"
 
-#: src/ps/global.c:493
+#: src/ps/global.c:495
 #, c-format
 msgid "fatal library error, context\n"
 msgstr "критична помилка бібліотеки, контекст\n"
 
-#: src/ps/global.c:501
+#: src/ps/global.c:503
 #, c-format
 msgid "fatal library error, lookup self\n"
 msgstr "критична помилка бібліотеки, самопошук\n"
@@ -910,7 +915,7 @@ msgstr "критична помилка бібліотеки, самопошук
 #. .
 #. . It must be limited to 15 characters or less.
 #.
-#: src/ps/global.c:540
+#: src/ps/global.c:542
 msgid "help"
 msgstr "help"
 
@@ -1223,7 +1228,14 @@ msgstr ""
 "     --rows, --lines <кількість>\n"
 "                      встановити висоту екрана у рядках\n"
 
-#: src/ps/help.c:162
+#: src/ps/help.c:160
+#, fuzzy
+msgid "     --signames       display signal masks using signal names\n"
+msgstr ""
+" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
+"назви)\n"
+
+#: src/ps/help.c:163
 msgid ""
 "\n"
 "Show threads:\n"
@@ -1231,23 +1243,23 @@ msgstr ""
 "\n"
 "Показ потоків:\n"
 
-#: src/ps/help.c:163
+#: src/ps/help.c:164
 msgid "  H                   as if they were processes\n"
 msgstr "  H                   так, наче вони є процесами\n"
 
-#: src/ps/help.c:164
+#: src/ps/help.c:165
 msgid " -L                   possibly with LWP and NLWP columns\n"
 msgstr " -L                   можливо, зі стовпчиками LWP і NLWP\n"
 
-#: src/ps/help.c:165
+#: src/ps/help.c:166
 msgid " -m, m                after processes\n"
 msgstr " -m, m                після процесів\n"
 
-#: src/ps/help.c:166
+#: src/ps/help.c:167
 msgid " -T                   possibly with SPID column\n"
 msgstr " -T                   можливо, зі стовпчиком SPID\n"
 
-#: src/ps/help.c:169
+#: src/ps/help.c:170
 msgid ""
 "\n"
 "Miscellaneous options:\n"
@@ -1255,51 +1267,51 @@ msgstr ""
 "\n"
 "Інші параметри:\n"
 
-#: src/ps/help.c:170
+#: src/ps/help.c:171
 msgid " -c                   show scheduling class with -l option\n"
 msgstr " -c                   виводити для параметра -l клас планування\n"
 
-#: src/ps/help.c:171
+#: src/ps/help.c:172
 msgid "  c                   show true command name\n"
 msgstr "  c                   вивести справжню назву команди\n"
 
-#: src/ps/help.c:172
+#: src/ps/help.c:173
 msgid "  e                   show the environment after command\n"
 msgstr "  e                   вивести дані середовища після команди\n"
 
-#: src/ps/help.c:173
+#: src/ps/help.c:174
 msgid ""
 "  k,    --sort        specify sort order as: [+|-]key[,[+|-]key[,...]]\n"
 msgstr ""
 "  k,    --sort        вказати спосіб упорядковування: [+|-]ключ[,"
 "[+|-]ключ[,...]]\n"
 
-#: src/ps/help.c:174
+#: src/ps/help.c:175
 msgid "  L                   show format specifiers\n"
 msgstr "  L                   вивести специфікатори форматів\n"
 
-#: src/ps/help.c:175
+#: src/ps/help.c:176
 msgid "  n                   display numeric uid and wchan\n"
 msgstr "  n                   вивести числові значення uid і wchan\n"
 
-#: src/ps/help.c:176
+#: src/ps/help.c:177
 msgid "  S,    --cumulative  include some dead child process data\n"
 msgstr ""
 "  S,    --cumulative  включити деякі дані щодо «мертвих» дочірніх процесів\n"
 
-#: src/ps/help.c:177
+#: src/ps/help.c:178
 msgid " -y                   do not show flags, show rss (only with -l)\n"
 msgstr " -y                   не виводити прапорців, вивести rss (лише з -l)\n"
 
-#: src/ps/help.c:178
+#: src/ps/help.c:179
 msgid " -V, V, --version     display version information and exit\n"
 msgstr " -V, V, --version     вивести дані щодо версії і завершити роботу\n"
 
-#: src/ps/help.c:179
+#: src/ps/help.c:180
 msgid " -w, w                unlimited output width\n"
 msgstr " -w, w                необмежена ширина виведення даних\n"
 
-#: src/ps/help.c:180
+#: src/ps/help.c:181
 #, c-format
 msgid ""
 "\n"
@@ -1322,7 +1334,7 @@ msgstr ""
 #. .  The word for "help" will be translated elsewhere.  Thus, the only
 #. .  translations below will be: "Try", "or" and "for additional...".
 #. .
-#: src/ps/help.c:201
+#: src/ps/help.c:202
 #, c-format
 msgid ""
 "\n"
@@ -1335,7 +1347,7 @@ msgstr ""
 "  за допомогою таких команд:   %s --%s <%s|%s|%s|%s|%s|%s>\n"
 "  %s --%s <%s|%s|%s|%s|%s|%s>\n"
 
-#: src/ps/help.c:214
+#: src/ps/help.c:215
 #, c-format
 msgid ""
 "\n"
@@ -1344,305 +1356,305 @@ msgstr ""
 "\n"
 "Докладніший опис можна знайти у ps(1).\n"
 
-#: src/ps/output.c:103
+#: src/ps/output.c:104
 msgid "Unable to get system boot time"
 msgstr "Не вдалося отримати час завантаження системи"
 
-#: src/ps/output.c:118
+#: src/ps/output.c:119
 msgid "Unable to get total memory"
 msgstr "Не вдалося отримати загальні дані щодо пам'яті"
 
-#: src/ps/output.c:2186
+#: src/ps/output.c:2206
 #, c-format
 msgid "fix bigness error\n"
 msgstr "помилка з виправленням величини\n"
 
-#: src/ps/output.c:2269
+#: src/ps/output.c:2289
 #, c-format
 msgid "bad alignment code\n"
 msgstr "помилковий код вирівнювання\n"
 
-#: src/ps/parser.c:62
+#: src/ps/parser.c:63
 msgid "the option is exclusive: "
 msgstr "параметр не можна використовувати з іншими: "
 
-#: src/ps/parser.c:92
+#: src/ps/parser.c:93
 msgid "process ID list syntax error"
 msgstr "синтаксична помилка у списку ідентифікаторів процесів"
 
-#: src/ps/parser.c:93 src/ps/parser.c:94
+#: src/ps/parser.c:94 src/ps/parser.c:95
 msgid "process ID out of range"
 msgstr "ідентифікатор процесу не належить до припустимого діапазону"
 
-#: src/ps/parser.c:107
+#: src/ps/parser.c:108
 msgid "user name does not exist"
 msgstr "такого імені користувача не існує"
 
-#: src/ps/parser.c:113
+#: src/ps/parser.c:114
 msgid "user ID out of range"
 msgstr "ідентифікатор користувача не належить до припустимого діапазону"
 
-#: src/ps/parser.c:126
+#: src/ps/parser.c:127
 msgid "group name does not exist"
 msgstr "назви групи не існує"
 
-#: src/ps/parser.c:132
+#: src/ps/parser.c:133
 msgid "group ID out of range"
 msgstr "ідентифікатор групи поза межами припустимого діапазону"
 
-#: src/ps/parser.c:148 src/ps/parser.c:172
+#: src/ps/parser.c:149 src/ps/parser.c:173
 msgid "TTY could not be found"
 msgstr "не вдалося знайти TTY"
 
-#: src/ps/parser.c:174
+#: src/ps/parser.c:175
 msgid "list member was not a TTY"
 msgstr "запис списку не був записом TTY"
 
-#: src/ps/parser.c:199
+#: src/ps/parser.c:200
 msgid "improper list"
 msgstr "неналежний список"
 
-#: src/ps/parser.c:247
+#: src/ps/parser.c:249
 msgid "list of command names must follow -C"
 msgstr "після -C має бути вказано список команд"
 
-#: src/ps/parser.c:255
+#: src/ps/parser.c:257
 msgid "date format must follow -D"
 msgstr "формат дати має відповідати -D"
 
-#: src/ps/parser.c:268
+#: src/ps/parser.c:270
 msgid "list of real groups must follow -G"
 msgstr "після -G має бути вказано список справжніх груп"
 
-#: src/ps/parser.c:281
+#: src/ps/parser.c:283
 msgid "list of jobs must follow -J"
 msgstr "після списку завдань має бути вказано -J"
 
-#: src/ps/parser.c:309
+#: src/ps/parser.c:311
 msgid "format or sort specification must follow -O"
 msgstr "після -O має бути вказано формат або специфікацію впорядкування"
 
-#: src/ps/parser.c:320
+#: src/ps/parser.c:322
 msgid "list of PRM groups must follow -R"
 msgstr "після -R слід вказати список груп PRM"
 
-#: src/ps/parser.c:339
+#: src/ps/parser.c:341
 msgid "list of real users must follow -U"
 msgstr "після -U має бути вказано список справжніх користувачів"
 
-#: src/ps/parser.c:380
+#: src/ps/parser.c:382
 msgid "list of session leaders OR effective group names must follow -g"
 msgstr ""
 "після -g має бути вказано список лідерів сеансів або назв ефективних груп"
 
-#: src/ps/parser.c:391
+#: src/ps/parser.c:393
 msgid "list of session leaders OR effective group IDs was invalid"
 msgstr ""
 "список лідерів сеансів або ідентифікаторів ефективних груп виявився "
 "некоректним"
 
-#: src/ps/parser.c:415
+#: src/ps/parser.c:417
 msgid "format specification must follow -o"
 msgstr "після -o має бути вказано специфікацію формату"
 
-#: src/ps/parser.c:421
+#: src/ps/parser.c:423
 msgid "list of process IDs must follow -p"
 msgstr "після -p має бути вказано список ідентифікаторів процесів"
 
-#: src/ps/parser.c:438
+#: src/ps/parser.c:440
 msgid "the -r option is reserved"
 msgstr "параметр -r зарезервовано"
 
-#: src/ps/parser.c:444
+#: src/ps/parser.c:446
 msgid "list of session IDs must follow -s"
 msgstr "після -s має бути вказано список ідентифікаторів сеансів"
 
-#: src/ps/parser.c:452
+#: src/ps/parser.c:454
 msgid "list of terminals (pty, tty...) must follow -t"
 msgstr "після -t має бути вказано список терміналів (pty, tty...)"
 
-#: src/ps/parser.c:460
+#: src/ps/parser.c:462
 msgid "list of users must follow -u"
 msgstr "після -u має бути вказано список користувачів"
 
-#: src/ps/parser.c:482
+#: src/ps/parser.c:484
 msgid "must set personality to get -x option"
 msgstr "для отримання доступу до параметра -x слід встановити особистість"
 
-#: src/ps/parser.c:497
+#: src/ps/parser.c:499
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
 msgstr "після -z слід вказати список зон (контекстів, міток, чогось іншого?)"
 
-#: src/ps/parser.c:504
+#: src/ps/parser.c:506
 msgid "embedded '-' among SysV options makes no sense"
 msgstr "вбудовування «-» до параметрів SysV не має сенсу"
 
-#: src/ps/parser.c:510
+#: src/ps/parser.c:512
 msgid "unsupported SysV option"
 msgstr "непідтримуваний параметр SysV"
 
-#: src/ps/parser.c:523
+#: src/ps/parser.c:525
 msgid "cannot happen - problem #1"
 msgstr "цього не мало статися — проблема 1"
 
-#: src/ps/parser.c:527
+#: src/ps/parser.c:529
 msgid "cannot happen - problem #2"
 msgstr "цього не мало статися — проблема 2"
 
-#: src/ps/parser.c:529
+#: src/ps/parser.c:531
 msgid "second chance parse failed, not BSD or SysV"
 msgstr "друга спроба обробки зазнала невдачі, не BSD або SysV"
 
-#: src/ps/parser.c:546
+#: src/ps/parser.c:548
 msgid "option A is reserved"
 msgstr "параметр A зарезервовано"
 
-#: src/ps/parser.c:551
+#: src/ps/parser.c:553
 msgid "option C is reserved"
 msgstr "параметр C зарезервовано"
 
-#: src/ps/parser.c:571
+#: src/ps/parser.c:573
 msgid "format or sort specification must follow O"
 msgstr "після O має бути вказано формат або специфікацію впорядкування"
 
-#: src/ps/parser.c:596
+#: src/ps/parser.c:598
 msgid "list of users must follow U"
 msgstr "після U має бути вказано список користувачів"
 
-#: src/ps/parser.c:608
+#: src/ps/parser.c:610
 msgid "obsolete W option not supported (you have a /dev/drum?)"
 msgstr "підтримки застарілого параметра W не передбачено (маєте /dev/drum?)"
 
-#: src/ps/parser.c:644 src/ps/parser.c:918 src/ps/parser.c:927
+#: src/ps/parser.c:646 src/ps/parser.c:921 src/ps/parser.c:930
 msgid "only one heading option may be specified"
 msgstr "має бути вказано лише один параметр заголовка"
 
-#: src/ps/parser.c:659
+#: src/ps/parser.c:661
 msgid "long sort specification must follow 'k'"
 msgstr "після k має бути вказано довгу специфікацію упорядковування"
 
-#: src/ps/parser.c:687
+#: src/ps/parser.c:689
 msgid "format specification must follow o"
 msgstr "після o має бути вказано специфікацію формату"
 
-#: src/ps/parser.c:693
+#: src/ps/parser.c:695
 msgid "list of process IDs must follow p"
 msgstr "після p має бути вказано список ідентифікаторів процесів"
 
-#: src/ps/parser.c:751
+#: src/ps/parser.c:753
 msgid "embedded '-' among BSD options makes no sense"
 msgstr "вбудовування «-» серед параметрів BSD не має сенсу"
 
-#: src/ps/parser.c:757
+#: src/ps/parser.c:759
 msgid "unsupported option (BSD syntax)"
 msgstr "непідтримуваний параметр (синтаксис BSD)"
 
-#: src/ps/parser.c:844 src/ps/parser.c:856
+#: src/ps/parser.c:847 src/ps/parser.c:859
 msgid "unknown gnu long option"
 msgstr "невідомий довгий параметр gnu"
 
-#: src/ps/parser.c:864
+#: src/ps/parser.c:867
 msgid "list of real groups must follow --Group"
 msgstr "після --Group має бути вказано список справжніх груп"
 
-#: src/ps/parser.c:872
+#: src/ps/parser.c:875
 msgid "list of real users must follow --User"
 msgstr "після --User має бути вказано список справжніх користувачів"
 
-#: src/ps/parser.c:891
+#: src/ps/parser.c:894
 msgid "number of columns must follow --cols, --width, or --columns"
 msgstr ""
 "після --cols, --width або --columns має бути вказано кількість стовпчиків"
 
-#: src/ps/parser.c:894
+#: src/ps/parser.c:897
 msgid "option --cumulative does not take an argument"
 msgstr "параметру --cumulative не передається жоден аргумент"
 
-#: src/ps/parser.c:899
+#: src/ps/parser.c:902
 msgid "date format must follow --date-format"
 msgstr "формат дати має відповідати --date-format"
 
-#: src/ps/parser.c:905
+#: src/ps/parser.c:908
 msgid "option --deselect does not take an argument"
 msgstr "параметру --deselect не передається жоден аргумент"
 
-#: src/ps/parser.c:917
+#: src/ps/parser.c:920
 msgid "option --no-heading does not take an argument"
 msgstr "параметру --no-heading не передається жоден аргумент"
 
-#: src/ps/parser.c:926
+#: src/ps/parser.c:929
 msgid "option --heading does not take an argument"
 msgstr "параметру --heading не передається жоден аргумент"
 
-#: src/ps/parser.c:932
+#: src/ps/parser.c:935
 msgid "option --forest does not take an argument"
 msgstr "параметру --forest не передається жоден аргумент"
 
-#: src/ps/parser.c:938
+#: src/ps/parser.c:941
 msgid "format specification must follow --format"
 msgstr "після --format має бути вказано специфікацію формату"
 
-#: src/ps/parser.c:944
+#: src/ps/parser.c:947
 msgid "list of effective groups must follow --group"
 msgstr "після --group має бути вказано список ефективних груп"
 
-#: src/ps/parser.c:962
+#: src/ps/parser.c:965
 msgid "list of process IDs must follow --pid"
 msgstr "після --pid має бути вказано список ідентифікаторів процесів"
 
-#: src/ps/parser.c:978
+#: src/ps/parser.c:981
 msgid "list of process IDs must follow --ppid"
 msgstr "після --ppid має бути вказано список ідентифікаторів процесів"
 
-#: src/ps/parser.c:996
+#: src/ps/parser.c:999
 msgid "number of rows must follow --rows or --lines"
 msgstr "після --rows або --lines має бути вказано кількість рядків"
 
-#: src/ps/parser.c:1000
+#: src/ps/parser.c:1003
 msgid "some sid thing(s) must follow --sid"
 msgstr "після --sid має бути вказано щось пов’язане із sid"
 
-#: src/ps/parser.c:1008
+#: src/ps/parser.c:1015
 msgid "long sort specification must follow --sort"
 msgstr "після --sort має бути вказано довгу специфікацію упорядковування"
 
-#: src/ps/parser.c:1014
+#: src/ps/parser.c:1021
 msgid "list of ttys must follow --tty"
 msgstr "після --tty має бути вказано список tty"
 
-#: src/ps/parser.c:1022
+#: src/ps/parser.c:1029
 msgid "list of effective users must follow --user"
 msgstr "після --user має бути вказано ефективних користувачів"
 
-#: src/ps/parser.c:1138
+#: src/ps/parser.c:1145
 msgid "way bad"
 msgstr "погано"
 
-#: src/ps/parser.c:1152
+#: src/ps/parser.c:1159
 msgid "garbage option"
 msgstr "зайвий параметр"
 
-#: src/ps/parser.c:1156
+#: src/ps/parser.c:1163
 msgid "something broke"
 msgstr "щось поламалося"
 
-#: src/ps/parser.c:1176
+#: src/ps/parser.c:1183
 msgid "thread display conflicts with forest display"
 msgstr "показ гілки конфліктує з показом деревоподібної ієрархії"
 
-#: src/ps/parser.c:1181
+#: src/ps/parser.c:1188
 msgid "thread flags conflict; can't use H with m or -m"
 msgstr "конфлікт прапорців гілок; не можна використовувати H з m або -m"
 
-#: src/ps/parser.c:1183
+#: src/ps/parser.c:1190
 msgid "thread flags conflict; can't use both m and -m"
 msgstr "конфлікт прапорців гілок; не можна використовувати одразу m і -m"
 
-#: src/ps/parser.c:1185
+#: src/ps/parser.c:1192
 msgid "thread flags conflict; can't use both -L and -T"
 msgstr "конфлікт прапорців гілок; не можна використовувати одразу -L і -T"
 
-#: src/ps/parser.c:1258 src/ps/parser.c:1259
+#: src/ps/parser.c:1265 src/ps/parser.c:1266
 #, c-format
 msgid "error: %s\n"
 msgstr "помилка: %s\n"
@@ -1803,7 +1815,7 @@ msgstr "некоректний ідентифікатор процесу: %s"
 msgid "Unable to create pid Pids_info structure"
 msgstr "Unable to create pid Pids_info structure"
 
-#: src/skill.c:288 src/w.c:411
+#: src/skill.c:288 src/w.c:458
 msgid "Unable to load process information"
 msgstr "Не вдалося завантажити дані щодо процесу"
 
@@ -2034,7 +2046,7 @@ msgstr "Не можна поєднувати параметри -d і -o"
 msgid "illegal delay"
 msgstr "некоректна затримка"
 
-#: src/slabtop.c:192 src/tload.c:142 src/vmstat.c:1050
+#: src/slabtop.c:192 src/tload.c:142 src/vmstat.c:1049
 msgid "delay must be positive integer"
 msgstr "затримку слід вказувати як додатне число"
 
@@ -2074,7 +2086,7 @@ msgstr "Мінімальний / Середній / Максимальний о�
 msgid "  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
 msgstr "  ОБ’Є АКТИВН  ВИК РОЗМ ОБ.  ЧАСТ  ОБ./ЧАСТ РОЗМ. КЕШУ НАЗВ"
 
-#: src/slabtop.c:313 src/vmstat.c:768
+#: src/slabtop.c:313 src/vmstat.c:767
 msgid "Unable to create slabinfo structure"
 msgstr "Не вдалося отримати структуру slabinfo"
 
@@ -2082,11 +2094,11 @@ msgstr "Не вдалося отримати структуру slabinfo"
 msgid "terminal setting retrieval"
 msgstr "отримання параметра термінала"
 
-#: src/slabtop.c:334 src/vmstat.c:775
+#: src/slabtop.c:334 src/vmstat.c:774
 msgid "Unable to get slabinfo node data"
 msgstr "Не вдалося отримати дані вузла slabinfo"
 
-#: src/slabtop.c:340 src/vmstat.c:777
+#: src/slabtop.c:340 src/vmstat.c:776
 msgid "Unable to sort slab nodes"
 msgstr "Не вдалося упорядкувати вузли частини"
 
@@ -2185,65 +2197,65 @@ msgstr "  -x                   фіктивний параметр\n"
 msgid "  -d                   alias of -h\n"
 msgstr "  -d                   те саме, що і -h\n"
 
-#: src/sysctl.c:334 src/sysctl.c:395
+#: src/sysctl.c:334 src/sysctl.c:390
 #, c-format
 msgid "\"%s\" is an unknown key"
 msgstr "«%s» є невідомим ключем"
 
-#: src/sysctl.c:357 src/sysctl.c:513 src/sysctl.c:550
+#: src/sysctl.c:352 src/sysctl.c:508 src/sysctl.c:545
 #, c-format
 msgid "cannot stat %s"
 msgstr "не вдалося отримати статистичні дані щодо %s"
 
-#: src/sysctl.c:400 src/sysctl.c:442
+#: src/sysctl.c:395 src/sysctl.c:437
 #, c-format
 msgid "permission denied on key '%s'"
 msgstr "доступ до ключа «%s» заборонено"
 
-#: src/sysctl.c:407 src/sysctl.c:459
+#: src/sysctl.c:402 src/sysctl.c:454
 #, c-format
 msgid "reading key \"%s\""
 msgstr "читаємо ключ «%s»"
 
-#: src/sysctl.c:497
+#: src/sysctl.c:492
 #, c-format
 msgid "unable to open directory \"%s\""
 msgstr "не вдалося відкрити каталог «%s»"
 
-#: src/sysctl.c:562
+#: src/sysctl.c:557
 msgid "strdup key"
 msgstr "ключ strdup"
 
-#: src/sysctl.c:568 src/sysctl.c:574 src/sysctl.c:607
+#: src/sysctl.c:564 src/sysctl.c:571 src/sysctl.c:604
 #, c-format
 msgid "setting key \"%s\""
 msgstr "встановлюємо ключ «%s»"
 
-#: src/sysctl.c:584
+#: src/sysctl.c:581
 #, c-format
 msgid "\"%s\" is an unknown key%s"
 msgstr "«%s» є невідомим ключем%s"
 
-#: src/sysctl.c:585 src/sysctl.c:594 src/sysctl.c:598
+#: src/sysctl.c:582 src/sysctl.c:591 src/sysctl.c:595
 msgid ", ignoring"
 msgstr ", ігноруємо"
 
-#: src/sysctl.c:593
+#: src/sysctl.c:590
 #, c-format
 msgid "permission denied on key \"%s\"%s"
 msgstr "заборонено доступ до ключа «%s»%s"
 
-#: src/sysctl.c:597
+#: src/sysctl.c:594
 #, c-format
 msgid "setting key \"%s\"%s"
 msgstr "встановлюємо ключ «%s»%s"
 
-#: src/sysctl.c:672
+#: src/sysctl.c:669
 #, c-format
 msgid "%s(%d): invalid syntax, continuing..."
 msgstr "%s(%d): некоректний синтаксис, продовжуємо..."
 
-#: src/sysctl.c:764
+#: src/sysctl.c:761
 #, c-format
 msgid ""
 "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
@@ -2252,21 +2264,21 @@ msgstr ""
 "На цій платформі не передбачено підтримки GLOB_TILDE, тильду у «%s» не буде "
 "замінено."
 
-#: src/sysctl.c:770
+#: src/sysctl.c:767
 msgid "glob failed"
 msgstr "не вдалося використати символи-замінники"
 
-#: src/sysctl.c:776
+#: src/sysctl.c:773
 #, c-format
 msgid "cannot open \"%s\""
 msgstr "не вдалося відкрити «%s»"
 
-#: src/sysctl.c:880 src/sysctl.c:887
+#: src/sysctl.c:877 src/sysctl.c:884
 #, c-format
 msgid "* Applying %s ...\n"
 msgstr "* Застосовуємо %s ...\n"
 
-#: src/sysctl.c:1053
+#: src/sysctl.c:1050
 #, c-format
 msgid ""
 "no variables specified\n"
@@ -2275,7 +2287,7 @@ msgstr ""
 "не вказано змінних\n"
 "Спробуйте «%s --help», щоб отримати додаткову інформацію."
 
-#: src/sysctl.c:1057
+#: src/sysctl.c:1054
 #, c-format
 msgid ""
 "options -N and -q cannot coexist\n"
@@ -2309,7 +2321,7 @@ msgstr " -s, --scale <число> вертикальний масштаб\n"
 msgid "scale cannot be negative"
 msgstr "масштаб не може бути від’ємним"
 
-#: src/tload.c:144 src/vmstat.c:1052
+#: src/tload.c:144 src/vmstat.c:1051
 msgid "too large delay value"
 msgstr "надто велике значення затримки"
 
@@ -2381,7 +2393,7 @@ msgid "Effective User Id"
 msgstr "Ідентифікатор ефективного користувача"
 
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:161 src/w.c:684
+#: src/top/top_nls.c:161 src/w.c:799
 msgid "USER"
 msgstr "КОР."
 
@@ -4019,7 +4031,7 @@ msgstr ""
 "зміни і завершити "
 
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
-#. .                 also imbedded in the translatable text (along with escape seqs)
+#. .                 also embedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:751
 msgid ""
@@ -4032,7 +4044,7 @@ msgstr ""
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
 #. .  to allow 1 blank line before the fields & descriptions.
-#. .  If absoultely necessary, 4 lines could be used (but never more).
+#. .  If absolutely necessary, 4 lines could be used (but never more).
 #. .
 #: src/top/top_nls.c:759
 #, c-format
@@ -4198,9 +4210,10 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         пропустити перший рядок виведення\n"
 
 #: src/vmstat.c:253
+#, fuzzy
 msgid ""
-"procs -----------memory---------- ---swap-- -----io---- -system-- ------"
-"cpu-----"
+"procs -----------memory---------- ---swap-- -----io---- -system-- -------"
+"cpu-------"
 msgstr ""
 "проц  -----------пам’ять--------- ---своп-- ----в/в---- -система- ----"
 "процесор---"
@@ -4213,7 +4226,7 @@ msgstr ""
 "проц  -----------пам’ять--------- ---своп-- ----в/в---- -система- ------"
 "процесор-----"
 
-#: src/vmstat.c:256 src/vmstat.c:620
+#: src/vmstat.c:256 src/vmstat.c:619
 msgid " -----timestamp-----"
 msgstr " -----часова позначка-----"
 
@@ -4317,23 +4330,23 @@ msgstr "st"
 msgid "gu"
 msgstr "gu"
 
-#: src/vmstat.c:375 src/vmstat.c:871
+#: src/vmstat.c:374 src/vmstat.c:870
 msgid "Unable to create vmstat structure"
 msgstr "Не вдалося створити структуру vmstat"
 
-#: src/vmstat.c:377 src/vmstat.c:867 src/vmstat.c:920
+#: src/vmstat.c:376 src/vmstat.c:866 src/vmstat.c:919
 msgid "Unable to create system stat structure"
 msgstr "Не вдалося створити структуру статистики системи"
 
-#: src/vmstat.c:381
+#: src/vmstat.c:380
 msgid "Unable to get uptime"
 msgstr "Не вдалося отримати час роботи"
 
-#: src/vmstat.c:392 src/vmstat.c:473 src/vmstat.c:875
+#: src/vmstat.c:391 src/vmstat.c:472 src/vmstat.c:874
 msgid "Unable to select memory information"
 msgstr "Не вдалося вибрати відомості щодо пам'яті"
 
-#: src/vmstat.c:406 src/vmstat.c:459 src/vmstat.c:869
+#: src/vmstat.c:405 src/vmstat.c:458 src/vmstat.c:868
 msgid "Unable to select stat information"
 msgstr "Не вдалося вибрати статистичні відомості"
 
@@ -4341,35 +4354,35 @@ msgstr "Не вдалося вибрати статистичні відомос
 #. * header fields that follow (marked with max x chars) might
 #. * not work, unless manual page is translated as well.
 #. Translation Hint: max 10 chars
-#: src/vmstat.c:566
+#: src/vmstat.c:565
 msgid "reads"
 msgstr "читання"
 
 #. Translation Hint: max 16 chars
-#: src/vmstat.c:568
+#: src/vmstat.c:567
 msgid "read sectors"
 msgstr "чит. секторів"
 
 #. Translation Hint: max 10 chars
-#: src/vmstat.c:570
+#: src/vmstat.c:569
 msgid "writes"
 msgstr "записи"
 
 #. Translation Hint: max 16 chars
-#: src/vmstat.c:572
+#: src/vmstat.c:571
 msgid "requested writes"
 msgstr "запитаних записів"
 
-#: src/vmstat.c:585 src/vmstat.c:688 src/vmstat.c:814
+#: src/vmstat.c:584 src/vmstat.c:687 src/vmstat.c:813
 msgid "Unable to create diskstat structure"
 msgstr "Не вдалося створити структуру diskstat"
 
-#: src/vmstat.c:588 src/vmstat.c:594
+#: src/vmstat.c:587 src/vmstat.c:593
 #, c-format
 msgid "Disk/Partition %s not found"
 msgstr "Диск або розділ %s не знайдено"
 
-#: src/vmstat.c:617
+#: src/vmstat.c:616
 msgid ""
 "disk- ------------reads------------ ------------writes----------- -----"
 "IO------"
@@ -4377,7 +4390,7 @@ msgstr ""
 "диск- -----------читання----------- ------------запис----------- -----В/"
 "В-----"
 
-#: src/vmstat.c:619
+#: src/vmstat.c:618
 msgid ""
 "disk- -------------------reads------------------- -------------------"
 "writes------------------ ------IO-------"
@@ -4386,36 +4399,36 @@ msgstr ""
 "запис------------------- ------В/В------"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:638 src/vmstat.c:646
+#: src/vmstat.c:637 src/vmstat.c:645
 msgid "total"
 msgstr "загалом"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:640 src/vmstat.c:648
+#: src/vmstat.c:639 src/vmstat.c:647
 msgid "merged"
 msgstr "об’єднано"
 
 #. Translation Hint: max 7 chars
-#: src/vmstat.c:642 src/vmstat.c:650
+#: src/vmstat.c:641 src/vmstat.c:649
 msgid "sectors"
 msgstr "сектори"
 
 #. Translation Hint: max 7 chars
-#: src/vmstat.c:644 src/vmstat.c:652
+#: src/vmstat.c:643 src/vmstat.c:651
 msgid "ms"
 msgstr "мс"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:654
+#: src/vmstat.c:653
 msgid "cur"
 msgstr "пот."
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:656
+#: src/vmstat.c:655
 msgid "sec"
 msgstr "сек"
 
-#: src/vmstat.c:695 src/vmstat.c:816
+#: src/vmstat.c:694 src/vmstat.c:815
 msgid "Unable to retrieve disk statistics"
 msgstr "Не вдалося отримати статистику щодо дисків"
 
@@ -4423,237 +4436,237 @@ msgstr "Не вдалося отримати статистику щодо ди�
 #. * follow (marked with max x chars) might not work, unless
 #. * manual page is translated as well.
 #. Translation Hint: max 24 chars
-#: src/vmstat.c:742
+#: src/vmstat.c:741
 msgid "Cache"
 msgstr "Кеш"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:744
+#: src/vmstat.c:743
 msgid "Num"
 msgstr "Числ"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:746
+#: src/vmstat.c:745
 msgid "Total"
 msgstr "Загалом"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:748
+#: src/vmstat.c:747
 msgid "Size"
 msgstr "Розмір"
 
 #. Translation Hint: max 6 chars
-#: src/vmstat.c:750
+#: src/vmstat.c:749
 msgid "Pages"
 msgstr "Сторінки"
 
-#: src/vmstat.c:837
+#: src/vmstat.c:836
 #, c-format
 msgid "%13d disks\n"
 msgstr "%13d дисків\n"
 
-#: src/vmstat.c:838
+#: src/vmstat.c:837
 #, c-format
 msgid "%13d partitions\n"
 msgstr "%13d розділів\n"
 
-#: src/vmstat.c:839
+#: src/vmstat.c:838
 #, c-format
 msgid "%13lu total reads\n"
 msgstr "%13lu читань загалом\n"
 
-#: src/vmstat.c:840
+#: src/vmstat.c:839
 #, c-format
 msgid "%13lu merged reads\n"
 msgstr "%13lu об’єднаних читань\n"
 
-#: src/vmstat.c:841
+#: src/vmstat.c:840
 #, c-format
 msgid "%13lu read sectors\n"
 msgstr "%13lu секторів прочитано\n"
 
-#: src/vmstat.c:842
+#: src/vmstat.c:841
 #, c-format
 msgid "%13lu milli reading\n"
 msgstr "%13lu мілісекунд на читання\n"
 
-#: src/vmstat.c:843
+#: src/vmstat.c:842
 #, c-format
 msgid "%13lu writes\n"
 msgstr "%13lu записів\n"
 
-#: src/vmstat.c:844
+#: src/vmstat.c:843
 #, c-format
 msgid "%13lu merged writes\n"
 msgstr "%13lu об’єднаних записів\n"
 
-#: src/vmstat.c:845
+#: src/vmstat.c:844
 #, c-format
 msgid "%13lu written sectors\n"
 msgstr "%13lu секторів записано\n"
 
-#: src/vmstat.c:846
+#: src/vmstat.c:845
 #, c-format
 msgid "%13lu milli writing\n"
 msgstr "%13lu мілісекунд на запис\n"
 
-#: src/vmstat.c:847
+#: src/vmstat.c:846
 #, c-format
 msgid "%13lu inprogress IO\n"
 msgstr "%13lu дій з введення-виведення, що виконуються\n"
 
-#: src/vmstat.c:848
+#: src/vmstat.c:847
 #, c-format
 msgid "%13lu milli spent IO\n"
 msgstr "%13lu мілісекунд на введення-виведення\n"
 
-#: src/vmstat.c:849
+#: src/vmstat.c:848
 #, c-format
 msgid "%13lu milli weighted IO\n"
 msgstr "%13lu мілісекунд зваженого введення-виведення\n"
 
-#: src/vmstat.c:877
+#: src/vmstat.c:876
 #, c-format
 msgid "%13lu %s total memory\n"
 msgstr "%13lu %s пам’яті загалом\n"
 
-#: src/vmstat.c:878
+#: src/vmstat.c:877
 #, c-format
 msgid "%13lu %s used memory\n"
 msgstr "%13lu %s пам’яті використано\n"
 
-#: src/vmstat.c:879
+#: src/vmstat.c:878
 #, c-format
 msgid "%13lu %s active memory\n"
 msgstr "%13lu %s пам’яті активно\n"
 
-#: src/vmstat.c:880
+#: src/vmstat.c:879
 #, c-format
 msgid "%13lu %s inactive memory\n"
 msgstr "%13lu %s пам’яті неактивно\n"
 
-#: src/vmstat.c:881
+#: src/vmstat.c:880
 #, c-format
 msgid "%13lu %s free memory\n"
 msgstr "%13lu %s пам’яті вільно\n"
 
-#: src/vmstat.c:882
+#: src/vmstat.c:881
 #, c-format
 msgid "%13lu %s buffer memory\n"
 msgstr "%13lu %s пам’яті у буфері\n"
 
-#: src/vmstat.c:883
+#: src/vmstat.c:882
 #, c-format
 msgid "%13lu %s swap cache\n"
 msgstr "%13lu %s резервного кешу\n"
 
-#: src/vmstat.c:884
+#: src/vmstat.c:883
 #, c-format
 msgid "%13lu %s total swap\n"
 msgstr "%13lu %s резервної пам’яті загалом\n"
 
-#: src/vmstat.c:885
+#: src/vmstat.c:884
 #, c-format
 msgid "%13lu %s used swap\n"
 msgstr "%13lu %s резервної пам’яті використано\n"
 
-#: src/vmstat.c:886
+#: src/vmstat.c:885
 #, c-format
 msgid "%13lu %s free swap\n"
 msgstr "%13lu %s резервної пам’яті вільно\n"
 
-#: src/vmstat.c:887
+#: src/vmstat.c:886
 #, c-format
 msgid "%13lld non-nice user cpu ticks\n"
 msgstr "%13lld тактів процесора для неуподобаних процесів користувача\n"
 
-#: src/vmstat.c:888
+#: src/vmstat.c:887
 #, c-format
 msgid "%13lld nice user cpu ticks\n"
 msgstr "%13lld тактів процесора для уподобаних процесів користувача\n"
 
-#: src/vmstat.c:889
+#: src/vmstat.c:888
 #, c-format
 msgid "%13lld system cpu ticks\n"
 msgstr "%13lld тактів процесора для системи\n"
 
-#: src/vmstat.c:890
+#: src/vmstat.c:889
 #, c-format
 msgid "%13lld idle cpu ticks\n"
 msgstr "%13lld тактів бездіяльності процесора\n"
 
-#: src/vmstat.c:891
+#: src/vmstat.c:890
 #, c-format
 msgid "%13lld IO-wait cpu ticks\n"
 msgstr "%13lld тактів очікування введення-виведення процесора\n"
 
-#: src/vmstat.c:892
+#: src/vmstat.c:891
 #, c-format
 msgid "%13lld IRQ cpu ticks\n"
 msgstr "%13lld тактів IRQ процесора\n"
 
-#: src/vmstat.c:893
+#: src/vmstat.c:892
 #, c-format
 msgid "%13lld softirq cpu ticks\n"
 msgstr "%13lld тактів програмних переривань процесора\n"
 
-#: src/vmstat.c:894
+#: src/vmstat.c:893
 #, c-format
 msgid "%13lld stolen cpu ticks\n"
 msgstr "%13lld викрадених тактів процесора\n"
 
-#: src/vmstat.c:895
+#: src/vmstat.c:894
 #, c-format
 msgid "%13lld non-nice guest cpu ticks\n"
 msgstr "%13lld тактів процесора для неуподобаних гостьових процесів\n"
 
-#: src/vmstat.c:896
+#: src/vmstat.c:895
 #, c-format
 msgid "%13lld nice guest cpu ticks\n"
 msgstr "%13lld тактів процесора для уподобаних гостьових процесів\n"
 
-#: src/vmstat.c:897
+#: src/vmstat.c:896
 #, c-format
 msgid "%13lu K paged in\n"
 msgstr "%13lu K поділених на сторінки вхідних даних\n"
 
-#: src/vmstat.c:898
+#: src/vmstat.c:897
 #, c-format
 msgid "%13lu K paged out\n"
 msgstr "%13lu K поділених на сторінки вихідних даних\n"
 
-#: src/vmstat.c:899
+#: src/vmstat.c:898
 #, c-format
 msgid "%13lu pages swapped in\n"
 msgstr "%13lu сторінок завантажено\n"
 
-#: src/vmstat.c:900
+#: src/vmstat.c:899
 #, c-format
 msgid "%13lu pages swapped out\n"
 msgstr "%13lu сторінок вивантажено\n"
 
-#: src/vmstat.c:901
+#: src/vmstat.c:900
 #, c-format
 msgid "%13lu interrupts\n"
 msgstr "%13lu переривань\n"
 
-#: src/vmstat.c:902
+#: src/vmstat.c:901
 #, c-format
 msgid "%13lu CPU context switches\n"
 msgstr "%13lu перемикачів контексту процесора\n"
 
-#: src/vmstat.c:903
+#: src/vmstat.c:902
 #, c-format
 msgid "%13lu boot time\n"
 msgstr "%13lu час з моменту завантаження\n"
 
-#: src/vmstat.c:904 src/vmstat.c:922
+#: src/vmstat.c:903 src/vmstat.c:921
 #, c-format
 msgid "%13lu forks\n"
 msgstr "%13lu відгалужень\n"
 
 #. Translation Hint: do not change argument characters
-#: src/vmstat.c:1025
+#: src/vmstat.c:1024
 msgid "-S requires k, K, m or M (default is KiB)"
 msgstr "для -S слід вказати k, K, m або M (типовою одиницею є КіБ)"
 
@@ -4675,6 +4688,14 @@ msgstr ""
 "і стилю\n"
 
 #: src/watch.c:98
+#, fuzzy
+msgid ""
+"  -C, --no-color         do not interpret ANSI color and style sequences\n"
+msgstr ""
+"  -c, --color            обробляти послідовності символів ANSI для кольорів "
+"і стилю\n"
+
+#: src/watch.c:99
 msgid ""
 "  -d, --differences[=<permanent>]\n"
 "                         highlight changes between updates\n"
@@ -4682,18 +4703,18 @@ msgstr ""
 "  -d, --differences[=<сталість>]\n"
 "                         позначати відмінності між оновленнями\n"
 
-#: src/watch.c:100
+#: src/watch.c:101
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
 msgstr ""
 "  -e, --errexit          вийти, якщо виконання команди завершується "
 "ненульовим станом\n"
 
-#: src/watch.c:101
+#: src/watch.c:102
 msgid "  -g, --chgexit          exit when output from command changes\n"
 msgstr ""
 "  -g, --chgexit          вийти, якщо змінюються дані, виведені командою\n"
 
-#: src/watch.c:102
+#: src/watch.c:103
 msgid ""
 "  -q, --equexit <cycles>\n"
 "                         exit when output from command does not change\n"
@@ -4702,145 +4723,145 @@ msgstr ""
 "                         вийти, якщо виведення з командного рядка не "
 "змінюється\n"
 
-#: src/watch.c:104
+#: src/watch.c:105
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr "  -n, --interval <число> кількість секунд очікування між оновленнями\n"
 
-#: src/watch.c:105
+#: src/watch.c:106
 msgid "  -p, --precise          attempt run command in precise intervals\n"
 msgstr ""
 "  -p, --precise          намагатися виконувати команду з точними проміжками\n"
 
-#: src/watch.c:106
+#: src/watch.c:107
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
 msgstr ""
 "  -r, --no-rerun         не перезапускати програми при зміні розмірів вікна\n"
 
-#: src/watch.c:107
+#: src/watch.c:108
 msgid "  -t, --no-title         turn off header\n"
 msgstr "  -t, --no-title         вимкнути заголовок\n"
 
-#: src/watch.c:108
+#: src/watch.c:109
 msgid "  -w, --no-wrap          turn off line wrapping\n"
 msgstr "  -w, --no-wrap          вимкнути перенесення рядків\n"
 
-#: src/watch.c:109
+#: src/watch.c:110
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
 msgstr "  -x, --exec             передати команду exec, а не \"sh -c\"\n"
 
-#: src/watch.c:112
+#: src/watch.c:113
 msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  вивести інформацію про версію та вийти\n"
 
-#: src/watch.c:486
+#: src/watch.c:485
 #, c-format
 msgid "Every %.1fs: "
 msgstr "Кожні %.1f с: "
 
-#: src/watch.c:487
+#: src/watch.c:486
 #, c-format
 msgid "%s: %s"
 msgstr "%s: %s"
 
-#: src/watch.c:576
+#: src/watch.c:575
 msgid "unable to create IPC pipes"
 msgstr "не вдалося створити канали IPC"
 
-#: src/watch.c:586
+#: src/watch.c:585
 msgid "unable to fork process"
 msgstr "не вдалося розгалузити процес"
 
-#: src/watch.c:591
+#: src/watch.c:590
 msgid "dup2 failed"
 msgstr "помилка dup2"
 
-#: src/watch.c:598
+#: src/watch.c:597
 #, c-format
 msgid "unable to execute '%s'"
 msgstr "не вдалося виконати «%s»"
 
-#: src/watch.c:615
+#: src/watch.c:614
 msgid "fdopen"
 msgstr "fdopen"
 
-#: src/watch.c:789
+#: src/watch.c:788
 msgid "waitpid"
 msgstr "waitpid"
 
-#: src/watch.c:797
+#: src/watch.c:796
 msgid "command exit with a non-zero status, press a key to exit"
 msgstr ""
 "виконання команди завершено з ненульовим повідомлення щодо стану, натисніть "
 "клавішу, щоб завершити роботу"
 
-#: src/watch.c:859
+#: src/watch.c:863
 msgid "Could not parse interval from WATCH_INTERVAL"
 msgstr "Не вдалося обробити інтервал з WATCH_INTERVAL"
 
-#: src/watch.c:947
+#: src/watch.c:954
 #, c-format
 msgid "unicode handling error\n"
 msgstr "помилка обробки unicode\n"
 
-#: src/watch.c:953
+#: src/watch.c:960
 #, c-format
 msgid "unicode handling error (malloc)\n"
 msgstr "помилка обробки unicode (malloc)\n"
 
-#: src/w.c:255 src/w.c:270
+#: src/w.c:289 src/w.c:304
 #, c-format
 msgid " %2lludays"
 msgstr " %2lluднів"
 
 #. Translation Hint: Minutes:Seconds
 #. Translation Hint: Hours:Minutes
-#: src/w.c:264 src/w.c:274
+#: src/w.c:298 src/w.c:308
 #, c-format
 msgid " %2llu:%02um"
 msgstr " %2llu:%02uхв"
 
 #. Translation Hint: Seconds:Centiseconds
-#: src/w.c:282
+#: src/w.c:316
 #, c-format
 msgid " %2llu.%02us"
 msgstr " %2llu.%02uс"
 
-#: src/w.c:541
+#: src/w.c:656
 #, c-format
 msgid " %s [options] [user]\n"
 msgstr " %s [параметри] [користувач]\n"
 
-#: src/w.c:543
+#: src/w.c:658
 msgid " -h, --no-header     do not print header\n"
 msgstr " -h, --no-header     не виводити заголовок\n"
 
-#: src/w.c:544
+#: src/w.c:659
 msgid " -u, --no-current    ignore current process username\n"
 msgstr " -u, --no-current    ігнорувати ім’я користувача поточного процесу\n"
 
-#: src/w.c:545
+#: src/w.c:660
 msgid " -s, --short         short format\n"
 msgstr " -s, --short         скорочений формат\n"
 
-#: src/w.c:546
+#: src/w.c:661
 msgid " -f, --from          show remote hostname field\n"
 msgstr " -f, --from          вивести поле назви віддаленого вузла\n"
 
-#: src/w.c:547
+#: src/w.c:662
 msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     виведення даних у застарілому форматі\n"
 
-#: src/w.c:548
+#: src/w.c:663
 msgid ""
 " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
 msgstr ""
 " -i, --ip-addr       виводити IP-адресу замість назви вузла (якщо можна)\n"
 
-#: src/w.c:549
+#: src/w.c:664
 msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          вивести ідентифікатори процесів у WHAT\n"
 
-#: src/w.c:648
+#: src/w.c:763
 #, c-format
 msgid ""
 "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
@@ -4848,7 +4869,7 @@ msgstr ""
 "Значення довжини для середовища користувача, PROCPS_USERLEN, має належати "
 "діапазону від 8 до %i, ігноруємо.\n"
 
-#: src/w.c:658
+#: src/w.c:773
 #, c-format
 msgid ""
 "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
@@ -4858,24 +4879,33 @@ msgstr ""
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
-#: src/w.c:684
+#: src/w.c:799
 #, c-format
 msgid "%-*s TTY      "
 msgstr "%-*s TTY      "
 
-#: src/w.c:686
+#: src/w.c:801
 msgid "FROM"
 msgstr "З"
 
-#: src/w.c:688
+#: src/w.c:803
 #, c-format
 msgid "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 msgstr "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
 
-#: src/w.c:690
+#: src/w.c:805
 #, c-format
 msgid "   IDLE WHAT\n"
 msgstr "   IDLE WHAT\n"
+
+#: src/w.c:815
+#, fuzzy
+msgid "error getting sessions"
+msgstr "Помилка під час отримання результатів резюме частини"
+
+#: src/w.c:823
+msgid "get user name failed"
+msgstr ""
 
 #: local/c.h:153
 msgid ""
