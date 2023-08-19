@@ -10,13 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH PS "1" "2023-08-16" "procps-ng" "User Commands"
-.\"
-.\" To render this page:
-.\"    groff -t -b -man -X -P-resolution -P100 -Tps ps.1 &
-.\"    groff -t -b -man -X -TX100 ps.1 &
-.\"    tbl ps.1 | troff -Ww -man -z
-.\"    groff -t -man -Tps ps.1 | ps2pdf - - > ps.pdf
+.TH PS "1" "2023-08-19" "procps-ng" "User Commands"
 .\"
 .\" Ragged-right text.
 .na
@@ -33,9 +27,7 @@
 .SH NAME
 ps \- report a snapshot of the current processes.
 .SH SYNOPSIS
-\fBps\fR [\fIoptions\fR]
-.PP
-.PP
+\fBps\fR [\,\fIoptions\/\fR]
 .SH DESCRIPTION
 .B ps
 displays information about a selection of the active processes.  If you want
@@ -87,7 +79,7 @@ The use of BSD\-style options will add process state (stat=STAT) to the
 default display and show the command args (args=COMMAND) instead of the
 executable name.  You can override this with the
 .B PS_FORMAT
-environment variable. The use of BSD\-style options will also change the
+environment variable.  The use of BSD\-style options will also change the
 process selection to include processes on other terminals (TTYs) that are
 owned by you; alternately, this may be described as setting the selection to
 be the set of all processes filtered to exclude processes owned by other
@@ -100,8 +92,6 @@ Except as described below, process selection options are additive.  The
 default selection is discarded, and then the selected processes are added to
 the set of processes to be displayed.  A process will thus be shown if it
 meets any of the given selection criteria.
-.PP
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH "EXAMPLES"
 .TP 3
 To see every process on the system using standard syntax:
@@ -119,21 +109,21 @@ To see every process on the system using BSD syntax:
 .B ps\ axu
 .TP
 To print a process tree:
-.B ps\ -ejH
+.B ps\ \-ejH
 .br
 .B ps\ axjf
 .TP
 To get info about threads:
-.B ps\ -eLf
+.B ps\ \-eLf
 .br
 .B ps\ axms
 .TP
 To get security info:
-.B ps\ -eo euser,ruser,suser,fuser,f,comm,label
+.B ps\ \-eo euser,ruser,suser,fuser,f,comm,label
 .br
 .B ps\ axZ
 .br
-.B ps\ -eM
+.B ps\ \-eM
 .TP
 To see every process running as root (real\ &\ effective\ ID) in user format:
 .B ps\ \-U\ root\ \-u\ root\ u
@@ -150,12 +140,9 @@ Print only the process IDs of syslogd:
 .TP
 Print only the name of PID 42:
 .B ps\ \-q\ 42\ \-o\ comm=
-.PP
-.PP
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .SH "SIMPLE PROCESS SELECTION"
 .TP
-.BR a
+.B a
 Lift the BSD\-style "only yourself" restriction, which is imposed upon the
 set of all processes when some BSD\-style (without "\-") options are used or
 when the
@@ -228,19 +215,19 @@ to list all processes owned by you (same EUID as
 or to list all processes when used together with the
 .B a
 option.
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
-.PP
 .SH "PROCESS SELECTION BY LIST"
 These options accept a single argument in the form of a blank\-separated or
 comma\-separated list.  They can be used multiple times.  For example:
-\fBps\ \-p\ "1\ 2"\ \-p\ 3,4\fR
+.B ps\ \-p\ "1\ 2"\ \-p\ 3,4
 .TP
 .I 123
-Identical to \fB\-\-pid\ \fI123\fR.
+Identical to
+.B \-\-pid\ \fI123\fR.
 .TP
 .RI \+ 123
-Identical to \fB\-\-sid\ \fI123\fR.
+Identical to
+.B \-\-sid\ \fI123\fR.
 .TP
 .RI \- 123
 Select by process group ID (PGID).
@@ -325,7 +312,8 @@ and
 .BR \-\-quick\-pid .
 .TP
 .BI \-q \ pidlist
-Select by PID (quick mode).  This selects the processes whose process ID numbers appear in
+Select by PID (quick mode).
+This selects the processes whose process ID numbers appear in
 .IR pidlist .
 With this option \fBps\fR reads the necessary info only
 for the pids listed in the \fIpidlist\fR and doesn't apply
@@ -424,14 +412,11 @@ Select by effective user ID (EUID) or name.  Identical to
 .B \-u
 and
 .BR U .
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
-.PP
 .SH "OUTPUT FORMAT CONTROL"
 These options are used to choose the information displayed by
 .BR ps .
 The output may differ by personality.
-.PP
 .TP
 .B \-c
 Show different scheduler information for the
@@ -442,7 +427,7 @@ option.
 Display security context format (for SELinux).
 .TP
 .B \-f
-Do full\-format listing. This option can be combined with many other
+Do full\-format listing.  This option can be combined with many other
 UNIX\-style options to add additional columns.  It also causes the command
 arguments to be printed.  When used with
 .BR \-L ,
@@ -508,8 +493,9 @@ with the BSD personality.
 Like
 .BR \-o ,
 but preloaded with some default columns.  Identical to
-\fB\-o\ pid,\:\fIformat\fB,\:state,\:tname,\:time,\:command\fR or
-\fB\-o\ pid,\:\fIformat\fB,\:tname,\:time,\:cmd\fR,
+.BI \-o\ pid,\: format ,\:state,\:tname,\:time,\:command
+or
+.BI \-o\ pid,\: format ,\:tname,\:time,\:cmd \fR,
 see
 .B \-o
 below.
@@ -539,7 +525,7 @@ Explicit width
 control
 .RB ( "ps opid,\:wchan:42,\:cmd" )
 is offered too.  The behavior of
-.B ps -o pid=X,\:comm=Y
+.B ps \-o pid=X,\:comm=Y
 varies with personality; output may be one column named "X,\:comm=Y" or two
 columns named "X" and "Y".  Use multiple
 .B \-o
@@ -572,13 +558,8 @@ with
 Add a column of security data.  Identical to
 .B \-M
 (for SELinux).
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
-.PP
 .SH "OUTPUT MODIFIERS"
-.\"  .TP
-.\"  .B C
-.\"  use raw CPU time for %CPU instead of decaying average
 .TP
 .B c
 Show the true command name.  This is derived from the name of the executable
@@ -652,7 +633,10 @@ Repeat header lines, one per page of output.
 .TP
 .BI k \ spec
 Specify sorting order.  Sorting syntax is
-[\fB+\fR|\fB\-\fR]\fIkey\fR[,[\fB+\fR|\fB\-\fR]\fIkey\fR[,...]].
+.RB [ + | \- ]\c
+.I key\/\c
+.RB [,[ + | \- ]\c
+.IR key [,...]].
 Choose a multi\-letter key from the
 .B STANDARD FORMAT SPECIFIERS
 section.  The "+" is optional since default direction is increasing
@@ -697,10 +681,13 @@ or
 For sorting, obsolete BSD
 .B O
 option syntax is
-\fBO\fR[\fB+\fR|\fB\-\fR]\fIk1\fR[,[\fB+\fR|\fB\-\fR]\fIk2\fR[,...]].
+.BR O [ + | \- ]\c
+.IR k1 [,[\c
+.BR + | \- ]\c
+.IR k2 [,...]].
 It orders the processes listing according to the multilevel sort specified by
 the sequence of one\-letter short keys
-.IR k1 , k2 ", ..."
+.IR k1 , k2 ", ...\&"
 described in the
 .B OBSOLETE SORT KEYS
 section below.  The\ "+" is currently optional, merely re\-iterating the
@@ -720,8 +707,11 @@ repeatedly forks off short\-lived children to do work.
 .TP
 .BI \-\-sort \ spec
 Specify sorting order.  Sorting syntax is
-[\fB+\fR|\fB\-\fR]\fIkey\fR[,[\fB+\fR|\fB\-\fR]\fIkey\fR[,...]].  Choose a
-multi\-letter key from the
+.RI [ + | \- ]\c
+.IR key [,[\c
+.BR + | \- ]\c
+.IR key [,...]].
+Choose a multi\-letter key from the
 .B STANDARD FORMAT SPECIFIERS
 section.  The "+" is optional since default direction is increasing numerical
 or lexicographic order.  Identical to
@@ -742,9 +732,7 @@ Wide output.  Use this option twice for unlimited width.
 .TP
 .BI \-\-width \ n
 Set screen width.
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 .PD
-.PP
 .SH "THREAD DISPLAY"
 .TP
 .B H
@@ -761,9 +749,6 @@ Show threads after processes.
 .TP
 .B \-T
 Show threads, possibly with SPID column.
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.PD
-.PP
 .SH "OTHER INFORMATION"
 .TP
 .BI \-\-help \ section
@@ -791,9 +776,6 @@ Print the procps-ng version.
 .TP
 .B \-\-version
 Print the procps-ng version.
-.\" """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-.PD
-.PP
 .SH NOTES
 This
 .B ps
@@ -804,7 +786,6 @@ this
 .B ps
 any special permissions.
 .PP
-.PP
 CPU usage is currently expressed as the percentage of time spent running
 during the entire lifetime of a process.  This is not ideal, and\ it does not
 conform to the standards that
@@ -813,7 +794,7 @@ otherwise conforms to.  CPU usage is unlikely to add up to exactly 100%.
 .PP
 The SIZE and RSS fields don't count some parts of a process including the
 page tables, kernel stack, struct thread_info, and struct task_struct.  This
-is usually at least 20 KiB of memory that is always resident.  SIZE is the
+is usually at least 20\ KiB of memory that is always resident.  SIZE is the
 virtual size of the process (code+\:data+\:stack).
 .PP
 Processes marked <defunct> are dead processes (so\-called "zombies") that
@@ -834,13 +815,15 @@ display all processes with a TTY (generally the commands users are
 running) plus all processes owned by a user named \fIx\fR.  If that user
 doesn't exist, then
 .B ps
-will assume you really meant \fBps aux\fR.
+will assume you really meant
+.RB """" ps
+.IR aux """."
 .SH "PROCESS FLAGS"
 The sum of these values is displayed in the "F" column,
 which is provided by the
 .B flags
 output specifier:
-.IP
+.PP
 .RS 8
 .PD 0
 .TP 5
@@ -851,13 +834,12 @@ forked but didn't exec
 used super\-user privileges
 .PD
 .RE
-.PP
 .SH "PROCESS STATE CODES"
 Here are the different values that the
-.BR s , \ stat \ and \ state
+.BR s ", " stat " and " state
 output specifiers (header "STAT" or "S") will display to describe the state
 of a process:
-.IP
+.PP
 .RS 8
 .PD 0
 .TP 5
@@ -893,7 +875,7 @@ defunct ("zombie") process, terminated but not reaped by its parent
 For BSD formats and when the
 .B stat
 keyword is used, additional characters may be displayed:
-.IP
+.PP
 .RS 8
 .PD 0
 .TP 5
@@ -916,7 +898,6 @@ is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
 is in the foreground process group
 .PD
 .RE
-.PP
 .SH "OBSOLETE SORT KEYS"
 These keys are used by the BSD
 .B O
@@ -963,8 +944,6 @@ v	vsize	total VM size in KiB
 y	priority	kernel scheduling priority
 .\"K	stime	system time (conflict, system vs. start time)
 .TE
-.PP
-.PP
 .SH "AIX FORMAT DESCRIPTORS"
 This
 .B ps
@@ -974,7 +953,7 @@ formatting codes of
 and
 .IR printf (3).
 For example, the normal default output can be produced with this:
-\fBps \-eo "%p %y %x %c"\fR.
+.B ps \-eo """%p %y %x %c""\fR."
 The
 .B NORMAL
 codes are described in the next section.
@@ -999,7 +978,7 @@ l l l.
 .TE
 .SH "STANDARD FORMAT SPECIFIERS"
 Here are the different keywords that may be used to control the output
-format (e.g. with option
+format (e.g., with option
 .BR \-o )
 or to sort the selected processes with the GNU\-style
 .B \-\-sort
@@ -1015,8 +994,8 @@ tries to recognize most of the keywords used in other implementations of
 .PP
 The following user\-defined format specifiers may contain
 spaces:
-.BR args , \ cmd , \ comm , \ command , \ fname , \ ucmd , \ ucomm ,
-.BR lstart , \ bsdstart , \ start .
+.BR args ", " cmd ", " comm ", " command ", " fname ", " ucmd ", " ucomm ,
+.BR lstart ", " bsdstart ", " start .
 .PP
 Some keywords may not be available for sorting.
 
@@ -1029,8 +1008,8 @@ Some keywords may not be available for sorting.
 .\"
 .TS
 expand;
-lB1 lB1 lBw(\n[ColSize]n)
-lB1 l1  l.
+l1B l1B lBw(\n[ColSize]n)
+l1B l1  l.
 CODE	HEADER	DESCRIPTION
 
 %cpu	%CPU	T{
@@ -1063,7 +1042,7 @@ marked <defunct> is partly dead, waiting to be fully destroyed by its parent.
 Sometimes the process args will be unavailable; when this happens,
 .B ps
 will instead print the executable name in brackets.  (alias
-.BR cmd , \ command ).
+.BR cmd ", " command ).
 See also the
 .B comm
 format keyword, the
@@ -1093,8 +1072,8 @@ blocked	BLOCKED	T{
 mask of the blocked signals, see
 .IR signal (7).
 According to the width of the field, a 32 or 64\-bit mask in hexadecimal
-format is displayed.  (alias
-.BR sig_block , \ sigmask ).
+format is displayed, unless the \fB\-\-signames\fR option is used.  (alias
+.BR sig_block ", " sigmask ).
 T}
 
 bsdstart	START	T{
@@ -1120,8 +1099,8 @@ caught	CAUGHT	T{
 mask of the caught signals, see
 .IR signal (7).
 According to the width of the field, a 32 or 64 bits mask in hexadecimal
-format is displayed.  (alias
-.BR sig_catch , \ sigcatch ).
+format is displayed, unless the \fB\-\-signames\fR option is used.  (alias
+.BR sig_catch ", " sigcatch ).
 T}
 
 cgname	CGNAME	T{
@@ -1140,9 +1119,10 @@ T}
 
 class	CLS	T{
 scheduling class of the process.  (alias
-.BR policy , \ cls ).
+.BR policy ", " cls ).
 Field's possible values are:
-.IP "" 2
+.sp 1
+.in +9n
 \-	not reported
 .br
 TS	SCHED_OTHER
@@ -1160,13 +1140,15 @@ IDL	SCHED_IDLE
 DLN	SCHED_DEADLINE
 .br
 ?	unknown value
+.in
 T}
 
 cls	CLS	T{
 scheduling class of the process.  (alias
-.BR policy , \ cls ).
+.BR policy ", " cls ).
 Field's possible values are:
-.IP "" 2
+.sp 1
+.in +9n
 \-	not reported
 .br
 TS	SCHED_OTHER
@@ -1184,20 +1166,21 @@ IDL	SCHED_IDLE
 DLN	SCHED_DEADLINE
 .br
 ?	unknown value
+.in
 T}
 
 cmd	CMD	T{
 see
 .BR args .
 (alias
-.BR args , \ command ).
+.BR args ", " command ).
 T}
 
 comm	COMMAND	T{
 command name (only the executable name).  The output in this column may
 contain spaces.
 (alias
-.BR ucmd , \ ucomm ).
+.BR ucmd ", " ucomm ).
 See also the
 .B args
 format keyword, the
@@ -1225,7 +1208,7 @@ command	COMMAND	T{
 See
 .BR args .
 (alias
-.BR args , \ command ).
+.BR args ", " command ).
 T}
 
 cp	CP	T{
@@ -1314,7 +1297,7 @@ effective user name.  This will be the textual user ID, if it can be obtained
 and the field width permits, or a decimal representation otherwise.  The
 .B n
 option can be used to force the decimal representation.  (alias
-.BR uname , \  user ).
+.BR uname ", "  user ).
 T}
 
 exe	EXE	T{
@@ -1329,7 +1312,7 @@ f	F	T{
 flags associated with the process, see the
 .B PROCESS FLAGS
 section.  (alias
-.BR flag , \ flags ).
+.BR flag ", " flags ).
 T}
 
 fgid	FGID	T{
@@ -1348,14 +1331,14 @@ flag	F	T{
 see
 .BR f .
 (alias
-.BR f , \ flags ).
+.BR f ", " flags ).
 T}
 
 flags	F	T{
 see
 .BR f .
 (alias
-.BR f , \ flag ).
+.BR f ", " flag ).
 T}
 
 fname	COMMAND	T{
@@ -1391,8 +1374,8 @@ ignored	IGNORED	T{
 mask of the ignored signals, see
 .IR signal (7).
 According to the width of the field, a 32 or 64 bits mask in hexadecimal
-format is displayed.  (alias
-.BR sig_ignore , \ sigignore ).
+format is displayed, unless the \fB\-\-signames\fR option is used.  (alias
+.BR sig_ignore ", " sigignore ).
 T}
 
 ipcns	IPCNS	T{
@@ -1522,7 +1505,8 @@ individual threads.  Use the
 option or the
 .B \-m
 option to see both.  According to the width of the field, a 32 or 64 bits
-mask in hexadecimal format is displayed.  (alias
+mask in hexadecimal
+format is displayed, unless the \fB\-\-signames\fR option is used.  (alias
 .BR sig ).
 T}
 
@@ -1559,9 +1543,10 @@ T}
 
 policy	POL	T{
 scheduling class of the process.  (alias
-.BR class , \ cls ).
+.BR class ", " cls ).
 Possible values are:
-.IP "" 2
+.sp 1
+.in +9n
 \-	not reported
 .br
 TS	SCHED_OTHER
@@ -1579,6 +1564,7 @@ IDL	SCHED_IDLE
 DLN	SCHED_DEADLINE
 .br
 ?	unknown value
+.in
 T}
 
 ppid	PPID	T{
@@ -1622,22 +1608,22 @@ T}
 
 rss	RSS	T{
 resident set size, the non\-swapped physical memory that a task has used (in
-kiloBytes).  (alias
-.BR rssize , \ rsz ).
+kilobytes).  (alias
+.BR rssize ", " rsz ).
 T}
 
 rssize	RSS	T{
 see
 .BR rss .
 (alias
-.BR rss , \ rsz ).
+.BR rss ", " rsz ).
 T}
 
 rsz	RSZ	T{
 see
 .BR rss .
 (alias
-.BR rss , \ rssize ).
+.BR rss ", " rssize ).
 T}
 
 rtprio	RTPRIO	T{
@@ -1676,7 +1662,7 @@ T}
 
 sess	SESS	T{
 session ID or, equivalently, the process ID of the session leader.  (alias
-.BR session , \ sid ).
+.BR session ", " sid ).
 T}
 
 sgi_p	P	T{
@@ -1698,35 +1684,35 @@ sid	SID	T{
 see
 .BR sess .
 (alias
-.BR sess , \ session ).
+.BR sess ", " session ).
 T}
 
 sig	PENDING	T{
 see
 .BR pending .
 (alias
-.BR pending , \ sig_pend ).
+.BR pending ", " sig_pend ).
 T}
 
 sigcatch	CAUGHT	T{
 see
 .BR caught .
 (alias
-.BR caught , \ sig_catch ).
+.BR caught ", " sig_catch ).
 T}
 
 sigignore	IGNORED	T{
 see
 .BR ignored .
 (alias
-.BR ignored , \ sig_ignore ).
+.BR ignored ", " sig_ignore ).
 T}
 
 sigmask	BLOCKED	T{
 see
 .BR blocked .
 (alias
-.BR blocked , \ sig_block ).
+.BR blocked ", " sig_block ).
 T}
 
 size	SIZE	T{
@@ -1744,7 +1730,7 @@ spid	SPID	T{
 see
 .BR lwp .
 (alias
-.BR lwp , \ tid ).
+.BR lwp ", " tid ).
 T}
 
 stackp	STACKP	T{
@@ -1755,7 +1741,7 @@ start	STARTED	T{
 time the command started.  If the process was started less than 24 hours ago,
 the output format is "HH:MM:SS", else it is "\ \ Mmm\ dd" (where Mmm is a
 three\-letter month name).  See also
-.BR lstart , \ bsdstart , \ start_time ", and" \ stime .
+.BR bsdstart ", " start ", " start_time ", and " stime .
 T}
 
 start_time	START	T{
@@ -1764,7 +1750,7 @@ process was not started the same year
 .B ps
 was invoked, or "MmmDD" if it was not started the same day, or "HH:MM"
 otherwise.  See also
-.BR bsdstart , \ start , \ lstart ", and" \ stime .
+.BR bsdstart ", " start ", " lstart ", and "  stime .
 T}
 
 stat	STAT	T{
@@ -1777,7 +1763,7 @@ T}
 
 state	S	T{
 see
-.BR s ". (alias" \ s ).
+.BR s ".\& (alias" \ s ).
 T}
 
 stime	STIME	T{
@@ -1842,7 +1828,7 @@ T}
 
 tid	TID	T{
 the unique number representing a dispatchable entity (alias
-.BR lwp , \ spid ).
+.BR spid ", " tid ).
 This value may also appear as: a process ID (pid); a process group ID (pgrp);
 a session ID for the session leader (sid); a thread group ID for the thread
 group leader (tgid); and a tty process group ID for the process group leader
@@ -1867,7 +1853,7 @@ T}
 
 tname	TTY	T{
 controlling tty (terminal).  (alias
-.BR tt , \ tty ).
+.BR tt ", " tty ).
 T}
 
 tpgid	TPGID	T{
@@ -1881,26 +1867,26 @@ T}
 
 tt	TT	T{
 controlling tty (terminal).  (alias
-.BR tname , \ tty ).
+.BR tname ", " tty ).
 T}
 
 tty	TT	T{
 controlling tty (terminal).  (alias
-.BR tname , \ tt ).
+.BR tname ", " tt ).
 T}
 
 ucmd	CMD	T{
 see
 .BR comm .
 (alias
-.BR comm , \ ucomm ).
+.BR comm ", " ucomm ).
 T}
 
 ucomm	COMMAND	T{
 see
 .BR comm .
 (alias
-.BR comm , \ ucmd ).
+.BR comm ", " ucmd ).
 T}
 
 uid	UID	T{
@@ -1914,7 +1900,7 @@ uname	USER	T{
 see
 .BR euser .
 (alias
-.BR euser , \ user ).
+.BR euser ", " user ).
 T}
 
 unit	UNIT	T{
@@ -1926,7 +1912,7 @@ user	USER	T{
 see
 .BR euser .
 (alias
-.BR euser , \ uname ).
+.BR euser ", " uname ).
 T}
 
 userns	USERNS	T{
@@ -1986,9 +1972,6 @@ Number of write I/O operations—that is, system calls such as
 T}
 
 .TE
-.\" #######################################################################
-.PP
-.PP
 .SH "ENVIRONMENT VARIABLES"
 The following environment variables could affect
 .BR ps :
@@ -2000,12 +1983,12 @@ Override default display width.
 Override default display height.
 .TP
 .B PS_PERSONALITY
-Set to one of posix, old, linux, bsd, sun, digital...  (see section
+Set to one of posix, old, linux, bsd, sun, digital...\& (see section
 .B PERSONALITY
 below).
 .TP
 .B CMD_ENV
-Set to one of posix, old, linux, bsd, sun, digital...  (see section
+Set to one of posix, old, linux, bsd, sun, digital...\& (see section
 .B PERSONALITY
 below).
 .TP
@@ -2047,7 +2030,10 @@ When set to "on", acts as
 Don't find excuses to ignore bad "features".
 .TP
 .B _XPG
-Cancel \fBCMD_ENV\fR=\fIirix\fR non\-standard behavior.
+Cancel
+.BR CMD_ENV =\c
+.I irix
+non\-standard behavior.
 .PP
 In general, it is a bad idea to set these variables.  The one exception is
 .B CMD_ENV
@@ -2056,7 +2042,6 @@ or
 which could be set to Linux for normal systems.  Without that setting,
 .B ps
 follows the useless and bad parts of the Unix98 standard.
-.PP
 .SH "PERSONALITY"
 .TS
 l	l.
@@ -2086,8 +2071,6 @@ unix	standard
 unix95	standard
 unix98	standard
 .TE
-.PP
-.PP
 .SH BUGS
 The fields \fBbsdstart\fR and \fBstart\fR will only show the abbreviated
 month name in English. The fields \fBlstart\fR and \fBstime\fR will show
@@ -2101,8 +2084,6 @@ names across languages.
 .BR top (1),
 .BR strftime (3),
 .BR proc (5).
-.PP
-.PP
 .SH STANDARDS
 This
 .B ps
@@ -2120,36 +2101,35 @@ X/Open System Interfaces Extension [UP\ XSI]
 .IP 5 4
 ISO/IEC 9945:2003
 .PD
-.PP
 .SH AUTHOR
 .B ps
 was originally written by
-.UR lankeste@\:fwi.\:uva.\:nl
+.MT lankeste@\:fwi.\:uva.\:nl
 Branko Lankester
-.UE .
-.UR johnsonm@\:redhat.\:com
+.ME .
+.MT johnsonm@\:redhat.\:com
 Michael K. Johnson
-.UE
+.ME
 re\-wrote it significantly to use the proc filesystem, changing a few things
 in the process.
-.UR mjshield@\:nyx.\:cs.\:du.\:edu
+.MT mjshield@\:nyx.\:cs.\:du.\:edu
 Michael Shields
-.UE
+.ME
 added the pid\-list feature.
-.UR cblake@\:bbn.\:com
+.MT cblake@\:bbn.\:com
 Charles Blake
-.UE
+.ME
 added multi\-level sorting, the dirent\-style library, the device
 name\-to\-number mmaped database, the approximate binary search directly on
 System.map, and many code and documentation cleanups.  David Mossberger\-Tang
 wrote the generic BFD support for psupdate.
-.UR albert@\:users.\:sf.\:net
+.MT albert@\:users.\:sf.\:net
 Albert Cahalan
-.UE
+.ME
 rewrote ps for full Unix98 and BSD support, along with some ugly hacks for
 obsolete and foreign syntax.
 .PP
 Please send bug reports to
-.UR procps@\:freelists.\:org
-.UE .
+.MT procps@\:freelists.\:org
+.ME .
 No subscription is required or suggested.
