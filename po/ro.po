@@ -1,22 +1,23 @@
 # Mesajele în limba română pentru pachetul procps-ng.
-# Copyright © 2022 Free Software Foundation, Inc.
+# Copyright © 2022, 2023 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2022.
+# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2022 - 2023.
 #
 # Cronologia traducerii fișierului „procps-ng”:
-# Traducerea inițială, făcută de R-GC, pentru versiunea procps-ng 3.3.17rc1 (99% - tradus).
-# Actualizare a traducerii pentru versiunea 4.0.1rc3, făcută de R-GC, 2022 (100% - tradus).
-# Actualizare a traducerii pentru versiunea 4.0.2-rc1, făcută de R-GC, 2022.
+# Traducerea inițială, făcută de R-GC, pentru versiunea procps-ng 3.3.17rc1 (99% - tradus), noi-2022.
+# Actualizare a traducerii pentru versiunea 4.0.1rc3, făcută de R-GC (100% - tradus), noi-2022.
+# Actualizare a traducerii pentru versiunea 4.0.2-rc1, făcută de R-GC, noi-2022.
 # Actualizare a traducerii pentru versiunea 4.0.3-rc1, făcută de R-GC, ian-2023.
+# Actualizare a traducerii pentru versiunea 4.0.4-rc1, făcută de R-GC, aug-2023.
 # Actualizare a traducerii pentru versiunea Y, făcută de X, Z(anul).
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.3-rc1\n"
+"Project-Id-Version: procps-ng 4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2023-01-29 23:17+0100\n"
+"PO-Revision-Date: 2023-08-20 17:03+0200\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -104,9 +105,8 @@ msgstr ""
 "                     utilizată, scăzută(Low) și ridicată(High)\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          afișează ieșirea în kibiocteți\n"
+msgstr " -L, --line          afișează ieșirea pe o singură linie\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -178,22 +178,20 @@ msgstr "Nu se poate crea structura informațiilor despre memorie"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:381
-#, fuzzy
 msgid "SwapUse"
-msgstr "Swap"
+msgstr "UzSwap"
 
 #: src/free.c:382
-#, fuzzy
 msgid "CachUse"
-msgstr "Cache"
+msgstr "UzCache"
 
 #: src/free.c:384
 msgid " MemUse"
-msgstr ""
+msgstr " UzMem"
 
 #: src/free.c:385
 msgid "MemFree"
-msgstr ""
+msgstr "MemLib"
 
 #: src/free.c:395
 #, c-format
@@ -356,10 +354,9 @@ msgstr ""
 "                           identificatoarele firelor procesului furnizat)\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
 msgstr ""
-" -<sig>, --signal <sig>    semnalul «sig» de trimis (fie număr, fie nume)\n"
+" -<sig>                    semnalul «sig» de trimis (fie număr, fie nume)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
@@ -437,10 +434,9 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   potrivește ID-urile de sesiune\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
 msgstr ""
-" -<sig>, --signal <sig>    semnalul «sig» de trimis (fie număr, fie nume)\n"
+"     --signal <sig>        semnalul «sig» de trimis (fie număr, fie nume)\n"
 
 #: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
@@ -559,9 +555,9 @@ msgstr ""
 "completă."
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "nume de semnal necunoscut %s"
+msgstr "Semnal necunoscut „%s”."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -666,11 +662,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,...>  omite procesele cu PID\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr ""
-" -w, --lightweight         afișează toate numerele TID (Thread-ID,\n"
-"                           identificatoarele firelor procesului furnizat)\n"
+msgstr " -t, --lightweight         listează de asemenea și firele procesului\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1353,10 +1346,10 @@ msgstr ""
 "                      stabilesc înălțimea ecranului\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
 msgstr ""
-" -<sig>, --signal <sig>    semnalul «sig» de trimis (fie număr, fie nume)\n"
+"     --signames       afișează măștile semnalelor folosind numele "
+"semnalelor\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -4496,13 +4489,12 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         omite prima linie de ieșire\n"
 
 #: src/vmstat.c:253
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
 "procese ----------memorie--------- ---swap-- ---in/ieș-- -sistem-- ------"
-"cpu-----"
+"cpu----"
 
 #: src/vmstat.c:255
 msgid ""
@@ -4993,11 +4985,11 @@ msgstr ""
 "  -c, --color            interpretează secvențele de culoare și stil ANSI\n"
 
 #: src/watch.c:98
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
 msgstr ""
-"  -c, --color            interpretează secvențele de culoare și stil ANSI\n"
+"  -C, --no-color         nu interpretează secvențele de culoare și stil "
+"ANSI\n"
 
 #: src/watch.c:99
 msgid ""
@@ -5214,13 +5206,12 @@ msgid "   IDLE WHAT\n"
 msgstr "   IDLE WHAT\n"
 
 #: src/w.c:815
-#, fuzzy
 msgid "error getting sessions"
-msgstr "Eroare la obținerea rezultatelor rezumatului „slab”"
+msgstr "eroare la obținerea sesiunilor"
 
 #: src/w.c:823
 msgid "get user name failed"
-msgstr ""
+msgstr "obținerea numelui de utilizator a eșuat"
 
 #: local/c.h:153
 msgid ""

@@ -5,10 +5,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.3-rc1\n"
+"Project-Id-Version: procps-ng-4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2023-01-29 20:15+0100\n"
+"PO-Revision-Date: 2023-08-20 11:45+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -84,9 +84,8 @@ msgstr ""
 " -l, --lohi          szczegółowe statystyki niskiej i wysokiej pamięci\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          wyjście w kibibajtach\n"
+msgstr " -L, --line          wyjście w pojedynczej linii\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -143,22 +142,20 @@ msgstr "Nie można utworzyć struktury meminfo"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:381
-#, fuzzy
 msgid "SwapUse"
-msgstr "Swap"
+msgstr " SwapUż"
 
 #: src/free.c:382
-#, fuzzy
 msgid "CachUse"
-msgstr "Cache"
+msgstr "CacheUż"
 
 #: src/free.c:384
 msgid " MemUse"
-msgstr ""
+msgstr "PamUżyw"
 
 #: src/free.c:385
 msgid "MemFree"
-msgstr ""
+msgstr "PamWoln"
 
 #: src/free.c:395
 #, c-format
@@ -291,9 +288,8 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         wypisanie wszystkich TID-ów\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
-msgstr " -<sig>, --signal <sig>    sygnał do wysłania (numer lub nazwa)\n"
+msgstr " -<sig>                    sygnał do wysłania (numer lub nazwa)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
@@ -359,9 +355,8 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   dopasowanie ID sesji\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
-msgstr " -<sig>, --signal <sig>    sygnał do wysłania (numer lub nazwa)\n"
+msgstr "     --signal <sig>        sygnał do wysłania (numer lub nazwa)\n"
 
 #: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
@@ -481,9 +476,9 @@ msgstr ""
 "Aby dopasowywać do pełnej linii poleceń, można spróbować opcji `%s -f'."
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "nieznana nazwa sygnału %s"
+msgstr "Nieznany sygnał \"%s\"."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -582,9 +577,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,...>  pominięcie procesów o podanych PID-ach\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         wypisanie wszystkich TID-ów\n"
+msgstr " -t, --lightweight         wypisanie także wątków\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1204,9 +1198,8 @@ msgstr ""
 "                      ustawienie wysokości ekranu\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr " -<sig>, --signal <sig>    sygnał do wysłania (numer lub nazwa)\n"
+msgstr "     --signames       lista masek sygnałów z użyciem ich nazw\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -4160,13 +4153,12 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         pominięcie pierwszej linii wyjścia\n"
 
 #: src/vmstat.c:253
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
-"proc. -----------pamięć---------- ---swap-- ---we/wy--- -system-- ------"
-"cpu-----"
+"proc. -----------pamięć---------- ---swap-- ---we/wy--- -system-- -------"
+"cpu-------"
 
 #: src/vmstat.c:255
 msgid ""
@@ -4635,11 +4627,10 @@ msgstr ""
 "  -c, --color            interpretowanie sekwencji kolorów i styli ANSI\n"
 
 #: src/watch.c:98
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
 msgstr ""
-"  -c, --color            interpretowanie sekwencji kolorów i styli ANSI\n"
+"  -C, --no-color         bez interpretowania sekwencji kolorów i styli ANSI\n"
 
 #: src/watch.c:99
 msgid ""
@@ -4848,13 +4839,12 @@ msgid "   IDLE WHAT\n"
 msgstr " BEZCZ. CO\n"
 
 #: src/w.c:815
-#, fuzzy
 msgid "error getting sessions"
-msgstr "Błąd odczytu wyników podsumowania płyt"
+msgstr "błąd odczytu sesji"
 
 #: src/w.c:823
 msgid "get user name failed"
-msgstr ""
+msgstr "odczyt nazwy użytkownika nie powiódł się"
 
 #: local/c.h:153
 msgid ""

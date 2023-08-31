@@ -2074,10 +2074,9 @@ msgstr "SKILL"
 
 #. type: TH
 #: ../man/skill.1:12 ../man/sysctl.8:14 ../man/ps.1:13
-#, fuzzy, no-wrap
-#| msgid "2018-05-31"
+#, no-wrap
 msgid "2023-08-19"
-msgstr "2018-05-31"
+msgstr ""
 
 #. type: Plain text
 #: ../man/skill.1:15
@@ -2364,10 +2363,6 @@ msgstr "Nenhum padrão aplicável."
 
 #. type: Plain text
 #: ../man/skill.1:125
-#, fuzzy
-#| msgid ""
-#| "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote skill and snice in "
-#| "1999 as a replacement for a non-free version."
 msgid ""
 "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote skill and snice in "
 "1999 as a replacement for a non-free version."
@@ -4883,8 +4878,6 @@ msgstr "ps - relatar uma imagem dos processos atuais."
 
 #. type: Plain text
 #: ../man/ps.1:31
-#, fuzzy
-#| msgid "B<ps> [\\,I<options\\/>]"
 msgid "B<ps> [\\,I<options\\/>]"
 msgstr "B<ps> [\\,I<opções\\/>]"
 
@@ -4954,18 +4947,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/ps.1:79
-#, fuzzy
-#| msgid ""
-#| "The use of BSD-style options will add process state (stat=STAT) to the "
-#| "default display and show the command args (args=COMMAND) instead of the "
-#| "executable name.  You can override this with the B<PS_FORMAT> environment "
-#| "variable.  The use of BSD-style options will also change the process "
-#| "selection to include processes on other terminals (TTYs) that are owned "
-#| "by you; alternately, this may be described as setting the selection to be "
-#| "the set of all processes filtered to exclude processes owned by other "
-#| "users or not on a terminal.  These effects are not considered when "
-#| "options are described as being \"identical\" below, so B<-M> will be "
-#| "considered identical to B<Z> and so on."
 msgid ""
 "The use of BSD-style options will add process state (stat=STAT) to the "
 "default display and show the command args (args=COMMAND) instead of the "
@@ -5777,13 +5758,6 @@ msgstr "Exibe formato de contexto de segurança (para SELinux)."
 
 #. type: Plain text
 #: ../man/ps.1:430
-#, fuzzy
-#| msgid ""
-#| "Do full-format listing.  This option can be combined with many other UNIX-"
-#| "style options to add additional columns.  It also causes the command "
-#| "arguments to be printed.  When used with B<-L>, the NLWP (number of "
-#| "threads) and LWP (thread ID) columns will be added.  See the B<c> option, "
-#| "the format keyword B<args>, and the format keyword B<comm>."
 msgid ""
 "Do full-format listing.  This option can be combined with many other UNIX-"
 "style options to add additional columns.  It also causes the command "
@@ -6235,12 +6209,6 @@ msgstr "B<k>I<\\ especificação>"
 
 #. type: Plain text
 #: ../man/ps.1:634
-#, fuzzy
-#| msgid ""
-#| "Specify sorting order.  Sorting syntax is [B<+>|B<->]I<key\\/.RB [,[ + | "
-#| "- ].IR key [,...]].> Choose a multi-letter key from the B<STANDARD FORMAT "
-#| "SPECIFIERS> section.  The \"+\" is optional since default direction is "
-#| "increasing numerical or lexicographic order.  Identical to B<--sort>."
 msgid ""
 "Specify sorting order.  Sorting syntax is [B<+>|B<->]I<key\\/.RB [,[ + | - ]."
 "IR key [,...]].> Choose a multi-letter key from the B<STANDARD FORMAT "
@@ -6336,15 +6304,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/ps.1:688
-#, fuzzy
-#| msgid ""
-#| "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,"
-#| "[B<+>|B<->]I<k2>[,...]].  It orders the processes listing according to "
-#| "the multilevel sort specified by the sequence of one-letter short keys "
-#| "I<k1>,I<k2>, ...\" described in the B<OBSOLETE SORT KEYS> section below.  "
-#| "The\\ \"+\" is currently optional, merely re-iterating the default "
-#| "direction on a key, but may help to distinguish an B<O> sort from an B<O> "
-#| "format.  The \"-\" reverses direction only on the key it precedes."
 msgid ""
 "For sorting, obsolete BSD B<O> option syntax is B<O>[B<+>|B<->]I<k1>[,[B<+>|"
 "B<->]I<k2>[,...]].  It orders the processes listing according to the "
@@ -6394,13 +6353,6 @@ msgstr "B<--sort>I<\\ especificação>"
 
 #. type: Plain text
 #: ../man/ps.1:710
-#, fuzzy
-#| msgid ""
-#| "Specify sorting order.  Sorting syntax is [I<+>|I<->]I<key>[,[B<+>|B<-"
-#| ">]I<key>[,...]].  Choose a multi-letter key from the B<STANDARD FORMAT "
-#| "SPECIFIERS> section.  The \"+\" is optional since default direction is "
-#| "increasing numerical or lexicographic order.  Identical to B<k>.  For "
-#| "example: B<ps jax --sort=\\:uid,\\:-ppid,\\:+pid>"
 msgid ""
 "Specify sorting order.  Sorting syntax is [I<+>|I<->]I<key>[,[B<+>|B<-"
 ">]I<key>[,...]].  Choose a multi-letter key from the B<STANDARD FORMAT "
@@ -6598,12 +6550,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/ps.1:788
-#, fuzzy
-#| msgid ""
-#| "The SIZE and RSS fields don't count some parts of a process including the "
-#| "page tables, kernel stack, struct thread_info, and struct task_struct.  "
-#| "This is usually at least 20\\ KiB of memory that is always resident.  "
-#| "SIZE is the virtual size of the process (code+\\:data+\\:stack)."
 msgid ""
 "The SIZE and RSS fields don't count some parts of a process including the "
 "page tables, kernel stack, struct thread_info, and struct task_struct.  This "
@@ -17215,43 +17161,6 @@ msgstr ""
 msgid "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 
-#, no-wrap
-#~ msgid "October 2011"
-#~ msgstr "Outubro de 2011"
-
-#, fuzzy, no-wrap
-#~| msgid "B<--nslist >I<name>B<,...>"
-#~ msgid "B<--nslist >I<ns,...>"
-#~ msgstr "B<--nslist >I<nome>B<,...>"
-
-#~ msgid "Use this option when all arguments prescribe a key to be set."
-#~ msgstr ""
-#~ "Use essa opção quando todos os argumentos prescrevem um chave a ser "
-#~ "definida."
-
-#~ msgid ""
-#~ "Note that B<ps -aux> is distinct from B<ps\\ aux>.  The POSIX and UNIX "
-#~ "standards require that B<ps\\ -aux> print all processes owned by a user "
-#~ "named I<x>, as well as printing all processes that would be selected by "
-#~ "the B<-a> option.  If the user named I<x> does not exist, this B<ps> may "
-#~ "interpret the command as B<ps\\ aux> instead and print a warning.  This "
-#~ "behavior is intended to aid in transitioning old scripts and habits.  It "
-#~ "is fragile, subject to change, and thus should not be relied upon."
-#~ msgstr ""
-#~ "Observe que B<ps -aux> é diferente de B<ps\\ aux>. Os padrões POSIX e "
-#~ "UNIX exigem que B<ps\\ -aux> imprima todos os processos pertencentes a um "
-#~ "usuário chamado I<x>, bem como imprima todos os processos que seriam "
-#~ "selecionados pela opção B<-a>. Se o usuário denominado I<x> não existir, "
-#~ "este B<ps> pode interpretar o comando como B<ps\\ aux> e imprimir um "
-#~ "aviso. Esse comportamento tem como objetivo ajudar na transição de "
-#~ "scripts e hábitos antigos. É frágil, sujeito a mudanças e, portanto, não "
-#~ "deve ser invocado."
-
-#, fuzzy, no-wrap
-#~| msgid "January 2012"
-#~ msgid "January 2023"
-#~ msgstr "Janeiro de 2012"
-
 #~ msgid "Total installed memory (MemTotal and SwapTotal in /proc/meminfo)"
 #~ msgstr "Memória total instalada (MemTotal e SwapTotal em /proc/meminfo)"
 
@@ -17305,6 +17214,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, no-wrap
 #~ msgid "2020-02-27"
 #~ msgstr "2020-02-27"
+
+#~ msgid "Use this option when all arguments prescribe a key to be set."
+#~ msgstr ""
+#~ "Use essa opção quando todos os argumentos prescrevem um chave a ser "
+#~ "definida."
 
 #~ msgid "B<vmstat> does not require special permissions."
 #~ msgstr "B<vmstat> não exige permissões especiais."
@@ -17364,6 +17278,24 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "2020-12-06"
 #~ msgstr "2020-12-06"
 
+#~ msgid ""
+#~ "Note that B<ps -aux> is distinct from B<ps\\ aux>.  The POSIX and UNIX "
+#~ "standards require that B<ps\\ -aux> print all processes owned by a user "
+#~ "named I<x>, as well as printing all processes that would be selected by "
+#~ "the B<-a> option.  If the user named I<x> does not exist, this B<ps> may "
+#~ "interpret the command as B<ps\\ aux> instead and print a warning.  This "
+#~ "behavior is intended to aid in transitioning old scripts and habits.  It "
+#~ "is fragile, subject to change, and thus should not be relied upon."
+#~ msgstr ""
+#~ "Observe que B<ps -aux> é diferente de B<ps\\ aux>. Os padrões POSIX e "
+#~ "UNIX exigem que B<ps\\ -aux> imprima todos os processos pertencentes a um "
+#~ "usuário chamado I<x>, bem como imprima todos os processos que seriam "
+#~ "selecionados pela opção B<-a>. Se o usuário denominado I<x> não existir, "
+#~ "este B<ps> pode interpretar o comando como B<ps\\ aux> e imprimir um "
+#~ "aviso. Esse comportamento tem como objetivo ajudar na transição de "
+#~ "scripts e hábitos antigos. É frágil, sujeito a mudanças e, portanto, não "
+#~ "deve ser invocado."
+
 #, fuzzy, no-wrap
 #~ msgid "20"
 #~ msgstr "0"
@@ -17397,6 +17329,9 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "Written by Brian Edmonds."
 #~ msgstr "Escrito por Brian Edmonds."
 
+#~ msgid "October 2011"
+#~ msgstr "Outubro de 2011"
+
 #~ msgid "October 2012"
 #~ msgstr "Outubro de 2012"
 
@@ -17420,6 +17355,9 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr "n\tnome\tNOME\n"
 
 #~ msgid "Jan 2012"
+#~ msgstr "Janeiro de 2012"
+
+#~ msgid "January 2012"
 #~ msgstr "Janeiro de 2012"
 
 #~ msgid ""

@@ -21,10 +21,10 @@
 #                                                     Frédéric Marchal
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.3-rc1\n"
+"Project-Id-Version: procps-ng 4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2023-01-29 15:51+0100\n"
+"PO-Revision-Date: 2023-08-21 07:48+0200\n"
 "Last-Translator: Frédéric Marchal <fmarchal@perso.be>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "Language: fr\n"
@@ -103,9 +103,8 @@ msgstr ""
 "basse et haute\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          afficher la sortie en kibioctets\n"
+msgstr " -L, --line          afficher la sortie sur une seule ligne\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -162,22 +161,20 @@ msgstr "impossible de créer la structure meminfo"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:381
-#, fuzzy
 msgid "SwapUse"
-msgstr "Éch "
+msgstr "ÉchUtil"
 
 #: src/free.c:382
-#, fuzzy
 msgid "CachUse"
-msgstr "Cache"
+msgstr "CachUti"
 
 #: src/free.c:384
 msgid " MemUse"
-msgstr ""
+msgstr "MemUtil"
 
 #: src/free.c:385
 msgid "MemFree"
-msgstr ""
+msgstr "MemLibr"
 
 #: src/free.c:395
 #, c-format
@@ -310,11 +307,9 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         liste tous les TID\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
 msgstr ""
-" -<sig>, --signal <sig>    signal à envoyer (<sig> est le numéro ou le nom "
-"du signal)\n"
+" -<sig>                    signal à envoyer (numéro ou nom du signal)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
@@ -380,11 +375,9 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,…>     correspondance sur le ID de session\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
 msgstr ""
-" -<sig>, --signal <sig>    signal à envoyer (<sig> est le numéro ou le nom "
-"du signal)\n"
+"     --signal <sig>        signal à envoyer (numéro ou nom du signal)\n"
 
 #: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
@@ -508,9 +501,9 @@ msgstr ""
 "commande complète."
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "nom de signal %s inconnu"
+msgstr "Signal « %s » inconnu."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -611,9 +604,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,…>    omet les processus avec ce PID\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         liste tous les TID\n"
+msgstr " -t, --lightweight         lister aussi les threads\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1231,11 +1223,10 @@ msgstr ""
 "                      change la hauteur de l'écran\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
 msgstr ""
-" -<sig>, --signal <sig>    signal à envoyer (<sig> est le numéro ou le nom "
-"du signal)\n"
+"     --signames       lister les masques des signaux en utilisant les noms "
+"des signaux\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -3852,7 +3843,7 @@ msgid ""
 "Type 'q' or <Esc> to continue "
 msgstr ""
 "Aide pour les commandes interactives~2 - %s\n"
-"Fenêtre ~1%s~6: ~1Mode cumulatif ~3%s~2.  ~1Système~6: ~1Délai ~3%.1lf "
+"Fenêtre ~1%s~6: ~1Mode cumulatif ~3%s~2.  ~1Système~6: ~1Délai ~3%.1f "
 "secs~2; ~1Mode sûr ~3%s~2.\n"
 "\n"
 "  Z~5,~1B~5,E,e   Global: «~1Z~2» couleurs; «~1B~2» gras; «~1E~2»/«~1e~2» "
@@ -4235,13 +4226,12 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         passer outre la première ligne de la sortie\n"
 
 #: src/vmstat.c:253
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
 "procs ----------mémoire---------- -échange- -----io---- -système- ------"
-"cpu-----"
+"cpu--------"
 
 #: src/vmstat.c:255
 msgid ""
@@ -4713,12 +4703,11 @@ msgstr ""
 "ANSI\n"
 
 #: src/watch.c:98
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
 msgstr ""
-"  -c, --color            interprète les séquences de couleurs et de styles "
-"ANSI\n"
+"  -C, --no-color         ne pas interpréter les séquences de couleurs et de "
+"styles ANSI\n"
 
 #: src/watch.c:99
 msgid ""
@@ -4784,7 +4773,7 @@ msgstr " -v, --version  affiche les informations de version et sort\n"
 #: src/watch.c:485
 #, c-format
 msgid "Every %.1fs: "
-msgstr "Toutes les %.1lfs: "
+msgstr "Toutes les %.1fs: "
 
 #: src/watch.c:486
 #, c-format
@@ -4929,13 +4918,12 @@ msgid "   IDLE WHAT\n"
 msgstr "   IDLE QUOI\n"
 
 #: src/w.c:815
-#, fuzzy
 msgid "error getting sessions"
-msgstr "Erreur lors de l'obtention des résultats du résumé slab"
+msgstr "erreur lors de l'obtention des sessions"
 
 #: src/w.c:823
 msgid "get user name failed"
-msgstr ""
+msgstr "échec de l'obtention du nom de l'utilisateur"
 
 #: local/c.h:153
 msgid ""

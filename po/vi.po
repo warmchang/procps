@@ -1213,8 +1213,7 @@ msgstr ""
 #: src/ps/help.c:160
 #, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr ""
-" -<sig>, --signal <sig>    tín hiệu để gửi đi (hoặc là số hoặc là tên)\n"
+msgstr " -l, --list         liệt kê mọi tên tín hiệu\n"
 
 #: src/ps/help.c:163
 msgid ""

@@ -1226,7 +1226,7 @@ msgstr ""
 #: src/ps/help.c:160
 #, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr " -<sin>, --signal <sin>    sinal para enviar (número ou nome)\n"
+msgstr " -l, --list         lista todos os nomes de sinais\n"
 
 #: src/ps/help.c:163
 msgid ""

@@ -4207,9 +4207,9 @@ msgstr ""
 #. type: TP
 #: ../man/watch.1:33
 #, fuzzy, no-wrap
-#| msgid "B<-c>, B<--count>"
+#| msgid "B<-y>, B<--no-first>"
 msgid "B<-C>, B<--no-color>"
-msgstr "B<-c>, B<--count>"
+msgstr "B<-y>, B<--no-first>"
 
 #. type: Plain text
 #: ../man/watch.1:36
@@ -16932,11 +16932,6 @@ msgstr ""
 #: ../man/procps_pids.3:210
 msgid "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
-
-#, fuzzy, no-wrap
-#~| msgid "December 2012"
-#~ msgid "October 2011"
-#~ msgstr "grudzień 2012"
 
 #, no-wrap
 #~ msgid "2022-06-25"

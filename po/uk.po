@@ -5,10 +5,10 @@
 # Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019, 2021, 2022, 2023.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.3-rc1\n"
+"Project-Id-Version: procps-ng-4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2023-01-29 13:14+0200\n"
+"PO-Revision-Date: 2023-08-20 12:58+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -89,9 +89,8 @@ msgstr ""
 "нижньої областей пам’яті\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          вивести дані у кібібайтах\n"
+msgstr " -L, --line          вивести дані в один рядок\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -149,22 +148,20 @@ msgstr "Не вдалося створити структуру meminfo"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:381
-#, fuzzy
 msgid "SwapUse"
-msgstr "Своп"
+msgstr "ВикСвоп"
 
 #: src/free.c:382
-#, fuzzy
 msgid "CachUse"
-msgstr "Кеш"
+msgstr "ВикКеш"
 
 #: src/free.c:384
 msgid " MemUse"
-msgstr ""
+msgstr " ВикПам"
 
 #: src/free.c:385
 msgid "MemFree"
-msgstr ""
+msgstr "ВільПам"
 
 #: src/free.c:395
 #, c-format
@@ -297,10 +294,9 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         вивести список усіх TID\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
 msgstr ""
-" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
+" -<сиг>                    сигнал, який слід надіслати (у форматі числа або "
 "назви)\n"
 
 #: src/pgrep.c:167
@@ -374,10 +370,9 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   відповідність за ідентифікаторами сеансу\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
 msgstr ""
-" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
+"      --signal <сиг>     сигнал, який слід надіслати (у форматі числа або "
 "назви)\n"
 
 #: src/pgrep.c:188
@@ -504,9 +499,9 @@ msgstr ""
 "Спробуйте параметр «%s -f», щоб виконати пошук за повним рядком команди."
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "невідома назва сигналу, %s"
+msgstr "Невідомий сигнал «%s»."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -607,9 +602,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,...>  пропускати процеси із вказаним PID\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         вивести список усіх TID\n"
+msgstr " -t, --lightweight         також показати список потоків обробки\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1229,11 +1223,10 @@ msgstr ""
 "                      встановити висоту екрана у рядках\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
 msgstr ""
-" -<сиг>, --signal <сиг>    сигнал, який слід надіслати (у форматі числа або "
-"назви)\n"
+"     --signames       показувати маски сигналів з використанням назв "
+"сигналів\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -4210,13 +4203,12 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         пропустити перший рядок виведення\n"
 
 #: src/vmstat.c:253
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
-"проц  -----------пам’ять--------- ---своп-- ----в/в---- -система- ----"
-"процесор---"
+"проц  -----------пам’ять--------- ---своп-- ----в/в---- -система- -----"
+"процесор-----"
 
 #: src/vmstat.c:255
 msgid ""
@@ -4688,12 +4680,11 @@ msgstr ""
 "і стилю\n"
 
 #: src/watch.c:98
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
 msgstr ""
-"  -c, --color            обробляти послідовності символів ANSI для кольорів "
-"і стилю\n"
+"  -C, --no-color         не обробляти послідовності символів ANSI для "
+"кольорів і стилю\n"
 
 #: src/watch.c:99
 msgid ""
@@ -4899,13 +4890,12 @@ msgid "   IDLE WHAT\n"
 msgstr "   IDLE WHAT\n"
 
 #: src/w.c:815
-#, fuzzy
 msgid "error getting sessions"
-msgstr "Помилка під час отримання результатів резюме частини"
+msgstr "помилка під час спроби отримання списку сеансів"
 
 #: src/w.c:823
 msgid "get user name failed"
-msgstr ""
+msgstr "не вдалося отримати ім'я користувача"
 
 #: local/c.h:153
 msgid ""

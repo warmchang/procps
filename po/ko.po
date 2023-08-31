@@ -5,19 +5,19 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.3-rc1\n"
+"Project-Id-Version: procps-ng 4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2023-01-31 14:09+0900\n"
+"PO-Revision-Date: 2023-08-22 12:13+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
 "Language: ko\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 2.3.1\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
+"X-Bugs: Report translation errors to the Language-Team address.\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: local/fileutils.c:38
 msgid "write error"
@@ -85,9 +85,8 @@ msgid " -l, --lohi          show detailed low and high memory statistics\n"
 msgstr " -l, --lohi          자세한 하위 상위 메모리 통계 표시\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          키비바이트 단위로 출력 표시\n"
+msgstr " -L, --line          단일 행에 출력을 나타냅니다\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -144,22 +143,20 @@ msgstr "meminfo 구조 정보를 구성할 수 없습니다"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:381
-#, fuzzy
 msgid "SwapUse"
-msgstr "스  왑"
+msgstr "사용스왑"
 
 #: src/free.c:382
-#, fuzzy
 msgid "CachUse"
-msgstr "캐시"
+msgstr "사용캐시"
 
 #: src/free.c:384
 msgid " MemUse"
-msgstr ""
+msgstr "사용 RAM"
 
 #: src/free.c:385
 msgid "MemFree"
-msgstr ""
+msgstr "가용 RAM"
 
 #: src/free.c:395
 #, c-format
@@ -289,9 +286,8 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         모든 TID를 보여줍니다\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
-msgstr " -<시그널>, --signal <시그널>  보낼 시그널 (숫자 또는 이름)\n"
+msgstr " -<시그널>                 보낼 시그널 (숫자 또는 이름)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
@@ -353,9 +349,8 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   세션 ID가 일치하는 항목만\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
-msgstr " -<시그널>, --signal <시그널>  보낼 시그널 (숫자 또는 이름)\n"
+msgstr "     --signal <시그널>     보낼 시그널 (숫자 또는 이름)\n"
 
 #: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
@@ -469,9 +464,9 @@ msgstr ""
 "완전한 명령행과 일치하는 항목을 검색하려면 `%s -f' 옵션을 사용하십시오."
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "알 수 없는 %s 시그널 이름"
+msgstr "알 수 없는 \"%s\" 시그널."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -568,9 +563,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,...>  지정 PID 프로세스 생략\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         모든 TID를 보여줍니다\n"
+msgstr " -t, --lightweight         스레드도 목록에 나타냅니다\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1187,9 +1181,8 @@ msgstr ""
 "                      화면 높이 설정\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr " -<시그널>, --signal <시그널>  보낼 시그널 (숫자 또는 이름)\n"
+msgstr "     --signames       시그널 이름으로 시그널 마스크를 나타냅니다\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -4119,21 +4112,20 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         첫 줄 출력 건너뛰기\n"
 
 #: src/vmstat.c:253
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
-"procs -----------메모리---------- ---스왑-- ---입출력-- -시스템-- ------"
-"CPU-----"
+"procs -----------메모리---------- ---스왑-- ---입출력-- -시스템-- -------"
+"CPU-------"
 
 #: src/vmstat.c:255
 msgid ""
 "--procs-- -----------------------memory---------------------- ---swap-- -----"
 "io---- -system-- ----------cpu----------"
 msgstr ""
-"--procs-- -----------------------메모리---------------------- ---swap-- -----"
-"io---- -system-- ----------cpu----------"
+"--procs-- -----------------------메모리---------------------- ---스왑-- ---입"
+"출력-- -시스템-- ----------CPU----------"
 
 #: src/vmstat.c:256 src/vmstat.c:619
 msgid " -----timestamp-----"
@@ -4594,10 +4586,10 @@ msgid "  -c, --color            interpret ANSI color and style sequences\n"
 msgstr "  -c, --color            ANSI 색상 및 표시 방식 시퀀스 해석\n"
 
 #: src/watch.c:98
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
-msgstr "  -c, --color            ANSI 색상 및 표시 방식 시퀀스 해석\n"
+msgstr ""
+"  -C, --no-color         ANSI 색상 및 모양새 시퀀스를 해석하지 않습니다\n"
 
 #: src/watch.c:99
 msgid ""
@@ -4795,13 +4787,12 @@ msgid "   IDLE WHAT\n"
 msgstr "   대기 세션\n"
 
 #: src/w.c:815
-#, fuzzy
 msgid "error getting sessions"
-msgstr "slab 메모리 결과값 가져오기 오류"
+msgstr "세션 가져오기 오류"
 
 #: src/w.c:823
 msgid "get user name failed"
-msgstr ""
+msgstr "사용자 이름 가져오기에 실패했습니다"
 
 #: local/c.h:153
 msgid ""

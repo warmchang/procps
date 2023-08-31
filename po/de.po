@@ -5,10 +5,10 @@
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2014, 2017, 2019, 2021, 2023.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.3-rc1\n"
+"Project-Id-Version: procps-ng-4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2023-02-02 22:44+0100\n"
+"PO-Revision-Date: 2023-08-20 16:58+0200\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Lokalize 22.12.0\n"
+"X-Generator: Lokalize 23.04.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: local/fileutils.c:38
@@ -87,9 +87,8 @@ msgstr ""
 "                     Speicherbelegung anzeigen\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          Ausgabe in Kibibyte anzeigen\n"
+msgstr " -L, --line          Ausgabe in einer Zeile anzeigen\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -297,9 +296,8 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         alle Thread-IDs auflisten\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
-msgstr " -<sig>, --signal <sig>    zu sendendes Signal (Zahl oder Name)\n"
+msgstr " -<sig>                    zu sendendes Signal (Zahl oder Name)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
@@ -366,9 +364,8 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID, …>    Sitzungskennungen suchen\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
-msgstr " -<sig>, --signal <sig>    zu sendendes Signal (Zahl oder Name)\n"
+msgstr "     --signal <sig>        zu sendendes Signal (Zahl oder Name)\n"
 
 #: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
@@ -402,11 +399,12 @@ msgstr " -r, --runstates <Status>   nach Runstatus suchen [D,S,Z,...]\n"
 #: src/pgrep.c:195
 msgid " -A, --ignore-ancestors    exclude our ancestors from results\n"
 msgstr ""
+" -A, --ignore-ancestors    Vorgänger nicht in die Ergebnisse\n"
+"                             einbeziehen\n"
 
 #: src/pgrep.c:196
-#, fuzzy
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
-msgstr " -G, --group <GID, …>      reale Gruppenkennungen suchen\n"
+msgstr " --cgroup <Gruppe, …>      nach cgroup-v2-Namen suchen\n"
 
 #: src/pgrep.c:197
 msgid ""
@@ -482,11 +480,15 @@ msgid ""
 "in zero matches\n"
 "Try `%s -f' option to match against the complete command line."
 msgstr ""
+"Muster, die nach Prozessnamen mit mehr als 15 Zeichen suchen, ergeben keine "
+"Treffer.\n"
+"Mit der Option »%s -f« können Sie versuchen, nach der gesamten Befehlszeile "
+"suchen zu lassen."
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "Unbekannter Signalname %s"
+msgstr "Unbekanntes Signal »%s«."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -587,9 +589,8 @@ msgstr ""
 "                           auslassen\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         alle Thread-IDs auflisten\n"
+msgstr " -t, --lightweight         auch Threads auflisten\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1162,9 +1163,8 @@ msgstr ""
 "                      benutzerdefiniertes Format\n"
 
 #: src/ps/help.c:147
-#, fuzzy
 msgid "  -P                  add psr column\n"
-msgstr "  -o                   nichts tun\n"
+msgstr "  -P                  PSR-Zeile hinzufügen\n"
 
 #: src/ps/help.c:148
 msgid "  s                   signal format\n"
@@ -1218,9 +1218,10 @@ msgstr ""
 "                      Bildschirmhöhe angeben\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr " -<sig>, --signal <sig>    zu sendendes Signal (Zahl oder Name)\n"
+msgstr ""
+"     --signames       Signalmasken mittels Signalnamen\n"
+"                        anzeigen\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -2005,9 +2006,8 @@ msgid " l: sort by number of slabs\n"
 msgstr " l: nach der Anzahl der Slabs sortieren\n"
 
 #: src/slabtop.c:120
-#, fuzzy
 msgid " v: sort by (non display) number of active slabs\n"
-msgstr " v: nach Anzahl der aktiven Slabs sortieren\n"
+msgstr " v: nach Anzahl der (nicht angezeigten) aktiven Slabs sortieren\n"
 
 #: src/slabtop.c:121
 msgid " n: sort by name\n"
@@ -2018,9 +2018,8 @@ msgid " o: sort by number of objects (the default)\n"
 msgstr " o: nach Anzahl der Objekte sortieren (Vorgabe)\n"
 
 #: src/slabtop.c:123
-#, fuzzy
 msgid " p: sort by (non display) pages per slab\n"
-msgstr " p: nach Pages pro Slab sortieren\n"
+msgstr " p: nach (nicht angezeigten) Pages pro Slab sortieren\n"
 
 #: src/slabtop.c:124
 msgid " s: sort by object size\n"
@@ -2129,6 +2128,8 @@ msgstr "      --deprecated     auch nicht mehr genutzte Parameter auflisten\n"
 #: src/sysctl.c:239
 msgid "      --dry-run        Print the key and values but do not write\n"
 msgstr ""
+"      --dry-run        Schlüssel und Werte ausgeben,\n"
+"                         aber nicht schreiben\n"
 
 #: src/sysctl.c:240
 msgid "  -b, --binary         print value without new line\n"
@@ -2907,9 +2908,8 @@ msgstr ""
 
 #. Translation Hint: maximum 'PSS' = 6
 #: src/top/top_nls.c:340
-#, fuzzy
 msgid "PSS"
-msgstr "RSS"
+msgstr "PSS"
 
 #: src/top/top_nls.c:341
 msgid "Proportion RSS,  KiB"
@@ -2944,9 +2944,8 @@ msgstr ""
 
 #. Translation Hint: maximum 'USS' = 6
 #: src/top/top_nls.c:352
-#, fuzzy
 msgid "USS"
-msgstr "RSS"
+msgstr "USS"
 
 #: src/top/top_nls.c:353
 msgid "Unique RSS, KiB"
@@ -2959,7 +2958,7 @@ msgstr ""
 
 #: src/top/top_nls.c:356
 msgid "I/O Bytes Read"
-msgstr ""
+msgstr "E/A Bytes gelesen"
 
 #. Translation Hint: maximum 'ioRop' = 5
 #: src/top/top_nls.c:358
@@ -2968,7 +2967,7 @@ msgstr ""
 
 #: src/top/top_nls.c:359
 msgid "I/O Read Operations"
-msgstr ""
+msgstr "E/A-Lesevorgänge"
 
 #. Translation Hint: maximum 'ioW' = 6
 #: src/top/top_nls.c:361
@@ -2977,7 +2976,7 @@ msgstr ""
 
 #: src/top/top_nls.c:362
 msgid "I/O Bytes Written"
-msgstr ""
+msgstr "E/A Bytes geschrieben"
 
 #. Translation Hint: maximum 'ioWop' = 5
 #: src/top/top_nls.c:364
@@ -2986,12 +2985,12 @@ msgstr ""
 
 #: src/top/top_nls.c:365
 msgid "I/O Write Operations"
-msgstr ""
+msgstr "E/A-Schreibvorgänge"
 
 #. Translation Hint: maximum 'AGID' = 5
 #: src/top/top_nls.c:367
 msgid "AGID"
-msgstr ""
+msgstr "AGID"
 
 #: src/top/top_nls.c:368
 msgid "Autogroup Identifier"
@@ -3000,7 +2999,7 @@ msgstr ""
 #. Translation Hint: maximum 'AGNI' = 4
 #: src/top/top_nls.c:370
 msgid "AGNI"
-msgstr ""
+msgstr "AGNI"
 
 #: src/top/top_nls.c:371
 #, fuzzy
@@ -3029,7 +3028,7 @@ msgstr ""
 #: src/top/top_nls.c:379
 #, c-format
 msgid "%CUU"
-msgstr ""
+msgstr "%CUU"
 
 #: src/top/top_nls.c:380
 msgid "CPU Utilization"
@@ -3039,7 +3038,7 @@ msgstr ""
 #: src/top/top_nls.c:382
 #, c-format
 msgid "%CUC"
-msgstr ""
+msgstr "%CUC"
 
 #: src/top/top_nls.c:383
 msgid "Utilization + child"
@@ -3063,9 +3062,8 @@ msgid "nsTIME"
 msgstr "ZEIT"
 
 #: src/top/top_nls.c:389
-#, fuzzy
 msgid "TIME namespace Inode"
-msgstr "Inode für IPC-Namensraum"
+msgstr "TIME-Inode für IPC-Namensraum"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3374,9 +3372,9 @@ msgstr "%CPU(s):"
 #. and 'the Cp' prefix will be combined with a  core id: 'p', 'e' or 'u'
 #. .                 (if 'Cp' is translated, it must be exactly 2 characters long)
 #: src/top/top_nls.c:517
-#, fuzzy, c-format
+#, c-format
 msgid "%%Cp%c%-3d:"
-msgstr "%%CPU%-3d:"
+msgstr "%%Cp%c%-3d:"
 
 #. Translation Hint: The following word "another" must have 1 trailing space
 #: src/top/top_nls.c:519
@@ -3670,9 +3668,9 @@ msgid "library failed pids statistics, at %d: %s"
 msgstr ""
 
 #: src/top/top_nls.c:599
-#, fuzzy, c-format
+#, c-format
 msgid "bad memory scaling arg '%s'"
-msgstr "Falsches Argument »%s« für Iterationen"
+msgstr "Falsches Argument »%s« für Speicherskalierung"
 
 #: src/top/top_nls.c:600
 #, c-format
@@ -4203,13 +4201,12 @@ msgid "Unable to create system stat structure"
 msgstr ""
 
 #: src/vmstat.c:380
-#, fuzzy
 msgid "Unable to get uptime"
-msgstr "IPC-Pipes konnten nicht angelegt werden"
+msgstr "Systemlaufzeit konnte nicht ermittelt werden"
 
 #: src/vmstat.c:391 src/vmstat.c:472 src/vmstat.c:874
 msgid "Unable to select memory information"
-msgstr ""
+msgstr "Speicherinformation konnte nicht ermittelt werden"
 
 #: src/vmstat.c:405 src/vmstat.c:458 src/vmstat.c:868
 msgid "Unable to select stat information"
@@ -4247,9 +4244,9 @@ msgid "Unable to create diskstat structure"
 msgstr ""
 
 #: src/vmstat.c:587 src/vmstat.c:593
-#, fuzzy, c-format
+#, c-format
 msgid "Disk/Partition %s not found"
-msgstr "Partition wurde nicht gefunden\n"
+msgstr "Platte/Partition %s wurde nicht gefunden"
 
 #: src/vmstat.c:616
 msgid ""
@@ -4555,10 +4552,10 @@ msgid "  -c, --color            interpret ANSI color and style sequences\n"
 msgstr "  -c, --color            ANSI-Farb- und Stilsequenzen interpretieren\n"
 
 #: src/watch.c:98
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
-msgstr "  -c, --color            ANSI-Farb- und Stilsequenzen interpretieren\n"
+msgstr ""
+"  -C, --no-color         ANSI-Farb- und Stilsequenzen nicht interpretieren\n"
 
 #: src/watch.c:99
 msgid ""
@@ -4582,13 +4579,13 @@ msgstr ""
 "                         ändert\n"
 
 #: src/watch.c:103
-#, fuzzy
 msgid ""
 "  -q, --equexit <cycles>\n"
 "                         exit when output from command does not change\n"
 msgstr ""
-"  -g, --chgexit          beenden, wenn sich die Ausgabe des Befehls\n"
-"                         ändert\n"
+"  -q, --equexit <Durchläufe>                          beenden, wenn sich die "
+"Ausgabe des Befehls\n"
+"                           nicht ändert\n"
 
 #: src/watch.c:105
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
@@ -4775,11 +4772,11 @@ msgstr ""
 
 #: src/w.c:815
 msgid "error getting sessions"
-msgstr ""
+msgstr "Sitzungen konnten nicht ermittelt werden"
 
 #: src/w.c:823
 msgid "get user name failed"
-msgstr ""
+msgstr "Benutzername konnte nicht ermittelt werden"
 
 #: local/c.h:153
 msgid ""

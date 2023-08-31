@@ -1,14 +1,14 @@
 # procps-ng Georgian translaton
-# Copyright (C) 2022 Free Software Foundation, Inc.
+# Copyright (C) 2023 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022.
+# Temuri Doghonadze <temuri.doghonadze@gmail.com>, 2022-2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.2-rc1\n"
+"Project-Id-Version: procps-ng-4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2022-11-28 13:44+0100\n"
+"PO-Revision-Date: 2023-08-20 11:17+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <(nothing)>\n"
 "Language: ka\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #: local/fileutils.c:38
 msgid "write error"
@@ -83,11 +83,11 @@ msgstr "     --si            1024-ის მაგიერ 1000-ის ხა�
 #: src/free.c:89
 msgid " -l, --lohi          show detailed low and high memory statistics\n"
 msgstr ""
+" -l, --lohi          ზედა და ქვედა მეხსიერების დეტალური სტატისტიკის ჩვენება\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          მნიშვნელობების კიბიბაიტებში გამოტანა\n"
+msgstr " -L, --line          გამოტანის ერთ ხაზში ჩატევა\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -99,11 +99,11 @@ msgstr ""
 
 #: src/free.c:93
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
-msgstr ""
+msgstr " -s N, --seconds N   გამოტანის ყოველ N წამში გამეორება\n"
 
 #: src/free.c:94
 msgid " -c N, --count N     repeat printing N times, then exit\n"
-msgstr ""
+msgstr " -c N, --count N     გამოტანის N-ჯერ გამოტანა და გასვლა\n"
 
 #: src/free.c:95
 msgid " -w, --wide          wide output\n"
@@ -115,12 +115,12 @@ msgstr "     --help     ამ დახმარების გამოტა
 
 #: src/free.c:172
 msgid "Multiple unit options don't make sense."
-msgstr ""
+msgstr "ერთზე მეტი ერთეულის პარამეტრის მითითებას აზრი არ აქვს."
 
 #: src/free.c:341
 #, c-format
 msgid "seconds argument `%s' is not positive number"
-msgstr ""
+msgstr "მეორე არგუმენტი '%s' დადებითი რიცხვი არაა"
 
 #: src/free.c:347
 msgid "failed to parse count argument"
@@ -133,33 +133,31 @@ msgstr "რაოდენობის არგუმენტის დამ�
 
 #: src/free.c:370
 msgid "Memory information file /proc/meminfo does not exist"
-msgstr ""
+msgstr "მეხსიერების ინფორმაცის ფაილი /proc/meminfo არ არსებობს"
 
 #: src/free.c:373 src/vmstat.c:378 src/vmstat.c:872
 msgid "Unable to create meminfo structure"
-msgstr ""
+msgstr "შეცდომა meminfo-ის სტრუქტურის შექმნისას"
 
 #. Translation Hint: These are shortened column headers
 #. * that are all 7 characters long. Use spaces and right
 #. * align if the translation is shorter.
 #.
 #: src/free.c:381
-#, fuzzy
 msgid "SwapUse"
-msgstr "სვაპი"
+msgstr "სვოპისგამოყ"
 
 #: src/free.c:382
-#, fuzzy
 msgid "CachUse"
-msgstr "კეში"
+msgstr "კეშისგამოყ"
 
 #: src/free.c:384
 msgid " MemUse"
-msgstr ""
+msgstr " მეხსგამოყ"
 
 #: src/free.c:385
 msgid "MemFree"
-msgstr ""
+msgstr "მეხსთავის"
 
 #: src/free.c:395
 #, c-format
@@ -193,7 +191,7 @@ msgstr "მაღალი:"
 
 #: src/free.c:436
 msgid "Swap:"
-msgstr "სვაპი:"
+msgstr "სვოპი:"
 
 #: src/free.c:443
 msgid "Total:"
@@ -211,25 +209,29 @@ msgstr " %s [options] <pid> [...]\n"
 #: src/kill.c:42
 msgid " <pid> [...]            send signal to every <pid> listed\n"
 msgstr ""
+" <pid> [...]            სიგნალის ყველა ჩამოთვლილი <pid>-სთვის გაგზავნა\n"
 
 #: src/kill.c:43
 msgid ""
 " -<signal>, -s, --signal <signal>\n"
 "                        specify the <signal> to be sent\n"
 msgstr ""
+" -<signal>, -s, --signal <signal>\n"
+"                        მიუთითეთ გასაგზავნი <signal>\n"
 
 #: src/kill.c:45
 msgid " -q, --queue <value>    integer value to be sent with the signal\n"
-msgstr ""
+msgstr " -q, --queue <value>    სიგნალთან ერთად გასაგზავნი მთელი რიცხვი\n"
 
 #: src/kill.c:46
 msgid ""
 " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
 msgstr ""
+" -l, --list=[<signal>]  ყველა სიგნალის სიის გამოტანა ან სახელში გადაყვანა\n"
 
 #: src/kill.c:47
 msgid " -L, --table            list all signal names in a nice table\n"
-msgstr ""
+msgstr " -L, --table            სიგნალის სახელების ცხრილის სახით გამოტანა\n"
 
 #: src/kill.c:112
 #, c-format
@@ -239,6 +241,8 @@ msgstr "უცნობი სიგნალის სახელი: %s"
 #: src/kill.c:131
 msgid "must be an integer value to be passed with the signal."
 msgstr ""
+"სიგნალთან ერთად გადასაცემად დადებით მთელი რიცხვის მქონე მნიშვნელობას უნდა "
+"წარმოადგენდეს."
 
 #: src/kill.c:136
 #, c-format
@@ -271,32 +275,34 @@ msgstr " -d, --delimiter <string>  გამოტანის გამყო�
 
 #: src/pgrep.c:160
 msgid " -l, --list-name           list PID and process name\n"
-msgstr ""
+msgstr " -l, --list-name           PID-ების და პროცესის სახელების სია\n"
 
 #: src/pgrep.c:161
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
+" -a, --list-full           PID-ის და სრული ბრძანების სტრიქონის ჩვენება\n"
 
 #: src/pgrep.c:162
 msgid " -v, --inverse             negates the matching\n"
-msgstr ""
+msgstr " -v, --inverse             დამთხვევის შებრუნება\n"
 
 #: src/pgrep.c:163
 msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         ყველა TID-ის ჩამონათვალი\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
-msgstr "  s                   სიგნალის ფორმატი\n"
+msgstr "  -<სიგ>                   გასაგზავნი სიგნალი (რიცხვი ან სახელი)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
 msgstr ""
+" -H, --require-handler     დამთხვევა მხოლოდ მაშინ, თუ სიგნალის დამმუშავებელი "
+"ხელმისაწვდომია\n"
 
 #: src/pgrep.c:168
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
-msgstr ""
+msgstr " -q, --queue <value>       სიგნალთან ერთად გასაგზავნი მთელი რიცხვი\n"
 
 #: src/pgrep.c:169
 msgid " -e, --echo                display what is killed\n"
@@ -308,23 +314,27 @@ msgstr " -e, --echo                PID-ების მოცდამდე ჩ
 
 #: src/pgrep.c:177
 msgid " -c, --count               count of matching processes\n"
-msgstr ""
+msgstr " -c, --count               დამთხვეული პროცესების რაოდენობა\n"
 
 #: src/pgrep.c:178
 msgid " -f, --full                use full process name to match\n"
 msgstr ""
+" -f, --full                დასამთხვევად სრული პროცესის სახელის გამოყენება\n"
 
 #: src/pgrep.c:179
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
 msgstr ""
+" -g, --pgroup <PGID,...>   ჩამოთვლილი პროცესის ჯგუფის ID-ების დამთხვევა\n"
 
 #: src/pgrep.c:180
 msgid " -G, --group <GID,...>     match real group IDs\n"
-msgstr ""
+msgstr " -G, --group <GID,...>     რეალური ჯგუფის ID-ების დამთხვევა\n"
 
 #: src/pgrep.c:181
 msgid " -i, --ignore-case         match case insensitively\n"
 msgstr ""
+" -i, --ignore-case         დამთხვევა რეგისტრისთვის ყურადღების მიქცევის "
+"გარეშე\n"
 
 #: src/pgrep.c:182
 msgid " -n, --newest              select most recently started\n"
@@ -357,11 +367,11 @@ msgstr ""
 
 #: src/pgrep.c:189
 msgid " -u, --euid <ID,...>       match by effective IDs\n"
-msgstr ""
+msgstr " -u, --euid <ID,...>       ეფექტური ID-ებით დამთხვევა\n"
 
 #: src/pgrep.c:190
 msgid " -U, --uid <ID,...>        match by real IDs\n"
-msgstr ""
+msgstr " -U, --uid <ID,...>        რეალური ID-ებით დამთხვევა\n"
 
 #: src/pgrep.c:191
 msgid " -x, --exact               match exactly with the command name\n"
@@ -403,7 +413,7 @@ msgstr ""
 
 #: src/pgrep.c:224 src/pgrep.c:700 src/w.c:455
 msgid "Unable to create pid info structure"
-msgstr ""
+msgstr "Pid-ის ინფორმაციის სტრუქტურის შექმნის შეცდომა"
 
 #: src/pgrep.c:388
 #, c-format
@@ -431,13 +441,13 @@ msgid "not a number: %s"
 msgstr "რიცხვი არაა: %s"
 
 #: src/pgrep.c:490
-#, fuzzy, c-format
+#, c-format
 msgid "not a hex string: %s"
-msgstr "რიცხვი არაა: %s"
+msgstr "ტექსვსმ. სტრიქონი არაა: %s"
 
 #: src/pgrep.c:525 src/skill.c:162
 msgid "Unable to read process namespace information"
-msgstr ""
+msgstr "პროცესის სახელების სივრცის ინფორმაციის წაკითხვა შეუძლებელია"
 
 #: src/pgrep.c:612
 #, c-format
@@ -446,7 +456,7 @@ msgstr "რეგექსის შეცდომა: %s"
 
 #: src/pgrep.c:695
 msgid "Error reading reference namespace information\n"
-msgstr ""
+msgstr "მიმართვის სახელების სივრცის ინფორმაციის წაკითხვის შეცდომა\n"
 
 #: src/pgrep.c:809
 #, c-format
@@ -457,9 +467,9 @@ msgid ""
 msgstr ""
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "უცნობი სიგნალის სახელი: %s"
+msgstr "უცნობი სიგნალი \"%s\"."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -547,9 +557,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr ""
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         ყველა TID-ის ჩამონათვალი\n"
+msgstr " -t, --lightweight         ასევე ნაჩვენები იქნება ნაკადებიც\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -652,6 +661,8 @@ msgstr " -d, --device                მოწყობილობის ფო
 #: src/pmap.c:132
 msgid " -q, --quiet                 do not display header and footer\n"
 msgstr ""
+" -q, --quiet                 თავსართი და ქვემო კოლონტიტული ნაჩვენები არ "
+"იქნება\n"
 
 #: src/pmap.c:133
 msgid " -p, --show-path             show path in the mapping\n"
@@ -671,11 +682,11 @@ msgstr "გაზიარებული მეხსიერების წ�
 
 #: src/pmap.c:245
 msgid "  [ anon ]"
-msgstr ""
+msgstr "  [ ანონ ]"
 
 #: src/pmap.c:248
 msgid "  [ stack ]"
-msgstr ""
+msgstr "  [ სტეკი ]"
 
 #: src/pmap.c:334 src/pmap.c:340
 msgid "Unknown format in smaps file!"
@@ -745,7 +756,7 @@ msgstr ""
 
 #: src/pmap.c:1108
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
-msgstr ""
+msgstr "პარამეტრები -c, -C, -d, -n, -N, -x, -X ურთიერთგამომრიცხავია"
 
 #: src/pmap.c:1111
 msgid "options -p, -q are mutually exclusive with -n, -N"
@@ -834,12 +845,12 @@ msgstr ""
 #: src/ps/global.c:495
 #, c-format
 msgid "fatal library error, context\n"
-msgstr ""
+msgstr "ფატალური ბიბლიოთეკის შეცდომა, კონტექსტი\n"
 
 #: src/ps/global.c:503
 #, c-format
 msgid "fatal library error, lookup self\n"
-msgstr ""
+msgstr "ფატალური ბიბლიოთეკის შეცდომა, საკუთარი თავის ძებნა\n"
 
 #. Translation Note:
 #. . The following translatable word will be used to recognize the
@@ -963,7 +974,7 @@ msgstr ""
 
 #: src/ps/help.c:108
 msgid " -N, --deselect       negate selection\n"
-msgstr ""
+msgstr " -N, --deselect       მონიშნულის შებრუნება\n"
 
 #: src/ps/help.c:109
 msgid "  r                   only running processes\n"
@@ -991,25 +1002,27 @@ msgstr " -C <command>         ბრძანების სახელი\n"
 
 #: src/ps/help.c:116
 msgid " -G, --Group <GID>    real group id or name\n"
-msgstr ""
+msgstr " -G, --Group <GID>    რეალური ჯგუფის id ან სახელი\n"
 
 #: src/ps/help.c:117
 msgid " -g, --group <group>  session or effective group name\n"
-msgstr ""
+msgstr " -g, --group <group>  სესიის ან ეფექტური ჯგუფის სახელი\n"
 
 #: src/ps/help.c:118
 msgid " -p, p, --pid <PID>   process id\n"
-msgstr ""
+msgstr " -p, p, --pid <PID>   პროცესის id\n"
 
 #: src/ps/help.c:119
 msgid "        --ppid <PID>  parent process id\n"
-msgstr ""
+msgstr "        --ppid <PID>  მშობელი პროცესის id\n"
 
 #: src/ps/help.c:120
 msgid ""
 " -q, q, --quick-pid <PID>\n"
 "                      process id (quick mode)\n"
 msgstr ""
+" -q, q, --quick-pid <PID>\n"
+"                      პროცესის id (სწრაფი რეჟიმი)\n"
 
 #: src/ps/help.c:122
 msgid " -s, --sid <session>  session id\n"
@@ -1021,11 +1034,11 @@ msgstr " -t, t, --tty <tty>   ტერმინალი\n"
 
 #: src/ps/help.c:124
 msgid " -u, U, --user <UID>  effective user id or name\n"
-msgstr ""
+msgstr " -u, U, --user <UID>  ეფექტური მომხმარებლის id ან სახელი\n"
 
 #: src/ps/help.c:125
 msgid " -U, --User <UID>     real user id or name\n"
-msgstr ""
+msgstr " -U, --User <UID>     რეალური მომხმარებლის id ან სახელი\n"
 
 #: src/ps/help.c:126
 msgid ""
@@ -1069,7 +1082,7 @@ msgstr " -j                   დავალების ფორმატი\
 
 #: src/ps/help.c:139
 msgid "  j                   BSD job control format\n"
-msgstr ""
+msgstr "  j                   BSD-ის დავალების კონტროლის ფორმატი\n"
 
 #: src/ps/help.c:140
 msgid " -l                   long format\n"
@@ -1077,7 +1090,7 @@ msgstr " -l                   გრძელი ფორმატი\n"
 
 #: src/ps/help.c:141
 msgid "  l                   BSD long format\n"
-msgstr ""
+msgstr "  l                   BSD-ის გრძელი ფორმატი\n"
 
 #: src/ps/help.c:142
 msgid " -M, Z                add security data (for SELinux)\n"
@@ -1147,9 +1160,10 @@ msgid ""
 msgstr ""
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr " -l, --list         ყველა სიგნალის სიის გამოტანა\n"
+msgstr ""
+" --signames         სიგნალის ნიღბების ჩვენება სიგნალის სახელების "
+"გამოყენებით\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -1286,39 +1300,39 @@ msgstr ""
 #: src/ps/output.c:2289
 #, c-format
 msgid "bad alignment code\n"
-msgstr ""
+msgstr "არასწორი სწორების კოდი\n"
 
 #: src/ps/parser.c:63
 msgid "the option is exclusive: "
-msgstr ""
+msgstr "პარამეტრი ექსკლუზიურია: "
 
 #: src/ps/parser.c:93
 msgid "process ID list syntax error"
-msgstr ""
+msgstr "პროცესის ID-ების სიის სინტაქსის შეცდომა"
 
 #: src/ps/parser.c:94 src/ps/parser.c:95
 msgid "process ID out of range"
-msgstr ""
+msgstr "პროცესის ID დიაპაზონს გარეთაა"
 
 #: src/ps/parser.c:108
 msgid "user name does not exist"
-msgstr ""
+msgstr "მომხმარებლის სახელი არ არსებობს"
 
 #: src/ps/parser.c:114
 msgid "user ID out of range"
-msgstr ""
+msgstr "მომხმარებლის ID დიაპაზონს გარეთაა"
 
 #: src/ps/parser.c:127
 msgid "group name does not exist"
-msgstr ""
+msgstr "ჯგუფის სახელი არ არსებობს"
 
 #: src/ps/parser.c:133
 msgid "group ID out of range"
-msgstr ""
+msgstr "ჯგუფის ID დიაპაზონს გარეთაა"
 
 #: src/ps/parser.c:149 src/ps/parser.c:173
 msgid "TTY could not be found"
-msgstr ""
+msgstr "TTY ვერ ვიპოვე"
 
 #: src/ps/parser.c:175
 msgid "list member was not a TTY"
@@ -1333,9 +1347,8 @@ msgid "list of command names must follow -C"
 msgstr ""
 
 #: src/ps/parser.c:257
-#, fuzzy
 msgid "date format must follow -D"
-msgstr "ნამდვლი მომხმარებლების სია --User-ს უნდა მოსდევდეს"
+msgstr "თარიღის ფორმატი -D-ს უნდა მოსდევდეს"
 
 #: src/ps/parser.c:270
 msgid "list of real groups must follow -G"
@@ -1343,35 +1356,35 @@ msgstr ""
 
 #: src/ps/parser.c:283
 msgid "list of jobs must follow -J"
-msgstr ""
+msgstr "-J-ს დავალებების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:311
 msgid "format or sort specification must follow -O"
-msgstr ""
+msgstr "-O-ს დალაგების სპეციფიკაცია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:322
 msgid "list of PRM groups must follow -R"
-msgstr ""
+msgstr "-R-ს PRM-ის ჯგუფების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:341
 msgid "list of real users must follow -U"
-msgstr ""
+msgstr "-U-ს რეალური მომხმარებლები უნდა მოსდევდეს"
 
 #: src/ps/parser.c:382
 msgid "list of session leaders OR effective group names must follow -g"
-msgstr ""
+msgstr "-g-ს სესიის ლიდერების სია ან ეფექტური ჯგუფის სახელები უნდა მოსდევდეს"
 
 #: src/ps/parser.c:393
 msgid "list of session leaders OR effective group IDs was invalid"
-msgstr ""
+msgstr "სესიის ლიდერების სია ან ეფექტური ჯგუფის ID-ები არასწორია"
 
 #: src/ps/parser.c:417
 msgid "format specification must follow -o"
-msgstr ""
+msgstr "-o-ს ფორმატის სპეციფიკაცია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:423
 msgid "list of process IDs must follow -p"
-msgstr ""
+msgstr "-p-ს პროცესის ID-ების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:440
 msgid "the -r option is reserved"
@@ -1379,15 +1392,15 @@ msgstr "პარამეტრი -r დარეზერვებული�
 
 #: src/ps/parser.c:446
 msgid "list of session IDs must follow -s"
-msgstr ""
+msgstr "-s-ს სესიების ID-ების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:454
 msgid "list of terminals (pty, tty...) must follow -t"
-msgstr ""
+msgstr "-t-ს ტერმინალების სია (pty,tty….) უნდა მოსდევდეს"
 
 #: src/ps/parser.c:462
 msgid "list of users must follow -u"
-msgstr ""
+msgstr "-u-ს მომხმარებლების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:484
 msgid "must set personality to get -x option"
@@ -1487,55 +1500,55 @@ msgstr ""
 
 #: src/ps/parser.c:908
 msgid "option --deselect does not take an argument"
-msgstr ""
+msgstr "პარამეტრს --deselect არგუმენტები არ გააჩნია"
 
 #: src/ps/parser.c:920
 msgid "option --no-heading does not take an argument"
-msgstr ""
+msgstr "პარამეტრს --no-heading არგუმენტები არ გააჩნია"
 
 #: src/ps/parser.c:929
 msgid "option --heading does not take an argument"
-msgstr ""
+msgstr "პარამეტრს --heading არგუმენტები არ გააჩნია"
 
 #: src/ps/parser.c:935
 msgid "option --forest does not take an argument"
-msgstr ""
+msgstr "პარამეტრს --forest არგუმენტები არ გააჩნია"
 
 #: src/ps/parser.c:941
 msgid "format specification must follow --format"
-msgstr ""
+msgstr "--format-ს ფორმატის სპეციფიკაცია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:947
 msgid "list of effective groups must follow --group"
-msgstr ""
+msgstr "--group-ს ეფექტური ჯგუფების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:965
 msgid "list of process IDs must follow --pid"
-msgstr ""
+msgstr "--pid-ს პროცესის ID-ების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:981
 msgid "list of process IDs must follow --ppid"
-msgstr ""
+msgstr "--ppid-ს პროცესის ID-ების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:999
 msgid "number of rows must follow --rows or --lines"
-msgstr ""
+msgstr "--row და --lines პარამეტრად რიცხვი უნდა მოსდევდეს"
 
 #: src/ps/parser.c:1003
 msgid "some sid thing(s) must follow --sid"
-msgstr ""
+msgstr "--sid-ს sid-ის რამე უნდა მოჰყვებოდეს"
 
 #: src/ps/parser.c:1015
 msgid "long sort specification must follow --sort"
-msgstr ""
+msgstr "--sort-ს გრძელი დალაგების სპეციფიკაცია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:1021
 msgid "list of ttys must follow --tty"
-msgstr ""
+msgstr "--tty-ის tty-ების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:1029
 msgid "list of effective users must follow --user"
-msgstr ""
+msgstr "--user-ს ეფექტური მომხმარებლების სია უნდა მოსდევდეს"
 
 #: src/ps/parser.c:1145
 msgid "way bad"
@@ -1658,12 +1671,13 @@ msgstr ""
 
 #: src/ps/sortformat.c:797
 msgid "tell <procps@freelists.org> what you expected"
-msgstr ""
+msgstr "უთხარით <procps@freelists.org>-ს, რას მოელოდით"
 
 #: src/ps/sortformat.c:807
 msgid ""
 "tell <procps@freelists.org> what you want (-L/-T, -m/m/H, and $PS_FORMAT)"
 msgstr ""
+"უთხარით <procps@freelists.org>-ს, რა გნებავთ (-L/-T, -m/m/H, და $PS_FORMAT)"
 
 #: src/ps/sortformat.c:824
 #, c-format
@@ -1722,7 +1736,7 @@ msgstr ""
 
 #: src/skill.c:288 src/w.c:458
 msgid "Unable to load process information"
-msgstr ""
+msgstr "პროცესის ინფორმაციის ჩატვირთვა შეუძლებელია"
 
 #: src/skill.c:319
 #, c-format
@@ -1776,15 +1790,15 @@ msgstr ""
 
 #: src/skill.c:338
 msgid " -p, --pid <pid>          expression is a process id number\n"
-msgstr ""
+msgstr " -p, --pid <pid>          გამოსახულება პროცესის ID-ის ნომერია\n"
 
 #: src/skill.c:339
 msgid " -t, --tty <tty>          expression is a terminal\n"
-msgstr ""
+msgstr " -t, --tty <tty>          გამოსახულება ტერმინალია\n"
 
 #: src/skill.c:340
 msgid " -u, --user <username>    expression is a username\n"
-msgstr ""
+msgstr " -u, --user <username>    გამოსახულება მომხმარებლის სახელია\n"
 
 #: src/skill.c:342
 msgid "Alternatively, expression can be:\n"
@@ -3466,7 +3480,7 @@ msgstr "Mem "
 
 #: src/top/top_nls.c:595
 msgid "Swap"
-msgstr "სვაპი"
+msgstr "სვოპი"
 
 #: src/top/top_nls.c:596
 #, c-format
@@ -4011,9 +4025,8 @@ msgid "Unable to create system stat structure"
 msgstr ""
 
 #: src/vmstat.c:380
-#, fuzzy
 msgid "Unable to get uptime"
-msgstr "სრული მეხსიერების მიღების შეცდომა"
+msgstr "ჩართულობის დროის მიღება შეუძლებელია"
 
 #: src/vmstat.c:391 src/vmstat.c:472 src/vmstat.c:874
 msgid "Unable to select memory information"
@@ -4403,7 +4416,7 @@ msgstr ""
 
 #: src/watch.c:113
 msgid " -v, --version  output version information and exit\n"
-msgstr ""
+msgstr "  -V, --version              ვერსიის ჩვენება და გასვლა\n"
 
 #: src/watch.c:485
 #, c-format
@@ -4507,7 +4520,6 @@ msgid ""
 msgstr ""
 
 #: src/w.c:664
-#, fuzzy
 msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -A, -e               ყველა პროცესი\n"
 
@@ -4578,7 +4590,7 @@ msgstr ""
 
 #: local/c.h:157
 msgid " -V, --version  output version information and exit\n"
-msgstr ""
+msgstr "  -V, --version              ვერსიის ჩვენება და გასვლა\n"
 
 #: local/c.h:158
 #, c-format

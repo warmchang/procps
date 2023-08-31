@@ -4,13 +4,13 @@
 #
 # Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018, 2019, 2021, 2022, 2023.
 #
-# $Id: procps-ng.po,v 1.27 2023-01-31 16:19:19+01 göran Exp göran $
+# $Id: procps-ng.po,v 1.29 2023-08-21 10:53:48+02 göran Exp $
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.3-rc1\n"
+"Project-Id-Version: procps-ng 4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2023-08-19 17:38+1000\n"
-"PO-Revision-Date: 2023-01-31 16:18+0100\n"
+"PO-Revision-Date: 2023-08-21 10:53+0200\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -85,9 +85,8 @@ msgid " -l, --lohi          show detailed low and high memory statistics\n"
 msgstr " -l, --lohi          visa detaljerade lägsta och högsta minnesvärden\n"
 
 #: src/free.c:90
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          visa utdata i kibibyte\n"
+msgstr " -L, --line          visa utdata på en enda rad\n"
 
 #: src/free.c:91
 msgid " -t, --total         show total for RAM + swap\n"
@@ -144,22 +143,20 @@ msgstr "Kan inte skapa minnesinformationspost"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:381
-#, fuzzy
 msgid "SwapUse"
-msgstr "Växl"
+msgstr "VäxlAnv"
 
 #: src/free.c:382
-#, fuzzy
 msgid "CachUse"
-msgstr "Cache"
+msgstr "CachAnv"
 
 #: src/free.c:384
 msgid " MemUse"
-msgstr ""
+msgstr " MinnAnv"
 
 #: src/free.c:385
 msgid "MemFree"
-msgstr ""
+msgstr "MinnFritt"
 
 #: src/free.c:395
 #, c-format
@@ -293,10 +290,9 @@ msgid " -w, --lightweight         list all TID\n"
 msgstr " -w, --lightweight         lista alla TID\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
 msgstr ""
-" -<sig>, --signal <sig>    signal att skicka (antingen nummer eller namn)\n"
+" -<sig>                    signal att skicka (antingen nummer eller namn)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
@@ -359,10 +355,9 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,…>     matcha sessions-ID:n\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
 msgstr ""
-" -<sig>, --signal <sig>    signal att skicka (antingen nummer eller namn)\n"
+"     --signal <sig>        signal att skicka (antingen nummer eller namn)\n"
 
 #: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
@@ -480,9 +475,9 @@ msgstr ""
 "Prova flaggan ”%s -f” för att matcha mot den fullständiga kommandoraden."
 
 #: src/pgrep.c:924
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "okänt signalnamn %s"
+msgstr "Okänd signal ”%s”."
 
 #: src/pgrep.c:1090
 #, c-format
@@ -579,9 +574,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,…>    uteslut processer med PID\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         lista alla TID\n"
+msgstr " -t, --lightweight         lista trådar också\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1195,10 +1189,8 @@ msgstr ""
 "                      ange skärmhöjd\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr ""
-" -<sig>, --signal <sig>    signal att skicka (antingen nummer eller namn)\n"
+msgstr "     --signames       använd signalnamn för att visa signalmasker\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -4148,13 +4140,12 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         hoppar över första utdataraden\n"
 
 #: src/vmstat.c:253
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
-"procs -----------minne----------- -växling- -----io---- -system-- ------"
-"cpu-----"
+"procs -----------minne----------- -växling- -----io---- -system-- -------"
+"cpu-------"
 
 #: src/vmstat.c:255
 msgid ""
@@ -4624,10 +4615,9 @@ msgid "  -c, --color            interpret ANSI color and style sequences\n"
 msgstr "  -c, --color            tolka ANSI färg- och stilsekvenser\n"
 
 #: src/watch.c:98
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
-msgstr "  -c, --color            tolka ANSI färg- och stilsekvenser\n"
+msgstr "  -C, --no-color         tolka inte ANSI färg- och stilsekvenser\n"
 
 #: src/watch.c:99
 msgid ""
@@ -4831,13 +4821,12 @@ msgid "   IDLE WHAT\n"
 msgstr "  INAKT VAD\n"
 
 #: src/w.c:815
-#, fuzzy
 msgid "error getting sessions"
-msgstr "Fel när slab-sammanfattningsresultaten hämtades"
+msgstr "fel när sessioner inhämtades"
 
 #: src/w.c:823
 msgid "get user name failed"
-msgstr ""
+msgstr "att hämta användarnamn misslyckades"
 
 #: local/c.h:153
 msgid ""
