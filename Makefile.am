@@ -149,6 +149,13 @@ endif
 
 dist_man_MANS += man/w.1
 src_w_SOURCES = src/w.c local/fileutils.c
+src_w_LDADD = $(LDADD)
+if WITH_SYSTEMD
+src_w_LDADD += @SYSTEMD_LIBS@
+endif
+if WITH_ELOGIND
+src_w_LDADD += @ELOGIND_LIBS@
+endif
 else
   EXTRA_DIST += man/w.1
 endif
