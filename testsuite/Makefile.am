@@ -14,14 +14,21 @@ if LINUX
 # 3d807ae853b8b4264da156065b34f1447658a8ba
 DEJATOOL += \
 	pmap
+
 if !CYGWIN
-DEJATOOL += \
-	slabtop \
-	sysctl
+if WITH_NCURSES
+DEJATOOL += slabtop
+endif
+
+DEJATOOL += sysctl
 endif
 
 if BUILD_KILL
 DEJATOOL += kill
+endif
+
+if BUILD_W
+DEJATOOL += w
 endif
 
 DEJATOOL += \
@@ -31,10 +38,8 @@ DEJATOOL += \
 	pkill \
 	ps \
 	pwdx \
-	slabtop \
 	uptime \
-	vmstat \
-	w
+	vmstat
 endif
 
 EXTRA_DIST = \
