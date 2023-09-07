@@ -49,6 +49,7 @@
 #define __SIGRTMAX SIGRTMAX
 #endif
 
+#define SIGNAME_MAX 256
 /*
  * The actual list of unsupported signals varies by operating system. This
  * program is Linux specific as it processes /proc/ for signal information and
@@ -132,7 +133,7 @@ static uint64_t mask_sig_val_num(int signum)
 int print_signame(char *restrict const outbuf, const char *restrict const sig, const size_t len_in)
 {
 	unsigned int i;
-	char abbrev[PATH_MAX];
+	char abbrev[SIGNAME_MAX];
 	unsigned int n = 0;
 	char *c = outbuf;
         size_t len = len_in;
@@ -146,7 +147,7 @@ int print_signame(char *restrict const outbuf, const char *restrict const sig, c
 	for (i=1; i < NSIG; i++) {
 		test_val = mask_sig_val_num(i);
 		if (test_val & mask) {
-                        n = strlen(sigstat_strsignal_abbrev(i, abbrev, PATH_MAX));
+                        n = strlen(sigstat_strsignal_abbrev(i, abbrev, SIGNAME_MAX));
                         if (n+1 >= len) { // +1 for the '+'
                             strcpy(c, "+");
                             len -= 1;
@@ -155,7 +156,7 @@ int print_signame(char *restrict const outbuf, const char *restrict const sig, c
                         } else {
 			    n = snprintf(c, len, (c==outbuf)?"%s":",%s",
 				     sigstat_strsignal_abbrev(i, abbrev,
-					   		      PATH_MAX));
+					   		      SIGNAME_MAX));
 			    len -= n;
 			    c+=n;
                         }
