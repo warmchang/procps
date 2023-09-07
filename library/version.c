@@ -27,7 +27,7 @@
 #include "misc.h"
 #include "procps-private.h"
 
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__) || defined(__GNU__)
 #define PROCFS_OSRELEASE "/proc/version"
 #define PROCFS_OSPATTERN "%*s version %u.%u.%u"
 #else
