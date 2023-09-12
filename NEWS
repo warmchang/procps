@@ -1,5 +1,6 @@
 procps-ng-NEXT
 ---------------
+  * w: Don't segfault with -s option                       issue #301
 
 procps-ng-4.0.4
 ---------------
