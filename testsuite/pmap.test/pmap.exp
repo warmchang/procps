@@ -78,12 +78,12 @@ proc expect_twice_total { test } {
             set totkb $expect_out(1,string)
             expect {
                 -re "\r\n\\s+$totkb\[0-9 \]*KB" { pass "$test" }
-                eof { fail "$test" }
-                timeout { fail "$test" }
+                eof { fail "$test: first match" }
+                timeout { fail "$test: first match" }
             }
         }
-        eof { fail "$test" }
-        timeout { fail "$test" }
+        eof { fail "$test: second match" }
+        timeout { fail "$test: second match" }
     }
 }
 
