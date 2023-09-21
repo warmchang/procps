@@ -139,7 +139,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
         realtime.tm_hour, realtime.tm_min, realtime.tm_sec);
 
     if (updays)
-        pos += sprintf(upbuf + pos, "%d %s, ", updays, (updays > 1) ? "days" : "day");
+        pos += sprintf(upbuf + pos, "%d %s, ", updays, (updays != 1) ? "days" : "day");
 
     if (uphours)
         pos += sprintf(upbuf + pos, "%2d:%02d, ", uphours, upminutes);
@@ -155,7 +155,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
       pos += sprintf(upbuf + pos, "%2d ", users);
 
     pos += sprintf(upbuf + pos, "%s,  load average: %.2f, %.2f, %.2f",
-        users > 1 ? "users" : "user",
+        users != 1 ? "users" : "user",
         av1, av5, av15);
 
     return upbuf;
@@ -247,7 +247,7 @@ PROCPS_EXPORT char *procps_uptime_sprint_short(void)
     if (updays) {
         pos += sprintf(shortbuf + pos, "%s%d %s",
                        comma  > 0 ? ", " : "", updays,
-                       updays > 1 ? "days" : "day");
+                       updays != 1 ? "days" : "day");
         comma += 1;
     }
 
