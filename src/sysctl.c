@@ -36,6 +36,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <glob.h>
+#include <fnmatch.h>
 #include <libgen.h>
 #include <limits.h>
 #include <regex.h>
@@ -212,6 +213,8 @@ static SysctlSetting *settinglist_findpath(const SettingList *l, const char *pat
 
     for (node=l->head; node != NULL; node = node->next) {
         if (strcmp(node->path, path) == 0)
+            return node;
+        if (node->glob_exclude && fnmatch(node->path, path, 0) == 0)
             return node;
     }
     return NULL;
@@ -633,6 +636,7 @@ static int WriteSetting(
  * -key = value                              ignore errors
  * key.pattern.*.with.glob = value           set keys that match glob
  * -key.pattern.exclude.with.glob            dont set this value
+ * -key.pattern.exclude.*.glob               dont set values for keys matching glob
  * key.pattern.override.with.glob = value    set this glob match to value
  *
  */
