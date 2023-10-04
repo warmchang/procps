@@ -226,6 +226,13 @@ static void print_from(
 	char buf[fromlen + 1];
 	char buf_ipv6[INET6_ADDRSTRLEN];
 	int len;
+
+            if (!u) {
+                /* Both systemd session and utmp not available */
+                print_host("", 0, fromlen);
+                return;
+            }
+
 #ifndef __CYGWIN__
 	int32_t ut_addr_v6[4];      /* IP address of the remote host */
 
@@ -378,6 +385,32 @@ static int get_tty_device(const char *restrict const name)
     return -1;
 }
 
+static struct pids_fetch *cache_pids(struct pids_info **info)
+{
+    struct pids_fetch *reap;
+    *info = NULL;
+
+    enum pids_item items[] = {
+        PIDS_ID_PID,
+        PIDS_ID_TGID,
+        PIDS_TICS_BEGAN,
+        PIDS_ID_EUID,
+        PIDS_ID_RUID,
+        PIDS_ID_TPGID,
+        PIDS_ID_PGRP,
+        PIDS_TTY,
+        PIDS_TICS_ALL,
+        PIDS_CMDLINE};
+
+    if (procps_pids_new(info, items, 10) < 0)
+        xerrx(EXIT_FAILURE,
+              _("Unable to create pid info structure"));
+    if ((reap = procps_pids_reap(*info, PIDS_FETCH_TASKS_ONLY)) == NULL)
+        xerrx(EXIT_FAILURE,
+              _("Unable to load process information"));
+    return reap;
+}
+
 /*
  * This function scans the process table accumulating total cpu
  * times for any processes "associated" with this login session.
@@ -394,7 +427,8 @@ static int find_best_proc(
         unsigned long long *restrict const jcpu,
         unsigned long long *restrict const pcpu,
         char *cmdline,
-        pid_t *pid)
+        pid_t *pid,
+        struct pids_fetch *reap)
 {
 #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], info)
 #define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i], info)
@@ -407,19 +441,7 @@ static int find_best_proc(
     unsigned long long best_time = 0;
     unsigned long long secondbest_time = 0;
 
-    struct pids_info *info=NULL;
-    struct pids_fetch *reap;
-    enum pids_item items[] = {
-        PIDS_ID_PID,
-        PIDS_ID_TGID,
-        PIDS_TICS_BEGAN,
-        PIDS_ID_EUID,
-        PIDS_ID_RUID,
-        PIDS_ID_TPGID,
-        PIDS_ID_PGRP,
-        PIDS_TTY,
-        PIDS_TICS_ALL,
-        PIDS_CMDLINE};
+    /* Must match items in cache_pids */
     enum rel_items {
         EU_PID, EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
         EU_TICS_ALL, EU_CMDLINE};
@@ -448,12 +470,6 @@ static int find_best_proc(
 
     line = get_tty_device(tty);
 
-    if (procps_pids_new(&info, items, 10) < 0)
-        xerrx(EXIT_FAILURE,
-              _("Unable to create pid info structure"));
-    if ((reap = procps_pids_reap(info, PIDS_FETCH_TASKS_ONLY)) == NULL)
-        xerrx(EXIT_FAILURE,
-              _("Unable to load process information"));
     total_procs = reap->counts->total;
 
     if (u)
@@ -498,7 +514,6 @@ static int find_best_proc(
         *pid = PIDS_GETULL(PID);
         *pcpu = PIDS_GETULL(TICS_ALL);
     }
-    procps_pids_unref(&info);
     return found_utpid;
 #undef PIDS_GETINT
 #undef PIDS_GETUNT
@@ -511,7 +526,8 @@ static void showinfo(
             const char *session, const char *name,
             utmp_t * u, const int longform, int maxcmd, int from,
             const int userlen, const int fromlen, const int ip_addresses,
-            const int pids)
+            const int pids,
+            struct pids_fetch *reap)
 {
     unsigned long long jcpu, pcpu;
     unsigned i;
@@ -554,7 +570,7 @@ static void showinfo(
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
 		       session,
 #endif
-		       u, tty + 5, &jcpu, &pcpu, cmdline, &best_pid) == 0)
+		       u, tty + 5, &jcpu, &pcpu, cmdline, &best_pid, reap) == 0)
     /*
      * just skip if stale utmp entry (i.e. login proc doesn't
      * exist). If there is a desire a cmdline flag could be
@@ -563,18 +579,14 @@ static void showinfo(
      */
         return;
 
-#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
     if (name)
       strncpy(uname, name, UT_NAMESIZE);
-    else
-#endif
-      strncpy(uname, u->ut_user, UT_NAMESIZE);
     /* force NUL term for printf */
     uname[UT_NAMESIZE] = '\0';
 
     printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, tty + 5);
     if (from)
-        print_from(session, NULL, ip_addresses, fromlen);
+        print_from(session, u, ip_addresses, fromlen);
 
     /* login time */
     if (longform) {
@@ -657,7 +669,7 @@ static void __attribute__ ((__noreturn__))
 
 int main(int argc, char **argv)
 {
-	char *user = NULL, *p;
+	char *match_user = NULL, *p;
 	utmp_t *u;
 	struct winsize win;
 	int ch;
@@ -672,6 +684,8 @@ int main(int argc, char **argv)
 	int from = 1;
 	int ip_addresses = 0;
 	int pids = 0;
+        struct pids_info *info = NULL;
+        struct pids_fetch *pids_cache = NULL;
 
 	enum {
 		HELP_OPTION = CHAR_MAX + 1
@@ -737,7 +751,7 @@ int main(int argc, char **argv)
 		}
 
 	if ((argv[optind]))
-		user = (argv[optind]);
+		match_user = (argv[optind]);
 
 	/* Get user field length from environment */
 	if ((env_var = getenv("PROCPS_USERLEN")) != NULL) {
@@ -776,6 +790,9 @@ int main(int argc, char **argv)
 #undef CLAMP_CMD_WIDTH
 
 
+        if ( (pids_cache = cache_pids(&info)) == NULL) {
+            return(EXIT_FAILURE);
+        }
 	if (header) {
 		/* print uptime and headers */
 		printf("%s\n", procps_uptime_sprint());
@@ -807,15 +824,11 @@ int main(int argc, char **argv)
 				if ((r = sd_session_get_username(sessions_list[i], &name)) < 0)
 					error(EXIT_FAILURE, -r, _("get user name failed"));
 
-				if (user) {
-					if (!strcmp(name, user))
-						showinfo(sessions_list[i], name, NULL, longform,
-							 maxcmd, from, userlen, fromlen,
-							 ip_addresses, pids);
-				} else {
+                                if (!match_user || (0 == strcmp(name, match_user)))
 					showinfo(sessions_list[i], name, NULL, longform, maxcmd,
-						 from, userlen, fromlen, ip_addresses, pids);
-				}
+						 from, userlen, fromlen, ip_addresses, pids,
+                                                 pids_cache);
+
 				free(name);
 				free(sessions_list[i]);
 			}
@@ -829,40 +842,22 @@ int main(int argc, char **argv)
 	utmpname(UTMP_FILE);
 	setutent();
 #endif
-	if (user) {
-		for (;;) {
+	for (;;) {
 #ifdef HAVE_UTMPX_H
-			u = getutxent();
+		u = getutxent();
 #else
-			u = getutent();
+		u = getutent();
 #endif
-			if (!u)
-				break;
-			if (u->ut_type != USER_PROCESS)
-				continue;
-			if (!strncmp(u->ut_user, user, UT_NAMESIZE))
-				showinfo(
-					 NULL, NULL,
-					 u, longform, maxcmd, from, userlen,
-					 fromlen, ip_addresses, pids);
-		}
-	} else {
-		for (;;) {
-#ifdef HAVE_UTMPX_H
-			u = getutxent();
-#else
-			u = getutent();
-#endif
-			if (!u)
-				break;
-			if (u->ut_type != USER_PROCESS)
-				continue;
-			if (*u->ut_user)
-				showinfo(
-					 NULL, NULL,
-					 u, longform, maxcmd, from, userlen,
-					 fromlen, ip_addresses, pids);
-		}
+		if (!u)
+			break;
+		if (u->ut_type != USER_PROCESS || (NULL == u->ut_user))
+			continue;
+		if (!match_user ||
+                    (0 == strncmp(u->ut_user, match_user, UT_NAMESIZE)))
+			showinfo(
+				 NULL, u->ut_user,
+				 u, longform, maxcmd, from, userlen,
+				 fromlen, ip_addresses, pids, pids_cache);
 	}
 #ifdef HAVE_UTMPX_H
 	endutxent();
@@ -873,5 +868,6 @@ int main(int argc, char **argv)
 	}
 #endif
 
+        procps_pids_unref(&info);
 	return EXIT_SUCCESS;
 }
