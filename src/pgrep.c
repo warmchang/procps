@@ -80,12 +80,15 @@ enum pids_item Items[] = {
     PIDS_STATE,
     PIDS_TIME_ELAPSED,
     PIDS_CGROUP_V,
-    PIDS_SIGCATCH
+    PIDS_SIGCATCH,
+    PIDS_ENVIRON_V
 };
+#define ITEMS_COUNT (sizeof Items / sizeof *Items)
+
 enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
     EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA, EU_ELAPSED,
-    EU_CGROUP, EU_SIGCATCH
+    EU_CGROUP, EU_SIGCATCH, EU_ENVIRON
 };
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -139,6 +142,7 @@ static struct el *opt_euid = NULL;
 static struct el *opt_ruid = NULL;
 static struct el *opt_nslist = NULL;
 static struct el *opt_cgroup = NULL;
+static struct el *opt_env = NULL;
 static char *opt_pattern = NULL;
 static char *opt_pidfile = NULL;
 static char *opt_runstates = NULL;
@@ -199,6 +203,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" --nslist <ns,...>         list which namespaces will be considered for\n"
         "                           the --ns option.\n"
         "                           Available namespaces: ipc, mnt, net, pid, user, uts\n"), fp);
+    fputs(_("  --env <name=val,...>     match on environment variable\n"), fp);
     fputs(USAGE_SEPARATOR, fp);
     fputs(USAGE_HELP, fp);
     fputs(USAGE_VERSION, fp);
@@ -220,7 +225,7 @@ static struct el *get_our_ancestors(void)
     while (!done) {
         struct pids_info *info = NULL;
 
-        if (procps_pids_new(&info, Items, 16) < 0)
+        if (procps_pids_new(&info, Items, ITEMS_COUNT) < 0)
             xerrx(EXIT_FATAL, _("Unable to create pid info structure"));
 
         if (i == size) {
@@ -485,7 +490,7 @@ static unsigned long long unhex (const char *restrict in)
     unsigned long long ret;
     char *rem;
     errno = 0;
-    ret = strtoull(in, &rem, 16);
+    ret = strtoull(in, &rem, ITEMS_COUNT);
     if (errno || *rem != '\0') {
         xwarnx(_("not a hex string: %s"), in);
         return 0;
@@ -558,6 +563,29 @@ static int match_cgroup_list(char **values,
                     return 1;
                 }
 			}
+        }
+    }
+    return 0;
+}
+
+static int match_env_list(
+        char **values,
+        const struct el *restrict list)
+{
+    int i,j;
+
+    if (list == NULL || values == NULL)
+        return 0;
+
+    for (i = list[0].num; i > 0; i--) {
+        for (j = 0; values[j] && values[j][0]; j++) {
+            if (NULL == strchr(list[i].str, '=')) {
+                if (strncmp(values[j], list[i].str, strlen(list[i].str)) == 0)
+                    return 1;
+            } else {
+                if (strcmp(values[j], list[i].str) == 0)
+                    return 1;
+            }
         }
     }
     return 0;
@@ -695,7 +723,7 @@ static struct el * select_procs (int *num)
               _("Error reading reference namespace information\n"));
     }
 
-    if (procps_pids_new(&info, Items, 16) < 0)
+    if (procps_pids_new(&info, Items, ITEMS_COUNT) < 0)
         xerrx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
@@ -737,6 +765,8 @@ static struct el * select_procs (int *num)
         else if (opt_runstates && ! strchr(opt_runstates, PIDS_GETSCH(STA)))
             match = 0;
         else if (opt_cgroup && ! match_cgroup_list (PIDS_GETSTV(CGROUP), opt_cgroup))
+            match = 0;
+        else if (opt_env && ! match_env_list(PIDS_GETSTV(ENVIRON), opt_env))
             match = 0;
         else if (require_handler && ! match_signal_handler (PIDS_GETSTR(SIGCATCH), opt_signal))
             match = 0;
@@ -853,6 +883,7 @@ static void parse_opts (int argc, char **argv)
         NS_OPTION,
         NSLIST_OPTION,
         CGROUP_OPTION,
+        ENV_OPTION,
     };
     static const struct option longopts[] = {
         {"signal", required_argument, NULL, SIGNAL_OPTION},
@@ -885,6 +916,7 @@ static void parse_opts (int argc, char **argv)
         {"nslist", required_argument, NULL, NSLIST_OPTION},
         {"queue", required_argument, NULL, 'q'},
         {"runstates", required_argument, NULL, 'r'},
+        {"env", required_argument, NULL, ENV_OPTION},
         {"help", no_argument, NULL, 'h'},
         {"version", no_argument, NULL, 'V'},
         {NULL, 0, NULL, 0}
@@ -1073,6 +1105,12 @@ static void parse_opts (int argc, char **argv)
             opt_cgroup = split_list (optarg, conv_str);
             if (opt_cgroup == NULL)
                 usage ('?');
+            ++criteria_count;
+            break;
+        case ENV_OPTION:
+            opt_env = split_list(optarg, conv_str);
+            if (opt_env == NULL)
+                usage('?');
             ++criteria_count;
             break;
         case 'H':
