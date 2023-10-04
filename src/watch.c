@@ -419,11 +419,19 @@ static void get_terminal_size(void)
 /* get current time in usec */
 typedef unsigned long long watch_usec_t;
 #define USECS_PER_SEC (1000000ull)
+#define NSECS_PER_SEC (1000000000ull)
 static watch_usec_t get_time_usec()
 {
-	struct timeval now;
-	gettimeofday(&now, NULL);
-	return USECS_PER_SEC * now.tv_sec + now.tv_usec;
+    struct timeval now;
+#if defined(HAVE_CLOCK_GETTIME) && defined(_POSIX_TIMERS)
+    struct timespec ts;
+    if (0 > clock_gettime(CLOCK_MONOTONIC, &ts))
+        xerr(EXIT_FAILURE, "Cannot get monotonic clock");
+    TIMESPEC_TO_TIMEVAL(&now, &ts);
+#else
+    gettimeofday(&now, NULL);
+#endif /* HAVE_CLOCK_GETTIME */
+    return USECS_PER_SEC * now.tv_sec + now.tv_usec;
 }
 
 #ifdef WITH_WATCH8BIT

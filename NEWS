@@ -6,6 +6,7 @@ procps-ng-NEXT
   * sysctl: Add glob excludes                              merge #206
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305
+  * watch: use clock_gettime                               issue #295
 
 procps-ng-4.0.4
 ---------------
