@@ -892,6 +892,21 @@ setREL1(ADDR_STACK_START)
     return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_STACK_START, ul_int, pp));
 }
 
+#define OUTBUF_SIZE_AT(endp) \
+  (((endp) >= outbuf && (endp) < outbuf + OUTBUF_SIZE) ? (outbuf + OUTBUF_SIZE) - (endp) : 0)
+static int pr_environ(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(ENVIRON)
+    char *endp = outbuf;
+    int rightward = max_rightward;
+    char *e = rSv(ENVIRON, str, pp);
+
+    if(e[0] != '-' || e[1] != '\0') {
+      escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
+    }
+    return max_rightward-rightward;
+}
+#undef OUTBUF_SIZE_AT
+
 static int pr_esp(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(ADDR_CURR_ESP)
     return snprintf(outbuf, COLWID, "%0*lx", (int)(2*sizeof(long)), rSv(ADDR_CURR_ESP, ul_int, pp));
@@ -1690,7 +1705,7 @@ static const format_struct format_array[] = { /*
 {"eip",       "EIP",     pr_eip,           PIDS_ADDR_CURR_EIP, (int)(2*sizeof(long)), LNX, TO|RIGHT},
 {"emul",      "EMUL",    pr_nop,           PIDS_noop,               13,    BSD,  PO|LEFT},  /* "FreeBSD ELF32" and such */
 {"end_code",  "E_CODE",  pr_nop,           PIDS_ADDR_CODE_END, (int)(2*sizeof(long)), LNx, PO|RIGHT}, // sortable, but unprintable ??
-{"environ","ENVIRONMENT",pr_nop,           PIDS_noop,               11,    LNx,  PO|UNLIMITED},
+{"environ","ENVIRONMENT",pr_environ,       PIDS_noop,               31,    LNx,  PO|UNLIMITED},
 {"esp",       "ESP",     pr_esp,           PIDS_ADDR_CURR_ESP, (int)(2*sizeof(long)), LNX, TO|RIGHT},
 {"etime",     "ELAPSED", pr_etime,         PIDS_TIME_ELAPSED,       11,    U98,  ET|RIGHT}, /* was 7 wide */
 {"etimes",    "ELAPSED", pr_etimes,        PIDS_TIME_ELAPSED,        7,    BSD,  ET|RIGHT}, /* FreeBSD */
