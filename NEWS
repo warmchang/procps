@@ -3,6 +3,7 @@ procps-ng-NEXT
   * library
     internal: days/users when value is 0                   issue #303
     internal: dont print 60s but increment minute          issue #302
+  * sysctl: Add glob excludes                              merge #206
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305
 
