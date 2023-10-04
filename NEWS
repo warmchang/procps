@@ -5,6 +5,7 @@ procps-ng-NEXT
     internal: dont print 60s but increment minute          issue #302
   * pgrep: select process by environment variable          issue #167
   * ps: Add environ field
+  * ps: restore lost tasks for options --sort with -H      issue #304
   * sysctl: Add glob excludes                              merge #206
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305

@@ -357,7 +357,7 @@ next_proc:
 
 /***** forest output requires sorting by ppid; add start_time by default */
 static void prep_forest_sort(void){
-  sort_node *endp, *tmp_list = sort_list;
+  sort_node *endp, *tmp_list;
   const format_struct *incoming;
 
   if(!sort_list) {     /* assume start time order */
