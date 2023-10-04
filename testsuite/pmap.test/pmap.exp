@@ -61,17 +61,18 @@ if  { [ file readable "/proc/self/smaps" ] == 0 } {
     spawn $pmap -XX $mypid
     expect_table $test $pmap_generic_header "\[^=\]+" "\[= \]+"
 
-    set test "pmap X with unreachable process"
     if { [ file exists "/proc/1/smaps" ] == 1  && [ file readable "/proc/1/smaps" ] == 0 } {
+        set test "pmap X with unreachable process"
         spawn $pmap -X 1
         expect_pass $test "$pmap_initname\$"
-    } else {
-        unsupported "$test : PID 1 smaps file needs to exist and not be readable"
-    }
 
-    set test "pmap XX with unreachable process"
-    spawn $pmap -XX 1
-    expect_pass $test "$pmap_initname\$"
+        set test "pmap XX with unreachable process"
+        spawn $pmap -XX 1
+        expect_pass $test "$pmap_initname\$"
+    } else {
+        unsupported "pmap X with unreachable process : PID 1 smaps file needs to exist and not be readable"
+        unsupported "pmap XX with unreachable process : PID 1 smaps file needs to exist and not be readable"
+    }
 }
 
 
