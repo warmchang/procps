@@ -223,7 +223,7 @@ else
 	man/snice.1
 endif
 
-src_free_SOURCES = src/free.c local/strutils.c local/fileutils.c
+src_free_SOURCES = src/free.c local/strutils.c local/fileutils.c local/units.c
 src_pgrep_SOURCES = src/pgrep.c local/fileutils.c local/signals.c local/strutils.c
 src_pkill_SOURCES = src/pgrep.c local/fileutils.c local/signals.c local/strutils.c
 src_pmap_SOURCES = src/pmap.c local/fileutils.c

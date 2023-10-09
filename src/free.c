@@ -38,6 +38,7 @@
 #include "nls.h"
 #include "strutils.h"
 #include "fileutils.h"
+#include "units.h"
 
 #include "meminfo.h"
 
@@ -63,8 +64,6 @@ struct commandline_arguments {
 
 /* function prototypes */
 static void usage(FILE * out);
-double power(unsigned int base, unsigned int expo);
-static const char *scale_size(unsigned long size, int flags, struct commandline_arguments args);
 
 static void __attribute__ ((__noreturn__))
     usage(FILE * out)
@@ -99,70 +98,6 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out, USAGE_MAN_TAIL("free(1)"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
-
-double power(unsigned int base, unsigned int expo)
-{
-	return (expo == 0) ? 1 : base * power(base, expo - 1);
-}
-
-/* idea of this function is copied from top size scaling */
-static const char *scale_size(unsigned long size, int flags, struct commandline_arguments args)
-{
-	static char up[] = { 'B', 'K', 'M', 'G', 'T', 'P', 0 };
-	static char buf[BUFSIZ];
-	int i;
-	float base;
-	long long bytes;
-
-	base = (flags & FREE_SI) ? 1000.0 : 1024.0;
-	bytes = size * 1024LL;
-
-	if (!(flags & FREE_HUMANREADABLE)) {
-		switch (args.exponent) {
-		case 0:
-			/* default output */
-			snprintf(buf, sizeof(buf), "%ld", (long int)(bytes / (long long int)base));
-			return buf;
-		case 1:
-			/* in bytes, which can not be in SI */
-			snprintf(buf, sizeof(buf), "%lld", bytes);
-			return buf;
-		default:
-			/* In desired scale. */
-			snprintf(buf, sizeof(buf), "%ld",
-			        (long)(bytes / power(base, args.exponent-1)));
-			return buf;
-		}
-	}
-
-	/* human readable output */
-	if (4 >= snprintf(buf, sizeof(buf), "%lld%c", bytes, up[0]))
-		return buf;
-
-	for (i = 1; up[i] != 0; i++) {
-		if (flags & FREE_SI) {
-			if (4 >= snprintf(buf, sizeof(buf), "%.1f%c",
-			                  (float)(bytes / power(base, i)), up[i]))
-				return buf;
-			if (4 >= snprintf(buf, sizeof(buf), "%ld%c",
-			                  (long)(bytes / power(base, i)), up[i]))
-				return buf;
-		} else {
-			if (5 >= snprintf(buf, sizeof(buf), "%.1f%ci",
-			                  (float)(bytes / power(base, i)), up[i]))
-				return buf;
-			if (5 >= snprintf(buf, sizeof(buf), "%ld%ci",
-			                  (long)(bytes / power(base, i)), up[i]))
-				return buf;
-		}
-	}
-	/*
-	 * On system where there is more than exbibyte of memory or swap the
-	 * output does not fit to column. For incoming few years this should
-	 * not be a big problem (wrote at Apr, 2015).
-	 */
-	return buf;
 }
 
 static void check_unit_set(int *unit_set)
@@ -378,11 +313,11 @@ int main(int argc, char **argv)
                   * that are all 7 characters long. Use spaces and right
                   * align if the translation is shorter.
                   */
-		printf("%s %11s ", _("SwapUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), flags, args));
+		     printf("%s %11s ", _("SwapUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 		printf("%s %11s ", _("CachUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_BUFFERS, ul_int) +
-                            MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int), flags, args));
-		printf("%s %11s ", _(" MemUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int), flags, args));
-		printf("%s %11s ", _("MemFree"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int), flags, args));
+                            MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+		printf("%s %11s ", _(" MemUse"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+		printf("%s %11s ", _("MemFree"), scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 		if ( (flags & FREE_REPEAT) == 0 )
 			printf("\n");
 		else if ( args.repeat_counter == 1 )
@@ -398,20 +333,20 @@ int main(int argc, char **argv)
 		}
 		printf("\n");
 		print_head_col(_("Mem:"));
-		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int), flags, args));
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int), flags, args));
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int), flags, args));
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_SHARED, ul_int), flags, args));
+		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_SHARED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 		if (flags & FREE_WIDE) {
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_BUFFERS, ul_int),
-				    flags, args));
+				    args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int)
-				    , flags, args));
+				    , args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 		} else {
 			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_BUFFERS, ul_int) +
-				    MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int), flags, args));
+				    MEMINFO_GET(mem_info, MEMINFO_MEM_CACHED_ALL, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 		}
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_AVAILABLE, ul_int), flags, args));
+		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_AVAILABLE, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 		printf("\n");
 		/*
 		 * Print low vs. high information, if the user requested it.
@@ -421,44 +356,44 @@ int main(int argc, char **argv)
 		 */
 		if (flags & FREE_LOHI) {
 			print_head_col(_("Low:"));
-			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_TOTAL, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_USED, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_FREE, ul_int), flags, args));
+			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_TOTAL, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_USED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_LOW_FREE, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf("\n");
 
 			print_head_col( _("High:"));
-			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_TOTAL, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_USED, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_FREE, ul_int), flags, args));
+			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_TOTAL, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_USED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_HIGH_FREE, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf("\n");
 		}
 
 		print_head_col(_("Swap:"));
-		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), flags, args));
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), flags, args));
-		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_FREE, ul_int), flags, args));
+		printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+		printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_SWAP_FREE, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 		printf("\n");
 
 		if (flags & FREE_TOTAL) {
 			print_head_col(_("Total:"));
 			printf("%11s", scale_size(
 				    MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int) +
-				    MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), flags, args));
+				    MEMINFO_GET(mem_info, MEMINFO_SWAP_TOTAL, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf(" %11s", scale_size(
 				    MEMINFO_GET(mem_info, MEMINFO_MEM_USED, ul_int) +
-				    MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), flags, args));
+				    MEMINFO_GET(mem_info, MEMINFO_SWAP_USED, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf(" %11s", scale_size(
 				    MEMINFO_GET(mem_info, MEMINFO_MEM_FREE, ul_int) +
-				    MEMINFO_GET(mem_info, MEMINFO_SWAP_FREE, ul_int), flags, args));
+				    MEMINFO_GET(mem_info, MEMINFO_SWAP_FREE, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf("\n");
 		}
 		if (flags & FREE_COMMITTED) {
 			print_head_col(_("Comm:"));
-			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMIT_LIMIT, ul_int), flags, args));
-			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMITTED_AS, ul_int), flags, args));
+			printf("%11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMIT_LIMIT, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
+			printf(" %11s", scale_size(MEMINFO_GET(mem_info, MEMINFO_MEM_COMMITTED_AS, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf(" %11s", scale_size(
 				    MEMINFO_GET(mem_info, MEMINFO_MEM_COMMIT_LIMIT, ul_int) -
-				    MEMINFO_GET(mem_info, MEMINFO_MEM_COMMITTED_AS, ul_int), flags, args));
+				    MEMINFO_GET(mem_info, MEMINFO_MEM_COMMITTED_AS, ul_int), args.exponent, flags & FREE_SI, flags & FREE_HUMANREADABLE));
 			printf("\n");
 		}
 
