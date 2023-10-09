@@ -184,8 +184,8 @@ static void parse_opts (int argc, char **argv)
     while ((o = getopt_long(argc, argv, "d:s:ohV", longopts, NULL)) != -1) {
         switch (o) {
         case 'd':
-	    if (Run_once)
-		xerrx(EXIT_FAILURE, _("Cannot combine -d and -o options"));
+            if (Run_once)
+                xerrx(EXIT_FAILURE, _("Cannot combine -d and -o options"));
             errno = 0;
             Delay = strtol_or_err(optarg, _("illegal delay"));
             if (Delay < 1)
@@ -195,8 +195,8 @@ static void parse_opts (int argc, char **argv)
             set_sort_stuff(optarg[0]);
             break;
         case 'o':
-	    if (Delay != 0)
-		xerrx(EXIT_FAILURE, _("Cannot combine -d and -o options"));
+            if (Delay != 0)
+                xerrx(EXIT_FAILURE, _("Cannot combine -d and -o options"));
             Run_once=1;
             break;
         case 'V':
@@ -211,7 +211,7 @@ static void parse_opts (int argc, char **argv)
     if (optind != argc)
         usage(stderr);
     if (!Run_once && Delay == 0)
-	Delay = DEFAULT_DELAY;
+        Delay = DEFAULT_DELAY;
 }
 
 static void print_summary (void)
