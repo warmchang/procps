@@ -44,6 +44,7 @@
 #include "fileutils.h"
 #include "nls.h"
 #include "strutils.h"
+#include "units.h"
 
 #include "slabinfo.h"
 
@@ -55,6 +56,7 @@
 static unsigned short Cols, Rows;
 static struct termios Saved_tty;
 static long Delay = 0;
+static int Human = 0;
 static int Run_once = 0;
 
 static struct slabinfo_info *Slab_info;
@@ -107,6 +109,7 @@ static void __attribute__((__noreturn__)) usage (FILE *out)
     fputs(USAGE_OPTIONS, out);
     fputs(_(" -d, --delay <secs>  delay updates\n"), out);
     fputs(_(" -o, --once          only display once, then exit\n"), out);
+    fputs(_(" --human             show human-readable output\n"), out);
     fputs(_(" -s, --sort <char>   specify sort criteria by character (see below)\n"), out);
     fputs(USAGE_SEPARATOR, out);
     fputs(USAGE_HELP, out);
@@ -172,7 +175,12 @@ static void set_sort_stuff (const char key)
 
 static void parse_opts (int argc, char **argv)
 {
+
+    enum {
+        HUMAN_OPTION = CHAR_MAX + 1,
+    };
     static const struct option longopts[] = {
+        { "human",   no_argument,       NULL, HUMAN_OPTION },
         { "delay",   required_argument, NULL, 'd' },
         { "sort",    required_argument, NULL, 's' },
         { "once",    no_argument,       NULL, 'o' },
@@ -183,6 +191,9 @@ static void parse_opts (int argc, char **argv)
 
     while ((o = getopt_long(argc, argv, "d:s:ohV", longopts, NULL)) != -1) {
         switch (o) {
+        case HUMAN_OPTION:
+            Human = 1;
+            break;
         case 'd':
             if (Run_once)
                 xerrx(EXIT_FAILURE, _("Cannot combine -d and -o options"));
@@ -255,11 +266,13 @@ static void print_summary (void)
                , totalVAL(tot_ACACHES, u_int)
                , totalVAL(tot_CACHES,  u_int)
                , 100.0 * totalVAL(tot_ACACHES, u_int) / totalVAL(tot_CACHES, u_int));
-    PRINT_line(" %-35s: %.2fK / %.2fK (%.1f%%)\n"
+    PRINT_line(" %-35s: %s / "
                , /* xgettext:no-c-format */
                  _("Active / Total Size (% used)")
-               , totalVAL(tot_ACTIVE, ul_int) / 1024.0
-               , totalVAL(tot_TOTAL,  ul_int) / 1024.0
+               , scale_size(totalVAL(tot_ACTIVE, ul_int) / 1024, 0, 0, Human));
+    PRINT_line("%s (%.1f%%)\n"
+                 /* xgettext:no-c-format */
+               , scale_size(totalVAL(tot_TOTAL,  ul_int) / 1024, 0, 0, Human)
                , 100.0 * totalVAL(tot_ACTIVE, ul_int) / totalVAL(tot_TOTAL, ul_int));
     PRINT_line(" %-35s: %.2fK / %.2fK / %.2fK\n\n"
                , _("Minimum / Average / Maximum Object")
@@ -279,14 +292,14 @@ static void print_headings (void)
 static void print_details (struct slabinfo_stack *stack)
 {
  #define nodeVAL(e,t) SLABINFO_VAL(e, t, stack, Slab_info)
-    PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %9luK %-23s\n"
+    PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %10s %-23s\n"
         , nodeVAL(nod_OBJS,  u_int)
         , nodeVAL(nod_AOBJS, u_int)
         , nodeVAL(nod_USE,   u_int)
         , nodeVAL(nod_OSIZE, u_int) / 1024.0
         , nodeVAL(nod_SLABS, u_int)
         , nodeVAL(nod_OPS,   u_int)
-        , nodeVAL(nod_SIZE,  ul_int) / 1024
+        , scale_size(nodeVAL(nod_SIZE,  ul_int) / 1024, 0, 0, Human)
         , nodeVAL(nod_NAME,  str));
 
     return;

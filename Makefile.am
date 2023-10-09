@@ -179,7 +179,7 @@ bin_PROGRAMS += \
 	src/slabtop
 dist_man_MANS += \
 	man/slabtop.1
-src_slabtop_SOURCES = src/slabtop.c local/strutils.c local/fileutils.c
+src_slabtop_SOURCES = src/slabtop.c local/strutils.c local/fileutils.c local/units.c
 src_slabtop_CFLAGS = @NCURSES_CFLAGS@
 src_slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
