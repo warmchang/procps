@@ -6,6 +6,7 @@ procps-ng-NEXT
   * pgrep: select process by environment variable          issue #167
   * ps: Add environ field
   * ps: restore lost tasks for options --sort with -H      issue #304
+  * slabtop: Add --human option for slab size
   * sysctl: Add glob excludes                              merge #206
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305

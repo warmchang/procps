@@ -11,7 +11,7 @@
 .\" License, or (at your option) any later version.
 .\"
 .\"
-.TH SLABTOP "1" "2021-03-11" "procps-ng" "User Commands"
+.TH SLABTOP "1" "2023-10-11" "procps-ng" "User Commands"
 .SH NAME
 slabtop \- display kernel slab cache information in real time
 .SH SYNOPSIS
@@ -42,6 +42,20 @@ Sort by \fIS\fR, where \fIS\fR is one of the sort criteria.
 .TP
 \fB\-o\fR, \fB\-\-once\fR
 Display the output once and then exit.
+.TP
+.B \-\-human
+Show slab sizes automatically scaled to shortest three digit unit and
+display the units of print out.  Following units are used.
+.sp
+.nf
+  B = bytes
+  Ki = kibibyte
+  Mi = mebibyte
+  Gi = gibibyte
+  Ti = tebibyte
+  Pi = pebibyte
+.fi
+.sp
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
