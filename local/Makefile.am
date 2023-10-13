@@ -7,4 +7,5 @@ dist_noinst_HEADERS = \
 	signals.h \
 	strutils.h \
 	tests.h \
+	units.h \
 	xalloc.h
