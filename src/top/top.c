@@ -557,8 +557,8 @@ static void bye_bye (const char *str) {
 #endif
    }
 
-   /* we'll only have a 'str' if called by error_exit() |
-      and parse_args(), never from a signal handler ... | */
+   /* we will only have the passed 'str' when called by |
+      error_exit() or parse_args(), and it may be empty | */
    if (str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
@@ -6511,9 +6511,9 @@ numa_oops:
          for (i = 0; i < Cpu_cnt; i++) {
 #ifndef CORE_TYPE_NO
  #ifdef CORE_TYPE_LO
-            char ctab[] = { 'u', 'e', 'p' };
+            static char ctab[] = { 'u', 'e', 'p' };
  #else
-            char ctab[] = { 'u', 'E', 'P' };
+            static char ctab[] = { 'u', 'E', 'P' };
  #endif
             int cid = CPU_VAL(stat_ID, i), typ = CPU_VAL(stat_COR_TYP, i);
             char chr = Curwin->rc.core_types ? ctab[typ] : 'u' ;
