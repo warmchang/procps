@@ -199,7 +199,7 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'nTH' = 3 */
    Head_nlstab[EU_THD] = _("nTH");
    Desc_nlstab[EU_THD] = _("Number of Threads");
-/* Translation Hint: maximum 'P' = 1 */
+/* Translation Hint: maximum 'P' = 2 */
    Head_nlstab[EU_CPN] = _("P");
    Desc_nlstab[EU_CPN] = _("Last Used Cpu (SMP)");
 /* Translation Hint: maximum '%CPU' = 4 */

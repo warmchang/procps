@@ -1941,7 +1941,7 @@ static struct {
    {     3,     -1,  A_right,  PIDS_PRIORITY       },  // s_int    EU_PRI
    {     3,     -1,  A_right,  PIDS_NICE           },  // s_int    EU_NCE
    {     3,     -1,  A_right,  PIDS_NLWP           },  // s_int    EU_THD
-   {     0,     -1,  A_right,  PIDS_PROCESSOR      },  // s_int    EU_CPN
+   {     2,     -1,  A_right,  PIDS_PROCESSOR      },  // s_int    EU_CPN
    {     5,     -1,  A_right,  PIDS_TICS_ALL_DELTA },  // u_int    EU_CPU
    {     6,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TME
    {     9,     -1,  A_right,  PIDS_TICS_ALL       },  // ull_int  EU_TM2
@@ -1981,7 +1981,7 @@ static struct {
    {     6,  SK_Kb,  A_right,  PIDS_VM_RSS_LOCKED  },  // ul_int   EU_RZL
    {     6,  SK_Kb,  A_right,  PIDS_VM_RSS_SHARED  },  // ul_int   EU_RZS
    {    -1,     -1,  A_left,   PIDS_CGNAME         },  // str      EU_CGN
-   {     0,     -1,  A_right,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
+   {     2,     -1,  A_right,  PIDS_PROCESSOR_NODE },  // s_int    EU_NMA
    {     5,     -1,  A_right,  PIDS_ID_LOGIN       },  // s_int    EU_LID
    {    -1,     -1,  A_left,   PIDS_EXE            },  // str      EU_EXE
    {     6,  SK_Kb,  A_right,  PIDS_SMAP_RSS       },  // ul_int   EU_RSS
@@ -2599,8 +2599,6 @@ static void zap_fieldstab (void) {
    char buf[8];
 
    if (!once) {
-      Fieldstab[EU_CPN].width = 1;
-      Fieldstab[EU_NMA].width = 2;
       Fieldstab[EU_PID].width = Fieldstab[EU_PPD].width
          = Fieldstab[EU_PGD].width = Fieldstab[EU_SID].width
          = Fieldstab[EU_TGD].width = Fieldstab[EU_TPG].width = 5;
@@ -2668,7 +2666,7 @@ static void zap_fieldstab (void) {
    }
 #else
    digits = snprintf(buf, sizeof(buf), "%d", Cpu_cnt);
-   if (1 < digits) {
+   if (2 < digits) {
       if (5 < digits) error_exit(N_txt(FAIL_widecpu_txt));
       Fieldstab[EU_CPN].width = digits;
    }
