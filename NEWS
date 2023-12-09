@@ -3,6 +3,7 @@ procps-ng-NEXT
   * library
     internal: days/users when value is 0                   issue #303
     internal: dont print 60s but increment minute          issue #302
+    external: zswap & zswapped added to meminfo api
   * pgrep: select process by environment variable          issue #167
   * ps: Add environ field
   * ps: restore lost tasks for options --sort with -H      issue #304
