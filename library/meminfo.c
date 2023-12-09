@@ -107,6 +107,8 @@ struct meminfo_data {
     unsigned long VmallocUsed;
     unsigned long Writeback;
     unsigned long WritebackTmp;
+    unsigned long Zswap;
+    unsigned long Zswapped;
 
     unsigned long derived_mem_cached;
     unsigned long derived_mem_hi_used;
@@ -214,6 +216,8 @@ MEM_set(MEM_VM_ALLOC_TOTAL,     ul_int,  VmallocTotal)
 MEM_set(MEM_VM_ALLOC_USED,      ul_int,  VmallocUsed)
 MEM_set(MEM_WRITEBACK,          ul_int,  Writeback)
 MEM_set(MEM_WRITEBACK_TMP,      ul_int,  WritebackTmp)
+MEM_set(MEM_ZSWAP,              ul_int,  Zswap)
+MEM_set(MEM_ZSWAPPED,           ul_int,  Zswapped)
 
 HST_set(DELTA_ACTIVE,            s_int,  Active)
 HST_set(DELTA_ACTIVE_ANON,       s_int,  Active_anon)
@@ -276,6 +280,8 @@ HST_set(DELTA_VM_ALLOC_TOTAL,    s_int,  VmallocTotal)
 HST_set(DELTA_VM_ALLOC_USED,     s_int,  VmallocUsed)
 HST_set(DELTA_WRITEBACK,         s_int,  Writeback)
 HST_set(DELTA_WRITEBACK_TMP,     s_int,  WritebackTmp)
+HST_set(DELTA_ZSWAP,             s_int,  Zswap)
+HST_set(DELTA_ZSWAPPED,          s_int,  Zswapped)
 
 MEM_set(SWAP_CACHED,            ul_int,  SwapCached)
 MEM_set(SWAP_FREE,              ul_int,  SwapFree)
@@ -382,6 +388,8 @@ static struct {
   { RS(MEM_VM_ALLOC_USED),     TS(ul_int) },
   { RS(MEM_WRITEBACK),         TS(ul_int) },
   { RS(MEM_WRITEBACK_TMP),     TS(ul_int) },
+  { RS(MEM_ZSWAP),             TS(ul_int) },
+  { RS(MEM_ZSWAPPED),          TS(ul_int) },
 
   { RS(DELTA_ACTIVE),          TS(s_int)  },
   { RS(DELTA_ACTIVE_ANON),     TS(s_int)  },
@@ -444,6 +452,8 @@ static struct {
   { RS(DELTA_VM_ALLOC_USED),   TS(s_int)  },
   { RS(DELTA_WRITEBACK),       TS(s_int)  },
   { RS(DELTA_WRITEBACK_TMP),   TS(s_int)  },
+  { RS(DELTA_ZSWAP),           TS(s_int)  },
+  { RS(DELTA_ZSWAPPED),        TS(s_int)  },
 
   { RS(SWAP_CACHED),           TS(ul_int) },
   { RS(SWAP_FREE),             TS(ul_int) },
@@ -616,6 +626,8 @@ static int meminfo_make_hash_failed (
     htVAL(VmallocUsed)
     htVAL(Writeback)
     htVAL(WritebackTmp)
+    htVAL(Zswap)
+    htVAL(Zswapped)
 
     return 0;
  #undef htVAL

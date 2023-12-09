@@ -95,6 +95,8 @@ enum meminfo_item {
     MEMINFO_MEM_VM_ALLOC_USED,     //   ul_int         "
     MEMINFO_MEM_WRITEBACK,         //   ul_int         "
     MEMINFO_MEM_WRITEBACK_TMP,     //   ul_int         "
+    MEMINFO_MEM_ZSWAP,             //   ul_int         "
+    MEMINFO_MEM_ZSWAPPED,          //   ul_int         "
 
     MEMINFO_DELTA_ACTIVE,          //    s_int        derived from above
     MEMINFO_DELTA_ACTIVE_ANON,     //    s_int         "
@@ -157,6 +159,8 @@ enum meminfo_item {
     MEMINFO_DELTA_VM_ALLOC_USED,   //    s_int         "
     MEMINFO_DELTA_WRITEBACK,       //    s_int         "
     MEMINFO_DELTA_WRITEBACK_TMP,   //    s_int         "
+    MEMINFO_DELTA_ZSWAP,           //    s_int         "
+    MEMINFO_DELTA_ZSWAPPED,        //    s_int         "
 
     MEMINFO_SWAP_CACHED,           //   ul_int        /proc/meminfo
     MEMINFO_SWAP_FREE,             //   ul_int         "
@@ -167,6 +171,7 @@ enum meminfo_item {
     MEMINFO_SWAP_DELTA_FREE,       //    s_int         "
     MEMINFO_SWAP_DELTA_TOTAL,      //    s_int         "
     MEMINFO_SWAP_DELTA_USED        //    s_int         "
+
 };
 
 
