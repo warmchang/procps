@@ -116,6 +116,7 @@ enum pids_item {
     PIDS_RSS,               //   ul_int        stat: rss
     PIDS_RSS_RLIM,          //   ul_int        stat: rsslim
     PIDS_SCHED_CLASS,       //    s_int        stat: policy
+    PIDS_SCHED_CLASSSTR,    //      str        derived from policy, see ps(1) or top(1)
     PIDS_SD_MACH,           //      str        derived from PID/TID, see sd-login(3)
     PIDS_SD_OUID,           //      str         "
     PIDS_SD_SEAT,           //      str         "

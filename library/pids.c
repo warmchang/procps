@@ -115,6 +115,30 @@ static void freNAME(strv) (struct pids_result *R) {
 }
 
 
+// ___ Special Suppott Funtion(s) |||||||||||||||||||||||||||||||||||||||||||||
+
+static const char *pids_sched_to_classstr (
+//  struct pids_info *,
+//  struct pids_result *r,
+    proc_t *p)
+{
+    switch (p->sched) {
+        case -1: return "-";   // not reported
+        case  0: return "TS";  // SCHED_OTHER SCHED_NORMAL
+        case  1: return "FF";  // SCHED_FIFO
+        case  2: return "RR";  // SCHED_RR
+        case  3: return "B";   // SCHED_BATCH
+        case  4: return "ISO"; // reserved for SCHED_ISO (Con Kolivas)
+        case  5: return "IDL"; // SCHED_IDLE
+        case  6: return "DLN"; // SCHED_DEADLINE
+        case  7: return "#7";  //
+        case  8: return "#8";  //
+        case  9: return "#9";  //
+    }
+    return "?";
+} // end: pids_sched_to_classstr
+
+
 // ___ Results 'Set' Support ||||||||||||||||||||||||||||||||||||||||||||||||||
 
 #define setNAME(e) set_pids_ ## e
@@ -235,6 +259,7 @@ setDECL(PROCESSOR_NODE) { (void)I; R->result.s_int = numa_node_of_cpu(P->process
 REG_set(RSS,              ul_int,  rss)
 REG_set(RSS_RLIM,         ul_int,  rss_rlim)
 REG_set(SCHED_CLASS,      s_int,   sched)
+setDECL(SCHED_CLASSSTR) { (void)I; R->result.str = (char *)pids_sched_to_classstr(P); }
 STR_set(SD_MACH,                   sd_mach)
 STR_set(SD_OUID,                   sd_ouid)
 STR_set(SD_SEAT,                   sd_seat)
@@ -525,6 +550,7 @@ static struct {
     { RS(RSS),               f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(RSS_RLIM),          f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(SCHED_CLASS),       f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
+    { RS(SCHED_CLASSSTR),    f_stat,     NULL,      QS(str),       0,        TS(str)     }, // freefunc NULL w/ cached string
     { RS(SD_MACH),           f_systemd,  FF(str),   QS(str),       0,        TS(str)     },
     { RS(SD_OUID),           f_systemd,  FF(str),   QS(str),       0,        TS(str)     },
     { RS(SD_SEAT),           f_systemd,  FF(str),   QS(str),       0,        TS(str)     },
