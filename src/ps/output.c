@@ -739,21 +739,8 @@ setREL1(OOM_SCORE)
 //                  WL=weightless; GN=gang-scheduled
 //                  see miser(1) for this; PRI has some letter codes too
 static int pr_class(char *restrict const outbuf, const proc_t *restrict const pp){
-setREL1(SCHED_CLASS)
-  switch(rSv(SCHED_CLASS, s_int, pp)){
-  case -1: return snprintf(outbuf, COLWID, "-");   // not reported
-  case  0: return snprintf(outbuf, COLWID, "TS");  // SCHED_OTHER SCHED_NORMAL
-  case  1: return snprintf(outbuf, COLWID, "FF");  // SCHED_FIFO
-  case  2: return snprintf(outbuf, COLWID, "RR");  // SCHED_RR
-  case  3: return snprintf(outbuf, COLWID, "B");   // SCHED_BATCH
-  case  4: return snprintf(outbuf, COLWID, "ISO"); // reserved for SCHED_ISO (Con Kolivas)
-  case  5: return snprintf(outbuf, COLWID, "IDL"); // SCHED_IDLE
-  case  6: return snprintf(outbuf, COLWID, "DLN"); // SCHED_DEADLINE
-  case  7: return snprintf(outbuf, COLWID, "#7");  //
-  case  8: return snprintf(outbuf, COLWID, "#8");  //
-  case  9: return snprintf(outbuf, COLWID, "#9");  //
-  default: return snprintf(outbuf, COLWID, "?");   // unknown value
-  }
+setREL1(SCHED_CLASSSTR)
+  return snprintf(outbuf, COLWID, "%s", rSv(SCHED_CLASSSTR, str, pp));
 }
 
 // Based on "type", FreeBSD would do:
@@ -1678,8 +1665,8 @@ static const format_struct format_array[] = { /*
 {"cgname",    "CGNAME",  pr_cgname,        PIDS_CGNAME,             27,    LNX,  PO|UNLIMITED},
 {"cgroup",    "CGROUP",  pr_cgroup,        PIDS_CGROUP,             27,    LNX,  PO|UNLIMITED},
 {"cgroupns",  "CGROUPNS",pr_cgroupns,      PIDS_NS_CGROUP,          10,    LNX,  ET|RIGHT},
-{"class",     "CLS",     pr_class,         PIDS_SCHED_CLASS,         3,    XXX,  TO|LEFT},
-{"cls",       "CLS",     pr_class,         PIDS_SCHED_CLASS,         3,    HPU,  TO|RIGHT}, /*says HPUX or RT*/
+{"class",     "CLS",     pr_class,         PIDS_SCHED_CLASSSTR,      3,    XXX,  TO|LEFT},
+{"cls",       "CLS",     pr_class,         PIDS_SCHED_CLASSSTR,      3,    HPU,  TO|RIGHT}, /*says HPUX or RT*/
 {"cmaj_flt",  "-",       pr_nop,           PIDS_noop,                1,    LNX,  AN|RIGHT},
 {"cmd",       "CMD",     pr_args,          PIDS_CMDLINE,            27,    DEC,  PO|UNLIMITED}, /*ucomm*/
 {"cmin_flt",  "-",       pr_nop,           PIDS_noop,                1,    LNX,  AN|RIGHT},
@@ -1793,7 +1780,7 @@ static const format_struct format_array[] = { /*
 {"pidns",     "PIDNS",   pr_pidns,         PIDS_NS_PID,             10,    LNX,  ET|RIGHT},
 {"pmem",      "%MEM",    pr_pmem,          PIDS_VM_RSS,              4,    XXX,  PO|RIGHT}, /* %mem */
 {"poip",      "-",       pr_nop,           PIDS_noop,                1,    BSD,  AN|RIGHT},
-{"policy",    "POL",     pr_class,         PIDS_SCHED_CLASS,         3,    DEC,  TO|LEFT},
+{"policy",    "POL",     pr_class,         PIDS_SCHED_CLASSSTR,      3,    DEC,  TO|LEFT},
 {"ppid",      "PPID",    pr_ppid,          PIDS_ID_PPID,             5,    U98,  PO|PIDMAX|RIGHT},
 {"pri",       "PRI",     pr_pri,           PIDS_PRIORITY,            3,    XXX,  TO|RIGHT},
 {"pri_api",   "API",     pr_pri_api,       PIDS_PRIORITY,            3,    LNX,  TO|RIGHT},
