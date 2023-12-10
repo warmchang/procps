@@ -387,6 +387,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'nsTIME' = 10 + */
    Head_nlstab[EU_NS8] = _("nsTIME");
    Desc_nlstab[EU_NS8] = _("TIME namespace Inode");
+/* Translation Hint: maximum 'CLS' = 3 */
+   Head_nlstab[EU_CLS] = _("CLS");
+   Desc_nlstab[EU_CLS] = _("Schedule Class");
 }
 
 

@@ -729,6 +729,19 @@ Even so, such variable width fields could still suffer truncation.
 any truncated data.
 
 .TP 4
+\fBCLS \*(Em Scheduling Class \fR
+The task's current scheduling policy which can be one of:
+    \fB-  \fR = not reported
+    \fBTS \fR = SCHED_OTHER
+    \fBFF \fR = SCHED_FIFO
+    \fBRR \fR = SCHED_RR
+    \fBB  \fR = SCHED_BATCH
+    \fBISO\fR = SCHED_ISO
+    \fBIDL\fR = SCHED_IDLE
+    \fBDLN\fR = SCHED_DEADLINE
+    \fB?  \fR = unknown value
+
+.TP 4
 \fBCODE \*(Em Code Size (KiB) \fR
 The amount of \*(MP currently devoted to executable code, also known
 as the Text Resident Set size or TRS.

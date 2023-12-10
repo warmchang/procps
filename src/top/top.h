@@ -226,6 +226,7 @@ enum pflag {
    EU_AGI, EU_AGN,
    EU_TM3, EU_TM4, EU_CUU, EU_CUC,
    EU_NS7, EU_NS8,
+   EU_CLS,
 #ifdef USE_X_COLHDR
    // not really pflags, used with tbl indexing
    EU_MAXPFLGS
@@ -534,7 +535,7 @@ typedef struct WIN_t {
 #define RCF_XFORMED_ID  'k'
         // this next guy is incremented when columns change
         // ( to prevent older top versions from accessing )
-#define RCF_VERSION_ID  'k'
+#define RCF_VERSION_ID  'l'
 
 #define FLD_OFFSET  ( (int)'%' )
 #define FLD_ROWMAX  20

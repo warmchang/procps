@@ -2001,8 +2001,9 @@ static struct {
    {     6,     -1,  A_right,  PIDS_UTILIZATION    },  // real     EU_CUU
    {     7,     -1,  A_right,  PIDS_UTILIZATION_C  },  // real     EU_CUC
    {    10,     -1,  A_right,  PIDS_NS_CGROUP      },  // ul_int   EU_NS7
-   {    10,     -1,  A_right,  PIDS_NS_TIME        }   // ul_int   EU_NS8
-#define eu_LAST        EU_NS8
+   {    10,     -1,  A_right,  PIDS_NS_TIME        },  // ul_int   EU_NS8
+   {     3,     -1,  A_left,   PIDS_SCHED_CLASSSTR }   // str      EU_CLS
+#define eu_LAST        EU_CLS
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -4075,8 +4076,10 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
                return p;
             Rc.tics_scaled = 0;
          // fall through
-         case 'k':                          // current RCF_VERSION_ID
-         // fall through
+         case 'k':                          // this is release 4.0.2
+         // fall through                       ( transitioned to integer )
+         case 'l':                          // current RCF_VERSION_ID
+         // fall through                       ( added EU_CLS )
          default:
             if (mlen(w->rc.fieldscur) < EU_MAXPFLGS)
                return p;
@@ -7028,6 +7031,10 @@ static const char *task_show (const WIN_t *q, int idx) {
    /* real, scale_tics (try 'hour,minutes') */
          case EU_TM4:        // PIDS_TIME_ELAPSED
             cp = scale_tics(rSv(EU_TM4, real) * Hertz, W, Jn, TICS_AS_HOUR);
+            break;
+   /* str, make_str (fixed width) */
+         case EU_CLS:        // PIDS_SCHED_CLASSSTR
+            cp = make_str(rSv(i, str), W, Js, AUTOX_NO);
             break;
    /* str, make_str (all AUTOX yes) */
          case EU_LXC:        // PIDS_LXCNAME
