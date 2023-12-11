@@ -506,9 +506,15 @@ state percentages.
 
 Line 1 shows total\fB tasks\fR or\fB threads\fR, depending on the state
 of the Threads-mode toggle.
-That total is further classified as:
+That total is further classified according to task state as follows:
 .nf
-    running; sleeping; stopped; zombie
+    displayed       process status (`S')
+    ---------       --------------------
+    running         R
+    sleep           S + any remaining
+    d-sleep         D
+    stopped         T + t
+    zombie          Z
 .fi
 
 Line 2 shows \*(PU state percentages based on the interval since the

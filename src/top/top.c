@@ -6770,6 +6770,7 @@ static void summary_show (void) {
             , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
             , PIDSmaxt, Pids_reap->counts->running
             , Pids_reap->counts->sleeping + Pids_reap->counts->other
+            , Pids_reap->counts->disk_sleep
             , Pids_reap->counts->stopped, Pids_reap->counts->zombied));
          Msg_row += 1;
       }
@@ -6798,6 +6799,7 @@ static void summary_show (void) {
          , Thread_mode ? N_txt(WORD_threads_txt) : N_txt(WORD_process_txt)
          , PIDSmaxt, Pids_reap->counts->running
          , Pids_reap->counts->sleeping + Pids_reap->counts->other
+         , Pids_reap->counts->disk_sleep
          , Pids_reap->counts->stopped, Pids_reap->counts->zombied));
       Msg_row += 1;
 
