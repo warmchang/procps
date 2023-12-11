@@ -5,12 +5,14 @@ procps-ng-NEXT
     internal: dont print 60s but increment minute          issue #302
     external: zswap & zswapped added to meminfo api
     external: schedule class added to pids api
+    external: disk sleep added to pids api, sleep revised  issue #265
   * pgrep: select process by environment variable          issue #167
   * ps: Add environ field
   * ps: restore lost tasks for options --sort with -H      issue #304
   * slabtop: Add --human option for slab size
   * sysctl: Add glob excludes                              merge #206
   * top: added a 'CLS' scheduling class field, like ps
+  * top: exploit library addition of 'disk sleep'          issue #265
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305
   * watch: use clock_gettime                               issue #295
