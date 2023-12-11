@@ -229,7 +229,7 @@ struct pids_stack {
 
 struct pids_counts {
     int total;
-    int running, sleeping, stopped, zombied, other;
+    int running, sleeping, disk_sleep, stopped, zombied, other;
 };
 
 struct pids_fetch {

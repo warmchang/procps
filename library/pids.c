@@ -1091,7 +1091,9 @@ static inline int pids_proc_tally (
         case 'R':
             ++counts->running;
             break;
-        case 'D':      // 'D' (disk sleep)
+        case 'D':
+            ++counts->disk_sleep;
+            break;
         case 'S':
             ++counts->sleeping;
             break;
