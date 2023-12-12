@@ -1526,7 +1526,7 @@ setREL1(ID_TGID)
   return len;
 }
 
-/************************ Linux autogroups ******************************/
+/************************ Linux miscellaneous ***************************/
 static int pr_agid(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(AUTOGRP_ID)
   return snprintf(outbuf, COLWID, "%d", rSv(AUTOGRP_ID, s_int, pp));
@@ -1534,6 +1534,10 @@ setREL1(AUTOGRP_ID)
 static int pr_agnice(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(AUTOGRP_NICE)
   return snprintf(outbuf, COLWID, "%d", rSv(AUTOGRP_NICE, s_int, pp));
+}
+static int pr_docker(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(DOCKER_ID)
+  return snprintf(outbuf, COLWID, "%s", rSv(DOCKER_ID, str, pp));
 }
 
 ////////////////////////////// Test code /////////////////////////////////
@@ -1685,6 +1689,7 @@ static const format_struct format_array[] = { /*
 {"cutime",    "-",       pr_nop,           PIDS_TICS_USER_C,         1,    LNX,  AN|RIGHT},
 {"cuu",       "%CUU",    pr_utilization,   PIDS_UTILIZATION,         6,    XXX,  AN|RIGHT},
 {"cwd",       "CWD",     pr_nop,           PIDS_noop,                3,    LNX,  AN|LEFT},
+{"docker",    "DOCKER",  pr_docker,        PIDS_DOCKER_ID,          12,    LNX,  AN|LEFT},
 {"drs",       "DRS",     pr_drs,           PIDS_VSIZE_BYTES,         5,    LNX,  PO|RIGHT},
 {"dsiz",      "DSIZ",    pr_dsiz,          PIDS_VSIZE_BYTES,         4,    LNX,  PO|RIGHT},
 {"egid",      "EGID",    pr_egid,          PIDS_ID_EGID,             5,    LNX,  ET|RIGHT},

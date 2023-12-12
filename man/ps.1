@@ -1233,6 +1233,11 @@ The CPU utilization of a process in an extended "##.###" format.
 .BR pcpu ).
 T}
 
+docker	DOCKER	T{
+The abbreviated id of the docker container within which a task is running.
+If a process is not running inside a container, a dash ('\-') will be shown.
+T}
+
 drs	DRS	T{
 data resident set size, the amount of private memory \fIreserved\fR by a process.
 It is also known as DATA. Such memory may not yet be mapped to
