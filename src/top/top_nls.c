@@ -390,6 +390,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'CLS' = 3 */
    Head_nlstab[EU_CLS] = _("CLS");
    Desc_nlstab[EU_CLS] = _("Schedule Class");
+/* Translation Hint: maximum 'Docker' = 8 + */
+   Head_nlstab[EU_DKR] = _("Docker");
+   Desc_nlstab[EU_DKR] = _("Docker container id");
 }
 
 

@@ -788,6 +788,12 @@ included in the \*(MV (VIRT) amount.
 \*(XX.
 
 .TP 4
+\fBDocker\*(Em Docker Container ID \fR
+The identity (abbreviated hash) of the docker container within which a task
+is running.
+If a process is not running inside a container, a dash (`\-') will be shown.
+
+.TP 4
 \fBELAPSED \*(Em Elapsed Running Time\fR
 The length of time since a process was started.
 Thus, the most recently started task will display the smallest time interval.
@@ -1510,13 +1516,13 @@ This \*(CI can be used to alter the widths of the following fields:
 
 .nf
    \fI field  default    field  default    field   default \fR
-    GID       5       GROUP     8       WCHAN      10
-    LOGID     5       LXC       8       nsCGROUP   10
-    RUID      5       RUSER     8       nsIPC      10
-    SUID      5       SUSER     8       nsMNT      10
-    UID       5       TTY       8       nsNET      10
-                      USER      8       nsPID      10
-                                        nsTIME     10
+    GID       5       Docker    8       WCHAN      10
+    LOGID     5       GROUP     8       nsCGROUP   10
+    RUID      5       LXC       8       nsIPC      10
+    SUID      5       RUSER     8       nsMNT      10
+    UID       5       SUSER     8       nsNET      10
+                      TTY       8       nsPID      10
+                      USER      8       nsTIME     10
                                         nsUSER     10
                                         nsUTS      10
 .fi

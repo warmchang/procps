@@ -2002,8 +2002,9 @@ static struct {
    {     7,     -1,  A_right,  PIDS_UTILIZATION_C  },  // real     EU_CUC
    {    10,     -1,  A_right,  PIDS_NS_CGROUP      },  // ul_int   EU_NS7
    {    10,     -1,  A_right,  PIDS_NS_TIME        },  // ul_int   EU_NS8
-   {     3,     -1,  A_left,   PIDS_SCHED_CLASSSTR }   // str      EU_CLS
-#define eu_LAST        EU_CLS
+   {     3,     -1,  A_left,   PIDS_SCHED_CLASSSTR },  // str      EU_CLS
+   {     8,     -1,  A_left,   PIDS_DOCKER_ID      }   // str      EU_DKR
+#define eu_LAST        EU_DKR
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -2617,7 +2618,7 @@ static void zap_fieldstab (void) {
          = wtab[EU_WCH].watx = wtab[EU_NS1].watx = wtab[EU_NS2].watx
          = wtab[EU_NS3].watx = wtab[EU_NS4].watx = wtab[EU_NS5].watx
          = wtab[EU_NS6].watx = wtab[EU_NS7].watx = wtab[EU_NS8].watx
-         = wtab[EU_LXC].watx = wtab[EU_LID].watx
+         = wtab[EU_LXC].watx = wtab[EU_LID].watx = wtab[EU_DKR].watx
          = +1;
       /* establish translatable header 'column' requirements
          and ensure .width reflects the widest value */
@@ -2682,8 +2683,8 @@ static void zap_fieldstab (void) {
          = Rc.fixed_widest ? 5 + Rc.fixed_widest : 5;
       Fieldstab[EU_UEN].width = Fieldstab[EU_URN].width
          = Fieldstab[EU_USN].width = Fieldstab[EU_GRP].width
-         = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
-      Fieldstab[EU_TTY].width = Fieldstab[EU_LXC].width
+         = Fieldstab[EU_TTY].width = Fieldstab[EU_LXC].width
+         = Fieldstab[EU_DKR].width
          = Rc.fixed_widest ? 8 + Rc.fixed_widest : 8;
       Fieldstab[EU_WCH].width
          = Rc.fixed_widest ? 10 + Rc.fixed_widest : 10;
@@ -4079,7 +4080,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
          case 'k':                          // this is release 4.0.2
          // fall through                       ( transitioned to integer )
          case 'l':                          // current RCF_VERSION_ID
-         // fall through                       ( added EU_CLS )
+         // fall through                       ( added EU_CLS, EU_DKR  )
          default:
             if (mlen(w->rc.fieldscur) < EU_MAXPFLGS)
                return p;
@@ -7039,6 +7040,7 @@ static const char *task_show (const WIN_t *q, int idx) {
             cp = make_str(rSv(i, str), W, Js, AUTOX_NO);
             break;
    /* str, make_str (all AUTOX yes) */
+         case EU_DKR:        // PIDS_DOCKER_ID
          case EU_LXC:        // PIDS_LXCNAME
          case EU_TTY:        // PIDS_TTY_NAME
          case EU_WCH:        // PIDS_WCHAN_NAME
