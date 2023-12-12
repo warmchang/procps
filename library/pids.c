@@ -187,6 +187,8 @@ VEC_set(CGROUP_V,                  cgroup_v)
 STR_set(CMD,                       cmd)
 STR_set(CMDLINE,                   cmdline)
 VEC_set(CMDLINE_V,                 cmdline_v)
+REG_set(DOCKER_ID,        str,     dockerid)
+REG_set(DOCKER_ID_64,     str,     dockerid_64)
 STR_set(ENVIRON,                   environ)
 VEC_set(ENVIRON_V,                 environ_v)
 STR_set(EXE,                       exe)
@@ -428,8 +430,9 @@ srtDECL(noop) {
 #define x_ogroup   PROC_FILL_OGROUPS
 #define x_ouser    PROC_FILL_OUSERS
 #define x_supgrp   PROC_FILL_SUPGRP
-   // placed here so an 'f' prefix wouldn't make 'em first
+   // placed here so an 'f' prefix wouldn't put at/near 1st
 #define z_autogrp  PROC_FILLAUTOGRP
+#define z_docker   PROC_FILL_DOCKER
 
 typedef void (*FRE_t)(struct pids_result *);
 typedef int  (*QSR_t)(const void *, const void *, void *);
@@ -478,6 +481,8 @@ static struct {
     { RS(CMD),               f_either,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CMDLINE),           x_cmdline,  FF(str),   QS(str),       0,        TS(str)     },
     { RS(CMDLINE_V),         v_arg,      FF(strv),  QS(strv),      0,        TS(strv)    },
+    { RS(DOCKER_ID),         z_docker,   NULL,      QS(str),       0,        TS(str)     }, // freefunc NULL w/ cached string
+    { RS(DOCKER_ID_64),      z_docker,   NULL,      QS(str),       0,        TS(str)     }, // freefunc NULL w/ cached string
     { RS(ENVIRON),           x_environ,  FF(str),   QS(str),       0,        TS(str)     },
     { RS(ENVIRON_V),         v_env,      FF(strv),  QS(strv),      0,        TS(strv)    },
     { RS(EXE),               f_exe,      FF(str),   QS(str),       0,        TS(str)     },
@@ -658,6 +663,7 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 #undef x_ouser
 #undef x_supgrp
 #undef z_autogrp
+#undef z_docker
 
 
 // ___ History Support Private Functions ||||||||||||||||||||||||||||||||||||||

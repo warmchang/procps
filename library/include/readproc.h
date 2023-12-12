@@ -190,6 +190,8 @@ typedef struct proc_t {
         *sd_unit,       // n/a             systemd system unit id
         *sd_uunit;      // n/a             systemd user unit id
     char
+        *dockerid,      // n/a             docker container id, abbreviated
+        *dockerid_64,   // n/a             docker container id, full
         *lxcname,       // n/a             lxc container name
         *exe;           // exe             executable path + name
     int
@@ -274,6 +276,7 @@ typedef struct PROCTAB {
 
 // and let's put new flags here ...
 #define PROC_FILLAUTOGRP     0x01000000 // fill in proc_t autogroup stuff
+#define PROC_FILL_DOCKER     0x02000000 // fill in proc_t dockerid, if possible
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1         0x10000000

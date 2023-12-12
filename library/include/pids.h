@@ -44,6 +44,8 @@ enum pids_item {
     PIDS_CMD,               //      str        stat: comm or status: Name
     PIDS_CMDLINE,           //      str        cmdline
     PIDS_CMDLINE_V,         //     strv        cmdline, as *str[]
+    PIDS_DOCKER_ID,         //      str        derived from CGROUP '/docker-' (abbreviated hash)
+    PIDS_DOCKER_ID_64,      //      str        derived from CGROUP '/docker-' (full hash)
     PIDS_ENVIRON,           //      str        environ
     PIDS_ENVIRON_V,         //     strv        environ, as *str[]
     PIDS_EXE,               //      str        exe

@@ -973,8 +973,7 @@ static int fill_environ_cvt (const char *directory, proc_t *restrict p) {
     // Provide the means to value proc_t.lxcname (perhaps only with "-") while
     // tracking all names already seen thus avoiding the overhead of repeating
     // malloc() and free() calls.
-static char *lxc_containers (const char *path) {
-    static __thread struct utlbuf_s ub = { NULL, 0 };   // util buffer for whole cgroup
+static char *lxc_containers (const char *path, struct utlbuf_s *ub) {
     static char lxc_none[] = "-";
     static char lxc_oops[] = "?";              // used when memory alloc fails
     /*
@@ -992,7 +991,7 @@ static char *lxc_containers (const char *path) {
            2:name=systemd:/
            1:cpuset,cpu,cpuacct,devices,freezer,net_cls,blkio,perf_event,net_prio:/lxc/lxc-P
     */
-    if (file2str(path, "cgroup", &ub) > 0) {
+    if (ub->buf[0]) {
         /* ouch, the next defaults could be changed at lxc ./configure time
            ( and a changed 'lxc.cgroup.pattern' is only available to root ) */
         static const char *lxc_delm1 = "lxc.payload.";    // with lxc-4.0.0
@@ -1001,9 +1000,9 @@ static char *lxc_containers (const char *path) {
         const char *delim;
         char *p1;
 
-        if ((p1 = strstr(ub.buf, (delim = lxc_delm1)))
-        || ((p1 = strstr(ub.buf, (delim = lxc_delm2)))
-        || ((p1 = strstr(ub.buf, (delim = lxc_delm3)))))) {
+        if ((p1 = strstr(ub->buf, (delim = lxc_delm1)))
+        || ((p1 = strstr(ub->buf, (delim = lxc_delm2)))
+        || ((p1 = strstr(ub->buf, (delim = lxc_delm3)))))) {
             static __thread struct lxc_ele {
                 struct lxc_ele *next;
                 char *name;
@@ -1037,6 +1036,68 @@ static char *lxc_containers (const char *path) {
         }
     }
     return lxc_none;
+}
+
+
+struct docker_ids {
+    char *id;
+    char *id_64;
+};
+
+    // Provide the means to value proc_t.dockerid (perhaps only with "-") while
+    // tracking all identifiers already seen to avoid the overhead of repeating
+    // malloc() and free() calls.
+static struct docker_ids *docker_containers (const char *path, struct utlbuf_s *ub) {
+    static struct docker_ids docker_none = { "-", "-" };;
+    // used when memory alloc fails
+    static struct docker_ids docker_oops = { "?", "?" };;
+
+    if (ub->buf[0]) {
+        static const char *docker_allow = "01234567890abcdef";
+        static const char *docker_delm1 = "/docker-";     // with v2 cgroup
+        static const char *docker_delm2 = "/docker/";     // with v1 cgroup
+        const char *delim;
+        char *p1;
+
+        if ((p1 = strstr(ub->buf, (delim = docker_delm1)))
+        || ((p1 = strstr(ub->buf, (delim = docker_delm2))))) {
+            static __thread struct docker_ele {
+                struct docker_ele *next;
+                struct docker_ids ids;
+            } *anchor = NULL;
+            struct docker_ele *ele = anchor;
+            int delim_len = strlen(delim);
+            char *p2;
+
+            if ((p2 = strchr(p1, '\n')))       // isolate a controller's line
+                *p2 = '\0';
+            p1 += delim_len;
+            if (64 != strspn(p1, docker_allow)) // validate id only substring
+                return &docker_none;
+            p1[64] = '\0';                     // deal with entire hash value
+            while (ele) {                      // have we already seen the id
+                if (!strncmp(ele->ids.id, p1, 12))
+                    return &ele->ids;          // return just the recycled id
+                ele = ele->next;
+            }
+            if (!(ele = (struct docker_ele *)malloc(sizeof(struct docker_ele))))
+                return &docker_oops;
+            if (!(ele->ids.id_64 = strdup(p1))) {
+                free(ele);
+                return &docker_oops;
+            }
+            p1[12] = '\0';
+            if (!(ele->ids.id = strdup(p1))) {
+                free(ele->ids.id_64);
+                free(ele);
+                return &docker_oops;
+            }
+            ele->next = anchor;                // push a previously unseen id
+            anchor = ele;
+            return &ele->ids;                  // return this docker identity
+        }
+    }
+    return &docker_none;
 }
 
 
@@ -1121,7 +1182,7 @@ static void autogroup_fill (const char *path, proc_t *p) {
 // The pid (tgid? tid?) is already in p, and a path to it in path, with some
 // room to spare.
 static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict const p) {
-    static __thread struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
+    static __thread struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status,cgroup
     static __thread struct stat sb;     // stat() buffer
     char *restrict const path = PT->path;
     unsigned flags = PT->flags;
@@ -1218,8 +1279,16 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLSYSTEMD)               // get sd-login.h stuff
         rc += sd2proc(p);
 
-    if (flags & PROC_FILL_LXC)                  // value the lxc name
-        p->lxcname = lxc_containers(path);
+    if (flags & (PROC_FILL_LXC | PROC_FILL_DOCKER)
+    && (file2str(path, "cgroup", &ub) > 0)) {
+        if (flags & PROC_FILL_LXC)              // value the lxc name
+            p->lxcname = lxc_containers(path, &ub);
+        if (flags & PROC_FILL_DOCKER) {         // value the dockerids
+            struct docker_ids *ids = docker_containers(path, &ub);
+            p->dockerid = ids->id;
+            p->dockerid_64 = ids->id_64;
+        }
+    }
 
     if (flags & PROC_FILL_LUID)                 // value the login user id
         p->luid = login_uid(path);
@@ -1251,7 +1320,7 @@ next_proc:
 // t is the POSIX thread  (task group member, generally not the leader)
 // path is a path to the task, with some room to spare.
 static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict const t, char *restrict const path) {
-    static __thread struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status
+    static __thread struct utlbuf_s ub = { NULL, 0 };    // buf for stat,statm,status.cgroup
     static __thread struct stat sb;     // stat() buffer
     unsigned flags = PT->flags;
     int rc = 0;
@@ -1352,8 +1421,16 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLNS)                    // read /proc/#/task/#/ns/*
         procps_ns_read_pid(t->tid, &(t->ns));
 
-    if (flags & PROC_FILL_LXC)
-        t->lxcname = lxc_containers(path);
+    if (flags & (PROC_FILL_LXC | PROC_FILL_DOCKER)
+    && (file2str(path, "cgroup", &ub) > 0)) {
+        if (flags & PROC_FILL_LXC)              // value the lxc name
+            t->lxcname = lxc_containers(path, &ub);
+        if (flags & PROC_FILL_DOCKER) {         // value the dockerids
+            struct docker_ids *ids = docker_containers(path, &ub);
+            t->dockerid = ids->id;
+            t->dockerid_64 = ids->id_64;
+        }
+    }
 
     if (flags & PROC_FILL_LUID)
         t->luid = login_uid(path);
