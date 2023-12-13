@@ -303,4 +303,9 @@ int look_up_our_self(void);
 void closeproc(PROCTAB *PT);
 char **vectorize_this_str(const char *src);
 
+struct utlbuf_s;
+struct docker_ids;
+char *lxc_containers(const char *path, struct utlbuf_s *ub);
+struct docker_ids *docker_containers(const char *path, struct utlbuf_s *ub);
+
 #endif

@@ -973,9 +973,14 @@ static int fill_environ_cvt (const char *directory, proc_t *restrict p) {
     // Provide the means to value proc_t.lxcname (perhaps only with "-") while
     // tracking all names already seen thus avoiding the overhead of repeating
     // malloc() and free() calls.
-static char *lxc_containers (const char *path, struct utlbuf_s *ub) {
+char *lxc_containers (const char *path, struct utlbuf_s *ub) {
     static char lxc_none[] = "-";
     static char lxc_oops[] = "?";              // used when memory alloc fails
+    static __thread struct lxc_ele {
+        struct lxc_ele *next;
+        char *name;
+    } *anchor = NULL;
+    struct lxc_ele *ele = anchor;
     /*
        try to locate the lxc delimiter eyecatcher somewhere in a task's cgroup
        directory -- the following are from nested privileged plus unprivileged
@@ -991,6 +996,15 @@ static char *lxc_containers (const char *path, struct utlbuf_s *ub) {
            2:name=systemd:/
            1:cpuset,cpu,cpuacct,devices,freezer,net_cls,blkio,perf_event,net_prio:/lxc/lxc-P
     */
+    if (!path) {                               // looks like time for cleanup
+        while (anchor) {
+            ele = anchor->next;
+            free(anchor->name);
+            free(anchor);
+            anchor = ele;
+        }
+        return NULL;
+    }
     if (ub->buf[0]) {
         /* ouch, the next defaults could be changed at lxc ./configure time
            ( and a changed 'lxc.cgroup.pattern' is only available to root ) */
@@ -1003,11 +1017,6 @@ static char *lxc_containers (const char *path, struct utlbuf_s *ub) {
         if ((p1 = strstr(ub->buf, (delim = lxc_delm1)))
         || ((p1 = strstr(ub->buf, (delim = lxc_delm2)))
         || ((p1 = strstr(ub->buf, (delim = lxc_delm3)))))) {
-            static __thread struct lxc_ele {
-                struct lxc_ele *next;
-                char *name;
-            } *anchor = NULL;
-            struct lxc_ele *ele = anchor;
             int delim_len = strlen(delim);
             char *p2;
 
@@ -1047,11 +1056,26 @@ struct docker_ids {
     // Provide the means to value proc_t.dockerid (perhaps only with "-") while
     // tracking all identifiers already seen to avoid the overhead of repeating
     // malloc() and free() calls.
-static struct docker_ids *docker_containers (const char *path, struct utlbuf_s *ub) {
+struct docker_ids *docker_containers (const char *path, struct utlbuf_s *ub) {
     static struct docker_ids docker_none = { "-", "-" };;
     // used when memory alloc fails
     static struct docker_ids docker_oops = { "?", "?" };;
+    static __thread struct docker_ele {
+        struct docker_ele *next;
+        struct docker_ids ids;
+    } *anchor = NULL;
+    struct docker_ele *ele = anchor;
 
+    if (!path) {                               // looks like time for cleanup
+        while (anchor) {
+            ele = anchor->next;
+            free(anchor->ids.id);
+            free(anchor->ids.id_64);
+            free(anchor);
+            anchor = ele;
+        }
+        return NULL;
+    }
     if (ub->buf[0]) {
         static const char *docker_allow = "01234567890abcdef";
         static const char *docker_delm1 = "/docker-";     // with v2 cgroup
@@ -1061,11 +1085,6 @@ static struct docker_ids *docker_containers (const char *path, struct utlbuf_s *
 
         if ((p1 = strstr(ub->buf, (delim = docker_delm1)))
         || ((p1 = strstr(ub->buf, (delim = docker_delm2))))) {
-            static __thread struct docker_ele {
-                struct docker_ele *next;
-                struct docker_ids ids;
-            } *anchor = NULL;
-            struct docker_ele *ele = anchor;
             int delim_len = strlen(delim);
             char *p2;
 

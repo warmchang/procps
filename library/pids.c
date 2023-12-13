@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 
 #include <sys/stat.h>
@@ -99,6 +100,7 @@ struct pids_info {
     proc_t get_proc;                   // the proc_t used by procps_pids_get
     proc_t fetch_proc;                 // the proc_t used by pids_stacks_fetch
     SET_t *func_array;                 // extracted Item_table 'setsfunc' pointers
+    int containers_yes;                // need to call pids_containers_check
 };
 
 
@@ -644,7 +646,7 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 #undef f_grp
 #undef f_io
 #undef f_login
-#undef f_lxc
+//#undef f_lxc                    // needed later
 #undef f_ns
 #undef f_oom
 #undef f_smaps
@@ -663,7 +665,7 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 #undef x_ouser
 #undef x_supgrp
 #undef z_autogrp
-#undef z_docker
+//#undef z_docker                 // needed later
 
 
 // ___ History Support Private Functions ||||||||||||||||||||||||||||||||||||||
@@ -882,6 +884,33 @@ static void pids_unref_rpthash (
 #undef HHASH_SIZE
 
 
+// ___ Unique/Specialized Private Function(s) |||||||||||||||||||||||||||||||||
+
+        /*
+         * This routine periodically invokes the garbage collection services
+         * embedded in 'lxc' and 'docker' container extraction functions. It
+         * exists in case a library caller (like top) is kept running for an
+         * extended period of time (perhaps weeks or months). In such a case
+         * containers long since disappeared would otherwise be tracked thus
+         * consuming ever more memory while needlessly slowing the searches. */
+static void pids_containers_check (void) {
+ #define oneDAY (60 * 60 * 24)
+    static __thread time_t sav_secs;
+    time_t cur_secs = time(NULL);
+
+    if (!sav_secs)
+       sav_secs = cur_secs;
+    else if (oneDAY <= (cur_secs - sav_secs)) {
+        lxc_containers(NULL, NULL);
+        docker_containers(NULL, NULL);
+        sav_secs = cur_secs;
+    }
+    return;
+ #undef oneDAY
+} // pids_containers_check
+
+
+
 // ___ Standard Private Functions |||||||||||||||||||||||||||||||||||||||||||||
 
 static inline int pids_assign_results (
@@ -1026,12 +1055,13 @@ static inline void pids_libflags_set (
     enum pids_item e;
     int i;
 
-    info->oldflags = info->history_yes = 0;
+    info->oldflags = info->history_yes = info->containers_yes = 0;
     for (i = 0; i < info->maxitems; i++) {
         if (((e = info->items[i])) >= PIDS_logical_end)
             break;
         info->oldflags |= Item_table[e].oldflags;
         info->history_yes |= Item_table[e].needhist;
+        info->containers_yes |= (Item_table[e].oldflags & (f_lxc | z_docker));
     }
     if (info->oldflags & f_either) {
         if (!(info->oldflags & (f_stat | f_status)))
@@ -1478,6 +1508,9 @@ fresh_start:
     }
     errno = 0;
 
+    if (info->containers_yes)
+        pids_containers_check();
+
     /* when in a namespace with proc mounted subset=pid,
        we will be restricted to process information only */
     info->boot_tics = 0;
@@ -1516,6 +1549,9 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
     if (!info->maxitems)
         return NULL;
     errno = 0;
+
+    if (info->containers_yes)
+        pids_containers_check();
 
     if (!pids_oldproc_open(&info->fetch_PT, info->oldflags))
         return NULL;
@@ -1619,6 +1655,9 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
     if (!info->maxitems)
         return NULL;
     errno = 0;
+
+    if (info->containers_yes)
+        pids_containers_check();
 
     // this zero delimiter is really only needed with PIDS_SELECT_PID
     memcpy(ids, these, sizeof(unsigned) * numthese);
