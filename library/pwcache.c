@@ -87,7 +87,7 @@ char *pwcache_get_group(gid_t gid) {
         g = &(*g)->next;
     }
     if (!(*g = (struct grpbuf *)malloc(sizeof(struct grpbuf))))
-        return ERRname;;
+        return ERRname;
     (*g)->gid = gid;
     gr = getgrgid(gid);
     if (!gr || strlen(gr->gr_name) >= P_G_SZ)

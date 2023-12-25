@@ -333,7 +333,7 @@ REG_set(VM_STACK,         ul_int,  vm_stack)
 REG_set(VM_SWAP,          ul_int,  vm_swap)
 setDECL(VM_USED)        { (void)I; R->result.ul_int = P->vm_swap + P->vm_rss; }
 REG_set(VSIZE_BYTES,      ul_int,  vsize)
-setDECL(WCHAN_NAME)     { freNAME(str)(R); if (!(R->result.str = strdup(lookup_wchan(P->tid)))) I->seterr = 1;; }
+setDECL(WCHAN_NAME)     { freNAME(str)(R); if (!(R->result.str = strdup(lookup_wchan(P->tid)))) I->seterr = 1; }
 
 #undef setDECL
 #undef CVT_set

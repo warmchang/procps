@@ -695,7 +695,7 @@ static int stat_make_numa_hist (
             nod_ptr->new.xtot += cpu_ptr->new.xtot;  nod_ptr->old.xtot += cpu_ptr->old.xtot;
 
             cpu_ptr->numa_node = nod_ptr->numa_node = node;
-            nod_ptr->count++; ;
+            nod_ptr->count++;
         }
     }
     info->nodes.hist.n_inuse = info->nodes.total;

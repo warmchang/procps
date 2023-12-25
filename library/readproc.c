@@ -1057,9 +1057,9 @@ struct docker_ids {
     // tracking all identifiers already seen to avoid the overhead of repeating
     // malloc() and free() calls.
 struct docker_ids *docker_containers (const char *path, struct utlbuf_s *ub) {
-    static struct docker_ids docker_none = { "-", "-" };;
+    static struct docker_ids docker_none = { "-", "-" };
     // used when memory alloc fails
-    static struct docker_ids docker_oops = { "?", "?" };;
+    static struct docker_ids docker_oops = { "?", "?" };
     static __thread struct docker_ele {
         struct docker_ele *next;
         struct docker_ids ids;
@@ -1077,7 +1077,7 @@ struct docker_ids *docker_containers (const char *path, struct utlbuf_s *ub) {
         return NULL;
     }
     if (ub->buf[0]) {
-        static const char *docker_allow = "01234567890abcdef";
+        static const char *docker_allow = "0123456789abcdef";
         static const char *docker_delm1 = "/docker-";     // with v2 cgroup
         static const char *docker_delm2 = "/docker/";     // with v1 cgroup
         const char *delim;
