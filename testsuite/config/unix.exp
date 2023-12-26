@@ -131,7 +131,15 @@ proc expect_table_dsc { test match_header match_item } {
         }
         default {
             if { $found_item == 0 } {
-                fail "$test (items)"
+                fail "$test (items ${found_item})"
+            } else {
+                pass $test
+            }
+            return
+        }
+        eof {
+            if { $found_item == 0 } {
+                fail "$test (items eof)"
             } else {
                 pass $test
             }
