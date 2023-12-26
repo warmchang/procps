@@ -850,7 +850,7 @@ int main(int argc, char **argv)
 #endif
 		if (!u)
 			break;
-		if (u->ut_type != USER_PROCESS || (NULL == u->ut_user))
+		if (u->ut_type != USER_PROCESS || ('\0' == u->ut_user[0]))
 			continue;
 		if (!match_user ||
                     (0 == strncmp(u->ut_user, match_user, UT_NAMESIZE)))
