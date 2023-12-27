@@ -9,7 +9,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH KILL 1 "2023-01-16" "procps-ng" "User Commands"
+.TH KILL 1 "2023-12-27" "procps-ng" "User Commands"
 .SH NAME
 kill \- send a signal to a process
 .SH SYNOPSIS
@@ -47,6 +47,7 @@ to be sent.  The signal can be specified by using name or number.
 The behavior of signals is explained in
 .BR signal (7)
 manual page.
+In addition, if \fIsignal\fR is zero, no signal is sent, but existence and permission checks are still performed; this can be used to check for the existence of a process ID or process group ID that the caller is permitted to signal.
 .TP
 \fB\-q\fR, \fB\-\-queue \fIvalue\fP
 Use
