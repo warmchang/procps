@@ -6517,9 +6517,9 @@ numa_oops:
  #else
             static char ctab[] = { 'u', 'E', 'P' };
  #endif
-            int cid = CPU_VAL(stat_ID, i), typ = CPU_VAL(stat_COR_TYP, i);
-            char chr = Curwin->rc.core_types ? ctab[typ] : 'u' ;
-            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt), chr, cid);
+            snprintf(tmp, sizeof(tmp), N_fmt(WORD_eachcpu_fmt)
+               , Curwin->rc.core_types ? ctab[CPU_VAL(stat_COR_TYP, i)] : 'u'
+               , CPU_VAL(stat_ID, i));
 #else
             snprintf(tmp, sizeof(tmp), eachCPU(CPU_VAL(stat_ID, i)));
 #endif
