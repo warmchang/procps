@@ -17,15 +17,15 @@
 .ds F \fIOff\fR
 .ds O \fIOn\fR
 .
-.ds AK asterisk (`*')
+.ds AK asterisk (\[oq]*\[cq])
 .ds AM alternate\-display mode
 .ds AS auxiliary storage
 .ds CF configuration file
-.ds CG `current' window/field group
+.ds CG \[oq]current\[cq] window/field group
 .ds CI interactive command
 .ds CO command\-line option
 .ds CT command toggle
-.ds CW `current' window
+.ds CW \[oq]current\[cq] window
 .ds FG field group
 .ds FM full\-screen mode
 .ds KA arrow key
@@ -53,7 +53,7 @@
 .ds Xc see the
 .ds XT See topic
 .ds Xt see topic
-.ds XX See `OVERVIEW, Linux Memory Types' for additional details
+.ds XX See \[oq]OVERVIEW, Linux Memory Types\[cq] for additional details
 .ds ZX Accessing smaps values is 10x more costly than other \
 memory statistics and data for other users requires root privileges
 .
@@ -71,7 +71,8 @@ top \- display Linux processes
 .\" ----------------------------------------------------------------------
 .SH SYNOPSIS
 .\" ----------------------------------------------------------------------
-\*(WE [options]
+\*(WE
+.RI [ option " .\|.\|.]"
 
 .\" ----------------------------------------------------------------------
 .SH DESCRIPTION
@@ -144,7 +145,7 @@ The remaining Table of Contents
 .SS Operation
 .\" ----------------------------------------------------------------------
 When operating \*(We, the two most important keys are the help (h or ?)
-key and quit (`q') key.
+key and quit (\[oq]q\[cq]) key.
 Alternatively, you could simply use the traditional interrupt key (^C)
 when you're done.
 
@@ -242,9 +243,9 @@ following goals:
 Regardless of which of these forms memory may take, all are managed as
 pages (typically 4096 bytes) but expressed by default in \*(We as
 KiB (kibibyte).
-The memory discussed under topic `2c. MEMORY Usage' deals with \*(MP
-and the \*(MS for the system as a whole.
-The memory reviewed in topic `3. FIELDS / Columns Display'
+The memory discussed under topic \[oq]2c. MEMORY Usage\[cq] deals with
+\*(MP and the \*(MS for the system as a whole.
+The memory reviewed in topic \[oq]3. FIELDS / Columns Display\[cq]
 embraces all three memory types, but for individual processes.
 
 For each such process, every memory page is restricted to a single
@@ -267,11 +268,12 @@ The memory in quadrant #4, when modified, acts as its own dedicated \*(MS.
 .fi
 
 The following may help in interpreting process level memory values displayed
-as scalable columns and discussed under topic `3a. DESCRIPTIONS of Fields'.
+as scalable columns and discussed under topic \[oq]3a. DESCRIPTIONS of
+Fields\[cq].
 
 .nf
    %MEM \- simply RES divided by total \*(MP
-   CODE \- the `pgms' portion of quadrant \fB3\fR
+   CODE \- the \[oq]pgms\[cq] portion of quadrant \fB3\fR
    DATA \- the entire quadrant \fB1\fR portion of VIRT plus all
           explicit mmap file-backed pages of quadrant \fB3\fR
    RES  \- anything occupying \*(MP which, beginning with
@@ -298,31 +300,31 @@ Mandatory\fI arguments\fR to long options are mandatory for short
 options too.
 
 Although not required, the equals sign can be used with either option
-form and whitespace before and/or after the `=' is permitted.
+form and whitespace before and/or after the \[oq]=\[cq] is permitted.
 
 .TP 3
 \-\fBb\fR, \fB\-\-batch\fR
 Starts \*(We in Batch mode, which could be useful for sending output
 from \*(We to other programs or to a file.
 In this mode, \*(We will not accept input and runs until the iterations
-limit you've set with the `\-n' \*(CO or until killed.
+limit you've set with the \[oq]\-n\[cq] \*(CO or until killed.
 
 .TP 3
 \-\fBc\fR, \fB\-\-cmdline\-toggle\fR
-Starts \*(We with the last remembered `c' state reversed.
+Starts \*(We with the last remembered \[oq]c\[cq] state reversed.
 Thus, if \*(We was displaying command lines, now that field will show program
 names, and vice versa.
-\*(XC `c' \*(CI for additional information.
+\*(XC \[oq]c\[cq] \*(CI for additional information.
 
 .TP 3
 \-\fBd\fR, \fB\-\-delay\fR = \fISECS\fR [\fI.TENTHS\fR]\fR
 Specifies the delay between screen updates, and overrides the corresponding
 value in one's personal \*(CF or the startup default.
-Later this can be changed with the `d' or `s' \*(CIs.
+Later this can be changed with the \[oq]d\[cq] or \[oq]s\[cq] \*(CIs.
 
 Fractional seconds are honored, but a negative number is not allowed.
 In all cases, however, such changes are prohibited if \*(We is running
-in Secure mode, except for root (unless the `s' \*(CO was used).
+in Secure mode, except for root (unless the \[oq]s\[cq] \*(CO was used).
 For additional information on Secure mode \*(Xt 6d. SYSTEM Restrictions File.
 
 .TP 3
@@ -337,7 +339,7 @@ Instructs \*(We to force \*(SA memory to be scaled as:
    e \- exbibytes
 .fi
 
-Later this can be changed with the `E' \*(CT.
+Later this can be changed with the \[oq]E\[cq] \*(CT.
 
 .TP 3
 \-\fBe\fR, \fB\-\-scale-task-mem\fR = \fIk\fR | \fIm\fR | \fIg\fR | \fIt\fR | \fIp\fR
@@ -350,13 +352,13 @@ Instructs \*(We to force \*(TA memory to be scaled as:
    p \- pebibytes
 .fi
 
-Later this can be changed with the `e' \*(CT.
+Later this can be changed with the \[oq]e\[cq] \*(CT.
 
 .TP 3
 \-\fBH\fR, \fB\-\-threads-show\fR
 Instructs \*(We to display individual threads.
 Without this \*(CO a summation of all threads in each process is shown.
-Later this can be changed with the `H' \*(CI.
+Later this can be changed with the \[oq]H\[cq] \*(CI.
 
 .TP 3
 \-\fBh\fR, \fB\-\-help\fR
@@ -364,7 +366,7 @@ Display usage help text, then quit.
 
 .TP 3
 \-\fBi\fR, \fB\-\-idle-toggle\fR
-Starts \*(We with the last remembered `i' state reversed.
+Starts \*(We with the last remembered \[oq]i\[cq] state reversed.
 When this toggle is \*F, tasks that have not used any \*(PU since the
 last update will not be displayed.
 For additional information regarding this toggle
@@ -386,20 +388,22 @@ Such names are subject to NLS (National Language Support) translation.
 \-\fBo\fR, \fB\-\-sort-override\fR = \fIFIELDNAME\fR
 Specifies the name of the field on which tasks will be sorted, independent
 of what is reflected in the configuration file.
-You can prepend a `+' or `\-' to the field name to also override the sort
-direction.
-A leading `+' will force sorting high to low, whereas a `\-' will ensure
-a low to high ordering.
+You can prepend a \[oq]+\[cq] or \[oq]\-\[cq] to the field name to also
+override the sort direction.
+A leading \[oq]+\[cq] will force sorting high to low,
+whereas a \[oq]\-\[cq] will ensure a low to high ordering.
 
 This option exists primarily to support automated/scripted batch mode
 operation.
 
 .TP 3
 \-\fBp\fR, \fB\-\-pid\fR = \fIPIDLIST\fR \
-(as: \fI1\fR,\fI2\fR,\fI3\fR, ...\fR or \fR-p\fI1\fR -p\fI2\fR -p\fI3\fR ...)
+(as: \fI1\fR,\fI2\fR,\fI3\fR, .\|.\|.\fR or
+\fR-p\fI1\fR -p\fI2\fR -p\fI3\fR .\|.\|.)
 Monitor only processes with specified process IDs.
-However, when combined with Threads mode (`H'), all processes in the
-thread group (\*(Xa TGID) of each monitored PID will also be shown.
+However, when combined with Threads mode (\[oq]H\[cq]),
+all processes in the thread group (\*(Xa TGID) of each monitored PID
+will also be shown.
 
 This option can be given up to 20 times, or you can provide a comma delimited
 list with up to 20 pids.
@@ -410,16 +414,17 @@ itself once it is running.
 
 This is a \*(CO only and should you wish to return to normal operation,
 it is not necessary to quit and restart \*(We \*(Em just issue any
-of these \*(CIs: `=', `u' or `U'.
+of these \*(CIs: \[oq]=\[cq], \[oq]u\[cq] or \[oq]U\[cq].
 
-The `p', `u' and `U' \*(COs are mutually exclusive.
+The \[oq]p\[cq],
+\[oq]u\[cq] and \[oq]U\[cq] \*(COs are mutually exclusive.
 
 .TP 3
 \-\fBS\fR, \fB\-\-accum-time-toggle\fR
-Starts \*(We with the last remembered `S' state reversed.
+Starts \*(We with the last remembered \[oq]S\[cq] state reversed.
 When Cumulative time mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
-\*(XC `S' \*(CI for additional information regarding this mode.
+\*(XC \[oq]S\[cq] \*(CI for additional information regarding this mode.
 
 .TP 3
 \-\fBs\fR, \fB\-\-secure-mode\fR
@@ -433,20 +438,24 @@ Display only processes with a user id or user name matching that given.
 This option matches on\fI any\fR user (\fIreal\fR, \fIeffective\fR,
 \fIsaved\fR, or \fIfilesystem\fR).
 
-Prepending an exclamation point (`!') to the user id or name instructs \*(We
-to display only processes with users not matching the one provided.
+Prepending an exclamation point (\[oq]!\[cq]) to the user id or name
+instructs \*(We to display only processes with users not matching the
+one provided.
 
-The `p', `U' and `u' \*(COs are mutually exclusive.
+The \[oq]p\[cq],
+\[oq]U\[cq] and \[oq]u\[cq] \*(COs are mutually exclusive.
 
 .TP 3
 \-\fBu\fR, \fB\-\-filter-only-euser\fR = \fIUSER\fR (as: \fInumber\fR or \fIname\fR)
 Display only processes with a user id or user name matching that given.
 This option matches on the\fI effective\fR user id only.
 
-Prepending an exclamation point (`!') to the user id or name instructs \*(We
-to display only processes with users not matching the one provided.
+Prepending an exclamation point (\[oq]!\[cq]) to the user id or name
+instructs \*(We to display only processes with users not matching the
+one provided.
 
-The `p', `U' and `u' \*(COs are mutually exclusive.
+The \[oq]p\[cq],
+\[oq]U\[cq] and \[oq]u\[cq] \*(COs are mutually exclusive.
 
 .TP 3
 \-\fBV\fR, \fB\-\-version\fR
@@ -474,9 +483,9 @@ terminal at which \*(We was invoked whether or not in Batch mode.
 Starts \*(We with the last remembered Cpu States portion of the \*(SA reversed.
 Either all \*(Pu information will be displayed in a single line or
 each \*(Pu will be displayed separately, depending on the state of the NUMA Node
-\*(CT (`2').
+\*(CT (\[oq]2\[cq]).
 
-\*(XC `1' and `2' \*(CIs for additional information.
+\*(XC \[oq]1\[cq] and \[oq]2\[cq] \*(CIs for additional information.
 
 .\" ----------------------------------------------------------------------
 .SH 2. SUMMARY Display
@@ -508,7 +517,7 @@ Line 1 shows total\fB tasks\fR or\fB threads\fR, depending on the state
 of the Threads-mode toggle.
 That total is further classified according to task state as follows:
 .nf
-    displayed       process status (`S')
+    displayed       process status (\[oq]S\[cq])
     ---------       --------------------
     running         R
     sleep           S + any remaining
@@ -533,37 +542,40 @@ Depending on your kernel version, the \fBst\fR field may not be shown.
     \fBst\fR : time stolen from this vm by the hypervisor
 .fi
 
-The `sy' value above also reflects the time running a virtual \*(Pu
-for guest operating systems, including those that have been niced.
+The \[oq]sy\[cq] value above also reflects the time running a virtual
+\*(Pu for guest operating systems, including those that have been niced.
 
 Beyond the first tasks/threads line, there are alternate \*(PU display
-modes available via the 4-way `t' \*(CT.
+modes available via the 4-way \[oq]t\[cq] \*(CT.
 They show an abbreviated summary consisting of these elements:
 .nf
               \fR a  \fR  b    \fR c \fR   d
-    %Cpu(s):  \fB75.0\fR/25.0  \fB100\fR[ ... ]
+    %Cpu(s):  \fB75.0\fR/25.0  \fB100\fR[ .\|.\|. ]
 
 .fi
 
-Where: a) is the `user' (us + ni) percentage; b) is the `system'
-(sy + hi + si + guests) percentage; c) is the total percentage;
+Where: a) is the \[oq]user\[cq] (us + ni) percentage;
+b) is the \[oq]system\[cq] (sy + hi + si + guests) percentage;
+c) is the total percentage;
 and d) is one of two visual graphs of those representations.
-Such graphs also reflect separate `user' and `system' portions.
+Such graphs also reflect separate \[oq]user\[cq] and \[oq]system\[cq]
+portions.
 
-If the `4' \*(CT is used to yield more than two cpus per line,
+If the \[oq]4\[cq] \*(CT is used to yield more than two cpus per line,
 results will be further abridged eliminating the a) and b) elements.
 However, that information is still reflected in the graph itself
 assuming color is active or, if not, bars vs. blocks are being shown.
 
-\*(XT 4b. SUMMARY AREA Commands for additional information on the `t'
-and `4' \*(CTs.
+\*(XT 4b. SUMMARY AREA Commands for additional information on the
+\[oq]t\[cq] and \[oq]4\[cq] \*(CTs.
 
 .\" ......................................................................
 .SS 2c. MEMORY Usage
 .\" ----------------------------------------------------------------------
 This portion consists of two lines which may express values in kibibytes (KiB)
 through exbibytes (EiB) depending on the scaling factor enforced
-with the `E' \*(CI. The /proc/meminfo source fields are shown in parenthesis.
+with the \[oq]E\[cq] \*(CI. The /proc/meminfo source fields are shown in
+parenthesis.
 
 Line 1 reflects \*(MP, classified as:
 .nf
@@ -592,8 +604,8 @@ In the alternate memory display modes, two abbreviated summary lines
 are shown consisting of these elements:
 .nf
               \fR a  \fR  b          c
-    GiB Mem : \fB18.7\fR/15.738   [ ... ]
-    GiB Swap: \fB 0.0\fR/7.999    [ ... ]
+    GiB Mem : \fB18.7\fR/15.738   [ .\|.\|. ]
+    GiB Swap: \fB 0.0\fR/7.999    [ .\|.\|. ]
 .fi
 
 Where: a) is the percentage used; b) is the total available; and c) is one of two
@@ -601,10 +613,11 @@ visual graphs of those representations.
 
 In the case of \*(MP, the percentage represents the \fBtotal\fR minus the estimated
 \fBavail\fR noted above.
-The `Mem' graph itself is divided between the non-cached portion of \fBused\fR and
-any remaining memory not otherwise accounted for by \fBavail\fR.
-\*(XT 4b. SUMMARY AREA Commands and the `m' command for additional information
-on that special 4-way toggle.
+The \[oq]Mem\[cq] graph itself is divided between the non-cached portion
+of \fBused\fR and any remaining memory not otherwise accounted for by
+\fBavail\fR.
+\*(XT 4b. SUMMARY AREA Commands and the \[oq]m\[cq] command for
+additional information on that special 4-way toggle.
 
 This table may help in interpreting the scaled values displayed:
 .nf
@@ -625,18 +638,18 @@ This table may help in interpreting the scaled values displayed:
 Listed below are \*(We's available process fields (columns).
 They are shown in strict ascii alphabetical order.
 You may customize their position and whether or not they are displayable
-with the `f' (Fields Management) \*(CI.
+with the \[oq]f\[cq] (Fields Management) \*(CI.
 
 Any field is selectable as the sort field, and you control whether they
 are sorted high-to-low or low-to-high.
 For additional information on sort provisions
 \*(Xt 4c. TASK AREA Commands, SORTING.
 
-The fields related to \*(MP or \*(MV reference `(KiB)' which is the
-unsuffixed display mode.
+The fields related to \*(MP or \*(MV reference \[oq](KiB)\[cq] which is
+the unsuffixed display mode.
 Such fields may, however, be scaled from KiB through PiB.
-That scaling is influenced via the `e' \*(CI or established for startup
-through a build option.
+That scaling is influenced via the \[oq]e\[cq] \*(CI or established for
+startup through a build option.
 
 .TP 4
 \fB%CPU \*(Em \*(PU Usage \fR
@@ -646,18 +659,18 @@ expressed as a percentage of total \*(PU time.
 In a true SMP environment, if a process is multi-threaded and \*(We is
 \fInot\fR operating in Threads mode, amounts greater than 100% may be
 reported.
-You toggle Threads mode with the `H' \*(CI.
+You toggle Threads mode with the \[oq]H\[cq] \*(CI.
 
 Also for multi-processor environments, if Irix mode is \*F, \*(We
 will operate in Solaris mode where a task's \*(Pu usage will be
 divided by the total number of \*(PUs.
-You toggle Irix/Solaris modes with the `I' \*(CI.
+You toggle Irix/Solaris modes with the \[oq]I\[cq] \*(CI.
 
-\*(NT When running in forest view mode (`V') with children
-collapsed (`v'), this field will also include the \*(PU time of
+\*(NT When running in forest view mode (\[oq]V\[cq]) with children
+collapsed (\[oq]v\[cq]), this field will also include the \*(PU time of
 those unseen children.
 \*(XT 4c. TASK AREA Commands, CONTENT for more information regarding
-the `V' and `v' toggles.
+the \[oq]V\[cq] and \[oq]v\[cq] toggles.
 
 .TP 4
 \fB%CUC \*(Em \*(PU Utilization \fR
@@ -707,7 +720,7 @@ value means lower priority.
 .TP 4
 \fBCGNAME \*(Em Control Group Name \fR
 The name of the control group to which a process belongs,
-or `\-' if not applicable for that process.
+or \[oq]\-\[cq] if not applicable for that process.
 
 Available with cgroup v1 only, this will typically be the last entry in
 the full list of control groups as displayed under the CGROUPS heading.
@@ -716,7 +729,7 @@ And as is true there, this field is also variable width.
 .TP 4
 \fBCGROUPS \*(Em Control Groups \fR
 The names of the control group(s) to which a process belongs,
-or `\-' if not applicable for that process.
+or \[oq]\-\[cq] if not applicable for that process.
 
 Control Groups provide for allocating resources (cpu, memory, network
 bandwidth, etc.) among installation-defined groups of processes.
@@ -758,8 +771,8 @@ as the Text Resident Set size or TRS.
 \fBCOMMAND \*(Em Command\fB Name\fR or Command\fB Line \fR
 Display the command line used to start a task or the name of the associated
 program.
-You toggle between command\fI line\fR and\fI name\fR with `c', which is both
-a \*(CO and an \*(CI.
+You toggle between command\fI line\fR and\fI name\fR with \[oq]c\[cq],
+which is both a \*(CO and an \*(CI.
 
 When you've chosen to display command lines, processes without a command
 line (like kernel threads) will be shown with only the program name in
@@ -767,14 +780,14 @@ brackets, as in this example:
     \fR[kthreadd]
 
 This field may also be impacted by the forest view display mode.
-\*(XC `V' \*(CI for additional information regarding that mode.
+\*(XC \[oq]V\[cq] \*(CI for additional information regarding that mode.
 
 \*(NT The COMMAND field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
 all remaining screen width (up to the maximum \*(WX characters).
 Even so, such variable width fields could still suffer truncation.
 This is especially true for this field when command lines are being
-displayed (the `c' \*(CI.)
+displayed (the \[oq]c\[cq] \*(CI.)
 \*(XT 5c. SCROLLING a Window for additional information on accessing
 any truncated data.
 
@@ -791,24 +804,29 @@ included in the \*(MV (VIRT) amount.
 \fBDocker\*(Em Docker Container ID \fR
 The identity (abbreviated hash) of the docker container within which a task
 is running.
-If a process is not running inside a container, a dash (`\-') will be shown.
+If a process is not running inside a container,
+a dash (\[oq]\-\[cq]) will be shown.
 
 .TP 4
 \fBELAPSED \*(Em Elapsed Running Time\fR
 The length of time since a process was started.
 Thus, the most recently started task will display the smallest time interval.
 
-The value will be expressed as `HH,MM' (hours,minutes) but is subject to
-additional scaling if the interval becomes too great to fit column width.
-At that point it will be scaled to `DD+HH' (days+hours) and possibly
-beyond.
+The value will be expressed as \[oq]HH,MM\[cq]
+(hours,minutes)
+but is subject to additional scaling if the interval becomes too great
+to fit column width.
+At that point it will be scaled to \[oq]DD+HH\[cq]
+(days+hours)
+and possibly beyond.
 
 .TP 4
 \fBENVIRON \*(Em Environment variables \fR
 Display all of the environment variables, if any, as seen by the
 respective processes.
-These variables will be displayed in their raw native order, not the
-sorted order you are accustomed to seeing with an unqualified `set'.
+These variables will be displayed in their raw native order,
+not the sorted order you are accustomed to seeing with an unqualified
+\[oq]set\[cq].
 
 \*(NT The ENVIRON field, unlike most columns, is not fixed-width.
 When displayed, it plus any other variable width columns will be allocated
@@ -849,7 +867,8 @@ When -1 is displayed it means this information is not available.
 .TP 4
 \fBLXC \*(Em Lxc Container Name \fR
 The name of the lxc container within which a task is running.
-If a process is not running inside a container, a dash (`\-') will be shown.
+If a process is not running inside a container,
+a dash (\[oq]\-\[cq]) will be shown.
 
 .TP 4
 \fBNI \*(Em Nice Value \fR
@@ -861,14 +880,17 @@ a task's dispatch-ability.
 
 \*(NT This value only affects scheduling priority relative to other processes
 in the same autogroup.
-\*(XC `AGID' and `AGNI' fields for additional information on autogroups.
+\*(XC \[oq]AGID\[cq] and \[oq]AGNI\[cq] fields for additional
+information on autogroups.
 
 .TP 4
 \fBNU \*(Em Last known NUMA node \fR
-A number representing the NUMA node associated with the last used processor (`P').
+A number representing the NUMA node associated with the last used
+processor (\[oq]P\[cq]).
 When -1 is displayed it means that NUMA information is not available.
 
-\*(XC `2' and `3' \*(CIs for additional NUMA provisions affecting the \*(SA.
+\*(XC \[oq]2\[cq] and \[oq]3\[cq] \*(CIs for additional NUMA provisions
+affecting the \*(SA.
 
 .TP 4
 \fBOOMa \*(Em Out of Memory Adjustment Factor \fR
@@ -880,7 +902,8 @@ is exhausted.
 \fBOOMs \*(Em Out of Memory Score \fR
 The value, ranging from 0 to +1000, used to select task(s) to kill when memory
 is exhausted.
-Zero translates to `never kill' whereas 1000 means `always kill'.
+Zero translates to \[oq]never kill\[cq] whereas 1000 means \[oq]always
+kill\[cq].
 
 .TP 4
 \fBP \*(Em Last used \*(PU (SMP) \fR
@@ -919,7 +942,7 @@ The process ID (pid) of a task's parent.
 .TP 4
 \fBPR \*(Em Priority \fR
 The scheduling priority of the task.
-If you see `rt' in this field, it means the task is running
+If you see \[oq]rt\[cq] in this field, it means the task is running
 under real time scheduling priority.
 
 Under linux, real time priority is somewhat misleading since traditionally
@@ -928,12 +951,15 @@ And while the 2.6 kernel can be made mostly preemptible, it is not always so.
 
 .TP 4
 \fBPSS \*(Em Proportional Resident Memory, smaps (KiB) \fR
-The proportion of this task's share of `RSS' where each page is divided by
-the number of processes sharing it.
-It is also the sum of the `PSan', `PSfd' and `PSsh' fields.
+The proportion of this task's share of \[oq]RSS\[cq] where each page is
+divided by the number of processes sharing it.
+It is also the sum of the \[oq]PSan\[cq],
+\[oq]PSfd\[cq] and \[oq]PSsh\[cq] fields.
 
-For example, if a process has 1000 resident pages alone and 1000 resident
-pages shared with another process, its `PSS' would be 1500 (times page size).
+For example,
+if a process has 1000 resident pages alone and 1000 resident pages
+shared with another process,
+its \[oq]PSS\[cq] would be 1500 (times page size).
 
 \*(ZX.
 
@@ -944,7 +970,8 @@ pages shared with another process, its `PSS' would be 1500 (times page size).
 .br
 \fBPSsh \*(Em Proportional Shmem Memory, smaps (KiB) \fR
 .RS 4
-As was true for `PSS' above (total proportional resident memory),
+As was true for \[oq]PSS\[cq] above
+(total proportional resident memory),
 these fields represent the proportion of this task's share of each type
 of memory divided by the number of processes sharing it.
 
@@ -955,7 +982,8 @@ of memory divided by the number of processes sharing it.
 \fBRES \*(Em Resident Memory Size (KiB) \fR
 A subset of the virtual address space (VIRT) representing the non-swapped
 \*(MP a task is currently using.
-It is also the sum of the `RSan', `RSfd' and `RSsh' fields.
+It is also the sum of the \[oq]RSan\[cq],
+\[oq]RSfd\[cq] and \[oq]RSsh\[cq] fields.
 
 It can include private anonymous pages, private pages mapped to files
 (including program images and shared libraries) plus shared anonymous pages.
@@ -969,8 +997,8 @@ modified, act as a dedicated \*(MS and thus will never impact SWAP.
 .TP 4
 \fBRSS \*(Em Resident Memory, smaps (KiB) \fR
 Another, more precise view of process non-swapped \*(MP.
-It is obtained from the `smaps_rollup' file and is
-generally slightly larger than that shown for `RES'.
+It is obtained from the \[oq]smaps_rollup\[cq] file and is
+generally slightly larger than that shown for \[oq]RES\[cq].
 
 \*(ZX.
 
@@ -1041,9 +1069,9 @@ login shell.
 The length of time since system boot when a process started.
 Thus, the most recently started task will display the largest time interval.
 
-The value will be expressed as `MM:SS' (minutes:seconds).
+The value will be expressed as \[oq]MM:SS\[cq] (minutes:seconds).
 But if the interval is too great to fit column width it will be scaled
-as `HH,MM' (hours,minutes) and possibly beyond.
+as \[oq]HH,MM\[cq] (hours,minutes) and possibly beyond.
 
 .TP 4
 \fBSUID \*(Em Saved User Id \fR
@@ -1091,8 +1119,9 @@ In kernel terms, it represents those tasks that share an mm_struct.
 Total \*(PU time the task has used since it started.
 When Cumulative mode is \*O, each process is listed with the \*(Pu
 time that it and its dead children have used.
-You toggle Cumulative mode with `S', which is both a \*(CO and an \*(CI.
-\*(XC `S' \*(CI for additional information regarding this mode.
+You toggle Cumulative mode with \[oq]S\[cq],
+which is both a \*(CO and an \*(CI.
+\*(XC \[oq]S\[cq] \*(CI for additional information regarding this mode.
 
 .TP 4
 \fBTIME+ \*(Em \*(PU Time, hundredths \fR
@@ -1112,7 +1141,7 @@ The name of the controlling terminal.
 This is usually the device (serial port, pty, etc.) from which the
 process was started, and which it uses for input or output.
 However, a task need not be associated with a terminal, in which case
-you'll see `?' displayed.
+you'll see \[oq]?\[cq] displayed.
 
 .TP 4
 \fBUID \*(Em User Id \fR
@@ -1131,9 +1160,9 @@ The\fI effective\fR user name of the task's owner.
 
 .TP 4
 \fBUSS \*(Em Unique Set Size \fR
-The non-swapped portion of \*(MP (`RSS') not shared with
+The non-swapped portion of \*(MP (\[oq]RSS\[cq]) not shared with
 any other process.
-It is derived from the `smaps_rollup' file.
+It is derived from the \[oq]smaps_rollup\[cq] file.
 
 \*(ZX.
 
@@ -1149,13 +1178,14 @@ swapped out and pages that have been mapped but not used.
 \fBWCHAN \*(Em Sleeping in Function \fR
 This field will show the name of the kernel function in which the task
 is currently sleeping.
-Running tasks will display a dash (`\-') in this column.
+Running tasks will display a dash (\[oq]\-\[cq]) in this column.
 
 .TP 4
 \fBioR \*(Em I/O Bytes Read \fR
 The number of bytes a process caused to be fetched from the storage layer.
 
-Root privileges are required to display `io' data for other users.
+Root privileges are required to display \[oq]io\[cq] data for other
+users.
 
 .TP 4
 \fBioRop \*(Em I/O Read Operations \fR
@@ -1224,8 +1254,10 @@ IP addresses, IP routing, port numbers, etc.
 \fBnsPID \*(Em PID namespace \fR
 The Inode of the namespace used to isolate process ID numbers
 meaning they need not remain unique.
-Thus, each such namespace could have its own `init/systemd' (PID #1) to
-manage various initialization tasks and reap orphaned child processes.
+Thus,
+each such namespace could have its own \[oq]init/systemd\[cq] (PID #1)
+to manage various initialization tasks and reap orphaned child
+processes.
 
 .TP 4
 \fBnsTIME \*(Em TIME namespace \fR
@@ -1242,7 +1274,7 @@ that namespace.
 .TP 4
 \fBnsUTS \*(Em UTS namespace \fR
 The Inode of the namespace used to isolate hostname and NIS domain name.
-UTS simply means "UNIX Time-sharing System".
+UTS simply means "Unix Time-sharing System".
 
 .TP 4
 \fBvMj \*(Em Major Page Fault Count Delta\fR
@@ -1257,8 +1289,10 @@ last update (see nMin).
 .\" ......................................................................
 .SS 3b. MANAGING Fields
 .\" ----------------------------------------------------------------------
-After pressing the \*(CI `f' (Fields Management) you will be presented
-with a screen showing: 1) the \*(CW name; 2) the designated sort field;
+After pressing the \*(CI \[oq]f\[cq] (Fields Management) you will be
+presented with a screen showing:
+1) the \*(CW name;
+2) the designated sort field;
 3) all fields in their current order along with descriptions.
 Entries marked with an asterisk are the currently displayed fields,
 screen width permitting.
@@ -1276,26 +1310,28 @@ the\fB Left\fR \*(KA or the <\fBEnter\fR> key commits that field's
 placement.
 
 .IP \(bu 3
-The `\fBd\fR' key or the <\fBSpace\fR> bar toggles a field's display
-status, and thus the presence or absence of the asterisk.
+The \[oq]\fBd\fR\[cq] key or the <\fBSpace\fR> bar toggles a field's
+display status,
+and thus the presence or absence of the asterisk.
 
 .IP \(bu 3
-The `\fBs\fR' key designates a field as the sort field.
+The \[oq]\fBs\fR\[cq] key designates a field as the sort field.
 \*(XT 4c. TASK AREA Commands, SORTING for additional information regarding
 your selection of a sort field.
 
 .IP \(bu 3
-The `\fBa\fR' and `\fBw\fR' keys can be used to cycle through all available
-windows and the `\fBq\fR' or <\fBEsc\fR> keys exit Fields Management.
+The \[oq]\fBa\fR\[cq] and \[oq]\fBw\fR\[cq] keys can be used to cycle
+through all available windows and the \[oq]\fBq\fR\[cq] or <\fBEsc\fR>
+keys exit Fields Management.
 .RS -4
 
 .PP
 The Fields Management screen can also be used to change the \*(CG in
 either \*(FM or \*(AM.
-Whatever was targeted when `q' or <Esc> was pressed will be made current
-as you return to the \*(We display.
-\*(XT 5. ALTERNATE\-DISPLAY Provisions and the `g' \*(CI for insight
-into \*(CWs and \*(FGs.
+Whatever was targeted when \[oq]q\[cq] or <Esc> was pressed will be made
+current as you return to the \*(We display.
+\*(XT 5. ALTERNATE\-DISPLAY Provisions and the \[oq]g\[cq] \*(CI for
+insight into \*(CWs and \*(FGs.
 
 .PP
 \*(NT Any window that has been scrolled\fI horizontally\fR will be reset if any
@@ -1361,14 +1397,16 @@ There are two help levels available.
 The first will provide a reminder of all the basic \*(CIs.
 If \*(We is\fI secured\fR, that screen will be abbreviated.
 
-Typing `h' or `?' on that help screen will take you to help for
-those \*(CIs applicable to \*(AM.
+Typing \[oq]h\[cq] or \[oq]?\[cq] on that help screen will take you to
+help for those \*(CIs applicable to \*(AM.
 
 .TP 7
 \ \ \ \fB=\fR\ \ :\fIExit-Display-Limits \fR
 Removes restrictions on what is shown.
-This command will reverse any `i' (idle tasks), `n' (max tasks),
-`v' (hide children) and `F' focus commands that might be active.
+This command will reverse any \[oq]i\[cq] (idle tasks),
+\[oq]n\[cq] (max tasks),
+\[oq]v\[cq] (hide children) and \[oq]F\[cq] focus commands that might be
+active.
 It also provides for an exit from PID monitoring, User filtering,
 Other filtering, Locate processing and Combine Cpus mode.
 
@@ -1384,8 +1422,8 @@ Fields like UID, GID, NI, PR or P are not affected by this toggle.
 .TP 7
 \ \ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
 This command will switch between \*(FM and \*(AM.
-\*(XT 5. ALTERNATE\-DISPLAY Provisions and the `g' \*(CI for insight
-into \*(CWs and \*(FGs.
+\*(XT 5. ALTERNATE\-DISPLAY Provisions and the \[oq]g\[cq] \*(CI for
+insight into \*(CWs and \*(FGs.
 
 .TP 7
 \ \ \ \fBB\fR\ \ :\fIBold-Disable/Enable\fR toggle \fR
@@ -1396,7 +1434,9 @@ applied anytime.
 
 \*(NT When this toggle is \*O and \*(We is operating in monochrome mode,
 the\fB entire display\fR will appear as normal text.
-Thus, unless the `x' and/or `y' toggles are using reverse for emphasis,
+Thus,
+unless the \[oq]x\[cq] and/or \[oq]y\[cq] toggles are using reverse for
+emphasis,
 there will be no visual confirmation that they are even on.
 
 .TP 7
@@ -1419,8 +1459,9 @@ With this command you can cycle through the available \*(SA memory scaling
 which ranges from KiB (kibibytes or 1,024 bytes) through EiB (exbibytes or
 1,152,921,504,606,846,976 bytes).
 
-If you see a `+' between a displayed number and the following label, it
-means that \*(We was forced to truncate some portion of that number.
+If you see a \[oq]+\[cq] between a displayed number and the following
+label,
+it means that \*(We was forced to truncate some portion of that number.
 By raising the scaling factor, such truncation can be avoided.
 
 .TP 7
@@ -1434,7 +1475,7 @@ scaling might still be necessary in order to accommodate current values.
 If you wish to see a more homogeneous result in the memory columns,
 raising the scaling range will usually accomplish that goal.
 Raising it too high, however, is likely to produce an all zero result
-which cannot be suppressed with the `0' \*(CI.
+which cannot be suppressed with the \[oq]0\[cq] \*(CI.
 
 .TP 7
 \ \ \ \fBg\fR\ \ :\fIChoose-Another-Window/Field-Group \fR
@@ -1451,8 +1492,9 @@ Otherwise, \*(We displays a summation of all threads in each process.
 
 .TP 7
 \ \ \ \fBI\fR\ \ :\fIIrix/Solaris-Mode\fR toggle \fR
-When operating in Solaris mode (`I' toggled \*F), a task's \*(Pu usage
-will be divided by the total number of \*(PUs.
+When operating in Solaris mode
+(\[oq]I\[cq] toggled \*F),
+a task's \*(Pu usage will be divided by the total number of \*(PUs.
 After issuing this command, you'll be told the new state of this toggle.
 
 .TP 7
@@ -1510,7 +1552,7 @@ restart later in exactly that same state.
 \ \ \ \fBX\fR\ \ :\fIExtra-Fixed-Width \fR
 Some fields are fixed width and not scalable.
 As such, they are subject to truncation which would be indicated
-by a `+' in the last position.
+by a \[oq]+\[cq] in the last position.
 
 This \*(CI can be used to alter the widths of the following fields:
 
@@ -1540,7 +1582,8 @@ To narrow them you must specify a smaller number or restore the defaults.
 
 .TP 7
 \ \ \ \fBY\fR\ \ :\fIInspect-Other-Output \fR
-After issuing the `Y' \*(CI, you will be prompted for a target PID.
+After issuing the \[oq]Y\[cq] \*(CI,
+you will be prompted for a target PID.
 Typing a value or accepting the default results in a separate screen.
 That screen can be used to view a variety of files or piped command output
 while the normal \*(We iterative display is paused.
@@ -1553,14 +1596,14 @@ Most of the keys used to navigate the Inspect feature are reflected in
 its header prologue.
 There are, however, additional keys available once you have selected a
 particular file or command.
-They are familiar to anyone who has used the pager `less' and are
-summarized here for future reference.
+They are familiar to anyone who has used the pager \[oq]less\[cq] and
+are summarized here for future reference.
 
 .nf
    \fI key      function \fR
     =        alternate status\-line, file or pipeline
-    /        find, equivalent to `L' locate
-    n        find next, equivalent to `&' locate next
+    /        find, equivalent to \[oq]L\[cq] locate
+    n        find next, equivalent to \[oq]&\[cq] locate next
     <Space>  scroll down, equivalent to <PgDn>
     b        scroll up, equivalent to <PgUp>
     g        first line, equivalent to <Home>
@@ -1574,15 +1617,15 @@ colors for the \*(CW, or for all windows.
 For details regarding this \*(CI \*(Xt 4d. COLOR Mapping.
 
 .P
-\ \ \fB^G\fR\ \ :\fIDisplay-Control-Groups \fR       (Ctrl key + `g')
+\ \ \fB^G\fR\ \ :\fIDisplay-Control-Groups \fR       (Ctrl key + \[oq]g\[cq])
 .br
-\ \ \fB^K\fR\ \ :\fIDisplay-Cmdline \fR              (Ctrl key + `k')
+\ \ \fB^K\fR\ \ :\fIDisplay-Cmdline \fR              (Ctrl key + \[oq]k\[cq])
 .br
-\ \ \fB^N\fR\ \ :\fIDisplay-Environment \fR          (Ctrl key + `n')
+\ \ \fB^N\fR\ \ :\fIDisplay-Environment \fR          (Ctrl key + \[oq]n\[cq])
 .br
-\ \ \fB^P\fR\ \ :\fIDisplay-Namesspaces \fR          (Ctrl key + `p')
+\ \ \fB^P\fR\ \ :\fIDisplay-Namesspaces \fR          (Ctrl key + \[oq]p\[cq])
 .br
-\ \ \fB^U\fR\ \ :\fIDisplay-Supplementary-Groups \fR (Ctrl key + `u')
+\ \ \fB^U\fR\ \ :\fIDisplay-Supplementary-Groups \fR (Ctrl key + \[oq]u\[cq])
 .br
 .RS +7
 Applied to the first process displayed, these commands will show
@@ -1590,37 +1633,40 @@ that task's full (potentially wrapped) information.
 Such data will be displayed in a separate window at the bottom of
 the screen while normal \*(We monitoring continues.
 
-Keying the\fI same\fR `Ctrl' command a second time removes that
-separate window as does the `=' command.
-Keying a different `Ctrl' combination, while one is already active,
+Keying the\fI same\fR \[oq]Ctrl\[cq] command a second time removes that
+separate window as does the \[oq]=\[cq] command.
+Keying a different \[oq]Ctrl\[cq] combination,
+while one is already active,
 immediately transitions to the new information.
 
 Notable among these provisions is the Ctrl+N (environment) command.
 Its output can be extensive and not easily read when line wrapped.
-A more readable version can be achieved with an `Inspect' entry
+A more readable version can be achieved with an \[oq]Inspect\[cq] entry
 in the rcfile like the following.
 
 .nf
     pipe ^I Environment ^I cat /proc/%d/environ | tr '\\0' '\\n'
 .fi
 
-\*(XC `Y' \*(CI above and topic 6b. ADDING INSPECT Entries for
+\*(XC \[oq]Y\[cq] \*(CI above and topic 6b. ADDING INSPECT Entries for
 additional information.
 
-As an alternative to `Inspect', and available to all of these `Ctrl'
-commands, the tab key can be used to highlight individual elements
-in the bottom window.
+As an alternative to \[oq]Inspect\[cq],
+and available to all of these \[oq]Ctrl\[cq] commands,
+the tab key can be used to highlight individual elements in the bottom
+window.
 .RS -7
 
 .TP 7
-\ \ \fB^L\fR\ \ :\fILogged-Messages \fR (Ctrl key + `l')
+\ \ \fB^L\fR\ \ :\fILogged-Messages \fR (Ctrl key + \[oq]l\[cq])
 The 10 most recent messages are displayed in a separate window at
 the bottom of the screen while normal \*(We monitoring continues.
-Keying `^L' a second time removes that window as does the `=' command.
+Keying \[oq]^L\[cq] a second time removes that window as does the
+\[oq]=\[cq] command.
 Use the tab key to highlight individual messages.
 
 .TP 7
-*\ \fB^R\fR\ \ :\fIRenice-an-Autogroup \fR (Ctrl key + `r')
+*\ \fB^R\fR\ \ :\fIRenice-an-Autogroup \fR (Ctrl key + \[oq]r\[cq])
 You will be prompted for a PID and then the value for its
 autogroup AGNI.
 
@@ -1647,8 +1693,8 @@ They affect the beginning lines of your display and will determine the
 position of messages and prompts.
 
 These commands always impact just the \*(CG.
-\*(XT 5. ALTERNATE\-DISPLAY Provisions and the `g' \*(CI for insight into
-\*(CWs and \*(FGs.
+\*(XT 5. ALTERNATE\-DISPLAY Provisions and the \[oq]g\[cq] \*(CI for
+insight into \*(CWs and \*(FGs.
 
 .TP 7
 \ \ \ \fBC\fR\ \ :\fIShow-scroll-coordinates\fR toggle \fR
@@ -1663,12 +1709,14 @@ when operating in \*(FM or the \*(CW name when operating in \*(AM.
 
 .TP 7
 \ \ \ \fBt\fR\ \ :\fITask/Cpu-States\fR toggle \fR
-This command affects from 2 to many \*(SA lines, depending on the state
-of the `1', `2' or `3' \*(CTs and whether or not \*(We is running under
-true SMP.
+This command affects from 2 to many \*(SA lines,
+depending on the state of the \[oq]1\[cq],
+\[oq]2\[cq] or \[oq]3\[cq] \*(CTs and whether or not \*(We is running
+under true SMP.
 
-This portion of the \*(SA is also influenced by the `H' \*(CI toggle,
-as reflected in the total label which shows either Tasks or Threads.
+This portion of the \*(SA is also influenced by the \[oq]H\[cq] \*(CI
+toggle, as reflected in the total label which shows either Tasks or
+Threads.
 
 This command serves as a 4-way toggle, cycling through these modes:
 .nf
@@ -1680,7 +1728,8 @@ This command serves as a 4-way toggle, cycling through these modes:
 
 When operating in either of the graphic modes, the display becomes much
 more meaningful when individual CPUs or NUMA nodes are also displayed.
-\*(XC the `1', `2' and `3' commands below for additional information.
+\*(XC the \[oq]1\[cq],
+\[oq]2\[cq] and \[oq]3\[cq] commands below for additional information.
 
 .TP 7
 \ \ \ \fBm\fR\ \ :\fIMemory/Swap-Usage\fR toggle \fR
@@ -1697,18 +1746,21 @@ This command serves as a 4-way toggle, cycling through these modes:
 
 .TP 7
 \ \ \ \fB1\fR\ \ :\fISingle/Separate-Cpu-States\fR toggle \fR
-This command affects how the `t' command's Cpu States portion is shown.
+This command affects how the \[oq]t\[cq] command's Cpu States portion is
+shown.
 Although this toggle exists primarily to serve massively-parallel SMP
 machines, it is not restricted to solely SMP environments.
 
-When you see `%Cpu(s):' in the \*(SA, the `1' toggle is \*O and all
-\*(Pu information is gathered in a single line.
-Otherwise, each \*(Pu is displayed separately as: `%Cpu0, %Cpu1, ...'
-up to available screen height.
+When you see \[oq]%Cpu(s):\[cq] in the \*(SA,
+the \[oq]1\[cq] toggle is \*O and all \*(Pu information is gathered in a
+single line.
+Otherwise, each \*(Pu is displayed separately as:
+\[oq]%Cpu0, %Cpu1, .\|.\|.\[cq] up to available screen height.
 
 .TP 7
 \ \ \ \fB2\fR\ \ :\fINUMA-Nodes/Cpu-Summary\fR toggle \fR
-This command toggles between the `1' command cpu summary display (only)
+This command toggles between the \[oq]1\[cq] command cpu summary display
+(only)
 or a summary display plus the cpu usage statistics for each NUMA Node.
 It is only available if a system has the requisite NUMA support.
 
@@ -1716,42 +1768,48 @@ It is only available if a system has the requisite NUMA support.
 \ \ \ \fB3\fR\ \ :\fIExpand-NUMA-Node \fR
 You will be invited to enter a number representing a NUMA Node.
 Thereafter, a node summary plus the statistics for each cpu in that
-node will be shown until the `1', `2' or `4' \*(CT is pressed.
+node will be shown until the \[oq]1\[cq],
+\[oq]2\[cq] or \[oq]4\[cq] \*(CT is pressed.
 This \*(CI is only available if a system has the requisite NUMA support.
 
 .TP 7
 \ \ \ \fB4\fR\ \ :\fIDisplay-Multiple-Elements-Adjacent\fR toggle \fR
-This \*(CT turns the `1' toggle \*F and shows multiple \*(PU and
+This \*(CT turns the \[oq]1\[cq] toggle \*F and shows multiple \*(PU and
 Memory results on each line.
-Each successive `4' key adds another \*(PU until again reverting
+Each successive \[oq]4\[cq] key adds another \*(PU until again reverting
 to separate lines for \*(PU and Memory results.
 
 A maximum of 8 \*(PUs per line can be displayed in this manner.
 However, data truncation may occur before reaching the maximum.
 That is definitely true when displaying detailed statistics via
-the `t' \*(CT since such data cannot be scaled like the graphic
+the \[oq]t\[cq] \*(CT since such data cannot be scaled like the graphic
 representations.
 
 If one wished to quickly exit adjacent mode without cycling all the
-way to 8, simply use the `1' \*(CT.
+way to 8, simply use the \[oq]1\[cq] \*(CT.
 
 .TP 7
 \ \ \ \fB5\fR\ \ :\fIDisplay-P-Cores-and-E-Cores\fR toggle \fR
-This \*(CT is only active when the `t' toggle is \*O and the `1', `2',
-`3' and `!' toggles are \*F, thus showing individual \*(PU results.
+This \*(CT is only active when the \[oq]t\[cq] toggle is \*O and the
+\[oq]1\[cq],
+\[oq]2\[cq],
+\[oq]3\[cq] and \[oq]!\[cq] toggles are \*F,
+thus showing individual \*(PU results.
 It assumes a platform has multiple cores of two distinct types,
 either multi-threaded (P-Core) or single-threaded (E-Core).
 
-While normally each \*(Pu is displayed as `%Cpu0, %Cpu1, ...', this
-toggle can be used to identify and/or filter those \*(Pus by their
+While normally each \*(Pu is displayed as
+\[oq]%Cpu0, %Cpu1, .\|.\|.\[cq],
+this toggle can be used to identify and/or filter those \*(Pus by their
 core type, either P-Core (performance) or E-Core (efficient).
 
-The 1st time `5' is struck, each \*(PU is displayed as `%Cp\fBP\fR'
-or `%Cp\fBE\fR' representing the two core types.
+The 1st time \[oq]5\[cq] is struck,
+each \*(PU is displayed as \[oq]%Cp\fBP\fR\[cq] or \[oq]%Cp\fBE\fR\[cq]
+representing the two core types.
 The 2nd time, only P-Cores (%Cp\fBP\fR) will be shown.
 The 3rd time, only E-Cores (%Cp\fBE\fR) are displayed.
 When this \*(CT is struck for the 4th time, the \*(PU display
-returns to the normal `%Cpu' convention.
+returns to the normal \[oq]%Cpu\[cq] convention.
 
 If separate\fI performance\fR and\fI efficient\fR categories are
 not present, this \*(CT will have no effect.
@@ -1759,20 +1817,25 @@ not present, this \*(CT will have no effect.
 .TP 7
 \ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode\fR toggle \fR
 This \*(CT is intended for massively parallel SMP environments where,
-even with the `4' \*(CT, not all processors can be displayed.
-With each press of `!' the number of \*(Pus combined is doubled thus
-reducing the total number of \*(Pu lines displayed.
+even with the \[oq]4\[cq] \*(CT,
+not all processors can be displayed.
+With each press of \[oq]!\[cq] the number of \*(Pus combined is doubled
+thus reducing the total number of \*(Pu lines displayed.
 
-For example, with the first press of `!' two \*(Pus will be combined and
-displayed as `0-1, 2-3, ...' instead of the normal `%Cpu0, %Cpu1, %Cpu2,
-%Cpu3, ...'. With a second `!' \*(CT four \*(Pus are combined and shown
-as `0-3, 4-7, ...'.
-Then the third `!' press, combining eight \*(Pus, shows as `0-7, 8-15, ...',
+For example, with the first press of \[oq]!\[cq] two \*(Pus will be
+combined and displayed as
+\[oq]0-1, 2-3, .\|.\|.\[cq] instead of the normal
+\[oq]%Cpu0, %Cpu1, %Cpu2, %Cpu3, .\|.\|.\[cq].
+With a second \[oq]!\[cq] \*(CT four \*(Pus are combined and shown as
+\[oq]0-3, 4-7, .\|.\|.\[cq].
+Then the third \[oq]!\[cq] press,
+combining eight \*(Pus, shows as \[oq]0-7, 8-15, .\|.\|.\[cq],
 etc.
 
 Such progression continues until individual \*(Pus are again displayed
-and impacts both the `1' and `4' toggles (one or multiple columns).
-Use the `=' command to exit \fBCombine Cpus\fR mode.
+and impacts both the \[oq]1\[cq] and \[oq]4\[cq] toggles
+(one or multiple columns).
+Use the \[oq]=\[cq] command to exit \fBCombine Cpus\fR mode.
 
 .PP
 \*(NT If the entire \*(SA has been toggled \*F for any window, you would
@@ -1809,14 +1872,15 @@ If the character data completely fills the available column, this
 .PP
 .RS +2
 The following commands will also be influenced by the state of the
-global `B' (bold enable) toggle.
+global \[oq]B\[cq] (bold enable) toggle.
 .RS -2
 
 .TP 7
 \ \ \ \fBb\fR\ \ :\fIBold/Reverse\fR toggle \fR
-This command will impact how the `x' and `y' toggles are displayed.
-It may also impact the \*(SA when a bar graph has been selected for \*(Pu
-states or memory usage via the `t' or `m' toggles.
+This command will impact how the \[oq]x\[cq] and \[oq]y\[cq] toggles are
+displayed.
+It may also impact the \*(SA when a bar graph has been selected for
+\*(Pu states or memory usage via the \[oq]t\[cq] or \[oq]m\[cq] toggles.
 
 .TP 7
 \ \ \ \fBx\fR\ \ :\fIColumn-Highlight\fR toggle \fR
@@ -1825,13 +1889,14 @@ If you forget which field is being sorted this command can serve as a quick
 visual reminder, providing the sort field is being displayed.
 The sort field might\fI not\fR be visible because:
     1) there is insufficient\fI Screen Width \fR
-    2) the `f' \*(CI turned it \*F
+    2) the \[oq]f\[cq] \*(CI turned it \*F
 
 .TP 7
 \ \ \ \fBy\fR\ \ :\fIRow-Highlight\fR toggle \fR
 Changes highlighting for "running" tasks.
 For additional insight into this task state,
-\*(Xt 3a. DESCRIPTIONS of Fields, the `S' field (Process Status).
+\*(Xt 3a. DESCRIPTIONS of Fields,
+the \[oq]S\[cq] field (Process Status).
 
 Use of this provision provides important insight into your system's health.
 The only costs will be a few additional tty escape sequences.
@@ -1841,7 +1906,8 @@ The only costs will be a few additional tty escape sequences.
 Switches the \*(CW between your last used color scheme and the older form
 of black-on-white or white-on-black.
 This command will alter\fB both\fR the \*(SA and \*(TA but does not affect
-the state of the `x', `y' or `b' toggles.
+the state of the \[oq]x\[cq],
+\[oq]y\[cq] or \[oq]b\[cq] toggles.
 
 .\" ..................................................
 .PP
@@ -1864,7 +1930,8 @@ Once established, that task is always displayed as the first (topmost)
 process along with its forked children.
 All other processes will be suppressed.
 
-\*(NT keys like `i' (idle tasks), `n' (max tasks), `v' (hide children)
+\*(NT keys like \[oq]i\[cq] (idle tasks),
+\[oq]n\[cq] (max tasks), \[oq]v\[cq] (hide children)
 and User/Other filtering remain accessible and can impact what is displayed.
 
 .TP 7
@@ -1891,10 +1958,11 @@ time that it and its dead children have used.
 
 When \*F, programs that fork into many separate tasks will appear
 less demanding.
-For programs like `init' or a shell this is appropriate but for others,
+For programs like \[oq]init\[cq] or a shell this is appropriate but for
+others,
 like compilers, perhaps not.
-Experiment with two \*(TWs sharing the same sort field but with different `S'
-states and see which representation you prefer.
+Experiment with two \*(TWs sharing the same sort field but with
+different \[oq]S\[cq] states and see which representation you prefer.
 
 After issuing this command, you'll be informed of the new state of this toggle.
 If you wish to know in advance whether or not Cumulative mode is in
@@ -1908,8 +1976,9 @@ matches on\fB any\fR user (real, effective, saved, or filesystem).
 
 Thereafter, in that \*(TW only matching users will be shown, or possibly
 no processes will be shown.
-Prepending an exclamation point (`!') to the user id or name instructs \*(We
-to display only processes with users not matching the one provided.
+Prepending an exclamation point (\[oq]!\[cq]) to the user id or name
+instructs \*(We to display only processes with users not matching the
+one provided.
 
 Different \*(TWs can be used to filter different users.
 Later, if you wish to monitor all users again in the \*(CW, re-issue this
@@ -1920,8 +1989,8 @@ command but just press <Enter> at the prompt.
 In this mode, processes are reordered according to their parents and
 the layout of the COMMAND column resembles that of a tree.
 In forest view mode it is still possible to toggle between program
-name and command line (\*(Xc `c' \*(CI) or between processes and
-threads (\*(Xc `H' \*(CI).
+name and command line (\*(Xc \[oq]c\[cq] \*(CI) or between processes and
+threads (\*(Xc \[oq]H\[cq] \*(CI).
 
 \*(NT Typing any key affecting the sort order will exit forest view
 mode in the \*(CW.
@@ -1940,15 +2009,18 @@ If the target process has not forked any children, this key has no effect.
 It also has no effect when not in forest view mode.
 
 .TP 7
-\ \ \fB^E\fR\ \ :\fIScale-CPU-Time-fields\fR (Ctrl key + `e')
-The `time' fields are normally displayed with the greatest
+\ \ \fB^E\fR\ \ :\fIScale-CPU-Time-fields\fR (Ctrl key + \[oq]e\[cq])
+The \[oq]time\[cq] fields are normally displayed with the greatest
 precision their widths permit.
 This toggle reduces that precision until it wraps.
 It also illustrates the scaling those fields \fImight\fR experience
 automatically, which usually depends on how long the system runs.
 
-For example, if `MMM:SS.hh' is shown, each ^E keystroke would change
-it to: `MM:SS', `Hours,MM', `Days+Hours' and finally `Weeks+Days'.
+For example, if \[oq]MMM:SS.hh\[cq] is shown,
+each ^E keystroke would change it to:
+\[oq]MM:SS\[cq],
+\[oq]Hours,MM\[cq],
+\[oq]Days+Hours\[cq] and finally \[oq]Weeks+Days\[cq].
 
 Not all time fields are subject to the full range of such scaling.
 
@@ -1998,15 +2070,16 @@ not appear on any help screen.
       T         TIME+                         Yes
 .fi
 
-Before using any of the following sort provisions, \*(We suggests that you
-temporarily turn on column highlighting using the `x' \*(CI.
+Before using any of the following sort provisions,
+\*(We suggests that you temporarily turn on column highlighting using
+the \[oq]x\[cq] \*(CI.
 That will help ensure that the actual sort environment matches your intent.
 
 The following \*(CIs will\fB only\fR be honored when the current sort field
 is\fB visible\fR.
 The sort field might\fI not\fR be visible because:
       1) there is insufficient\fI Screen Width \fR
-      2) the `f' \*(CI turned it \*F
+      2) the \[oq]f\[cq] \*(CI turned it \*F
 
 .TP 7
 \ \ \ \fB<\fR\ \ :\fIMove-Sort-Field-Left \fR
@@ -2036,7 +2109,8 @@ Using this \*(CI you can alternate between high-to-low and low-to-high sorts.
 .\" ......................................................................
 .SS 4d. COLOR Mapping
 .\" ----------------------------------------------------------------------
-When you issue the `Z' \*(CI, you will be presented with a separate screen.
+When you issue the \[oq]Z\[cq] \*(CI,
+you will be presented with a separate screen.
 That screen can be used to change the colors in just the \*(CW or
 in all four windows before returning to the \*(We display.
 
@@ -2055,15 +2129,16 @@ The following \*(CIs are available.
         q         :abandon current changes and exit
 .fi
 
-If you use `a' or `w' to cycle the targeted window, you will
-have applied the color scheme that was displayed when you left that window.
+If you use \[oq]a\[cq] or \[oq]w\[cq] to cycle the targeted window,
+you will have applied the color scheme that was displayed when you left
+that window.
 You can, of course, easily return to any window and reapply different
-colors or turn colors \*F completely with the `z' toggle.
+colors or turn colors \*F completely with the \[oq]z\[cq] toggle.
 
 The Color Mapping screen can also be used to change the \*(CG in
 either \*(FM or \*(AM.
-Whatever was targeted when `q' or <Enter> was pressed will be made current
-as you return to the \*(We display.
+Whatever was targeted when \[oq]q\[cq] or <Enter> was pressed will be
+made current as you return to the \*(We display.
 
 .\" ----------------------------------------------------------------------
 .SH 5. ALTERNATE\-DISPLAY Provisions
@@ -2075,7 +2150,7 @@ as you return to the \*(We display.
 .B Field Groups/Windows\fR:
 In \*(FM there is a single window represented by the entire screen.
 That single window can still be changed to display 1 of 4 different\fB field
-groups\fR (\*(Xc `g' \*(CI, repeated below).
+groups\fR (\*(Xc \[oq]g\[cq] \*(CI, repeated below).
 Each of the 4 \*(FGs has a unique separately configurable\fB \*(SA \fR
 and its own configurable\fB \*(TA\fR.
 
@@ -2096,21 +2171,21 @@ restricted for the \*(CW.
 
 A further complication arises when you have toggled the first \*(SA
 line \*F.
-With the loss of the window name (the `l' toggled line), you'll not easily
-know what window is the \*(CW.
+With the loss of the window name (the \[oq]l\[cq] toggled line),
+you'll not easily know what window is the \*(CW.
 
 .\" ......................................................................
 .SS 5b. COMMANDS for Windows
 .\" ----------------------------------------------------------------------
 .TP 7
 \ \ \ \fB-\fR | \fB_\fR\ \ :\fIShow/Hide-Window(s)\fR toggles \fR
-The `\-' key turns the \*(CW's \*(TD \*O and \*F.
+The \[oq]\-\[cq] key turns the \*(CW's \*(TD \*O and \*F.
 When \*O, that \*(TA will show a minimum of the columns header you've
-established with the `f' \*(CI.
+established with the \[oq]f\[cq] \*(CI.
 It will also reflect any other \*(TA options/toggles you've applied
 yielding zero or more tasks.
 
-The `_' key does the same for all \*(TDs.
+The \[oq]_\[cq] key does the same for all \*(TDs.
 In other words, it switches between the currently visible \*(TD(s) and any
 \*(TD(s) you had toggled \*F.
 If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(SA
@@ -2118,18 +2193,22 @@ as the only display element.
 
 .TP 7
 *\ \ \fB=\fR | \fB+\fR\ \ :\fIEqualize/Reset-Window(s) \fR
-The `=' key forces the \*(CW's \*(TD to be visible.
-It also reverses any active `i' (idle tasks), `n' (max tasks), `u/U'
-(user filter), `o/O' (other filter), `v' (hide children), `F' focused,
-`L' (locate) and `!' (combine cpus) commands.
+The \[oq]=\[cq] key forces the \*(CW's \*(TD to be visible.
+It also reverses any active \[oq]i\[cq] (idle tasks),
+\[oq]n\[cq] (max tasks),
+\[oq]u/U\[cq] (user filter),
+\[oq]o/O\[cq] (other filter),
+\[oq]v\[cq] (hide children),
+\[oq]F\[cq] focused,
+\[oq]L\[cq] (locate) and \[oq]!\[cq] (combine cpus) commands.
 Also, if the window had been scrolled, it will be reset with this command.
 \*(XT 5c. SCROLLING a Window for additional information regarding vertical
 and horizontal scrolling.
 
-The `+' key does the same for all windows.
+The \[oq]+\[cq] key does the same for all windows.
 The four \*(TDs will reappear, evenly balanced, while retaining
 any customizations previously applied beyond those noted
-for the `=' \*(CT.
+for the \[oq]=\[cq] \*(CT.
 
 .TP 7
 *\ \ \fBA\fR\ \ :\fIAlternate-Display-Mode\fR toggle \fR
@@ -2146,7 +2225,8 @@ commands are directed.
 These keys act in a circular fashion so you can reach any desired window
 using either key.
 
-Assuming the window name is visible (you have not toggled `l' \*F),
+Assuming the window name is visible
+(you have not toggled \[oq]l\[cq] \*F),
 whenever the \*(CW name loses its emphasis/color, that's a reminder
 the \*(TD is \*F and many commands will be restricted.
 
@@ -2154,7 +2234,7 @@ the \*(TD is \*F and many commands will be restricted.
 \ \ \ \fBG\fR\ \ :\fIChange-Window/Field-Group-Name \fR
 You will be prompted for a new name to be applied to the \*(CW.
 It does not require that the window name be visible
-(the `l' toggle to be \*O).
+(the \[oq]l\[cq] toggle to be \*O).
 
 .IP "*" 3
 The \*(CIs shown with an \*(AK have use beyond \*(AM.
@@ -2170,8 +2250,9 @@ You will be prompted to enter a number between 1 and 4 designating the
 \*(FG which should be made the \*(CW.
 
 In \*(FM, this command is necessary to alter the \*(CW.
-In \*(AM, it is simply a less convenient alternative to the `a' and `w'
-commands.
+In \*(AM,
+it is simply a less convenient alternative to the \[oq]a\[cq] and
+\[oq]w\[cq] commands.
 
 .\" ......................................................................
 .SS 5c. SCROLLING a Window
@@ -2208,7 +2289,7 @@ Additionally, there are special provisions for any variable width field
 when positioned as the last displayed field.
 Once that field is reached via the right arrow key, and is thus the only
 column shown, you can continue scrolling horizontally within such a field.
-\*(XC `C' \*(CI below for additional information.
+\*(XC \[oq]C\[cq] \*(CI below for additional information.
 
 .TP 4
 \fBHome\fR\ \ :\fIJump-to-Home-Position \fR
@@ -2238,8 +2319,8 @@ variable width column has also been scrolled.
 
 The coordinates shown as \fBn\fR/\fBn\fR are relative to the upper left
 corner of the \*(CW.
-The additional `\fB+\ nn\fR' represents the displacement into a variable
-width column when it has been scrolled horizontally.
+The additional \[oq]\fB+\ nn\fR\[cq] represents the displacement into a
+variable width column when it has been scrolled horizontally.
 Such displacement occurs in normal 8 character tab stop amounts via
 the right and left arrow keys.
 
@@ -2255,7 +2336,7 @@ The second \fBn\fR is updated automatically to reflect total tasks.
 The first \fBn\fR represents the leftmost displayed column and is
 controlled by \*(KSs.
 The second \fBn\fR is the total number of displayable fields and is
-established with the `\fBf\fR' \*(CI.
+established with the \[oq]\fBf\fR\[cq] \*(CI.
 .RS -4
 
 .PP
@@ -2281,8 +2362,8 @@ Searches are not limited to values from a single field or column.
 All of the values displayed in a task row are allowed in a search string.
 You may include spaces, numbers, symbols and even forest view artwork.
 
-Keying <Enter> with no input will effectively disable the `&' key until
-a new search string is entered.
+Keying <Enter> with no input will effectively disable the \[oq]&\[cq]
+key until a new search string is entered.
 
 .TP 4
 \fB&\fR\ \ :\fILocate-next\fR
@@ -2293,7 +2374,7 @@ the next occurrence.
 When a match is found, the current window is repositioned vertically so the
 task row containing that string is first.
 The scroll coordinates message can provide confirmation of such vertical
-repositioning (\*(Xc `C' \*(CI).
+repositioning (\*(Xc \[oq]C\[cq] \*(CI).
 Horizontal scrolling, however, is never altered via searching.
 
 The availability of a matching string will be influenced by the following
@@ -2307,7 +2388,7 @@ b. Scrolling a window vertically and/or horizontally,
 \*(Xt 5c. SCROLLING a Window.
 .TP 3
 c. The state of the command/command-line toggle,
-\*(Xc `c' \*(CI.
+\*(Xc \[oq]c\[cq] \*(CI.
 .TP 3
 d. The stability of the chosen sort column,
 for example PID is good but %CPU bad.
@@ -2316,7 +2397,7 @@ for example PID is good but %CPU bad.
 .PP
 If a search fails, restoring the \*(CW home (unscrolled) position, scrolling
 horizontally, displaying command-lines or choosing a more stable sort field
-could yet produce a successful `&' search.
+could yet produce a successful \[oq]&\[cq] search.
 
 The above \*(CIs are\fB always\fR available in \*(FM but\fB never\fR
 available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
@@ -2324,10 +2405,10 @@ available in \*(AM if the \*(CW's \*(TD has been toggled \*F.
 .\" ......................................................................
 .SS 5e. FILTERING in a Window
 .\" ----------------------------------------------------------------------
-You can use this `Other Filter' feature to establish selection criteria which
-will then determine which tasks are shown in the \*(CW.
+You can use this \[oq]Other Filter\[cq] feature to establish selection
+criteria which will then determine which tasks are shown in the \*(CW.
 Such filters can be made persistent if preserved in the rcfile via
-the `W' \*(CI.
+the \[oq]W\[cq] \*(CI.
 
 Establishing a filter requires: 1) a field name; 2) an operator; and
 3) a selection value, as a minimum.
@@ -2344,7 +2425,7 @@ Remember the Up/Down \*(KAs or their aliases when prompted for input.
 .TP 3
 3. a selection is either case insensitive or sensitive to case
 .TP 3
-4. the default is inclusion, prepending `!' denotes exclusions
+4. the default is inclusion, prepending \[oq]!\[cq] denotes exclusions
 .TP 3
 5. multiple selection criteria can be applied to a \*(TW
 .TP 3
@@ -2372,7 +2453,7 @@ You will be prompted to establish a filter that \fBignores case\fR when
 matching.
 
 .TP 6
-\ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + `o')
+\ \fB^O\fR\ \ :\fIShow-Active-Filters\fR (Ctrl key + \[oq]o\[cq])
 This can serve as a reminder of which filters are active in the \*(CW.
 A summary will be shown on the message line until you press the <Enter> key.
 
@@ -2384,8 +2465,9 @@ It also has additional impact so please \*(Xt 4a. GLOBAL Commands.
 .TP 6
 \ \ \fB+\fR\ \ :\fIReset-Filtering\fR in all windows
 This clears the selection criteria in all windows, assuming you are in \*(AM.
-As with the `=' \*(CI, it too has additional consequences so you might wish to
-\*(Xt 5b. COMMANDS for Windows.
+As with the \[oq]=\[cq] \*(CI,
+it too has additional consequences so you might wish to \*(Xt 5b.
+COMMANDS for Windows.
 
 .PP
 .B Input Requirements
@@ -2404,11 +2486,15 @@ These examples use spaces for clarity but your input generally would not.
 
 Items #1, #3 and #4 should be self\-explanatory.
 Item \fB#2\fR represents both a required \fIdelimiter\fR and the \fIoperator\fR
-which must be one of either equality (`=') or relation (`<' or `>').
+which must be one of either equality
+(\[oq]=\[cq])
+or relation
+(\[oq]<\[cq] or \[oq]>\[cq]).
 
-The `=' equality operator requires only a partial match and that
-can reduce your `if\-value' input requirements.
-The `>' or `<' relational operators always employ string comparisons,
+The \[oq]=\[cq] equality operator requires only a partial match and that
+can reduce your \[oq]if\-value\[cq] input requirements.
+The \[oq]>\[cq] or \[oq]<\[cq] relational operators always employ string
+comparisons,
 even with numeric fields.
 They are designed to work with a field's default \fIjustification\fR and
 with homogeneous data.
@@ -2419,12 +2505,15 @@ If you establish a relational filter and you \fBhave\fR changed the
 default Numeric or Character \fIjustification\fR, that filter is likely to fail.
 When a relational filter is applied to a memory field and you \fBhave not\fR
 changed the \fIscaling\fR, it may produce misleading results.
-This happens, for example, because `100.0m' (MiB) would appear greater
-than `1.000g' (GiB) when compared as strings.
+This happens,
+for example,
+because \[oq]100.0m\[cq] (MiB) would appear greater
+than \[oq]1.000g\[cq] (GiB) when compared as strings.
 
 If your filtered results appear suspect, simply altering justification or
 scaling may yet achieve the desired objective.
-See the `j', `J' and `e' \*(CIs for additional information.
+See the \[oq]j\[cq],
+\[oq]J\[cq] and \[oq]e\[cq] \*(CIs for additional information.
 .RE
 
 .B Potential Problems
@@ -2434,7 +2523,7 @@ These \fBGROUP\fR filters could produce the exact same results or the
 second one might not display anything at all, just a blank \*(TW.
 .nf
      GROUP=root        ( only the same results when )
-     GROUP=ROOT        ( invoked via lower case `o' )
+     GROUP=ROOT        ( invoked via lower case \[oq]o\[cq] )
 .fi
 
 Either of these \fBRES\fR filters might yield inconsistent and/or
@@ -2442,7 +2531,7 @@ misleading results, depending on the current memory scaling factor.
 Or both filters could produce the exact same results.
 .nf
      RES>9999          ( only the same results when )
-     !RES<10000        ( memory scaling is at `KiB' )
+     !RES<10000        ( memory scaling is at \[oq]KiB\[cq] )
 .fi
 
 This \fBnMin\fR filter illustrates a problem unique to scalable fields.
@@ -2468,14 +2557,14 @@ only multi-threaded processes being shown.
 It also reminds us that a trailing space is part of every displayed field.
 The second filter achieves the exact same results with less typing.
 .nf
-     !nTH=` 1 '                ( ` for clarity only )
+     !nTH=\[oq] 1 \[cq]                ( \[oq]\[cq] for clarity only )
      nTH>1                     ( same with less i/p )
 .fi
 
 With Forest View mode active and the \fBCOMMAND\fR column in view, this
 filter effectively collapses child processes so that just 3 levels are shown.
 .nf
-     !COMMAND=`       `- '     ( ` for clarity only )
+     !COMMAND=\[oq]       \[oq]- \[cq]   ( \[oq]\[cq] for clarity only )
 .fi
 
 The final two filters appear as in response to the status request key (^O).
@@ -2483,10 +2572,10 @@ In reality, each filter would have required separate input.
 The \fBPR\fR example shows the two concurrent filters necessary to display
 tasks with priorities of 20 or more, since some might be negative.
 Then by exploiting trailing spaces, the \fBnMin\fR series of filters could
-achieve the failed `9999' objective discussed above.
+achieve the failed \[oq]9999\[cq] objective discussed above.
 .nf
-     `PR>20' + `!PR=-'         ( 2 for right result )
-     `!nMin=0 ' + `!nMin=1 ' + `!nMin=2 ' + `!nMin=3 ' ...
+     \[oq]PR>20\[cq] + \[oq]!PR=-\[cq]         ( 2 for right result )
+     \[oq]!nMin=0 \[cq] + \[oq]!nMin=1 \[cq] + \[oq]!nMin=2 \[cq] + \[oq]!nMin=3 \[cq] ...
 .fi
 .RS -3
 
@@ -2495,12 +2584,14 @@ achieve the failed `9999' objective discussed above.
 .\" ----------------------------------------------------------------------
 .SS 6a. PERSONAL Configuration File
 .\" ----------------------------------------------------------------------
-This file is created or updated via the `W' \*(CI.
+This file is created or updated via the \[oq]W\[cq] \*(CI.
 
-The legacy version is written as `$HOME/.your\-name\-4\-\*(We' + `rc'
+The legacy version is written as
+\[oq]$HOME/.your\-name\-4\-\*(We\[cq] + \[oq]rc\[cq]
 with a leading period.
 
-A newly created \*(CF is written as procps/your\-name\-4\-\*(We' + `rc'
+A newly created \*(CF is written as
+procps/your\-name\-4\-\*(We' + \[oq]rc\[cq]
 without a leading period.
 The procps directory will be subordinate to either $XDG_CONFIG_HOME when
 set as an absolute path or the $HOME/.config directory.
@@ -2514,8 +2605,8 @@ While not intended to be edited manually, here is the general layout:
       "      # line  c: summclr,msgsclr,headclr,taskclr
     global   # line 15: additional miscellaneous settings
       "      # any remaining lines are devoted to optional
-      "      # active `other filters' discussed in section 5e above
-      "      # plus `inspect' entries discussed in section 6b below
+      "      # active \[oq]other filters\[cq] discussed in section 5e above
+      "      # plus \[oq]inspect\[cq] entries discussed in section 6b below
 .fi
 
 If a valid absolute path to the rcfile cannot be established, customizations
@@ -2524,14 +2615,14 @@ made to a running \*(We will be impossible to preserve.
 .\" ......................................................................
 .SS 6b. ADDING INSPECT Entries
 .\" ----------------------------------------------------------------------
-To exploit the `Y' \*(CI, you must add entries at the\fB end\fR of the
-\*(We personal \*(CF.
+To exploit the \[oq]Y\[cq] \*(CI, you must add entries at the\fB end\fR
+of the \*(We personal \*(CF.
 Such entries simply reflect a file to be read or command/pipeline to be
 executed whose results will then be displayed in a separate scrollable,
 searchable window.
 
-If you don't know the location or name of your \*(We rcfile, use the `W'
-\*(CI to rewrite it and note those details.
+If you don't know the location or name of your \*(We rcfile, use the
+\[oq]W\[cq] \*(CI to rewrite it and note those details.
 
 Inspect entries can be added with a redirected echo or by editing the \*(CF.
 Redirecting an echo risks overwriting the rcfile should it replace (>)
@@ -2540,34 +2631,39 @@ Conversely, when using an editor care must be taken not to corrupt existing
 lines, some of which could contain unprintable data or unusual characters
 depending on the \*(We version under which that \*(CF was saved.
 
-Those Inspect entries beginning with a `#' character are ignored, regardless
-of content.
+Those Inspect entries beginning with a \[oq]#\[cq] character are
+ignored,
+regardless of content.
 Otherwise they consist of the following 3 elements, each of which\fI must\fR
-be separated by a tab character (thus 2 `\\t' total):
+be separated by a tab character (thus 2 \[oq]\\t\[cq] total):
 
 .nf
-  .type:  literal `file' or `pipe'
+  .type:  literal \[oq]file\[cq] or \[oq]pipe\[cq]
   .name:  selection shown on the Inspect screen
   .fmts:  string representing a path or command
 .fi
 
 The two types of Inspect entries are\fI not\fR interchangeable.
-Those designated `\fBfile\fR' will be accessed using fopen and
-must reference a single file in the `.fmts' element.
-Entries specifying `\fBpipe\fR' will employ popen, their `.fmts' element
-could contain many pipelined commands and, none can be interactive.
+Those designated \[oq]\fBfile\fR\[cq] will be accessed using fopen and
+must reference a single file in the \[oq].fmts\[cq] element.
+Entries specifying \[oq]\fBpipe\fR\[cq] will employ popen,
+their \[oq].fmts\[cq] element could contain many pipelined commands and,
+none can be interactive.
 
-If the file or pipeline represented in your `.fmts' deals with the specific PID
-input or accepted when prompted, then the format string must also contain
-the `\fB%d\fR' specifier, as these examples illustrate.
+If the file or pipeline represented in your \[oq].fmts\[cq] deals with
+the specific PID input or accepted when prompted,
+then the format string must also contain the \[oq]\fB%d\fR\[cq]
+specifier,
+as these examples illustrate.
 
 .nf
   .fmts=  /proc/\fI%d\fR/numa_maps
   .fmts=  lsof -P -p\fI %d\fR
 .fi
 
-For `\fBpipe\fR' type entries only, you may also wish to redirect stderr to
-stdout for a more comprehensive result.
+For \[oq]\fBpipe\fR\[cq] type entries only,
+you may also wish to redirect stderr to stdout for a more comprehensive
+result.
 Thus the format string becomes:
 
 .nf
@@ -2576,7 +2672,8 @@ Thus the format string becomes:
 
 Here are examples of both types of Inspect entries as they might appear
 in the rcfile.
-The first entry will be ignored due to the initial `#' character.
+The first entry will be ignored due to the initial \[oq]#\[cq]
+character.
 For clarity, the pseudo tab depictions (^I) are surrounded by an
 extra space but the actual tabs would not be.
 .nf
@@ -2588,10 +2685,13 @@ extra space but the actual tabs would not be.
 .fi
 
 Except for the commented entry above, these next examples show what could
-be echoed to achieve similar results, assuming the rcfile name was `.toprc'.
-However, due to the embedded tab characters, each of these lines should be
-preceded by `\fB/bin/echo \-e\fR', not just a simple an `echo', to
-enable backslash interpretation regardless of which shell you use.
+be echoed to achieve similar results,
+assuming the rcfile name was \[oq].toprc\[cq].
+However,
+due to the embedded tab characters,
+each of these lines should be preceded by \[oq]\fB/bin/echo \-e\fR\[cq],
+not just a simple an \[oq]echo\[cq],
+to enable backslash interpretation regardless of which shell you use.
 
 .nf
   "pipe\\tOpen Files\\tlsof -P -p %d 2>&1" >> ~/.toprc
@@ -2602,34 +2702,40 @@ enable backslash interpretation regardless of which shell you use.
 If any inspect entry you create produces output with unprintable characters
 they will be displayed in either the ^C notation or hexadecimal <FF> form,
 depending on their value.
-This applies to tab characters as well, which will show as `^I'.
+This applies to tab characters as well, which will show as \[oq]^I\[cq].
 If you want a truer representation, any embedded tabs should be expanded.
-The following example takes what could have been a `file' entry but employs
-a `pipe' instead so as to expand the embedded tabs.
+The following example takes what could have been a \[oq]file\[cq] entry
+but employs a \[oq]pipe\[cq] instead so as to expand the embedded tabs.
 
 .nf
-  # next would have contained `\\t' ...
+  # next would have contained \[oq]\\t\[cq] ...
   # file ^I <your_name> ^I /proc/%d/status
-  # but this will eliminate embedded `\\t' ...
+  # but this will eliminate embedded \[oq]\\t\[cq] ...
   pipe ^I <your_name> ^I cat /proc/%d/status | expand \-
 .fi
 
 \*(NT Some programs might rely on \fISIGINT\fR to end.
-Therefore, if a `\fBpipe\fR' such as the following is established, one must
-use Ctrl-C to terminate it in order to review the results.
-This is the single occasion where a `^C' will not also terminate \*(We.
+Therefore,
+if a \[oq]\fBpipe\fR\[cq] such as the following is established,
+one must use Ctrl-C to terminate it in order to review the results.
+This is the single occasion where a \[oq]^C\[cq] will not also terminate
+\*(We.
 
 .nf
   pipe ^I Trace ^I /usr/bin/strace -p %d 2>&1
 .fi
 
-Lastly, while `\fBpipe\fR' type entries have been discussed in terms of pipelines
-and commands, there is nothing to prevent you from including \fI shell scripts\fR
-as well.
-Perhaps even newly created scripts designed specifically for the `Y' \*(CI.
+Lastly,
+while \[oq]\fBpipe\fR\[cq] type entries have been discussed in terms of
+pipelines and commands,
+there is nothing to prevent you from including \fI shell scripts\fR as
+well.
+Perhaps even newly created scripts designed specifically for the
+\[oq]Y\[cq] \*(CI.
 
-For example, as the number of your Inspect entries grows over time, the `Options:'
-row will be truncated when screen width is exceeded.
+For example, as the number of your Inspect entries grows over time,
+the \[oq]Options:\[cq] row will be truncated when screen width is
+exceeded.
 That does not affect operation other than to make some selections invisible.
 However, if some choices are lost to truncation but you want to see more options,
 there is an easy solution hinted at below.
@@ -2640,26 +2746,28 @@ there is an easy solution hinted at below.
   Options:  help  1  2  3  4  5  6  7  8  9  10  11 ...
 .fi
 
-The entries in the \*(We rcfile would have a number for the `.name' element and
-the `help' entry would identify a shell script you've written explaining what
-those numbered selections actually mean.
+The entries in the \*(We rcfile would have a number for the
+\[oq].name\[cq] element and the \[oq]help\[cq] entry would identify a
+shell script you've written explaining what those numbered selections
+actually mean.
 In that way, many more choices can be made visible.
 
 .\" ......................................................................
 .SS 6c. SYSTEM Configuration File
 .\" ----------------------------------------------------------------------
 This \*(CF represents defaults for users who have not saved their own \*(CF.
-The format mirrors exactly the personal \*(CF and can also include `inspect'
-entries as explained above.
+The format mirrors exactly the personal \*(CF and can also include
+\[oq]inspect\[cq] entries as explained above.
 
 Creating it is a simple process.
 
 1. Configure \*(We appropriately for your installation and preserve that
-configuration with the `W' \*(CI.
+configuration with the \[oq]W\[cq] \*(CI.
 
-2. Add and test any desired `inspect' entries.
+2. Add and test any desired \[oq]inspect\[cq] entries.
 
-3. Copy that \*(CF to the \fI/etc/\fR directory as `\fBtopdefaultrc\fR'.
+3. Copy that \*(CF to the \fI/etc/\fR directory as
+\[oq]\fBtopdefaultrc\fR\[cq].
 
 .\" ......................................................................
 .SS 6d. SYSTEM Restrictions File
@@ -2678,7 +2786,7 @@ They will not be able to issue the following commands.
 
 This \*(CF is not created by \*(We.
 Rather, it is created manually and placed it in the \fI/etc/\fR
-directory as `\fBtoprc\fR'.
+directory as \[oq]\fBtoprc\fR\[cq].
 
 It should have exactly two lines, as shown in this example:
 .nf
@@ -2733,8 +2841,9 @@ What you'll see is a very busy Linux doing what he's always done for you,
 but there was no program available to illustrate this.
 
 .IP \(bu 3
-Under an xterm using `white-on-black' colors, on \*(We's Color Mapping screen
-set the task color to black and be sure that task highlighting is set to bold,
+Under an xterm using \[oq]white-on-black\[cq] colors,
+on \*(We's Color Mapping screen set the task color to black and be sure
+that task highlighting is set to bold,
 not reverse.
 Then set the delay interval to around .3 seconds.
 
@@ -2743,8 +2852,10 @@ the ghostly images of just the currently running tasks.
 
 .IP \(bu 3
 Delete the existing rcfile, or create a new symlink.
-Start this new version then type `T' (a secret key,
-\*(Xt 4c. Task Area Commands, SORTING) followed by `W' and `q'.
+Start this new version then type \[oq]T\[cq]
+(a secret key,
+\*(Xt 4c. Task Area Commands,
+SORTING) followed by \[oq]W\[cq] and \[oq]q\[cq].
 Finally, restart the program with \-d0 (zero delay).
 
 Your display will be refreshed at three times the rate of the former \*(We,
@@ -2759,19 +2870,23 @@ For these stupid tricks, \*(We needs \*(AM.
 
 .IP \(bu 3
 With 3 or 4 \*(TDs visible, pick any window other than the last
-and turn idle processes \*F using the `i' \*(CT.
-Depending on where you applied `i', sometimes several \*(TDs are bouncing and
+and turn idle processes \*F using the \[oq]i\[cq] \*(CT.
+Depending on where you applied \[oq]i\[cq],
+sometimes several \*(TDs are bouncing and
 sometimes it's like an accordion, as \*(We tries his best to allocate space.
 
 .IP \(bu 3
-Set each window's summary lines differently: one with no memory (`m'); another
-with no states (`t'); maybe one with nothing at all, just the message line.
-Then hold down `a' or `w' and watch a variation on bouncing windows \*(Em
-hopping windows.
+Set each window's summary lines differently:
+one with no memory (\[oq]m\[cq]);
+another with no states (\[oq]t\[cq]);
+maybe one with nothing at all,
+just the message line.
+Then hold down \[oq]a\[cq] or \[oq]w\[cq] and watch a variation on
+bouncing windows \*(Em hopping windows.
 
 .IP \(bu 3
 Display all 4 windows and for each, in turn, set idle processes to \*F using
-the `i' \*(CT.
+the \[oq]i\[cq] \*(CT.
 You've just entered the "extreme bounce" zone.
 
 .\" ......................................................................
@@ -2781,11 +2896,11 @@ This stupid trick also requires \*(AM.
 
 .IP \(bu 3
 Display all 4 windows and make sure that 1:Def is the \*(CW.
-Then, keep increasing window size with the `n' \*(CI until all the other
-\*(TDs are "pushed out of the nest".
+Then, keep increasing window size with the \[oq]n\[cq] \*(CI until all
+the other \*(TDs are "pushed out of the nest".
 
 When they've all been displaced, toggle between all visible/invisible windows
-using the `_' \*(CT.
+using the \[oq]_\[cq] \*(CT.
 Then ponder this:
 .br
    is \*(We fibbing or telling honestly your imposed truth?
@@ -2798,14 +2913,16 @@ on a per window basis.
 
 .IP \(bu 3
 Start \*(We and make COMMAND the last (rightmost) column displayed.
-If necessary, use the `c' \*(CT to display command lines and ensure
-that forest view mode is active with the `V' \*(CT.
+If necessary,
+use the \[oq]c\[cq] \*(CT to display command lines and ensure that
+forest view mode is active with the \[oq]V\[cq] \*(CT.
 
 Then use the up/down arrow keys to position the display so that some
-truncated command lines are shown (`+' in last position).
+truncated command lines are shown (\[oq]+\[cq] in last position).
 You may have to resize your xterm to produce truncation.
 
-Lastly, use the `j' \*(CT to make the COMMAND column right justified.
+Lastly, use the \[oq]j\[cq] \*(CT to make the COMMAND column right
+justified.
 
 Now use the right arrow key to reach the COMMAND column.
 Continuing with the right arrow key, watch closely the direction
@@ -2820,8 +2937,8 @@ of travel for the command lines being shown.
 .SH 9. BUGS
 .\" ----------------------------------------------------------------------
 Please send bug reports to
-.UR procps@freelists.org
-.UE .
+.MT procps@freelists.org
+.ME .
 
  \" ----------------------------------------------------------------------
 .SH 10. SEE Also

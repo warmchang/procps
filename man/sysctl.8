@@ -16,10 +16,13 @@
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
 .B sysctl
-[\fIoptions\fR] [\fIvariable\fR[\fB=\fIvalue\fR]] [...]
-.br
+.RI [ option " .\|.\|.\&]"
+.IR variable [\c
+.BI = value\c
+] .\|.\|.
+.P
 .B sysctl \-p
-[\fIfile\fR or \fIregexp\fR] [...]
+.IR file-or-regexp " .\|.\|."
 .SH DESCRIPTION
 .B sysctl
 is used to modify kernel parameters at runtime.  The parameters available
@@ -122,19 +125,17 @@ When using the \fB\-\-system\fR option,
 will read files from directories in the following list in given
 order from top to bottom. Once a file of a given filename is loaded, any
 file of the same name in subsequent directories is ignored.
-
-/etc/sysctl.d/*.conf
-.br
-/run/sysctl.d/*.conf
-.br
-/usr/local/lib/sysctl.d/*.conf
-.br
-/usr/lib/sysctl.d/*.conf
-.br
-/lib/sysctl.d/*.conf
-.br
+.P
+.TS
+Li.
+/etc/sysctl.d/\fR*\fP.conf
+/run/sysctl.d/\fR*\fP.conf
+/usr/local/lib/sysctl.d/\fR*\fP.conf
+/usr/lib/sysctl.d/\fR*\fP.conf
+/lib/sysctl.d/\fR*\fP.conf
 /etc/sysctl.conf
-
+.TE
+.P
 All configuration files are sorted in lexicographic order, regardless of the
 directory they reside in. Configuration files can either be completely
 replaced (by having a new configuration file with the same name in a
@@ -169,28 +170,25 @@ to \fB/proc\fR file system by other means.  For example:
 .PP
 echo 256 > /proc/sys/net/ipv6/neigh/eth0/base_reachable_time
 .SH FILES
-.I /proc/sys
-.br
-.I /etc/sysctl.d/*.conf
-.br
-.I /run/sysctl.d/*.conf
-.br
-.I /usr/local/lib/sysctl.d/*.conf
-.br
-.I /usr/lib/sysctl.d/*.conf
-.br
-.I /lib/sysctl.d/*.conf
-.br
-.I /etc/sysctl.conf
+.TS
+Li.
+/proc/sys
+/etc/sysctl.d/\fR*\fP.conf
+/run/sysctl.d/\fR*\fP.conf
+/usr/local/lib/sysctl.d/\fR*\fP.conf
+/usr/lib/sysctl.d/\fR*\fP.conf
+/lib/sysctl.d/\fR*\fP.conf
+/etc/sysctl.conf
+.TE
 .SH SEE ALSO
 .BR proc (5),
 .BR sysctl.conf (5),
 .BR regex (7)
 .SH AUTHOR
-.UR staikos@0wned.org
+.MT staikos@0wned.org
 George Staikos
-.UE
+.ME
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .

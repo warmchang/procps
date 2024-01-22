@@ -21,7 +21,8 @@
 pmap \- report memory map of a process
 .SH SYNOPSIS
 .B pmap
-[\fIoptions\fR] \fIpid\fR [...]
+.RI [ option " .\|.\|.\&]"
+.IR pid " .\|.\|."
 .SH DESCRIPTION
 The
 .B pmap
@@ -75,7 +76,6 @@ Display version information and exit.
 .SH "EXIT STATUS"
 .PP
 .RS
-.PD 0
 .TP
 .B 0
 Success.
@@ -85,7 +85,6 @@ Failure.
 .TP
 .B 42
 Did not find all processes asked for.
-.PD
 .RE
 .SH "SEE ALSO"
 .BR ps (1),
@@ -96,5 +95,5 @@ No standards apply, but
 looks an awful lot like a SunOS command.
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .

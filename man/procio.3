@@ -20,16 +20,14 @@
 .SH NAME
 fprocopen \- stream open functions on files below /proc/##
 .SH SYNOPSIS
+.nf
 .B #define _GNU_SOURCE
-.br
 .B #include <stdio.h>
-.br
 .B #include <proc/procio.h>
-.sp
-.BI "FILE *fprocopen(const char *path, const char *mode);
-
+.P
+.BI "FILE *fprocopen(const char *" path ", const char *" mode );
+.fi
 .SH DESCRIPTION
-
 The
 .B fprocopen
 function opens files below
@@ -59,12 +57,11 @@ delimiter and write each of them to the opened file below
 .TP
 .B e
 The underlying file descriptor will be closed if you use any
-of the `exec...' functions within your code.
+of the \[oq]exec.\|.\|.\[cq] functions within your code.
 .PP
 The internal API allows the use of stdio functions to read and write
 large buffers below
 .IR /proc/## .
-.PP
 .SH SEE ALSO
 .BR fopen (3),
 .br
@@ -73,7 +70,6 @@ large buffers below
 .BR setvbuf (3)
 .br
 .BR lseek (3)
-.PP
 .SH COPYRIGHT
 2018 Werner Fink,
 .SH AUTHOR

@@ -16,7 +16,8 @@
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
 .B watch
-[\fIoptions\fR] \fIcommand\fR
+.RI [ option " .\|.\|.\&]"
+.I command
 .SH DESCRIPTION
 .B watch
 runs
@@ -136,7 +137,7 @@ Terminal screen character height. Set to override autodetection.
 POSIX option processing is used (i.e., option processing stops at the first
 non\-option argument). This means that flags after \fIcommand\fR don't get
 interpreted by \fBwatch\fR itself.
-
+.P
 Non-printing characters are stripped from program output. Use \fBcat -v\fR as
 part of the command pipeline if you want to see them.
 .SH EXAMPLES
@@ -144,21 +145,18 @@ part of the command pipeline if you want to see them.
 To watch the contents of a directory change, you could use
 .IP
 watch \-d ls \-l
-
 .PP
 If you have CPUs with a dynamic frequency and want to observe it change, try the
 following. The command is passed to the shell, which allows you to make the
 pipeline. The quotes are a feature of the shell too.
 .IP
 watch \-n1 'grep "^cpu MHz" /proc/cpuinfo | sort -nrk4'
-
 .PP
 To monitor the up status of your servers, saving a copy of the output of each
 run to a file, you may use this. The \fB\-p\fR makes the command execute every
 10 seconds regardless of how long it took to complete the previous run.
 .IP
 watch \-n10 \-p \-d '{ date; for i in 10.0.0.31 10.0.0.32 10.0.0.33; do R=OK; ping \-c2 \-W2 "$i" &>/dev/null || R=FAIL; echo "$i: $R"; done } | tee \-a ~/log'
-
 .PP
 You can watch for your administrator to install the latest kernel with
 .IP
@@ -170,5 +168,5 @@ counter of \fB\-\-equexit\fR will not restart even if \fIcommand\fR output
 changes meanwhile. \fB\-\-differences\fR highlighting is reset.
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .

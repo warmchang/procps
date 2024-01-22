@@ -14,7 +14,8 @@
 kill \- send a signal to a process
 .SH SYNOPSIS
 .B kill
-[options] <pid> [...]
+.RI [ option " .\|.\|.\&]
+.IR pid " .\|.\|."
 .SH DESCRIPTION
 The default signal for kill is TERM.  Use
 .B \-l
@@ -33,7 +34,7 @@ is special; it indicates all processes except the kill process itself
 and init.
 .SH OPTIONS
 .TP
-.B <pid> [...]
+.B <pid> [.\|.\|.]
 Send signal to every <pid> listed.
 .TP
 .B \-<signal>
@@ -68,7 +69,6 @@ will convert signal number to signal name, or other way round.
 .BR \-L , \ \-\-table
 List signal names in a nice table.
 .TP
-.PD
 .SH NOTES
 Your shell (command line interpreter) may have a built-in kill
 command.  You may need to run the command described here as /bin/kill
@@ -100,12 +100,12 @@ This command meets appropriate standards. The
 .B \-L
 flag is Linux-specific.
 .SH AUTHOR
-.UR albert@users.sf.net
+.MT albert@users.sf.net
 Albert Cahalan
-.UE
+.ME
 wrote kill in 1999 to replace a bsdutils one that was not standards
 compliant.  The util-linux one might also work correctly.
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .

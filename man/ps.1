@@ -16,18 +16,11 @@
 .na
 .\" Disable hyphenation.
 .nh
-.\"
-.\" ColSize is used for the format spec table.
-.\" It's the left margin, minus the right, minus
-.\" the space needed for the 1st two columns.
-.\" Making it messy: inches, ens, points, scaled points...
-.\"
-.nr ColSize ((\n[.l] - \n[.i]) / 1n - 29)
-.\"
 .SH NAME
 ps \- report a snapshot of the current processes.
 .SH SYNOPSIS
-\fBps\fR [\,\fIoptions\/\fR]
+.B ps
+.RI [ option " .\|.\|.]"
 .SH DESCRIPTION
 .B ps
 displays information about a selection of the active processes.  If you want
@@ -37,16 +30,16 @@ instead.
 .P
 This version of
 .B ps
-accepts several kinds of options:
-.IP
-.PD 0
-.IP 1 4
-UNIX options, which may be grouped and must be preceded by a dash.
-.IP 2 4
+accepts several kinds of options.
+.TP 4n
+\[bu]
+Unix options, which may be grouped and must be preceded by a dash.
+.TP
+\[bu]
 BSD options, which may be grouped and must not be used with a dash.
-.IP 3 4
+.TP
+\[bu]
 GNU long options, which are preceded by two dashes.
-.PD
 .PP
 Options of different types may be freely mixed, but conflicts can appear.
 There are some synonymous options, which are functionally identical, due to
@@ -204,7 +197,6 @@ to list all processes owned by you (same EUID as
 or to list all processes when used together with the
 .B a
 option.
-.PD
 .SH "PROCESS SELECTION BY LIST"
 These options accept a single argument in the form of a blank\-separated or
 comma\-separated list.  They can be used multiple times.  For example:
@@ -214,7 +206,7 @@ comma\-separated list.  They can be used multiple times.  For example:
 Identical to
 .B \-\-pid\ \fI123\fR.
 .TP
-.RI \+ 123
+.RI + 123
 Identical to
 .B \-\-sid\ \fI123\fR.
 .TP
@@ -383,7 +375,7 @@ list.  The real user ID identifies the user who created the process, see
 Select by effective user ID (EUID) or name.  This selects the processes whose
 effective user name or ID is in
 .IR userlist .
-
+.P
 The effective user ID describes the user whose file
 access permissions are used by the process (see
 .IR geteuid (2)).
@@ -401,7 +393,6 @@ Select by effective user ID (EUID) or name.  Identical to
 .B \-u
 and
 .BR U .
-.PD
 .SH "OUTPUT FORMAT CONTROL"
 These options are used to choose the information displayed by
 .BR ps .
@@ -417,7 +408,7 @@ Display security context format (for SELinux).
 .TP
 .B \-f
 Do full\-format listing.  This option can be combined with many other
-UNIX\-style options to add additional columns.  It also causes the command
+Unix\-style options to add additional columns.  It also causes the command
 arguments to be printed.  When used with
 .BR \-L ,
 the NLWP (number of threads) and LWP (thread ID) columns will be added.  See
@@ -521,7 +512,7 @@ columns named "X" and "Y".  Use multiple
 options when in doubt.  Use the
 .B PS_FORMAT
 environment variable to specify a default as desired; DefSysV and DefBSD are
-macros that may be used to choose the default UNIX or BSD columns.
+macros that may be used to choose the default Unix or BSD columns.
 .TP
 .B \-P
 Add a column showing \fBpsr\fR.
@@ -547,7 +538,6 @@ with
 Add a column of security data.  Identical to
 .B \-M
 (for SELinux).
-.PD
 .SH "OUTPUT MODIFIERS"
 .TP
 .B c
@@ -625,7 +615,7 @@ Specify sorting order.  Sorting syntax is
 .RB [ + | \- ]\c
 .I key\/\c
 .RB [,[ + | \- ]\c
-.IR key [,...]].
+.IR key [,.\|.\|.]].
 Choose a multi\-letter key from the
 .B STANDARD FORMAT SPECIFIERS
 section.  The "+" is optional since default direction is increasing
@@ -673,10 +663,10 @@ option syntax is
 .BR O [ + | \- ]\c
 .IR k1 [,[\c
 .BR + | \- ]\c
-.IR k2 [,...]].
+.IR k2 [,.\|.\|.]].
 It orders the processes listing according to the multilevel sort specified by
 the sequence of one\-letter short keys
-.IR k1 , k2 ", ...\&"
+.IR k1 , k2 ", .\|.\|.\&"
 described in the
 .B OBSOLETE SORT KEYS
 section below.  The\ "+" is currently optional, merely re\-iterating the
@@ -699,7 +689,7 @@ Specify sorting order.  Sorting syntax is
 .RI [ + | \- ]\c
 .IR key [,[\c
 .BR + | \- ]\c
-.IR key [,...]].
+.IR key [,.\|.\|.]].
 Choose a multi\-letter key from the
 .B STANDARD FORMAT SPECIFIERS
 section.  The "+" is optional since default direction is increasing numerical
@@ -721,7 +711,6 @@ Wide output.  Use this option twice for unlimited width.
 .TP
 .BI \-\-width \ n
 Set screen width.
-.PD
 .SH "THREAD DISPLAY"
 .TP
 .B H
@@ -799,7 +788,7 @@ formatting options to customize length.
 Commands options such as
 .B ps \-aux
 are not recommended as it is a confusion of two different standards.
-According to the POSIX and UNIX standards, the above command asks to
+According to the POSIX and Unix standards, the above command asks to
 display all processes with a TTY (generally the commands users are
 running) plus all processes owned by a user named \fIx\fR.  If that user
 doesn't exist, then
@@ -814,14 +803,11 @@ which is provided by the
 output specifier:
 .PP
 .RS 8
-.PD 0
-.TP 5
-1
-forked but didn't exec
-.TP
-4
-used super\-user privileges
-.PD
+.TS
+R4 L.
+1	forked but didn't exec
+4	used super-user privileges
+.TE
 .RE
 .SH "PROCESS STATE CODES"
 Here are the different values that the
@@ -830,35 +816,24 @@ output specifiers (header "STAT" or "S") will display to describe the state
 of a process:
 .PP
 .RS 8
-.PD 0
-.TP 5
-D
-uninterruptible sleep (usually IO)
-.TP
-I
-Idle kernel thread
-.TP
-R
-running or runnable (on run queue)
-.TP
-S
-interruptible sleep (waiting for an event to complete)
-.TP
-T
-stopped by job control signal
-.TP
-t
-stopped by debugger during the tracing
-.TP
-W
-paging (not valid since the 2.6.xx kernel)
-.TP
-X
-dead (should never be seen)
-.TP
-Z
-defunct ("zombie") process, terminated but not reaped by its parent
-.PD
+.TS
+R4 L.
+D	uninterruptible sleep (usually I/O)
+I	idle kernel thread
+R	running or runnable (on run queue)
+S	T{
+interruptible sleep
+(waiting for an event to complete)
+T}
+T	stopped by job control signal
+t	stopped by debugger during the tracing
+W	paging (not valid since Linux 2.6)
+X	dead (should never be seen)
+Z	T{
+defunct (\[lq]zombie\[rq]) process,
+terminated but not reaped by its parent
+T}
+.TE
 .RE
 .PP
 For BSD formats and when the
@@ -866,26 +841,22 @@ For BSD formats and when the
 keyword is used, additional characters may be displayed:
 .PP
 .RS 8
-.PD 0
-.TP 5
-<
-high\-priority (not nice to other users)
-.TP
-N
-low\-priority (nice to other users)
-.TP
-L
-has pages locked into memory (for real\-time and custom IO)
-.TP
-s
-is a session leader
-.TP
-l
-is multi-threaded (using CLONE_THREAD, like NPTL pthreads do)
-.TP
-+
-is in the foreground process group
-.PD
+.TS
+R4 L.
+<	high-priority (not nice to other users)
+N	low-priority (nice to other users)
+L	T{
+has pages locked into memory
+(for real-time and custom I/O)
+T}
+s	is a session leader
+l	T{
+is multi-threaded
+(using CLONE_THREAD,
+like NPTL pthreads do)
+T}
++	is in the foreground process group
+.TE
 .RE
 .SH "OBSOLETE SORT KEYS"
 These keys are used by the BSD
@@ -985,20 +956,12 @@ spaces:
 .BR lstart ", " bsdstart ", " start .
 .PP
 Some keywords may not be available for sorting.
-
-.\" #######################################################################
-.\" lB1 lB1 lB1 lB1 s s s
-.\" lB1 l1  l1  l1  s s s.
-.\"
-.\" lB1 lB1 lBw(5.5i)
-.\" lB1 l1  l.
-.\"
+.PP
 .TS
-expand;
-l1B l1B lBw(\n[ColSize]n)
-l1B l1  l.
-CODE	HEADER	DESCRIPTION
-
+Lb Lb Lbx
+Lb Lb L  .
+Code	Header	Description
+_
 %cpu	%CPU	T{
 cpu utilization of the process in "##.#" format.  Currently, it is the CPU
 time used divided by the time the process has been running (cputime/realtime
@@ -1023,12 +986,16 @@ The autogroup nice value which affects scheduling of all processes in that group
 T}
 
 args	COMMAND	T{
-command with all its arguments as a string. Modifications to the arguments
-may be shown.  The output in this column may contain spaces.  A process
-marked <defunct> is partly dead, waiting to be fully destroyed by its parent.
-Sometimes the process args will be unavailable; when this happens,
+A command with all its arguments as a string.
+Modifications to the arguments may be shown.
+The output in this column may contain spaces.
+A process marked \[lq]<defunct>\[rq] is partly dead,
+waiting to be fully destroyed by its parent.
+Sometimes the process arguments will be unavailable;
+when this happens,
 .B ps
-will instead print the executable name in brackets.  (alias
+instead reports the executable name in brackets.
+(alias
 .BR cmd ", " command ).
 See also the
 .B comm
@@ -1037,18 +1004,26 @@ format keyword, the
 option, and the
 .B c
 option.
-.br
-When specified last, this column will extend to the edge of the display.  If
+.sp \n[PD]u
+When specified last,
+this column will extend to the edge of the display.
+If
 .B ps
-can not determine display width, as when output is redirected (piped) into a
-file or another command, the output width is undefined (it may be 80,
-unlimited, determined by the
+can not determine the display width,
+as when output is redirected (piped) into a file or another command,
+the output width is undefined
+(it may be 80,
+unlimited,
+determined by the
 .B TERM
-variable, and so on).  The
+variable,
+and so on).
+The
 .B COLUMNS
 environment variable or
 .B \-\-cols
-option may be used to exactly determine the width in this case.  The
+option may be used to exactly determine the width in this case.
+The
 .B w
 or
 .B \-w
@@ -1108,7 +1083,7 @@ class	CLS	T{
 scheduling class of the process.  (alias
 .BR policy ", " cls ).
 Field's possible values are:
-.sp 1
+.sp \n[PD]u
 .in +9n
 \-	not reported
 .br
@@ -1134,7 +1109,7 @@ cls	CLS	T{
 scheduling class of the process.  (alias
 .BR policy ", " cls ).
 Field's possible values are:
-.sp 1
+.sp \n[PD]u
 .in +9n
 \-	not reported
 .br
@@ -1175,7 +1150,7 @@ format keyword, the
 option, and the
 .B c
 option.
-.br
+.sp \n[PD]u
 When specified last, this column will extend to the edge of the display.  If
 .B ps
 can not determine display width, as when output is redirected (piped) into a
@@ -1246,7 +1221,6 @@ but will always be included
 included in the
 .B vsz
 amount.
-
 T}
 
 egid	EGID	T{
@@ -1279,7 +1253,7 @@ etimes	ELAPSED	T{
 elapsed time since the process was started, in seconds.
 T}
 
-environ ENVIRON T{
+environ	ENVIRON	T{
 environment variables for the process.
 T}
 euid	EUID	T{
@@ -1299,7 +1273,7 @@ exe	EXE	T{
 path to the executable. Useful if path cannot be printed via
 .BR cmd ", " comm
 or
-.BR args
+.B args
 format options.
 T}
 
@@ -1540,7 +1514,7 @@ policy	POL	T{
 scheduling class of the process.  (alias
 .BR class ", " cls ).
 Possible values are:
-.sp 1
+.sp \n[PD]u
 .in +9n
 \-	not reported
 .br
@@ -1597,7 +1571,7 @@ and the field width permits, or a decimal representation otherwise.
 T}
 
 rops	ROPS	T{
-Number of read I/O operations—that is, system calls such as
+Number of read I/O operations\[em]that is, system calls such as
 .BR read "(2) and " pread (2).
 T}
 
@@ -1962,7 +1936,7 @@ Number of bytes which this task has caused, or shall cause to be written to disk
 T}
 
 wops	WOPS	T{
-Number of write I/O operations—that is, system calls such as
+Number of write I/O operations\[em]that is, system calls such as
 .BR write "(2) and " pwrite (2).
 T}
 
@@ -1978,12 +1952,12 @@ Override default display width.
 Override default display height.
 .TP
 .B PS_PERSONALITY
-Set to one of posix, old, linux, bsd, sun, digital...\& (see section
+Set to one of posix, old, linux, bsd, sun, digital.\|.\|.\& (see section
 .B PERSONALITY
 below).
 .TP
 .B CMD_ENV
-Set to one of posix, old, linux, bsd, sun, digital...\& (see section
+Set to one of posix, old, linux, bsd, sun, digital.\|.\|.\& (see section
 .B PERSONALITY
 below).
 .TP
@@ -2082,20 +2056,22 @@ names across languages.
 .SH STANDARDS
 This
 .B ps
-conforms to:
-.PP
-.PD 0
-.IP 1 4
+conforms to the following standards.
+.TP 4n
+\[bu]
 Version 2 of the Single Unix Specification
-.IP 2 4
-The Open Group Technical Standard Base Specifications, Issue\ 6
-.IP 3 4
-IEEE Std 1003.1, 2004\ Edition
-.IP 4 4
-X/Open System Interfaces Extension [UP\ XSI]
-.IP 5 4
+.TP 4n
+\[bu]
+The Open Group Technical Standard Base Specifications, Issue\~6
+.TP 4n
+\[bu]
+IEEE Std 1003.1, 2004\~Edition
+.TP 4n
+\[bu]
+X/Open System Interfaces Extension [UP\~XSI]
+.TP 4n
+\[bu]
 ISO/IEC 9945:2003
-.PD
 .SH AUTHOR
 .B ps
 was originally written by

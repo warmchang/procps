@@ -16,7 +16,7 @@
 slabtop \- display kernel slab cache information in real time
 .SH SYNOPSIS
 .B slabtop
-[\fIoptions\fR]
+.RI [ option " .\|.\|.]"
 .SH DESCRIPTION
 .B slabtop
 displays detailed kernel slab cache information in real time.  It displays a
@@ -57,7 +57,7 @@ display the units of print out.  Following units are used.
 .fi
 .sp
 .TP
-If this flag is not used, the slab sizes will be show in KiB.
+If this flag is not used, the slab sizes will be shown in KiB.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
@@ -95,10 +95,10 @@ Each of the valid sort characters are also accepted, to change the sort
 routine. See the section
 .BR "SORT CRITERIA" .
 .TP
-.BR <SPACEBAR>
+.B <SPACEBAR>
 Refresh the screen.
 .TP
-.BR Q
+.B Q
 Quit the program.
 .SH FILES
 .TP
@@ -135,5 +135,5 @@ was inspired by Martin Bligh's perl script,
 .BR vmtop .
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .

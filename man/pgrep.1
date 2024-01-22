@@ -15,13 +15,16 @@
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
 .B pgrep
-[options] pattern
-.br
+.RI [ option " .\|.\|.\&]"
+.I pattern
+.P
 .B pkill
-[options] pattern
-.br
+.RI [ option " .\|.\|.\&]"
+.I pattern
+.P
 .B pidwait
-[options] pattern
+.RI [ option " .\|.\|.\&]"
+.I pattern
 .SH DESCRIPTION
 .B pgrep
 looks through the currently running processes and lists the process IDs which
@@ -63,7 +66,6 @@ or
 mode only the long option can be used and has no effect unless used in conjunction with
 \fB\-\-require\-handler\fR to filter to processes with a userspace signal
 handler present for a particular signal.
-
 .TP
 \fB\-c\fR, \fB\-\-count\fR
 Suppress normal output; instead print a count of matching processes.  When
@@ -90,7 +92,7 @@ is normally only matched against the process name.  When
 .B \-f
 is set, the full command line is used.
 .TP
-\fB\-g\fR, \fB\-\-pgroup\fR \fIpgrp\fP,...
+\fB\-g\fR, \fB\-\-pgroup\fR \fIpgrp\fP,.\|.\|.
 Only match processes in the process group IDs listed.  Process group 0 is
 translated into
 .BR pgrep 's,
@@ -99,7 +101,7 @@ or
 .BR pidwait 's
 own process group.
 .TP
-\fB\-G\fR, \fB\-\-group\fR \fIgid\fP,...
+\fB\-G\fR, \fB\-\-group\fR \fIgid\fP,.\|.\|.
 Only match processes whose real group ID is listed.  Either the numerical or
 symbolical value may be used.
 .TP
@@ -125,10 +127,10 @@ Select only the oldest (least recently started) of the matching processes.
 \fB\-O\fR, \fB\-\-older\fR \fIsecs\fP
 Select processes older than secs.
 .TP
-\fB\-P\fR, \fB\-\-parent\fR \fIppid\fP,...
+\fB\-P\fR, \fB\-\-parent\fR \fIppid\fP,.\|.\|.
 Only match processes whose parent process ID is listed.
 .TP
-\fB\-s\fR, \fB\-\-session\fR \fIsid\fP,...
+\fB\-s\fR, \fB\-\-session\fR \fIsid\fP,.\|.\|.
 Only match processes whose process session ID is listed.  Session ID 0
 is translated into
 .BR pgrep 's,
@@ -137,15 +139,15 @@ or
 .BR pidwait 's
 own session ID.
 .TP
-\fB\-t\fR, \fB\-\-terminal\fR \fIterm\fP,...
+\fB\-t\fR, \fB\-\-terminal\fR \fIterm\fP,.\|.\|.
 Only match processes whose controlling terminal is listed.  The terminal name
 should be specified without the "/dev/" prefix.
 .TP
-\fB\-u\fR, \fB\-\-euid\fR \fIeuid\fP,...
+\fB\-u\fR, \fB\-\-euid\fR \fIeuid\fP,.\|.\|.
 Only match processes whose effective user ID is listed.  Either the numerical
 or symbolical value may be used.
 .TP
-\fB\-U\fR, \fB\-\-uid\fR \fIuid\fP,...
+\fB\-U\fR, \fB\-\-uid\fR \fIuid\fP,.\|.\|.
 Only match processes whose real user ID is listed.  Either the numerical or
 symbolical value may be used.
 .TP
@@ -184,7 +186,7 @@ than
 \fB\-L\fR, \fB\-\-logpidfile\fR
 Fail if pidfile (see \fB\-F\fR) not locked.
 .TP
-\fB\-r\fR, \fB\-\-runstates\fR \fID,R,S,Z,\fP...
+\fB\-r\fR, \fB\-\-runstates\fR \fID,R,S,Z,\fP.\|.\|.
 Match only processes which match the process state.
 .TP
 \fB\-A\fR, \fB\-\-ignore-ancestors\fR\fR
@@ -194,18 +196,18 @@ Ignore all ancestors of
 or
 .BR pidwait .
 For example, this can be useful when elevating with
-.BR sudo
+.B sudo
 or similar tools.
 .TP
 \fB\-H\fR, \fB\-\-require\-handler\fR\fR
 Only match processes with a userspace signal handler present for the signal to
 be sent.
 .TP
-\fB\-\-cgroup \fIname\fP,...
+\fB\-\-cgroup \fIname\fP,.\|.\|.
 Match on provided control group (cgroup) v2 name. See
 .BR cgroups (8)
 .TP
-\fB\-\-env \fIname\fR[\fI=value\fR],...
+\fB\-\-env \fIname\fR[\fI=value\fR],.\|.\|.
 Match on process that have these environent variables. If the \fI=value\fR
 parameter is not defined then only the variable name is matched.
 .TP
@@ -214,7 +216,7 @@ Match processes that belong to the same namespaces. Required to run as
 root to match processes from other users. See \fB\-\-nslist\fR for how to
 limit which namespaces to match.
 .TP
-\fB\-\-nslist \fIname\fP,...
+\fB\-\-nslist \fIname\fP,.\|.\|.
 Match only the provided namespaces. Available namespaces:
 ipc, mnt, net, pid, user, uts.
 .TP
@@ -235,7 +237,6 @@ Display version information and exit.
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Display help and exit.
-.PD
 .SH OPERANDS
 .TP
 .I pattern
@@ -266,9 +267,8 @@ processes run nicer:
 .IP
 $ renice +4 $(pgrep chrome)
 .SH "EXIT STATUS"
-.PD 0
 .TP
-0
+.B 0
 One or more processes matched the criteria. For
 .B pkill
 and
@@ -276,15 +276,14 @@ and
 one or more
 processes must also have been successfully signalled or waited for.
 .TP
-1
+.B 1
 No processes matched or none of them could be signalled.
 .TP
-2
+.B 2
 Syntax error in the command line.
 .TP
-3
+.B 3
 Fatal error: out of memory etc.
-.PD
 .SH NOTES
 The process name used for matching is limited to the 15 characters present in
 the output of /proc/\fIpid\fP/stat.  Use the \fB\-f\fR option to match against the
@@ -329,10 +328,10 @@ system call which first appeared in Linux 5.3.
 .BR kill (2),
 .BR cgroups (8).
 .SH AUTHOR
-.UR kjetilho@ifi.uio.no
+.MT kjetilho@ifi.uio.no
 Kjetil Torgrim Homme
-.UE
+.ME
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .

@@ -14,13 +14,13 @@
 skill, snice \- send a signal or report process status
 .SH SYNOPSIS
 .B skill
-.RI [ signal ]
-.RI [ options ]
+.RI [ signal-option ]
+.RI [ other-option " .\|.\|.\&]"
 .I expression
-.br
+.P
 .B snice
-.RI [ "new priority" ]
-.RI [ options ]
+.RI [ new-priority ]
+.RI [ option " .\|.\|.\&]"
 .I expression
 .SH DESCRIPTION
 These tools are obsolete and unportable.  The command syntax is
@@ -68,7 +68,6 @@ Display help text and exit.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information.
-.PD
 .SH "PROCESS SELECTION OPTIONS"
 Selection criteria can be: terminal, user, pid, command.  The options
 below may be used to ensure correct interpretation.
@@ -88,10 +87,9 @@ The next expression is a command name.
 \fB\-\-ns \fIpid\fR
 Match the processes that belong to the same namespace as pid.
 .TP
-\fB\-\-nslist \fIns\/\fR,\,\fI...\/\fR
+\fB\-\-nslist \fIns\/\fR,\,\fI.\|.\|.\/\fR
 list which namespaces will be considered for the \fB\-\-ns\fP option.
 Available namespaces: ipc, mnt, net, pid, user, uts.
-.PD
 .SH SIGNALS
 The behavior of signals is explained in
 .BR signal (7)
@@ -124,5 +122,5 @@ wrote skill and snice in 1999 as a replacement for a non-free
 version.
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .

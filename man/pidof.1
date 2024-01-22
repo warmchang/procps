@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH PIDOF 1 "2023-01-16" "" "User Commands"
+.TH PIDOF 1 "2023-01-16" "procps-ng" "User Commands"
 .SH NAME
 pidof \- find the process ID of a running program
 .SH SYNOPSIS
@@ -21,12 +21,12 @@ pidof \- find the process ID of a running program
 .RB [ \-w ]
 .RB [ \-x ]
 .RB [ \-o
-.IR omitpid[,omitpid...]... ]
+.IR omitpid [,.\|.\|.\&]]
+\&.\|.\|.\&
 .RB [ \-t ]
 .RB [ \-S
 .IR separator ]
-.I program
-.IB [ program... ]
+.IR program " .\|.\|."
 .SH DESCRIPTION
 .B Pidof
 finds the process id's (pids) of the named programs. It prints those
@@ -65,18 +65,16 @@ At least one program was found with the requested name.
 .TP
 .B 1
 No program was found with the requested name.
-
 .SH BUGS
 When using the \fB\-x\fP option,
 .B pidof
 only has a simple method for detecting scripts and will miss scripts that,
 for example, use env. This limitation is due to how the scripts look in
 the proc filesystem.
-
 .SH SEE ALSO
 .BR pgrep (1),
 .BR pkill (1)
 .SH AUTHOR
-.UR jcapik@redhat.com
+.MT jcapik@redhat.com
 Jaromir Capik
-.UE
+.ME

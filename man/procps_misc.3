@@ -43,26 +43,25 @@ Namespace Particulars
 .RI "const char\fB *procps_ns_get_name\fR (int " id ");"
 .RI "int       \fB  procps_ns_read_pid\fR (int " pid ", struct procps_ns *" nsp ");"
 .RE
-
+.P
 Link with \fI\-lproc2\fP.
-
 .SH DESCRIPTION
 .BR procps_cpu_count ()
 returns the number of CPUs that are currently online as
 .BI sysconf( _SC_NPROCESSORS_ONLY )
 or an assumed \fI1\fR.
-
+.P
 .BR procps_hertz_get ()
 returns the number of clock ticks per second as
 .BI sysconf( _SC_CLK_TCK )
 or an assumed \fI100\fR.
 Dividing tics by this value yields seconds.
-
+.P
 .BR procps_pid_length ()
 returns the maximum string length for a PID on the system. For example, if the largest
 possible PID value on was 123, then the length would be 3. If the file
 \fI/proc/sys/kernel/pid_max\fR is unreadable, the value is assumed to be \fI5\fR.
-
+.P
 .BR procps_linux_version ()
 returns the current Linux version as an encoded integer. On non-Linux systems that
 have an emulated proc filesystem this function returns the version of the
@@ -81,11 +80,11 @@ LINUX_VERSION_MINOR(\ ver\ )
 .PP
 LINUX_VERSION_PATCH(\ ver\ )
 .RE
-
+.P
 .BR procps_loadavg ()
 fetches the system load average and puts the 1, 5 and 15 minute averages into
 location(s) specified by any pointer which is not \fINULL\fR.
-
+.P
 .BR procps_uptime ()
 returns uptime and/or idle seconds into location(s) specified by any pointer
 which is not \fINULL\fR.
@@ -96,13 +95,13 @@ HH:MM:SS up HH:MM, # users, load average: 1, 5, 15 MM averages
 .PP
 up HH, MM
 .RE
-
+.P
 .BR procps_ns_get_id ()
 returns the integer id (enum namespace_type) of the namespace for the given namespace \fIname\fR.
-
+.P
 .BR procps_ns_get_name ()
 returns the name of the namespace for the given \fIid\fR (enum namespace_type).
-
+.P
 .BR procps_ns_read_pid ()
 returns the inodes for the namespaces of the given process in the
 procps_ns structure pointed to by \fInsp\fR.
@@ -122,17 +121,13 @@ enum namespace_type {
 };
 .fi
 .RE
-
-
 .SH RETURN VALUE
-.SS Functions Returning an `int' or `long'
+.SS Functions Returning an \[oq]int\[cq] or \[oq]long\[cq]
 An error will be indicated by a negative number that
 is always the inverse of some well known errno.h value.
-
-.SS Functions Returning an `address'
+.SS Functions Returning an \[oq]address\[cq]
 An error will be indicated by a NULL return pointer
 with the reason found in the formal errno value.
-
 .SH FILES
 .TP
 .I /proc/loadavg
@@ -147,9 +142,9 @@ Contains the value at which PIDs wrap around, one greater than the maximum PID v
 .I /proc/uptime
 The raw values for uptime and idle time.
 .TP
-.IB /proc/<PID>/ns
-contains the set of namespaces for a particular \fBPID\fR.
-
+.IR /proc/ PID /ns
+contains the set of namespaces for a particular
+.IR PID .
 .SH SEE ALSO
 .BR procps (3),
 .BR procps_pids (3),

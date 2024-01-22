@@ -16,7 +16,7 @@
 free \- Display amount of free and used memory in the system
 .SH SYNOPSIS
 .B free
-.RI [ options ]
+.RI [ option " .\|.\|.]"
 .SH DESCRIPTION
 .B free
 displays the total amount of free and used physical and swap memory in the
@@ -149,19 +149,17 @@ Print help.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information.
-.PD
 .SH FILES
 .TP
 /proc/meminfo
 memory information
-.PD
 .SH BUGS
 The value for the \fBshared\fR column is not available from kernels before
 2.6.32 and is displayed as zero.
-.TP
+.P
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .
 .SH "SEE ALSO"
 .BR ps (1),
 .BR slabtop (1),

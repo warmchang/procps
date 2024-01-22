@@ -24,7 +24,7 @@ The syntax is simply as follows:
 .ne 7
 # comment
 ; comment
-
+.P
 token = value
 .fi
 .RE
@@ -32,20 +32,19 @@ token = value
 Note that blank lines are ignored, and whitespace before and after a token or
 value is ignored, although a value can contain whitespace within.  Lines which
 begin with a \fI#\fR or \fI;\fR are considered comments and ignored.
-
+.P
 If a line begins with a single \-, any attempts to set the value that fail will be
 ignored.
-
 .SH NOTES
 As the
-.BR /etc/sysctl.conf
+.I /etc/sysctl.conf
 file is used to override default kernel parameter values, only a small number of parameters is predefined in the file.
 Use
-.IR /sbin/sysctl\ \-a
+.RB \[lq] "sysctl \-a" \[rq]
 or follow
 .BR sysctl (8)
 to list all possible parameters. The description of individual parameters can be found in the kernel documentation.
-
+.P
 Maximum supported line length of the value is 4096 characters due
 to a limitation of \fI/proc\fR entries in Linux kernel.
 .SH EXAMPLE
@@ -62,18 +61,16 @@ to a limitation of \fI/proc\fR entries in Linux kernel.
 .RE
 .PP
 .SH FILES
-.I /etc/sysctl.d/*.conf
-.br
-.I /run/sysctl.d/*.conf
-.br
-.I /usr/local/lib/sysctl.d/*.conf
-.br
-.I /usr/lib/sysctl.d/*.conf
-.br
-.I /lib/sysctl.d/*.conf
-.br
-.I /etc/sysctl.conf
-
+.TS
+Li.
+/etc/sysctl.d/\fR*\fP.conf
+/run/sysctl.d/\fR*\fP.conf
+/usr/local/lib/sysctl.d/\fR*\fP.conf
+/usr/lib/sysctl.d/\fR*\fP.conf
+/lib/sysctl.d/\fR*\fP.conf
+/etc/sysctl.conf
+.TE
+.P
 The paths where
 .B sysctl
 preload files usually exist.  See also
@@ -83,10 +80,10 @@ option
 .SH SEE ALSO
 .BR sysctl (8)
 .SH AUTHOR
-.UR staikos@0wned.org
+.MT staikos@0wned.org
 George Staikos
-.UE
+.ME
 .SH "REPORTING BUGS"
 Please send bug reports to
-.UR procps@freelists.org
-.UE
+.MT procps@freelists.org
+.ME .
