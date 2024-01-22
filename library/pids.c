@@ -1055,18 +1055,18 @@ static inline void pids_libflags_set (
     enum pids_item e;
     int i;
 
-    info->oldflags = info->history_yes = info->containers_yes = 0;
+    info->oldflags = info->history_yes = 0;
     for (i = 0; i < info->maxitems; i++) {
         if (((e = info->items[i])) >= PIDS_logical_end)
             break;
         info->oldflags |= Item_table[e].oldflags;
         info->history_yes |= Item_table[e].needhist;
-        info->containers_yes |= (Item_table[e].oldflags & (f_lxc | z_docker));
     }
     if (info->oldflags & f_either) {
         if (!(info->oldflags & (f_stat | f_status)))
             info->oldflags |= f_stat;
     }
+    info->containers_yes = info->oldflags & (f_lxc | z_docker);
     return;
 } // end: pids_libflags_set
 
