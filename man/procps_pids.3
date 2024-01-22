@@ -1,6 +1,6 @@
 .\"
-.\" Copyright (c) 2020-2023 Jim Warner <james.warner@comcast.net>
-.\" Copyright (c) 2020-2023 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2020-2024 Jim Warner <james.warner@comcast.net>
+.\" Copyright (c) 2020-2024 Craig Small <csmall@dropbear.xyz>
 .\"
 .\" This manual is free software; you can redistribute it and/or
 .\" modify it under the terms of the GNU Lesser General Public
@@ -8,7 +8,7 @@
 .\" version 2.1 of the License, or (at your option) any later version.
 .\"
 .\"
-.TH PROCPS_PIDS 3 "August 2022" "libproc2"
+.TH PROCPS_PIDS 3 "January 2024" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -180,8 +180,8 @@ methods and any discrepancies will be written to \fBstderr\fR.
 Add CFLAGS='-DXTRA_PROCPS_DEBUG' to any other ./configure
 options your project may employ.
 .IP 2) 3
-Add #include <procps/xtra-procps-debug.h> to any program
-\fIafter\fR the #include <procps/pids.h>.
+Add #include <libproc2/xtra-procps-debug.h> to any program
+\fIafter\fR the #include <libproc2/pids.h>.
 .PP
 This verification feature incurs substantial overhead.
 Therefore, it is important that it \fInot\fR be activated
