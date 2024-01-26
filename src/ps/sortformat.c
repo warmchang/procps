@@ -132,6 +132,8 @@ static const char *aix_format_parse(sf_node *sfn){
   walk = sfn->sf;
   /* state machine */ {
   int c = *walk++;
+  if(c!='%'&&c!=' ')
+                  goto aix_oops;
   initial:
     if(c=='%')    goto get_desc;
     if(!c)        goto looks_ok;
@@ -181,6 +183,7 @@ static const char *aix_format_parse(sf_node *sfn){
     } else {
       size_t len;
       len = strcspn(walk, "%");
+      if(!len) break;
       memcpy(buf,walk,len);
       buf[len] = '\0';
       walk += len;
