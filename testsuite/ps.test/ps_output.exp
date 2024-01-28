@@ -52,6 +52,10 @@ set test "ps with unknown AIX field"
 spawn $ps -o "%p %Z"
 expect_pass "$test" "error: unknown AIX field descriptor"
 
+set test "ps with AIX format stating with random character"
+spawn $ps -o "a%a"
+expect_pass "$test" "error: improper AIX field descriptor"
+
 make_testproc
 set test "ps with c option"
 spawn $ps co command $testproc1_pid
