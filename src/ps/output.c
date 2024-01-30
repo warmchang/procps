@@ -1156,6 +1156,16 @@ setREL1(SMAP_PRV_TOTAL)
   return snprintf(outbuf, COLWID, "%lu", rSv(SMAP_PRV_TOTAL, ul_int, pp));
 }
 
+static int pr_hugetblprv(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(SMAP_HUGE_TLBPRV)
+  return snprintf(outbuf, COLWID, "%lu", rSv(SMAP_HUGE_TLBPRV, ul_int, pp));
+}
+
+static int pr_hugetblshr(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(SMAP_HUGE_TLBSHR)
+  return snprintf(outbuf, COLWID, "%lu", rSv(SMAP_HUGE_TLBSHR, ul_int, pp));
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 
 /*
@@ -1709,6 +1719,8 @@ static const format_struct format_array[] = { /*
 {"fuser",     "FUSER",   pr_fuser,         PIDS_ID_FUSER,            8,    LNX,  ET|USER},
 {"gid",       "GID",     pr_egid,          PIDS_ID_EGID,             5,    SUN,  ET|RIGHT},
 {"group",     "GROUP",   pr_egroup,        PIDS_ID_EGROUP,           8,    U98,  ET|USER},
+{"htprv",     "HTPRV",   pr_hugetblprv,    PIDS_SMAP_HUGE_TLBPRV,    5,    XXX,  PO|RIGHT},
+{"htshr",     "HTSHR",   pr_hugetblshr,    PIDS_SMAP_HUGE_TLBPRV,    5,    XXX,  PO|RIGHT},
 {"ignored",   "IGNORED", pr_sigignore,     PIDS_SIGIGNORE,           9,    BSD,  TO|SIGNAL},/*sigignore*/
 {"inblk",     "INBLK",   pr_nop,           PIDS_noop,                5,    BSD,  AN|RIGHT}, /*inblock*/
 {"inblock",   "INBLK",   pr_nop,           PIDS_noop,                5,    DEC,  AN|RIGHT}, /*inblk*/
