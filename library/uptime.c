@@ -56,10 +56,11 @@ static __thread char shortbuf[256];
  * places.
  *
  * Returns: user count on success and <0 on failure
+ * On some failures with utmp, 0 may be returned too.
  */ 
 PROCPS_EXPORT int procps_users(void)
 {
-    int numuser = -1;
+    int numuser = 0;
 #ifdef HAVE_UTMP_X
     struct utmpx *ut;
 #else
