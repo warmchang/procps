@@ -21,6 +21,7 @@ procps-ng-NEXT
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305
   * watch: use clock_gettime                               issue #295
+  * hugetop: a new utility to show huge page information   merge #214
 
 procps-ng-4.0.4
 ---------------

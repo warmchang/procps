@@ -176,12 +176,17 @@ dist_man_MANS += \
 	man/top.1
 if !CYGWIN
 bin_PROGRAMS += \
-	src/slabtop
+	src/slabtop \
+	src/hugetop
 dist_man_MANS += \
 	man/slabtop.1
+	man/hugetop.1
 src_slabtop_SOURCES = src/slabtop.c local/strutils.c local/fileutils.c local/units.c
 src_slabtop_CFLAGS = @NCURSES_CFLAGS@
 src_slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
+src_hugetop_SOURCES = src/hugetop.c local/strutils.c local/fileutils.c
+src_hugetop_CFLAGS = @NCURSES_CFLAGS@
+src_hugetop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
 src_watch_SOURCES = src/watch.c local/strutils.c local/fileutils.c local/signals.c
 src_watch_CFLAGS = @NCURSES_CFLAGS@
