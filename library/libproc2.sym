@@ -65,3 +65,7 @@ global:
 local:
 	*;
 };
+
+LIBPROC_2.1 {
+        procps_users;
+} LIBPROC_2;

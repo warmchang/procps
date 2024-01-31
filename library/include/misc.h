@@ -58,6 +58,7 @@ int   procps_loadavg (double *av1, double *av5, double *av15);
 int   procps_uptime (double *uptime_secs, double *idle_secs);
 char *procps_uptime_sprint (void);
 char *procps_uptime_sprint_short (void);
+int   procps_users (void);
 
 
 // //////////////////////////////////////////////////////////////////

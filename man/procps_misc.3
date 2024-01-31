@@ -1,6 +1,6 @@
 .\"
-.\" Copyright (c) 2020-2023 Jim Warner <james.warner@comcast.net>
-.\" Copyright (c) 2020-2023 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2020-2024 Jim Warner <james.warner@comcast.net>
+.\" Copyright (c) 2020-2024 Craig Small <csmall@dropbear.xyz>
 .\"
 .\" This manual is free software; you can redistribute it and/or
 .\" modify it under the terms of the GNU Lesser General Public
@@ -8,7 +8,7 @@
 .\" version 2.1 of the License, or (at your option) any later version.
 .\"
 .\"
-.TH PROCPS_MISC 3 "August 2022" "libproc2"
+.TH PROCPS_MISC 3 "2024-01-31" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -34,6 +34,7 @@ Runtime Particulars
 .RI "int  \fB procps_uptime\fR (double *" uptime_secs ", double *" idle_secs ");"
 .RB "char *" procps_uptime_sprint " (void);"
 .RB "char *" procps_uptime_sprint_short " (void);"
+.RB "int   " procps_users " (void);"
 .RE
 .PP
 Namespace Particulars
@@ -96,6 +97,12 @@ HH:MM:SS up HH:MM, # users, load average: 1, 5, 15 MM averages
 up HH, MM
 .RE
 .P
+.BR procps_users ()
+returns the number of users on the system. This value comes from
+.BR sd_get_sessions (3)
+or enumerating through
+.BR getutent (3).
+.P
 .BR procps_ns_get_id ()
 returns the integer id (enum namespace_type) of the namespace for the given namespace \fIname\fR.
 .P
@@ -148,4 +155,6 @@ contains the set of namespaces for a particular
 .SH SEE ALSO
 .BR procps (3),
 .BR procps_pids (3),
+.BR getutent (3),
+.BR sd_get_sessions (3),
 .BR proc (5).
