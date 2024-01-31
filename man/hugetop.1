@@ -16,7 +16,10 @@ hugetop \- report huge page information
 .SH DESCRIPTION
 The
 .B hugetop
-command reports the huge page information of system and processes.
+command reports the huge page information of system and processes. It displays
+a summary of the system huge page status. For each process that has a
+least one huge page, the number of private and shared pages, along with
+the process PID and command name are displayed.
 .SH OPTIONS
 .TP
 \fB\-d\fR, \fB\-\-delay\fR=\fIN\fR

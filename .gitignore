@@ -37,6 +37,7 @@ Makefile
 Makefile.in
 missing
 mkinstalldirs
+src/hugetop
 src/pgrep
 src/pidof
 src/pkill

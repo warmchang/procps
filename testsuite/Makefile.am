@@ -35,6 +35,7 @@ endif
 
 DEJATOOL += \
 	free \
+	hugetop \
 	lib \
 	pgrep \
 	pkill \
@@ -47,6 +48,7 @@ endif
 EXTRA_DIST = \
     config/unix.exp \
     free.test/free.exp \
+    hugetop.test/hugetop.exp \
     kill.test/kill.exp \
     lib.test/fileutils.exp \
     lib.test/fileutils_badfd.sh \
