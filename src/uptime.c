@@ -1,10 +1,14 @@
 /*
  * uptime.c - display system uptime
  *
- * Copyright © 2002-2023 Craig Small <csmall@dropbear.xyz>
- * Copyright © 2020-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2002-2024 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2020-2024 Jim Warner <james.warner@comcast.net>
  * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
  *
+ * Based on old public domain uptime/whattime by:
+ * Larry Greenfield <greenfie@gauss.rutgers.edu>
+ * Michael K. Johnson <johnsonm@sunsite.unc.edu>
+ * J. Cowley
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -59,6 +63,28 @@ static void print_uptime_since()
         up_since->tm_hour, up_since->tm_min, up_since->tm_sec);
 }
 
+/*
+ * Print the standard fields but in raw format in a single line
+ */
+static void print_uptime_raw()
+{
+    time_t realseconds;
+    double uptime_secs;
+    double av1, av5, av15;
+    int users=0;
+
+    if ((realseconds = time(NULL)) < 0)
+        xerrx(EXIT_FAILURE, "time");
+    if (procps_uptime(&uptime_secs, NULL) < 0)
+        xerrx(EXIT_FAILURE, "procps_uptime_secs");
+    if ((users = procps_users()) < 0)
+        xerrx(EXIT_FAILURE, "procps_users");
+    if (procps_loadavg(&av1, &av5, &av15) < 0)
+        xerrx(EXIT_FAILURE, "procps_loadavg");
+
+    printf("%d %f %d %.2f %.2f %.2f\n",
+            (int)realseconds, uptime_secs, users, av1, av5, av15);
+}
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
     fputs(USAGE_HEADER, out);
@@ -66,6 +92,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
     fputs(USAGE_OPTIONS, out);
     fputs(_(" -p, --pretty   show uptime in pretty format\n"), out);
     fputs(USAGE_HELP, out);
+    fputs(_(" -r, --raw      show uptime values in raw format\n"), out);
     fputs(_(" -s, --since    system up since\n"), out);
     fputs(USAGE_VERSION, out);
     fprintf(out, USAGE_MAN_TAIL("uptime(1)"));
@@ -81,6 +108,7 @@ int main(int argc, char **argv)
     static const struct option longopts[] = {
         {"pretty", no_argument, NULL, 'p'},
         {"help", no_argument, NULL, 'h'},
+        {"raw", no_argument, NULL, 'r'},
         {"since", no_argument, NULL, 's'},
         {"version", no_argument, NULL, 'V'},
         {NULL, 0, NULL, 0}
@@ -94,13 +122,16 @@ int main(int argc, char **argv)
     textdomain(PACKAGE);
     atexit(close_stdout);
 
-    while ((c = getopt_long(argc, argv, "phsV", longopts, NULL)) != -1)
+    while ((c = getopt_long(argc, argv, "phrsV", longopts, NULL)) != -1)
         switch (c) {
         case 'p':
             p = 1;
             break;
         case 'h':
             usage(stdout);
+        case 'r':
+            print_uptime_raw();
+            return EXIT_SUCCESS;
         case 's':
             print_uptime_since();
             return EXIT_SUCCESS;

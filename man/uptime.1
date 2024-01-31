@@ -1,6 +1,6 @@
 .\"
-.\" Copyright (c) 2011-2023 Craig Small <csmall@dropbear.xyz>
-.\" Copyright (c) 2011-2023 Jim Warner <james.warner@comcast.net>
+.\" Copyright (c) 2011-2024 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2011-2024 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 2002      Albert Cahalan
 .\"
@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH UPTIME "1" "December 2012" "procps-ng" "User Commands"
+.TH UPTIME "1" "2024-01-31" "procps-ng" "User Commands"
 .SH NAME
 uptime \- Tell how long the system has been running.
 .SH SYNOPSIS
@@ -41,6 +41,9 @@ show uptime in pretty format
 \fB\-h\fR, \fB\-\-help\fR
 display this help text
 .TP
+\fB\-r\fR, \fB\-\-raw\fR
+Display values in a raw format. Current time and uptime are displayed in seconds.
+.TP
 \fB\-s\fR, \fB\-\-since\fR
 system up since, in yyyy-mm-dd HH:MM:SS format
 .TP
@@ -53,16 +56,6 @@ information about who is currently logged on
 .TP
 .I /proc
 process information
-.SH AUTHORS
-.B uptime
-was written by
-.MT greenfie@gauss.\:rutgers.\:edu
-Larry Greenfield
-.ME
-and
-.MT johnsonm@sunsite.\:unc.\:edu
-Michael K. Johnson
-.ME .
 .SH "SEE ALSO"
 .BR ps (1),
 .BR top (1),

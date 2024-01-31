@@ -15,3 +15,7 @@ set test "uptime pretty option"
 spawn $uptime --pretty
 expect_pass "$test" "up (\\d+ decades?, )?(\\d+ years?, )?(\\d+ weeks?, )?(\\d+ days?, )?(\\d+ hours?, )?(\\d+ minutes?)\\s*$"
 
+set test "uptime raw option"
+spawn $uptime --raw
+expect_pass "$test" "^\\d+ \\d+\\.\\d+ \\d+( \\d+\.\\d+){3}\\s*$"
+
