@@ -184,7 +184,7 @@ dist_man_MANS += \
 src_slabtop_SOURCES = src/slabtop.c local/strutils.c local/fileutils.c local/units.c
 src_slabtop_CFLAGS = @NCURSES_CFLAGS@
 src_slabtop_LDADD = $(LDADD) @NCURSES_LIBS@
-src_hugetop_SOURCES = src/hugetop.c local/strutils.c local/fileutils.c
+src_hugetop_SOURCES = src/hugetop.c local/strutils.c local/fileutils.c local/units.c
 src_hugetop_CFLAGS = @NCURSES_CFLAGS@
 src_hugetop_LDADD = $(LDADD) @NCURSES_LIBS@
 endif
