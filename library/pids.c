@@ -313,13 +313,13 @@ REG_set(TICS_USER,        ull_int, utime)
 setDECL(TICS_USER_C)    { (void)I; R->result.ull_int = P->utime + P->cutime; }
 setDECL(TIME_ALL)       { R->result.real = ((double)P->utime + P->stime) / I->hertz; }
 setDECL(TIME_ALL_C)     { R->result.real = ((double)P->utime + P->stime + P->cutime + P->cstime) / I->hertz; }
-setDECL(TIME_ELAPSED)   { double t = I->boot_tics - P->start_time; if (t > 0) R->result.real = t / I->hertz; }
+setDECL(TIME_ELAPSED)   { double t = (double)I->boot_tics - P->start_time; if (t > 0) R->result.real = t / I->hertz; }
 setDECL(TIME_START)     { R->result.real = (double)P->start_time / I->hertz; }
 REG_set(TTY,              s_int,   tty)
 setDECL(TTY_NAME)       { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
 setDECL(TTY_NUMBER)     { char buf[64]; freNAME(str)(R); dev_to_tty(buf, sizeof(buf), P->tty, P->tid, ABBREV_DEV|ABBREV_TTY|ABBREV_PTS); if (!(R->result.str = strdup(buf))) I->seterr = 1; }
-setDECL(UTILIZATION)    { double t = I->boot_tics - P->start_time; if (t > 0) R->result.real = ((P->utime + P->stime) * 100.0f) / t; }
-setDECL(UTILIZATION_C)  { double t = I->boot_tics - P->start_time; if (t > 0) R->result.real = ((P->utime + P->stime + P->cutime + P->cstime) * 100.0f) / t; }
+setDECL(UTILIZATION)    { double t = (double)I->boot_tics - P->start_time; if (t > 0) R->result.real = ((P->utime + P->stime) * 100.0f) / t; }
+setDECL(UTILIZATION_C)  { double t = (double)I->boot_tics - P->start_time; if (t > 0) R->result.real = ((P->utime + P->stime + P->cutime + P->cstime) * 100.0f) / t; }
 REG_set(VM_DATA,          ul_int,  vm_data)
 REG_set(VM_EXE,           ul_int,  vm_exe)
 REG_set(VM_LIB,           ul_int,  vm_lib)
