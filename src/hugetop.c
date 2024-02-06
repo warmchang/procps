@@ -66,9 +66,13 @@ struct nodes_hg_states {
 	struct node_hg_states *nodes;
 };
 
+#define DEFAULT_COLS 80
+#define DEFAULT_ROWS 24
+static unsigned short cols = DEFAULT_COLS;
+static unsigned short rows = DEFAULT_ROWS;
+
 static int run_once;
 static int numa;
-static unsigned short cols, rows;
 static struct termios saved_tty;
 static long delay = 3;
 
@@ -135,8 +139,8 @@ static void term_size(int unusused __attribute__ ((__unused__)))
 		cols = ws.ws_col;
 		rows = ws.ws_row;
 	} else {
-		cols = 80;
-		rows = 24;
+		cols = DEFAULT_COLS;
+		rows = DEFAULT_ROWS;
 	}
 	if (run_once)
 		rows = USHRT_MAX;
