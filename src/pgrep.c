@@ -121,7 +121,6 @@ static int opt_negate = 0;
 static int opt_exact = 0;
 static int opt_count = 0;
 static int opt_signal = SIGTERM;
-static int opt_lock = 0;
 static int opt_case = 0;
 static int opt_echo = 0;
 static int opt_threads = 0;
@@ -144,7 +143,6 @@ static struct el *opt_nslist = NULL;
 static struct el *opt_cgroup = NULL;
 static struct el *opt_env = NULL;
 static char *opt_pattern = NULL;
-static char *opt_pidfile = NULL;
 static char *opt_runstates = NULL;
 
 /* by default, all namespaces will be checked */
@@ -345,40 +343,52 @@ static int has_fcntl(int fd)
     f.l_len = 0;
     return fcntl(fd,F_SETLK,&f)==-1 && (errno==EACCES || errno==EAGAIN);
 }
-
-static struct el *read_pidfile(void)
+/*
+ * Read the given filename for a PID and optionally
+ * check for a lock on the file.
+ * Returns NULL on failure of a pointer to struct el
+ * on success
+ *
+ * Note: pidfile only needs to start with a number and
+ * then have EOL/EOF or whitespace
+ */
+static struct el *read_pidfile(
+        const char *restrict pidfile,
+        const int check_lock)
 {
-    char buf[12];
-    int fd;
-    struct stat sbuf;
-    char *endp;
-    int n, pid;
-    struct el *list = NULL;
+    FILE *fp;
+    char pidbuf[256];
 
-    fd = open(opt_pidfile, O_RDONLY|O_NOCTTY|O_NONBLOCK);
-    if(fd<0)
-        goto just_ret;
-    if(fstat(fd,&sbuf) || !S_ISREG(sbuf.st_mode) || sbuf.st_size<1)
-        goto out;
-    /* type of lock, if any, is not standardized on Linux */
-    if(opt_lock && !has_flock(fd) && !has_fcntl(fd))
-        goto out;
-    memset(buf,'\0',sizeof buf);
-    n = read(fd,buf,sizeof buf-1);
-    if (n<1)
-        goto out;
-    pid = strtoul(buf,&endp,10);
-    if(endp<=buf || pid<1 )
-        goto out;
-    if(*endp && !isspace(*endp))
-        goto out;
-    list = xmalloc(2 * sizeof *list);
-    list[0].num = 1;
-    list[1].num = pid;
-out:
-    close(fd);
-just_ret:
-    return list;
+    if (strcmp(pidfile, "-") == 0)
+        fp = stdin;
+    else
+        if ((fp = fopen(pidfile, "r")) == NULL) {
+            xerr(EXIT_FAILURE, _("Unable to open pidfile"));
+            return NULL;
+        }
+    if (check_lock) {
+        int fd = fileno(fp);
+        if (fp < 0 || (!has_flock(fd) && !has_fcntl(fd))) {
+            fclose(fp);
+            xerr(EXIT_FAILURE, _("Locking check for pidfile failed"));
+            return NULL;
+        }
+    }
+    if (fgets(pidbuf, sizeof pidbuf, fp) != NULL) {
+        long pid;
+        char *end = NULL;
+
+        errno = 0;
+        pid = strtol(pidbuf, &end, 10);
+        if (errno == 0 && pidbuf != end && end != NULL && (*end == '\0' || isspace(*end))) {
+            struct el *list = NULL;
+            list = xmalloc(2 * sizeof *list);
+            list[0].num = 1;
+            list[1].num = pid;
+            return list;
+        }
+    }
+    return NULL;
 }
 
 static int conv_uid (const char *restrict name, struct el *restrict e)
@@ -877,6 +887,8 @@ static void parse_opts (int argc, char **argv)
     char opts[64] = "";
     int opt;
     int criteria_count = 0;
+    char *opt_pidfile = NULL;
+    int opt_lock = 0;
 
     enum {
         SIGNAL_OPTION = CHAR_MAX + 1,
@@ -1130,7 +1142,7 @@ static void parse_opts (int argc, char **argv)
                      program_invocation_short_name);
 
     if(opt_pidfile){
-        opt_pid = read_pidfile();
+        opt_pid = read_pidfile(opt_pidfile, opt_lock);
         if(!opt_pid)
             xerrx(EXIT_FAILURE, _("pidfile not valid\n"
                          "Try `%s --help' for more information."),

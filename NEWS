@@ -9,6 +9,7 @@ procps-ng-NEXT
     external: docker containers added to pids api
     external: procps_users new exported function
   * pgrep: select process by environment variable          issue #167
+  * pgrep: Rework pidfile reading to include stdin         issue #318
   * ps: Add environ field
   * ps: Add htprv and htshr fields for HugeTables
   * ps: restore lost tasks for options --sort with -H      issue #304
