@@ -73,6 +73,7 @@ static unsigned short rows = DEFAULT_ROWS;
 
 static int run_once;
 static int numa;
+static int human;
 static struct termios saved_tty;
 static long delay = 3;
 
@@ -161,6 +162,10 @@ static void parse_input(char c)
 
 	case 'n':
 		numa = !numa;
+		break;
+
+	case 'H':
+		human = !human;
 		break;
 	}
 }
@@ -365,6 +370,8 @@ static void print_procs(void)
 	struct pids_stack *stack;
 	unsigned long long shared_hugepages;
 	unsigned long long private_hugepages;
+	char *line = calloc(cols, sizeof(char));
+	int bytes = 0;
 
 	procps_pids_new(&info, Items, ITEMS_COUNT);
 	while ((stack = procps_pids_get(info, PIDS_FETCH_TASKS_ONLY))) {
@@ -375,13 +382,21 @@ static void print_procs(void)
 		if (shared_hugepages + private_hugepages == 0)
 			continue;
 
-		PRINT_line("%*d %*llu %*llu %s\n",
-			    8, PIDS_GETINT(PID),
-			    10, shared_hugepages,
-			    10, private_hugepages,
-			    PIDS_GETSTR(CMD));
+		/* XXX: we can't PRINT_line("", scale_size(), scale_size()...), because scale_size()
+		 *      uses a single static buffer, this statement overwrites buffer again.
+		 */
+		bytes = snprintf(line, cols, "%8d %10s",
+				PIDS_GETINT(PID), scale_size(shared_hugepages, 2, 0, human));
+
+		if (bytes < cols)
+			snprintf(line + bytes, cols - bytes, " %10s %s",
+				scale_size(private_hugepages, 2, 0, human), PIDS_GETSTR(CMD));
+
+		PRINT_line("%s\n", line);
 	}
 	procps_pids_unref(&info);
+
+	free(line);
 }
 
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
@@ -392,6 +407,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_(" -d, --delay <secs>  delay updates\n"), out);
 	fputs(_(" -n, --numa          display per NUMA nodes Huge pages information\n"), out);
 	fputs(_(" -o, --once          only display once, then exit\n"), out);
+	fputs(_(" -H, --human         display human-readable output\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
 	fputs(USAGE_VERSION, out);
@@ -409,6 +425,7 @@ int main(int argc, char **argv)
 		{ "delay",      required_argument, NULL, 'd' },
 		{ "numa",       no_argument,       NULL, 'n' },
 		{ "once",       no_argument,       NULL, 'o' },
+		{ "human",      no_argument,       NULL, 'H' },
 		{ "help",       no_argument,       NULL, 'h' },
 		{ "version",    no_argument,       NULL, 'V' },
 		{  NULL,        0,                 NULL, 0   }
@@ -422,7 +439,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 	atexit(close_stdout);
 
-	while ((o = getopt_long(argc, argv, "d:nohV", longopts, NULL)) != -1) {
+	while ((o = getopt_long(argc, argv, "d:noHhV", longopts, NULL)) != -1) {
 		switch (o) {
 			case 'd':
 				errno = 0;
@@ -437,6 +454,9 @@ int main(int argc, char **argv)
 			case 'o':
 				run_once=1;
 				delay = 0;
+				break;
+			case 'H':
+				human = 1;
 				break;
 			case 'V':
 				printf(PROCPS_NG_VERSION);
