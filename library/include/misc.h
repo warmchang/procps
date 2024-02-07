@@ -1,8 +1,8 @@
 /*
  * misc.h - miscellaneous declarations for libproc2
  *
- * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
- * Copyright © 2021-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2024 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2021-2024 Jim Warner <james.warner@comcast.net>
  * Copyright © 1998-2003 Albert Cahalan
  * Copyright © 1992-1998 Michael K. Johnson <johnsonm@redhat.com>
  * Copyright © 1996      Charles Blake <cblake@bbn.com>
@@ -58,6 +58,7 @@ int   procps_loadavg (double *av1, double *av5, double *av15);
 int   procps_uptime (double *uptime_secs, double *idle_secs);
 char *procps_uptime_sprint (void);
 char *procps_uptime_sprint_short (void);
+int procps_uptime_snprint( char *restrict str, size_t size, double uptime_secs, const int pretty);
 int   procps_users (void);
 
 

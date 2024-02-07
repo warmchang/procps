@@ -8,6 +8,7 @@ procps-ng-NEXT
     external: disk sleep added to pids api, sleep revised  issue #265
     external: docker containers added to pids api
     external: procps_users new exported function
+    external: procps_uptime_snprint uses given upseconds
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
   * ps: Add environ field

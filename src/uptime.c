@@ -38,6 +38,8 @@
 
 #include "misc.h"
 
+#define UPTIME_LEN 100
+
 static void print_uptime_since()
 {
     double now, uptime_secs, idle_secs;
@@ -102,8 +104,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int main(int argc, char **argv)
 {
-    int c, p = 0;
-    char *uptime_str;
+    int c, len, p = 0;
+    char uptime_str[UPTIME_LEN];
+    double uptime_secs;
 
     static const struct option longopts[] = {
         {"pretty", no_argument, NULL, 'p'},
@@ -145,12 +148,9 @@ int main(int argc, char **argv)
     if (optind != argc)
         usage(stderr);
 
-    if (p)
-        uptime_str = procps_uptime_sprint_short();
-    else
-        uptime_str = procps_uptime_sprint();
-
-    if (!uptime_str || uptime_str[0] == '\0')
+    procps_uptime(&uptime_secs, NULL);
+    len = procps_uptime_snprint( uptime_str, UPTIME_LEN, uptime_secs, p);
+    if (len <= 0 || len == UPTIME_LEN)
        xerr(EXIT_FAILURE, _("Cannot get system uptime"));
 
     printf("%s\n", uptime_str);

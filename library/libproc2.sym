@@ -68,4 +68,5 @@ local:
 
 LIBPROC_2.1 {
         procps_users;
+        procps_uptime_snprint;
 } LIBPROC_2;

@@ -32,6 +32,7 @@ Runtime Particulars
 .RS 4
 .RI "int  \fB procps_loadavg\fR (double *" av1 ", double *" av5 ", double *" av15 ");"
 .RI "int  \fB procps_uptime\fR (double *" uptime_secs ", double *" idle_secs ");"
+.RI "int  \fB procps_uptime_snprint\fR ( char *restrict " str ", size_t " size ", double " uptime_secs ", const int " pretty ");"
 .RB "char *" procps_uptime_sprint " (void);"
 .RB "char *" procps_uptime_sprint_short " (void);"
 .RB "int   " procps_users " (void);"
@@ -96,6 +97,14 @@ HH:MM:SS up HH:MM, # users, load average: 1, 5, 15 MM averages
 .PP
 up HH, MM
 .RE
+.P
+.BR procps_uptime_snprint ()
+Uses the given buffer \fIstr\fR of \fIsize\fR length to fill in the uptime string
+instead of a statically allocated buffer.
+The function requires the \fIuptime_secs\fR value, most likely from the first
+value in
+.BR procps_uptime ()
+and the \fIpretty\fR flag determines if the output is standard or pretty/short.
 .P
 .BR procps_users ()
 returns the number of users on the system. This value comes from
