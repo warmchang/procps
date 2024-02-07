@@ -324,7 +324,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
     if (procps_uptime(&uptime_secs, NULL) < 0)
         return shortbuf;
 
-    procps_uptime_snprint( shortbuf, UPTIME_BUFLEN, uptime_secs, 0);
+    procps_uptime_snprint( upbuf, UPTIME_BUFLEN, uptime_secs, 0);
     return upbuf;
 }
 
