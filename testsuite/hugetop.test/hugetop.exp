@@ -8,7 +8,7 @@ set hugetop "${topdir}src/hugetop"
 set hugetlb "${topdir}testsuite/test-hugetlb"
 set kbytes 2048
 
-set hugetop_header "^hugetop - \[A-Za-z0-9: \]+\\s+Size \\d+\[A-Z\], Total \\d+, Free \\d+\\s+PID\\s+SHARED\\s+PRIVATE\\s+COMMAND\\s*$"
+set hugetop_header {^hugetop - [^\r]+\s+node\(s\): ([0-9.]+[A-Z]i - \d+/\d+(, )?){1,}\s+PID\s+SHARED\s+PRIVATE\s+COMMAND\s*$}
 set hugetop_row "^\\s+\(\\d+\)\\s+\\d+\\s+\\d+\\s+test-hugetlb\\s*$"
 
 set test "hugetop zero delay"
