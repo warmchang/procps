@@ -521,6 +521,24 @@ static int find_best_proc(
 #undef PIDS_GETSTR
 }
 
+static void show_uptime(
+            int container)
+{
+    double uptime_secs=0;
+    char buf[100];
+
+    if ( (getenv("PROCPS_CONTAINER") != NULL) || container) {
+	if (procps_container_uptime(&uptime_secs) < 0)
+		xerr(EXIT_FAILURE, _("Cannot get container uptime"));
+    } else {
+	if (procps_uptime(&uptime_secs, NULL) < 0)
+		xerr(EXIT_FAILURE, _("Cannot get system uptime"));
+    }
+    if (procps_uptime_snprint(buf, 100, uptime_secs, 0) < 0)
+        xerr(EXIT_FAILURE, _("Cannot format uptime"));
+
+    printf("%s\n", buf);
+}
 
 static void showinfo(
             const char *session, const char *name,
@@ -679,6 +697,7 @@ int main(int argc, char **argv)
 	char *env_var;
 
 	/* switches (defaults) */
+        int container = 0;
 	int header = 1;
 	int longform = 1;
 	int from = 1;
@@ -692,6 +711,7 @@ int main(int argc, char **argv)
 	};
 
 	static const struct option longopts[] = {
+                {"container", no_argument, NULL, 'c'},
 		{"no-header", no_argument, NULL, 'h'},
 		{"no-current", no_argument, NULL, 'u'},
 		{"short", no_argument, NULL, 's'},
@@ -717,8 +737,11 @@ int main(int argc, char **argv)
 #endif
 
 	while ((ch =
-		getopt_long(argc, argv, "husfoVip", longopts, NULL)) != -1)
+		getopt_long(argc, argv, "chusfoVip", longopts, NULL)) != -1)
 		switch (ch) {
+                case 'c':
+                        container = 1;
+                        break;
 		case 'h':
 			header = 0;
 			break;
@@ -795,7 +818,7 @@ int main(int argc, char **argv)
         }
 	if (header) {
 		/* print uptime and headers */
-		printf("%s\n", procps_uptime_sprint());
+                show_uptime(container);
 		/* Translation Hint: Following five uppercase messages are
 		 * headers. Try to keep alignment intact.  */
 		printf(_("%-*s TTY      "), userlen, _("USER"));

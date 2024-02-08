@@ -1,6 +1,6 @@
 .\"
-.\" Copyright (c) 2009-2023 Craig Small <csmall@dropbear.xyz>
-.\" Copyright (c) 2015-2023 Jim Warner <james.warner@comcast.net>
+.\" Copyright (c) 2009-2024 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2015-2024 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2012-2013 Jaromir Capik <jcapik@redhat.com>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 2002-2004 Albert Cahalan
@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH W "1" "2023-01-15" "procps-ng" "User Commands"
+.TH W "1" "2024-02-08" "procps-ng" "User Commands"
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
@@ -35,7 +35,10 @@ background jobs.
 .PP
 The PCPU time is the time used by the current process, named in the "what"
 field.
-.SH "COMMAND\-LINE OPTIONS"
+.SH OPTIONS
+.TP
+\fB\-c\fR, \fB\-\-container\fR
+show the container uptime instead of system uptime in the header.
 .TP
 \fB\-h\fR, \fB\-\-no\-header\fR
 Don't print the header.
@@ -81,10 +84,13 @@ Old style output.  Prints blank space for idle times less than one minute.
 Show information about the specified user only.
 .SH ENVIRONMENT
 .TP
-PROCPS_USERLEN
+.B PROCPS_CONTAINER
+If $\fBPROCPS_CONTAINER\fR is set, then \fBw\fR behaves as if the \fB\-\-container\fR option has been given.
+.TP
+.B PROCPS_USERLEN
 Override the default width of the username column.  Defaults to 8.
 .TP
-PROCPS_FROMLEN
+.B PROCPS_FROMLEN
 Override the default width of the from column.  Defaults to 16.
 .SH FILES
 .TP
