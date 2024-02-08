@@ -40,9 +40,23 @@
 
 #define UPTIME_LEN 100
 
-static void print_uptime_since()
+static double get_uptime_secs(const int container_mode)
 {
-    double now, uptime_secs, idle_secs;
+    double uptime_secs=0;
+
+    if (container_mode) {
+	if (procps_container_uptime(&uptime_secs) < 0)
+		xerr(EXIT_FAILURE, _("Cannot get container uptime"));
+    } else {
+	if (procps_uptime(&uptime_secs, NULL) < 0)
+		xerr(EXIT_FAILURE, _("Cannot get system uptime"));
+    }
+    return uptime_secs;
+}
+
+static void print_uptime_since(const int container_mode)
+{
+    double now, uptime_secs;
     time_t up_since_secs;
     struct tm *up_since;
     struct timeval tim;
@@ -53,8 +67,7 @@ static void print_uptime_since()
     now = (tim.tv_sec * 1000000.0) + tim.tv_usec;
 
     /* Get the uptime and calculate when that was */
-	if (procps_uptime(&uptime_secs, &idle_secs) < 0)
-		xerr(EXIT_FAILURE, _("Cannot get system uptime"));
+    uptime_secs = get_uptime_secs(container_mode);
     up_since_secs = (time_t) ((now/1000000.0) - uptime_secs);
 
     /* Show this */
@@ -105,10 +118,13 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 int main(int argc, char **argv)
 {
     int c, len, p = 0;
+    int container_mode = 0;
     char uptime_str[UPTIME_LEN];
     double uptime_secs;
+    char env_var;
 
     static const struct option longopts[] = {
+        {"container", no_argument, NULL, 'c'},
         {"pretty", no_argument, NULL, 'p'},
         {"help", no_argument, NULL, 'h'},
         {"raw", no_argument, NULL, 'r'},
@@ -125,8 +141,13 @@ int main(int argc, char **argv)
     textdomain(PACKAGE);
     atexit(close_stdout);
 
-    while ((c = getopt_long(argc, argv, "phrsV", longopts, NULL)) != -1)
+    if ( getenv("PROCPS_CONTAINER") != NULL)
+        container_mode = 1;
+    while ((c = getopt_long(argc, argv, "cphrsV", longopts, NULL)) != -1)
         switch (c) {
+        case 'c':
+            container_mode = 1;
+            break;
         case 'p':
             p = 1;
             break;
@@ -136,7 +157,7 @@ int main(int argc, char **argv)
             print_uptime_raw();
             return EXIT_SUCCESS;
         case 's':
-            print_uptime_since();
+            print_uptime_since(container_mode);
             return EXIT_SUCCESS;
         case 'V':
             printf(PROCPS_NG_VERSION);
@@ -148,7 +169,7 @@ int main(int argc, char **argv)
     if (optind != argc)
         usage(stderr);
 
-    procps_uptime(&uptime_secs, NULL);
+    uptime_secs = get_uptime_secs(container_mode);
     len = procps_uptime_snprint( uptime_str, UPTIME_LEN, uptime_secs, p);
     if (len <= 0 || len == UPTIME_LEN)
        xerr(EXIT_FAILURE, _("Cannot get system uptime"));

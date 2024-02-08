@@ -9,6 +9,7 @@ procps-ng-NEXT
     external: docker containers added to pids api
     external: procps_users new exported function
     external: procps_uptime_snprint uses given upseconds
+    external: procps_container_uptime
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
   * ps: Add environ field
@@ -20,8 +21,10 @@ procps-ng-NEXT
   * top: added a 'CLS' scheduling class field, like ps
   * top: exploit library addition of 'disk sleep'          issue #265
   * top: add 'docker' containers field, similar to 'lxc'
+  * uptime: Add container uptime option                    issue #300
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305
+  * w: Add container uptime option
   * watch: use clock_gettime                               issue #295
   * hugetop: a new utility to show huge page information   merge #214
 

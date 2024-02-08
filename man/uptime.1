@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH UPTIME "1" "2024-01-31" "procps-ng" "User Commands"
+.TH UPTIME "1" "2024-02-08" "procps-ng" "User Commands"
 .SH NAME
 uptime \- Tell how long the system has been running.
 .SH SYNOPSIS
@@ -35,6 +35,9 @@ is loaded all the time while on a 4 CPU system it means it was idle 75% of
 the time.
 .SH OPTIONS
 .TP
+\fB\-c\fR, \fB\-\-container\fR
+show the container uptime instead of system uptime.
+.TP
 \fB\-p\fR, \fB\-\-pretty\fR
 show uptime in pretty format
 .TP
@@ -49,6 +52,10 @@ system up since, in yyyy-mm-dd HH:MM:SS format
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 display version information and exit
+.SH ENVIRONMENT
+.TP
+.B PROCPS_CONTAINER
+If $\fBPROCPS_CONTAINER\fR is set, then \fBuptime\fR behaves as if the \fB\-\-container\fR option has been given.
 .SH FILES
 .TP
 .I /var/run/utmp
