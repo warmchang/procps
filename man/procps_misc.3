@@ -8,7 +8,7 @@
 .\" version 2.1 of the License, or (at your option) any later version.
 .\"
 .\"
-.TH PROCPS_MISC 3 "2024-01-31" "libproc2"
+.TH PROCPS_MISC 3 "2024-02-08" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -30,6 +30,7 @@ Platform Particulars
 Runtime Particulars
 .PP
 .RS 4
+.RI "int  \fB procps_container_uptime\fR (double *" uptime_secs ");"
 .RI "int  \fB procps_loadavg\fR (double *" av1 ", double *" av5 ", double *" av15 ");"
 .RI "int  \fB procps_uptime\fR (double *" uptime_secs ", double *" idle_secs ");"
 .RI "int  \fB procps_uptime_snprint\fR ( char *restrict " str ", size_t " size ", double " uptime_secs ", const int " pretty ");"
@@ -87,6 +88,22 @@ LINUX_VERSION_PATCH(\ ver\ )
 fetches the system load average and puts the 1, 5 and 15 minute averages into
 location(s) specified by any pointer which is not \fINULL\fR.
 .P
+.BR procps_container_uptime ()
+returns the uptime of a container into location specified by the pointer
+if it is not \fINULL\fR. This is currently determined by the elapsed time of PID 1,
+which could be given with the command:
+.PP
+.in +4n
+.EX
+$ \fBps -o etimes 1\fR
+ELAPSED
+12345
+.EE
+.in
+.PP
+There is no concept of idle time in a container so \fBprocps_container_uptime\fR()
+doesn't have that parameter.
+.P
 .BR procps_uptime ()
 returns uptime and/or idle seconds into location(s) specified by any pointer
 which is not \fINULL\fR.
@@ -101,9 +118,10 @@ up HH, MM
 .BR procps_uptime_snprint ()
 Uses the given buffer \fIstr\fR of \fIsize\fR length to fill in the uptime string
 instead of a statically allocated buffer.
-The function requires the \fIuptime_secs\fR value, most likely from the first
-value in
+The function requires the \fIuptime_secs\fR value, which can be obtained from
 .BR procps_uptime ()
+or
+.BR procps_container_uptime ()
 and the \fIpretty\fR flag determines if the output is standard or pretty/short.
 .P
 .BR procps_users ()
@@ -156,7 +174,7 @@ Contains the release version of the Linux kernel or proc filesystem.
 Contains the value at which PIDs wrap around, one greater than the maximum PID value.
 .TP
 .I /proc/uptime
-The raw values for uptime and idle time.
+The raw values for system uptime and idle time.
 .TP
 .IR /proc/ PID /ns
 contains the set of namespaces for a particular

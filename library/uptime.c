@@ -42,6 +42,7 @@
 
 #include "misc.h"
 #include "procps-private.h"
+#include "pids.h"
 
 #define UPTIME_FILE "/proc/uptime"
 
@@ -127,6 +128,38 @@ PROCPS_EXPORT int procps_uptime(
     return 0;
 }
 
+/*
+ * procps_container_uptime:
+ *
+ * Find the uptime of a container.
+ * This is derived from the start time of process 1
+ * uptime_secs can be null
+ *
+ * Returns: 0 on success and <0 on failure
+ */
+PROCPS_EXPORT int procps_container_uptime(
+        double *restrict uptime_secs)
+{
+    int rv;
+    double up=0;
+    struct pids_fetch *pids_fetch = NULL;
+    struct pids_info *info = NULL;
+    pid_t tgid = 1;
+
+
+    enum pids_item items[] = {
+        PIDS_TIME_ELAPSED};
+
+    if ( (rv = procps_pids_new(&info, items, 1) < 0))
+        return rv;
+
+    if ( (pids_fetch = procps_pids_select(info, &tgid, 1, PIDS_SELECT_PID)) == NULL)
+        return -1;
+    up = PIDS_VAL(0, real, (pids_fetch->stacks[0]), info);
+    if (uptime_secs)
+        *uptime_secs = up;
+    return 0;
+}
 
 #define SECS_IN_DECADE  (60*60*24*365*10)
 #define SECS_IN_YEAR    (60*60*24*365)
