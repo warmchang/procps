@@ -142,19 +142,19 @@ PROCPS_EXPORT int procps_container_uptime(
         double *restrict uptime_secs)
 {
     int rv;
-    double cont_up=0, sys_up;
+    double boot_time, start_time;
     struct pids_fetch *pids_fetch = NULL;
     struct pids_info *info = NULL;
     pid_t tgid = 1;
-
+    struct timespec tp;
 
     enum pids_item items[] = {
-        PIDS_TIME_ELAPSED};
+        PIDS_TIME_START};
 
     if (!uptime_secs)
         return 0; //valid, but odd call
 
-    if ( (rv = procps_uptime(&sys_up, NULL)) < 0)
+    if ( (rv = clock_gettime(CLOCK_BOOTTIME, &tp) < 0))
         return rv;
 
     if ( (rv = procps_pids_new(&info, items, 1) < 0))
@@ -167,13 +167,15 @@ PROCPS_EXPORT int procps_container_uptime(
     if (pids_fetch->stacks[0] == NULL)
        return -1;
 
-    cont_up = PIDS_VAL(0, real, (pids_fetch->stacks[0]), info);
+    boot_time = (tp.tv_sec + tp.tv_nsec * 1.0e-9);
+    start_time = PIDS_VAL(0, real, (pids_fetch->stacks[0]), info);
 
-    if (cont_up > sys_up) // Container PID started before system, or its lxc
-        *uptime_secs = sys_up;
+    if (boot_time > start_time)
+        *uptime_secs = boot_time - start_time;
     else
-        *uptime_secs = cont_up;
+        *uptime_secs = 0;
 
+    procps_pids_unref(&info);
     return 0;
 }
 
