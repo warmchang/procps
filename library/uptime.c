@@ -133,6 +133,7 @@ PROCPS_EXPORT int procps_uptime(
  *
  * Find the uptime of a container.
  * This is derived from the start time of process 1
+ * If hidepid is in action, this will return -1 with errno=ENOENT
  * uptime_secs can be null
  *
  * Returns: 0 on success and <0 on failure
@@ -141,7 +142,7 @@ PROCPS_EXPORT int procps_container_uptime(
         double *restrict uptime_secs)
 {
     int rv;
-    double up=0;
+    double cont_up=0, sys_up;
     struct pids_fetch *pids_fetch = NULL;
     struct pids_info *info = NULL;
     pid_t tgid = 1;
@@ -150,14 +151,29 @@ PROCPS_EXPORT int procps_container_uptime(
     enum pids_item items[] = {
         PIDS_TIME_ELAPSED};
 
+    if (!uptime_secs)
+        return 0; //valid, but odd call
+
+    if ( (rv = procps_uptime(&sys_up, NULL)) < 0)
+        return rv;
+
     if ( (rv = procps_pids_new(&info, items, 1) < 0))
         return rv;
 
     if ( (pids_fetch = procps_pids_select(info, &tgid, 1, PIDS_SELECT_PID)) == NULL)
         return -1;
-    up = PIDS_VAL(0, real, (pids_fetch->stacks[0]), info);
-    if (uptime_secs)
-        *uptime_secs = up;
+
+    // Did we get anything? If not error out (probably hidepid>0)
+    if (pids_fetch->stacks[0] == NULL)
+       return -1;
+
+    cont_up = PIDS_VAL(0, real, (pids_fetch->stacks[0]), info);
+
+    if (cont_up > sys_up) // Container PID started before system, or its lxc
+        *uptime_secs = sys_up;
+    else
+        *uptime_secs = cont_up;
+
     return 0;
 }
 
