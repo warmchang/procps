@@ -105,10 +105,12 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
     fputs(USAGE_HEADER, out);
     fprintf(out, _(" %s [options]\n"), program_invocation_short_name);
     fputs(USAGE_OPTIONS, out);
+    fputs(_(" -c, --container show container uptime\n"),out);
     fputs(_(" -p, --pretty   show uptime in pretty format\n"), out);
-    fputs(USAGE_HELP, out);
     fputs(_(" -r, --raw      show uptime values in raw format\n"), out);
     fputs(_(" -s, --since    system up since\n"), out);
+    fputs(USAGE_SEPARATOR, out);
+    fputs(USAGE_HELP, out);
     fputs(USAGE_VERSION, out);
     fprintf(out, USAGE_MAN_TAIL("uptime(1)"));
 

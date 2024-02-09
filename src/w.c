@@ -670,6 +670,7 @@ static void __attribute__ ((__noreturn__))
 	fprintf(out,
               _(" %s [options] [user]\n"), program_invocation_short_name);
 	fputs(USAGE_OPTIONS, out);
+	fputs(_(" -c, --container     show container uptime\n"),out);
 	fputs(_(" -h, --no-header     do not print header\n"),out);
 	fputs(_(" -u, --no-current    ignore current process username\n"),out);
 	fputs(_(" -s, --short         short format\n"),out);
