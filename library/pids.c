@@ -1,8 +1,8 @@
 /*
  * pids.c - process related definitions for libproc2
  *
- * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
- * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2015-2024 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2024 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -36,7 +36,6 @@
 #include <sys/types.h>
 
 #include "devname.h"
-#include "misc.h"
 #include "numa.h"
 #include "readproc.h"
 #include "wchan.h"
@@ -1480,7 +1479,7 @@ PROCPS_EXPORT struct pids_stack *procps_pids_get (
         struct pids_info *info,
         enum pids_fetch_type which)
 {
-    double up_secs;
+    struct timespec ts;
 
     errno = EINVAL;
     if (info == NULL)
@@ -1511,11 +1510,9 @@ fresh_start:
     if (info->containers_yes)
         pids_containers_check();
 
-    /* when in a namespace with proc mounted subset=pid,
-       we will be restricted to process information only */
     info->boot_tics = 0;
-    if (0 >= procps_uptime(&up_secs, NULL))
-        info->boot_tics = up_secs * info->hertz;
+    if (0 >= clock_gettime(CLOCK_BOOTTIME, &ts))
+        info->boot_tics = (ts.tv_sec + ts.tv_nsec * 1.0e-9) * info->hertz;
 
     if (NULL == info->read_something(info->get_PT, &info->get_proc))
         return NULL;
@@ -1536,7 +1533,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
         struct pids_info *info,
         enum pids_fetch_type which)
 {
-    double up_secs;
+    struct timespec ts;
     int rc;
 
     errno = EINVAL;
@@ -1557,11 +1554,9 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_reap (
         return NULL;
     info->read_something = which ? readeither : readproc;
 
-    /* when in a namespace with proc mounted subset=pid,
-       we will be restricted to process information only */
     info->boot_tics = 0;
-    if (0 >= procps_uptime(&up_secs, NULL))
-        info->boot_tics = up_secs * info->hertz;
+    if (0 >= clock_gettime(CLOCK_BOOTTIME, &ts))
+        info->boot_tics = (ts.tv_sec + ts.tv_nsec * 1.0e-9) * info->hertz;
 
     rc = pids_stacks_fetch(info);
 
@@ -1639,7 +1634,7 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         enum pids_select_type which)
 {
     unsigned ids[FILL_ID_MAX + 1];
-    double up_secs;
+    struct timespec ts;
     int rc;
 
     errno = EINVAL;
@@ -1667,11 +1662,9 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         return NULL;
     info->read_something = (which & PIDS_FETCH_THREADS_TOO) ? readeither : readproc;
 
-    /* when in a namespace with proc mounted subset=pid,
-       we will be restricted to process information only */
     info->boot_tics = 0;
-    if (0 >= procps_uptime(&up_secs, NULL))
-        info->boot_tics = up_secs * info->hertz;
+    if (0 >= clock_gettime(CLOCK_BOOTTIME, &ts))
+        info->boot_tics = (ts.tv_sec + ts.tv_nsec * 1.0e-9) * info->hertz;
 
     rc = pids_stacks_fetch(info);
 
