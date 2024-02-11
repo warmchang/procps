@@ -10,6 +10,7 @@ the processess running on the system.
 
 The following programs are found in procps:
 * *free* - Report the amount of free and used memory in the system
+* *hugetop* - Report the huge page information of system and processes
 * *kill* - Send a signal to a process based on PID
 * *pgrep* - List processes based on name or other attributes
 * *pkill* - Send a signal to a process based on name or other attributes
