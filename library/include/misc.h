@@ -59,7 +59,7 @@ int   procps_uptime (double *uptime_secs, double *idle_secs);
 int   procps_container_uptime (double *uptime_secs);
 char *procps_uptime_sprint (void);
 char *procps_uptime_sprint_short (void);
-int procps_uptime_snprint( char *restrict str, size_t size, double uptime_secs, const int pretty);
+int   procps_uptime_snprint (char *__restrict str, size_t size, double uptime_secs, const int pretty);
 int   procps_users (void);
 
 
