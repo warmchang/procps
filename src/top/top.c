@@ -2809,12 +2809,14 @@ static void *tasks_refresh (void *unused) {
    double uptime_cur;
    float et;
    int i, what;
+   struct timespec ts;
 
    do {
 #ifdef THREADED_TSK
       sem_wait(&Semaphore_tasks_beg);
 #endif
-      procps_uptime(&uptime_cur, NULL);
+      clock_gettime(CLOCK_BOOTTIME, &ts);
+      uptime_cur = (ts.tv_sec + ts.tv_nsec * 1.0e-9);
       et = uptime_cur - uptime_sav;
       if (et < 0.01) et = 0.005;
       uptime_sav = uptime_cur;
@@ -3678,9 +3680,10 @@ static void before (char *me) {
       Cpu_States_fmts = N_unq(STATE_lin2x7_fmt);
 
    // get the total cpus (and, if possible, numa node total)
-   if ((rc = procps_stat_new(&Stat_ctx)))
-      Restrict_some = Cpu_cnt = 1;
-   else {
+   if ((rc = procps_stat_new(&Stat_ctx))) {
+      Restrict_some = 1;
+      Cpu_cnt = sysconf(_SC_NPROCESSORS_ONLN);
+   } else {
       if (!(Stat_reap = procps_stat_reap(Stat_ctx, doALL, Stat_items, MAXTBL(Stat_items))))
          error_exit(fmtmk(N_fmt(LIB_errorcpu_fmt), __LINE__, strerror(errno)));
 #ifndef PRETEND0NUMA
@@ -6926,10 +6929,6 @@ static const char *task_show (const WIN_t *q, int idx) {
          case EU_CPU:        // PIDS_TICS_ALL_DELTA
          {  float u = (float)rSv(EU_CPU, u_int);
             int n = rSv(EU_THD, s_int);
-            if (Restrict_some) {
-               cp = justify_pad("?", W, Jn);
-               break;
-            }
 #ifndef TREE_VCPUOFF
  #ifndef TREE_VWINALL
             if (q == Curwin) // note: the following is NOT indented
@@ -6952,10 +6951,6 @@ static const char *task_show (const WIN_t *q, int idx) {
    /* ull_int, scale_pcnt for 'utilization' */
          case EU_CUU:        // PIDS_UTILIZATION
          case EU_CUC:        // PIDS_UTILIZATION_C
-            if (Restrict_some) {
-               cp = justify_pad("?", W, Jn);
-               break;
-            }
             cp = scale_pcnt(rSv(i, real), W, Jn, 1);
             break;
    /* u_int, make_num with auto width */
@@ -7296,7 +7291,9 @@ static void frame_make (void) {
    tasks_refresh(NULL);
 #endif
 
-   if (!Restrict_some) {
+   if (Restrict_some)
+      Cpu_cnt = sysconf(_SC_NPROCESSORS_ONLN);
+   else {
 #ifdef THREADED_CPU
       sem_post(&Semaphore_cpus_beg);
 #else
