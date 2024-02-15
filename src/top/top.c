@@ -3452,7 +3452,7 @@ signify_that:
       mkSEL(sels);
       putp(Cap_home);
       show_special(1, fmtmk(N_unq(YINSP_hdsels_fmt)
-         , pid, PID_VAL(EU_CMD, str, Curwin->ppt[i]), sels));
+         , pid, PID_VAL(EU_CMD, str, p), sels));
       INSP_MKSL(0, " ");
 
       if (Frames_signal) goto signify_that;
