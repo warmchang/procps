@@ -1,9 +1,9 @@
 Installation Instructions for procps
 ====================================
-Depending on what format you are using to get these files, you
-might need to run the `autogen.sh` program to create the
+Depending on how you retrieve this code you
+may need to run the `autogen.sh` program to create the
 configure script. If you have a configure script already then
-you might not need it.
+you may not need to do this.
 
 A typical installation would go something like
 
