@@ -224,7 +224,7 @@ static void hg_states_one_node(struct node_hg_states *node, const char *name)
 		exit(errno);
 	}
 
-	while (hg = readdir(hg_dir)) {
+	while ((hg = readdir(hg_dir))) {
 		if (memcmp(hg->d_name, "hugepages-", 10))
 			continue;
 
@@ -261,7 +261,7 @@ static void hg_states_new(struct nodes_hg_states *nodes)
 		exit(errno);
 	}
 
-	while (dirent = readdir(nodes_dir)) {
+	while ((dirent = readdir(nodes_dir))) {
 		if ((dirent->d_type != DT_DIR) || memcmp(dirent->d_name, "node", 4))
 			continue;
 
@@ -417,9 +417,9 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 
 int main(int argc, char **argv)
 {
-	int is_tty, o;
+	int is_tty = isatty(STDIN_FILENO);
+	int o;
 	unsigned short old_rows;
-	int flags = 0;
 
 	static const struct option longopts[] = {
 		{ "delay",      required_argument, NULL, 'd' },
@@ -487,7 +487,6 @@ int main(int argc, char **argv)
 	do {
 		struct timeval tv;
 		fd_set readfds;
-		int i;
 		char c;
 
 		if (run_once) {
