@@ -123,7 +123,6 @@ int main(int argc, char **argv)
     int container_mode = 0;
     char uptime_str[UPTIME_LEN];
     double uptime_secs;
-    char env_var;
 
     static const struct option longopts[] = {
         {"container", no_argument, NULL, 'c'},
