@@ -145,7 +145,7 @@ PROCPS_EXPORT int procps_container_uptime(
     double boot_time, start_time;
     struct pids_fetch *pids_fetch = NULL;
     struct pids_info *info = NULL;
-    pid_t tgid = 1;
+    unsigned tgid = 1;
     struct timespec tp;
 
     enum pids_item items[] = {
@@ -207,7 +207,7 @@ static int snprint_uptime_only(
     if ( (l = snprintf(str + pos, size-pos, "%s%d %s", comma > 0 ? ", " : "", (VAL), (UNITS))) >= size) \
         return size; \
     else pos +=l
-    int rv, pos=0, l;
+    int pos=0, l;
     int updecades = 0, upyears = 0, upweeks = 0, updays = 0, uphours = 0, upminutes = 0;
     int comma = 0;
 
