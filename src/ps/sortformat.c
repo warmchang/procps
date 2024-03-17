@@ -125,10 +125,8 @@ static void O_wrap(sf_node *sfn, int otype){
 static const char *aix_format_parse(sf_node *sfn){
   char *buf;                   /* temp copy of arg to hack on */
   char *walk;
-  int items;
 
-  /*** sanity check and count items ***/
-  items = 0;
+  /*** sanity check ***/
   walk = sfn->sf;
   /* state machine */ {
   int c = *walk++;
@@ -138,7 +136,6 @@ static const char *aix_format_parse(sf_node *sfn){
     if(c=='%')    goto get_desc;
     if(!c)        goto looks_ok;
   /* get_text: */
-    items++;
   get_more:
     c = *walk++;
     if(c=='%')    goto get_desc;
@@ -146,7 +143,6 @@ static const char *aix_format_parse(sf_node *sfn){
     if(c)         goto aix_oops;
     goto looks_ok;
   get_desc:
-    items++;
     c = *walk++;
     if(c&&c!=' ') goto initial;
     return _("missing AIX field descriptor");
@@ -160,7 +156,7 @@ static const char *aix_format_parse(sf_node *sfn){
   buf = xstrdup(sfn->sf);
   walk = sfn->sf;
 
-  while(items--){
+  while(1){
     format_node *fnode;  /* newly allocated */
     format_node *endp;   /* for list manipulation */
 
@@ -183,6 +179,7 @@ static const char *aix_format_parse(sf_node *sfn){
     } else {
       size_t len;
       len = strcspn(walk, "%");
+      /* ladies and gentlemen, please use the following exit only ... */
       if(!len) break;
       memcpy(buf,walk,len);
       buf[len] = '\0';
