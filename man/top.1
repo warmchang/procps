@@ -59,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "August 2023" "procps-ng" "User Commands"
+.TH TOP 1 "March 2024" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -1360,7 +1360,7 @@ depending on the context in which they are issued.
         Size:        #, i, n
         Sorting:     <, >, f, R
   4d.\fI Color-Mapping \fR
-        <Ret>, a, B, b, H, M, q, S, T, w, z, 0 \- 7
+        <Ret>, a, B, b, H, M, q, S, T, w, z, @, 0 \- 7
   5b.\fI Commands-for-Windows \fR
         \-, _, =, +, A, a, G, g, w
   5c.\fI Scrolling-a-Window \fR
@@ -2117,8 +2117,8 @@ in all four windows before returning to the \*(We display.
 .P
 The following \*(CIs are available.
 .nf
-    \fB4\fR upper case letters to select a\fB target \fR
-    \fB8\fR numbers to select a\fB color \fR
+    \fB5\fR upper case letters to select a\fB target \fR
+    \fB8\fR numbers to select a\fB color\fR (@ selects no color)\fR
     normal toggles available \fR
         B         :bold disable/enable
         b         :running tasks "bold"/reverse

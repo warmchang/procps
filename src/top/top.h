@@ -304,10 +304,10 @@ typedef          long long SIC_t;
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_MEMORY | Show_CMDLIN \
    | Show_COLORS | Show_FOREST | Show_HIROWS | Show_IDLEPS | Show_JRNUMS | Show_TASKON \
    | Qsrt_NORMAL )
-#define DEF_GRAPHS2  1, 2
+#define DEF_GRAPHS2  2, 2
 #define DEF_SCALES2  SK_Gb, SK_Mb
 #define ALT_WINFLGS (DEF_WINFLGS | Show_HIBOLD) & ~Show_FOREST
-#define ALT_GRAPHS2  2, 0
+#define ALT_GRAPHS2  1, 1
 #endif
 
         /* These are used to direct wins_reflag */
@@ -333,7 +333,8 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
           summclr,                // a colors 'number' used for summ info
           msgsclr,                //             "           in msgs/pmts
           headclr,                //             "           in cols head
-          taskclr;                //             "           in task rows
+          taskclr,                //             "           in task data
+          task_xy;                //             "           for task x/y
    char   winname [WINNAMSIZ];    // name for the window, user changeable
    FLG_t  fieldscur [PFLAGSSIZ];  // the fields for display & their order
 } RCW_t;
@@ -535,7 +536,7 @@ typedef struct WIN_t {
 #define RCF_XFORMED_ID  'k'
         // this next guy is incremented when columns change
         // ( to prevent older top versions from accessing )
-#define RCF_VERSION_ID  'l'
+#define RCF_VERSION_ID  'm'
 
 #define FLD_OFFSET  ( (int)'%' )
 #define FLD_ROWMAX  20
@@ -594,16 +595,16 @@ typedef struct WIN_t {
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
    { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, 1, 0, 0, \
-      COLOR_RED, COLOR_RED, COLOR_YELLOW, COLOR_RED, \
+      COLOR_RED, COLOR_RED, COLOR_YELLOW, -1, COLOR_RED, \
       "Def", DEF_FIELDS }, \
-   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, 0, \
-      COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, COLOR_CYAN, \
+   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, 0, \
+      COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, -1, COLOR_CYAN, \
       "Job", JOB_FIELDS }, \
-   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, 0, \
-      COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, COLOR_MAGENTA, \
+   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, 0, \
+      COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, -1, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 0, 0, 0, \
-      COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, COLOR_YELLOW, \
+   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, 0, \
+      COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, -1, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
    }, 0, DEF_SCALES2, 0, 0 }
 

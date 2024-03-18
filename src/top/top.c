@@ -798,6 +798,7 @@ static void capsmk (WIN_t *q) {
          thanks: rofl0r <retnyg@gmx.net> */
  #define tPM(a,b) tparm(a, b, 0, 0, 0, 0, 0, 0, 0, 0)
    static int capsdone = 0;
+   char rowhigh_tmp [CLRBUFSIZ];
 
    // we must NOT disturb our 'empty' terminfo strings!
    if (Batch) return;
@@ -839,17 +840,37 @@ static void capsmk (WIN_t *q) {
       the job's done until he/she/it has a change-of-heart */
    STRLCPY(q->cap_bold, CHKw(q, View_NOBOLD) ? Cap_norm : tIF(enter_bold_mode))
    if (CHKw(q, Show_COLORS) && max_colors > 0) {
-      STRLCPY(q->capclr_sum, tPM(set_a_foreground, q->rc.summclr))
-      snprintf(q->capclr_msg, sizeof(q->capclr_msg), "%s%s"
-         , tPM(set_a_foreground, q->rc.msgsclr), Cap_reverse);
-      snprintf(q->capclr_pmt, sizeof(q->capclr_pmt), "%s%s"
-         , tPM(set_a_foreground, q->rc.msgsclr), q->cap_bold);
-      snprintf(q->capclr_hdr, sizeof(q->capclr_hdr), "%s%s"
-         , tPM(set_a_foreground, q->rc.headclr), Cap_reverse);
-      snprintf(q->capclr_rownorm, sizeof(q->capclr_rownorm), "%s%s"
-         , Caps_off, tPM(set_a_foreground, q->rc.taskclr));
+      if (q->rc.summclr < 0)
+         STRLCPY(q->capclr_sum, Cap_norm)
+      else
+         STRLCPY(q->capclr_sum, tPM(set_a_foreground, q->rc.summclr))
+      if (q->rc.msgsclr < 0)
+         STRLCPY(q->capclr_msg, Cap_reverse)
+      else
+         snprintf(q->capclr_msg, sizeof(q->capclr_msg), "%s%s"
+            , tPM(set_a_foreground, q->rc.msgsclr), Cap_reverse);
+      if (q->rc.msgsclr < 0)
+         STRLCPY(q->capclr_pmt, q->cap_bold)
+      else
+         snprintf(q->capclr_pmt, sizeof(q->capclr_pmt), "%s%s"
+            , tPM(set_a_foreground, q->rc.msgsclr), q->cap_bold);
+      if (q->rc.headclr < 0)
+         STRLCPY(q->capclr_hdr, Cap_reverse)
+      else
+         snprintf(q->capclr_hdr, sizeof(q->capclr_hdr), "%s%s"
+            , tPM(set_a_foreground, q->rc.headclr), Cap_reverse);
+      if (q->rc.taskclr < 0)
+         STRLCPY(q->capclr_rownorm, Cap_norm)
+      else
+         snprintf(q->capclr_rownorm, sizeof(q->capclr_rownorm), "%s%s"
+            , Caps_off, tPM(set_a_foreground, q->rc.taskclr));
+      if (q->rc.task_xy < 0)
+         STRLCPY(rowhigh_tmp, Cap_norm)
+      else
+         snprintf(rowhigh_tmp, sizeof(rowhigh_tmp), "%s%s"
+            , Caps_off, tPM(set_a_foreground, q->rc.task_xy));
    } else {
-      q->capclr_sum[0] = '\0';
+      STRLCPY(q->capclr_sum, Cap_norm)
 #ifdef USE_X_COLHDR
       snprintf(q->capclr_msg, sizeof(q->capclr_msg), "%s%s"
          , Cap_reverse, q->cap_bold);
@@ -859,11 +880,12 @@ static void capsmk (WIN_t *q) {
       STRLCPY(q->capclr_pmt, q->cap_bold)
       STRLCPY(q->capclr_hdr, Cap_reverse)
       STRLCPY(q->capclr_rownorm, Cap_norm)
+      STRLCPY(rowhigh_tmp, Cap_norm)
    }
 
    // composite(s), so we do 'em outside and after the if
    snprintf(q->capclr_rowhigh, sizeof(q->capclr_rowhigh), "%s%s"
-      , q->capclr_rownorm, CHKw(q, Show_HIBOLD) ? q->cap_bold : Cap_reverse);
+      , rowhigh_tmp, CHKw(q, Show_HIBOLD) ? q->cap_bold : Cap_reverse);
  #undef tIF
  #undef tPM
 } // end: capsmk
@@ -4048,14 +4070,16 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
       if (w->rc.core_types < 0 || w->rc.core_types > E_CORES_ONLY)
          return p;
 
-      if (4 != fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
-         , &w->rc.summclr, &w->rc.msgsclr, &w->rc.headclr, &w->rc.taskclr))
+      // 4 colors through release 4.0.4, 5 colors after ...
+      if (4 > fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d\n"
+         , &w->rc.summclr, &w->rc.msgsclr, &w->rc.headclr, &w->rc.taskclr, &w->rc.task_xy))
             return p;
       // would prefer to use 'max_colors', but it isn't available yet...
-      if (w->rc.summclr < 0 || w->rc.summclr > 255) return p;
-      if (w->rc.msgsclr < 0 || w->rc.msgsclr > 255) return p;
-      if (w->rc.headclr < 0 || w->rc.headclr > 255) return p;
-      if (w->rc.taskclr < 0 || w->rc.taskclr > 255) return p;
+      if (w->rc.summclr < -1 || w->rc.summclr > 255) return p;
+      if (w->rc.msgsclr < -1 || w->rc.msgsclr > 255) return p;
+      if (w->rc.headclr < -1 || w->rc.headclr > 255) return p;
+      if (w->rc.taskclr < -1 || w->rc.taskclr > 255) return p;
+      if (w->rc.task_xy < -1 || w->rc.task_xy > 255) return p;
 
       switch (Rc.id) {
          case 'a':                          // 3.2.8 (former procps)
@@ -4080,10 +4104,13 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
                return p;
             Rc.tics_scaled = 0;
          // fall through
-         case 'k':                          // this is release 4.0.2
+         case 'k':                          // releases 4.0.1 thru 4.0.4
          // fall through                       ( transitioned to integer )
-         case 'l':                          // current RCF_VERSION_ID
-         // fall through                       ( added EU_CLS, EU_DKR  )
+         case 'l':                          // no release, development only
+            w->rc.task_xy = w->rc.taskclr;
+         // fall through
+         case 'm':                          // current RCF_VERSION_ID
+         // fall through                       ( added rc.task_xy )
          default:
             if (mlen(w->rc.fieldscur) < EU_MAXPFLGS)
                return p;
@@ -4102,6 +4129,8 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
    } // end: for (GROUPSMAX)
 
    // any new addition(s) last, for older rcfiles compatibility...
+   // ( and ensure we're beginning a new line )
+   (void)fscanf(fp, "\n");
    (void)fscanf(fp, "Fixed_widest=%d, Summ_mscale=%d, Task_mscale=%d, Zero_suppress=%d, Tics_scaled=%d\n"
       , &Rc.fixed_widest, &Rc.summ_mscale, &Rc.task_mscale, &Rc.zero_suppress,  &Rc.tics_scaled);
    if (Rc.fixed_widest < -1 || Rc.fixed_widest > SCREENMAX)
@@ -4672,6 +4701,15 @@ signify_that:
             clr = *pclr;
             tgt = key;
             break;
+         case 'X':
+            pclr = &w->rc.task_xy;
+            clr = *pclr;
+            tgt = key;
+            break;
+         case '@':
+            clr = -1;
+            *pclr = clr;
+            break;
          case '0': case '1': case '2': case '3':
          case '4': case '5': case '6': case '7':
             clr = key - '0';
@@ -4679,12 +4717,12 @@ signify_that:
             break;
          case kbd_UP:
             ++clr;
-            if (clr >= max_colors) clr = 0;
+            if (clr >= max_colors) clr = -1;
             *pclr = clr;
             break;
          case kbd_DOWN:
             --clr;
-            if (clr < 0) clr = max_colors - 1;
+            if (clr < -1) clr = max_colors - 1;
             *pclr = clr;
             break;
          case 'B':
@@ -5516,9 +5554,9 @@ static void write_rcfile (void) {
          , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks
          , Winstk[i].rc.graph_cpus, Winstk[i].rc.graph_mems, Winstk[i].rc.double_up
          , Winstk[i].rc.combine_cpus, Winstk[i].rc.core_types);
-      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d\n"
+      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
-         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr);
+         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr, Winstk[i].rc.task_xy);
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
