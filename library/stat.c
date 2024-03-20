@@ -182,9 +182,10 @@ struct stat_info {
 #define SYS_set(e,t,x) setDECL(e) { \
     (void)T; R->result. t = S->new. x; }
 // delta assignment
+// ( thanks to 'stat_derive_unique', this macro no longer needs to )
+// ( protect against a negative value when a cpu is brought online )
 #define TICsetH(e,t,x) setDECL(e) { \
-    (void)S; R->result. t = 0; \
-    if ( T->new. x > T->old. x ) R->result. t = ( T->new. x - T->old. x ); }
+    (void)S; R->result. t = ( T->new. x - T->old. x ); }
 #define SYSsetH(e,t,x) setDECL(e) { \
     (void)T; R->result. t = ( S->new. x - S->old. x ); }
 
@@ -555,6 +556,9 @@ wrap_up:
 static inline void stat_derive_unique (
         struct hist_tic *this)
 {
+    unsigned long long *new, *old;
+    int i;
+
     /* note: we calculate these derived values in a manner consistent with
              the calculations for cgroup accounting, as nearly as possible
        ( see linux sources: ./kernel/cgroup/rstat.c, root_cgroup_cputime ) */
@@ -576,13 +580,15 @@ static inline void stat_derive_unique (
     this->new.xbsy
         = this->new.xtot - this->new.xidl;
 
-    // don't distort deltas when cpus are taken offline or brought online
-    if (this->new.xusr < this->old.xusr
-    || (this->new.xsys < this->old.xsys)
-    || (this->new.xidl < this->old.xidl)
-    || (this->new.xbsy < this->old.xbsy)
-    || (this->new.xtot < this->old.xtot))
-        memcpy(&this->old, &this->new, sizeof(struct stat_jifs));
+    // don't distort results when cpus are brought back online
+    new = (unsigned long long *)&this->new;
+    old = (unsigned long long *)&this->old;
+    for (i = 0; i < sizeof(struct stat_jifs) / sizeof(unsigned long long); i++) {
+        if (*(new++) < *(old++)) {
+            memcpy(&this->old, &this->new, sizeof(struct stat_jifs));
+            break;
+        }
+    }
 } // end: stat_derive_unique
 
 
