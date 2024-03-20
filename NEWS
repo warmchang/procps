@@ -3,6 +3,7 @@ procps-ng-NEXT
   * library
     internal: days/users when value is 0                   issue #303
     internal: dont print 60s but increment minute          issue #302
+    internal: stat api fixed remaining cpu distortions     issue #321
     external: zswap & zswapped added to meminfo api
     external: schedule class added to pids api
     external: disk sleep added to pids api, sleep revised  issue #265
@@ -10,6 +11,7 @@ procps-ng-NEXT
     external: procps_users new exported function
     external: procps_uptime_snprint uses given upseconds
     external: procps_container_uptime
+    external: meminfo api adds SecPageTables, Unaccepted
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
   * ps: Add environ field
@@ -21,6 +23,7 @@ procps-ng-NEXT
   * top: added a 'CLS' scheduling class field, like ps
   * top: exploit library addition of 'disk sleep'          issue #265
   * top: add 'docker' containers field, similar to 'lxc'
+  * top: provides additional control over colors
   * uptime: Add container uptime option                    issue #300
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305
