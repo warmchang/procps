@@ -3991,6 +3991,7 @@ static int config_osel (FILE *fp, char *buf, size_t size) {
       }
    }
    // let's prime that buf for the next guy...
+   buf[0] = '\0';
    fgets(buf, size, fp);
    return 0;
 
