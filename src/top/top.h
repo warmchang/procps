@@ -728,8 +728,8 @@ typedef struct WIN_t {
 /*------  Startup routines  ----------------------------------------------*/
 //atic void          before (char *me);
 //atic int           cfg_xform (WIN_t *q, char *flds, const char *defs);
-//atic int           config_insp (FILE *fp, char *buf, size_t size);
-//atic int           config_osel (FILE *fp, char *buf, size_t size);
+//atic void          config_insp (FILE *fp, char *buf, size_t size);
+//atic void          config_osel (FILE *fp, char *buf, size_t size);
 //atic const char   *configs_file (FILE *fp, const char *name, float *delay);
 //atic int           configs_path (const char *const fmts, ...);
 //atic void          configs_reads (void);

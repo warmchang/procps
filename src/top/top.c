@@ -3871,7 +3871,7 @@ static int cfg_xform (WIN_t *q, char *flds, const char *defs) {
         /*
          * A configs_file *Helper* function responsible for reading
          * and validating a configuration file's 'Inspection' entries */
-static int config_insp (FILE *fp, char *buf, size_t size) {
+static void config_insp (FILE *fp, char *buf, size_t size) {
    int i;
 
    // we'll start off with a 'potential' blank or empty line
@@ -3950,23 +3950,23 @@ static int config_insp (FILE *fp, char *buf, size_t size) {
     #undef mkS
    }
 #endif
-   return 0;
+   return;
 } // end: config_insp
 
 
         /*
          * A configs_file *Helper* function responsible for reading
          * and validating a configuration file's 'Other Filter' entries */
-static int config_osel (FILE *fp, char *buf, size_t size) {
+static void config_osel (FILE *fp, char *buf, size_t size) {
    int i, ch, tot, wno, begun;
    char *p;
 
    for (begun = 0;;) {
-      if (!fgets(buf, size, fp)) return 0;
+      if (!fgets(buf, size, fp)) return;
       if (buf[0] == '\n') continue;
       // whoa, must be an 'inspect' entry
       if (!begun && !strstr(buf, Osel_delim_1_txt))
-         return 0;
+         return;
       // ok, we're now beginning
       if (!begun && strstr(buf, Osel_delim_1_txt)) {
          begun = 1;
@@ -3982,7 +3982,7 @@ static int config_osel (FILE *fp, char *buf, size_t size) {
       if (tot < 0) goto end_oops;
 
       for (i = 0; i < tot; i++) {
-         if (!fgets(buf, size, fp)) return 1;
+         if (!fgets(buf, size, fp)) return;
          if (1 > sscanf(buf, Osel_filterI_fmt, &ch)) goto end_oops;
          if ((p = strchr(buf, '\n'))) *p = '\0';
          if (!(p = strstr(buf, OSEL_FILTER))) goto end_oops;
@@ -3993,11 +3993,11 @@ static int config_osel (FILE *fp, char *buf, size_t size) {
    // let's prime that buf for the next guy...
    buf[0] = '\0';
    fgets(buf, size, fp);
-   return 0;
+   return;
 
 end_oops:
    Rc_questions = 1;
-   return 1;
+   return;
 } // end: config_osel
 
 
