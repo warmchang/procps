@@ -479,8 +479,8 @@ static void stat_cores_check (
     core = info->cores;
     while (core) {
         core->type = P_CORE;
-        if (core->thread_1 > ECORE_BEGIN
-        || (core->thread_2 > ECORE_BEGIN))
+        if (core->thread_1 >= ECORE_BEGIN
+        || (core->thread_2 >= ECORE_BEGIN))
             core->type = E_CORE;
         core = core->next;
     }
