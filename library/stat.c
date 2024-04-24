@@ -48,7 +48,7 @@
 
 /* ------------------------------------------------------------------------- +
    this provision just does what its name sugggests - it will create several |
-   E-Core cpus for testing that STAT_TIC_ID_CORE & STAT_TIC_TYPE_CORE stuff! |*/
+   E-Core cpus for testing that STAT_TIC_ID_CORE & STAT_TIC_TYPE_CORE stuff! | */
 // #define PRETEND_E_CORES //----------------------------------------------- |
 // ------------------------------------------------------------------------- +
 

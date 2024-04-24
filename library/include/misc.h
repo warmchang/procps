@@ -48,7 +48,7 @@ unsigned int procps_pid_length (void);
 #define LINUX_VERSION_MINOR(x) (((x)>> 8) & 0xFF)
 #define LINUX_VERSION_PATCH(x) ( (x)      & 0xFF)
 
-int procps_linux_version(void);
+int procps_linux_version (void);
 
 
 // //////////////////////////////////////////////////////////////////
