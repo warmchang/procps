@@ -169,9 +169,9 @@ static void select_procs (void)
 	while ((stack = procps_pids_get(info, (opt_threads
 					       ? PIDS_FETCH_THREADS_TOO
 					       : PIDS_FETCH_TASKS_ONLY)))) {
-		char  *p_cmd     = PIDS_VAL(rel_cmd,     str,   stack, info),
-		     **p_cmdline = PIDS_VAL(rel_cmdline, strv,  stack, info);
-		int    tid       = PIDS_VAL(rel_pid,     s_int, stack, info);
+		char  *p_cmd     = PIDS_VAL(rel_cmd,     str,   stack),
+		     **p_cmdline = PIDS_VAL(rel_cmdline, strv,  stack);
+		int    tid       = PIDS_VAL(rel_pid,     s_int, stack);
 
 		if (opt_rootdir_check) {
 			/* get the /proc/<pid>/root symlink value */

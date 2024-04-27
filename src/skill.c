@@ -170,8 +170,8 @@ static int match_ns(const int pid)
     return found;
 }
 
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack, Pids_info)
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, Pids_info)
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack)
 
 static int ask_user(struct pids_stack *stack)
 {
@@ -274,9 +274,9 @@ static void show_lists(void)
 
 static void scan_procs(struct run_time_conf_t *run_time)
 {
- #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], Pids_info)
- #define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i], Pids_info)
- #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], Pids_info)
+ #define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+ #define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i])
+ #define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
     struct pids_fetch *reap;
     int i, total_procs;
 

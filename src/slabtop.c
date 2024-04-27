@@ -227,7 +227,7 @@ static void parse_opts (int argc, char **argv)
 
 static void print_summary (void)
 {
- #define totalVAL(e,t) SLABINFO_VAL(e, t, p, Slab_info)
+ #define totalVAL(e,t) SLABINFO_VAL(e, t, p)
     enum slabinfo_item items[] = {
         SLABS_ACTIVE_OBJS,   SLABS_NUM_OBJS,
         SLABS_ACTIVE_SLABS,  SLABS_NUMS_SLABS,
@@ -291,7 +291,7 @@ static void print_headings (void)
 
 static void print_details (struct slabinfo_stack *stack)
 {
- #define nodeVAL(e,t) SLABINFO_VAL(e, t, stack, Slab_info)
+ #define nodeVAL(e,t) SLABINFO_VAL(e, t, stack)
     PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %10s %-23s\n"
         , nodeVAL(nod_OBJS,  u_int)
         , nodeVAL(nod_AOBJS, u_int)

@@ -516,7 +516,7 @@ void reset_global(void){
   bsd_c_option          = 0;
   bsd_e_option          = 0;
   cached_euid           = geteuid();
-  cached_tty            = PIDS_VAL(0, s_int, p, Pids_info);
+  cached_tty            = PIDS_VAL(0, s_int, p);
 /* forest_prefix must be all zero because of POSIX */
   forest_type           = 0;
   format_flags          = 0;   /* -l -f l u s -j... */

@@ -430,10 +430,10 @@ static int find_best_proc(
         pid_t *pid,
         struct pids_fetch *reap)
 {
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i], info)
-#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i], info)
-#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i], info)
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i], info)
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i])
+#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i])
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
     unsigned uid = ~0U;
     pid_t ut_pid = -1;
     int found_utpid = 0;
@@ -493,7 +493,7 @@ static int find_best_proc(
         }
         if (PIDS_GETINT(TTY) != line)
             continue;
-        (*jcpu) += PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i], info);
+        (*jcpu) += PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i]);
         if (!(secondbest_time && PIDS_GETULL(START) <= secondbest_time)) {
             secondbest_time = PIDS_GETULL(START);
             if (cmdline[0] == '-' && cmdline[1] == '\0') {

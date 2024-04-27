@@ -243,8 +243,8 @@ static const char *mapping_name(struct pids_stack *p, unsigned long addr,
 	}
 
 	cp = _("  [ anon ]");
-	if (PIDS_VAL(start_stack, ul_int, p, Pids_info) >= addr
-	&& (PIDS_VAL(start_stack, ul_int, p, Pids_info) <= addr + len))
+	if (PIDS_VAL(start_stack, ul_int, p) >= addr
+	&& (PIDS_VAL(start_stack, ul_int, p) <= addr + len))
 		cp = _("  [ stack ]");
 	return cp;
 }
@@ -551,14 +551,14 @@ static int one_proc (struct pids_stack *p)
 	unsigned long long total_shared_dirty = 0ull;
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0;
 
-	printf("%u:   %s\n", PIDS_VAL(tgid, s_int, p, Pids_info), PIDS_VAL(cmdline, str, p, Pids_info));
+	printf("%u:   %s\n", PIDS_VAL(tgid, s_int, p), PIDS_VAL(cmdline, str, p));
 
 	if (x_option || X_option || c_option) {
-		snprintf(buf, sizeof buf, "/proc/%u/smaps", PIDS_VAL(tgid, s_int, p, Pids_info));
+		snprintf(buf, sizeof buf, "/proc/%u/smaps", PIDS_VAL(tgid, s_int, p));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	} else {
-		snprintf(buf, sizeof buf, "/proc/%u/maps", PIDS_VAL(tgid, s_int, p, Pids_info));
+		snprintf(buf, sizeof buf, "/proc/%u/maps", PIDS_VAL(tgid, s_int, p));
 		if ((fp = fopen(buf, "r")) == NULL)
 			return 1;
 	}

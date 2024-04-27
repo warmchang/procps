@@ -89,13 +89,13 @@ enum rel_items {
 	EU_PID, EU_CMD, EU_SMAP_HUGE_TLBPRV, EU_SMAP_HUGE_TLBSHR
 };
 
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack, info)
-#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, stack, info)
-#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack, info)
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack, info)
-#define PIDS_GETSCH(e) PIDS_VAL(EU_ ## e, s_ch, stack, info)
-#define PIDS_GETSTV(e) PIDS_VAL(EU_ ## e, strv, stack, info)
-#define PIDS_GETFLT(e) PIDS_VAL(EU_ ## e, real, stack, info)
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, stack)
+#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, stack)
+#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, stack)
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, stack)
+#define PIDS_GETSCH(e) PIDS_VAL(EU_ ## e, s_ch, stack)
+#define PIDS_GETSTV(e) PIDS_VAL(EU_ ## e, strv, stack)
+#define PIDS_GETFLT(e) PIDS_VAL(EU_ ## e, real, stack)
 
 static void setup_hugepage()
 {

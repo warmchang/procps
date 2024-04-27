@@ -275,7 +275,7 @@ static struct pids_fetch *Pids_reap;        // for reap or select
         // pid stack results extractor macro, where e=our EU enum, t=type, s=stack
         // ( we'll exploit that <proc/pids.h> provided macro as much as possible )
         // ( but many functions use their own unique tailored version for access )
-#define PID_VAL(e,t,s) PIDS_VAL(e, t, s, Pids_ctx)
+#define PID_VAL(e,t,s) PIDS_VAL(e, t, s)
         /*
          *  --- <proc/stat.h> -------------------------------------------------- */
 static struct stat_info *Stat_ctx;
@@ -307,9 +307,9 @@ enum Rel_statitems {
    stat_SUM_TOT, stat_COR_TYP };
 #endif
         // cpu/node stack results extractor macros, where e=rel enum, x=index
-#define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x], Stat_ctx)
-#define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->numa->stacks[x], Stat_ctx)
-#define TIC_VAL(e,s) STAT_VAL(e, sl_int, s, Stat_ctx)
+#define CPU_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->cpus->stacks[x])
+#define NOD_VAL(e,x) STAT_VAL(e, s_int, Stat_reap->numa->stacks[x])
+#define TIC_VAL(e,s) STAT_VAL(e, sl_int, s)
 #define E_CORE  1            // values for stat_COR_TYP itself
 #define P_CORE  2            // ( 0 = unsure/unknown )
 #define P_CORES_ONLY  2      // values of rc.core_types toggle, for filtering
@@ -327,7 +327,7 @@ enum Rel_memitems {
    mem_QUE, mem_BUF, mem_AVL,
    swp_TOT, swp_FRE, swp_USE };
         // mem stack results extractor macro, where e=rel enum
-#define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack, Mem_ctx)
+#define MEM_VAL(e) MEMINFO_VAL(e, ul_int, Mem_stack)
 
         /* Support for concurrent library updates via
            multithreaded background processes */
@@ -6392,7 +6392,7 @@ flush_it:
          * ( we return the number of lines printed, as reported by sum_see ) | */
 static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
   // tailored 'results stack value' extractor macros
- #define qSv(E)  STAT_VAL(E, s_int, this, Stat_ctx)
+ #define qSv(E)  STAT_VAL(E, s_int, this)
  #define rSv(E)  TIC_VAL(E, this)
    SIC_t idl_frme, tot_frme;
    struct rx_st *rx;
@@ -6445,7 +6445,7 @@ static int sum_tics (struct stat_stack *this, const char *pfx, int nobuf) {
          * ( we return the number of lines printed, as reported by sum_see ) | */
 static int sum_unify (struct stat_stack *this, int nobuf) {
   // a tailored 'results stack value' extractor macro
- #define rSv(E,T)  STAT_VAL(E, T, this, Stat_ctx)
+ #define rSv(E,T)  STAT_VAL(E, T, this)
    static struct stat_result stack[MAXTBL(Stat_items)];
    static struct stat_stack accum = { &stack[0] };
    static int ix, beg;

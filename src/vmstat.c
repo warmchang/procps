@@ -392,11 +392,11 @@ static void output_line(struct field *fields, char timebuf[])
 
 static void new_format(void)
 {
-#define TICv(E) STAT_VAL(E, ull_int, stat_stack, stat_info)
-#define DTICv(E) STAT_VAL(E, sl_int, stat_stack, stat_info)
-#define SYSv(E) STAT_VAL(E, ul_int, stat_stack, stat_info)
-#define MEMv(E) MEMINFO_VAL(E, ul_int, mem_stack, mem_info)
-#define DSYSv(E) STAT_VAL(E, s_int, stat_stack, stat_info)
+#define TICv(E) STAT_VAL(E, ull_int, stat_stack)
+#define DTICv(E) STAT_VAL(E, sl_int, stat_stack)
+#define SYSv(E) STAT_VAL(E, ul_int, stat_stack)
+#define MEMv(E) MEMINFO_VAL(E, ul_int, mem_stack)
+#define DSYSv(E) STAT_VAL(E, s_int, stat_stack)
     unsigned int tog = 0;    /* toggle switch for cleaner code */
     unsigned long i;
     long long cpu_use, cpu_sys, cpu_idl, cpu_iow, cpu_sto, cpu_gue;
@@ -601,7 +601,7 @@ static void diskpartition_header(const char *partition_name)
 
 static void diskpartition_format(const char *partition_name)
 {
- #define partVAL(x) DISKSTATS_VAL(x, ul_int, stack, disk_stat)
+ #define partVAL(x) DISKSTATS_VAL(x, ul_int, stack)
     struct diskstats_info *disk_stat = NULL;
     struct diskstats_stack *stack;
     struct diskstats_result *got;
@@ -701,7 +701,7 @@ static void diskheader(void)
 
 static void diskformat(void)
 {
-#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
+#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j])
     struct diskstats_info *disk_stat = NULL;
     struct diskstats_reaped *reap;
     unsigned long i;
@@ -781,7 +781,7 @@ static void slabheader(void)
 static void slabformat (void)
 {
  #define MAX_ITEMS (int)(sizeof(node_items) / sizeof(node_items[0]))
- #define slabVAL(e,t) SLABINFO_VAL(e, t, p, slab_info)
+ #define slabVAL(e,t) SLABINFO_VAL(e, t, p)
     struct slabinfo_info *slab_info = NULL;
     struct slabinfo_reaped *reaped;
     unsigned long i;
@@ -826,7 +826,7 @@ static void slabformat (void)
 
 static void disksum_format(void)
 {
-#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j], disk_stat)
+#define diskVAL(e,t) DISKSTATS_VAL(e, t, reap->stacks[j])
     struct diskstats_info *disk_stat = NULL;
     struct diskstats_reaped *reap;
     int j, disk_count, part_count;
@@ -883,9 +883,9 @@ static void disksum_format(void)
 
 static void sum_format(void)
 {
-#define TICv(E) STAT_VAL(E, ull_int, stat_stack, stat_info)
-#define SYSv(E) STAT_VAL(E, ul_int, stat_stack, stat_info)
-#define MEMv(E) unitConvert(MEMINFO_VAL(E, ul_int, mem_stack, mem_info))
+#define TICv(E) STAT_VAL(E, ull_int, stat_stack)
+#define SYSv(E) STAT_VAL(E, ul_int, stat_stack)
+#define MEMv(E) unitConvert(MEMINFO_VAL(E, ul_int, mem_stack))
     struct stat_info *stat_info = NULL;
     struct vmstat_info *vm_info = NULL;
     struct meminfo_info *mem_info = NULL;
