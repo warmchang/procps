@@ -198,7 +198,7 @@ struct meminfo_info;
     struct meminfo_result *r = procps_meminfo_get( info, actual_enum ); \
     r ? r->result . type : 0; } )
 
-#define MEMINFO_VAL( relative_enum, type, stack, info ) \
+#define MEMINFO_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 

@@ -1020,7 +1020,6 @@ PROCPS_EXPORT struct slabinfo_result *xtra_slabinfo_val (
         int relative_enum,
         const char *typestr,
         const struct slabinfo_stack *stack,
-        struct slabinfo_info *info,
         const char *file,
         int lineno)
 {
@@ -1040,5 +1039,4 @@ PROCPS_EXPORT struct slabinfo_result *xtra_slabinfo_val (
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
     }
     return &stack->head[relative_enum];
-    (void)info;
 } // end: xtra_slabinfo_val

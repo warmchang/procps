@@ -1489,7 +1489,6 @@ PROCPS_EXPORT struct vmstat_result *xtra_vmstat_val (
         int relative_enum,
         const char *typestr,
         const struct vmstat_stack *stack,
-        struct vmstat_info *info,
         const char *file,
         int lineno)
 {
@@ -1509,5 +1508,4 @@ PROCPS_EXPORT struct vmstat_result *xtra_vmstat_val (
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
     }
     return &stack->head[relative_enum];
-    (void)info;
 } // end: xtra_vmstat_val

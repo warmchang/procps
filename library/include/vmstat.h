@@ -355,7 +355,7 @@ struct vmstat_info;
     struct vmstat_result *r = procps_vmstat_get( info, actual_enum ); \
     r ? r->result . type : 0; } )
 
-#define VMSTAT_VAL( relative_enum, type, stack, info ) \
+#define VMSTAT_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 

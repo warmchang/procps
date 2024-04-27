@@ -168,7 +168,7 @@ PROCPS_EXPORT int procps_container_uptime(
        return -1;
 
     boot_time = (tp.tv_sec + tp.tv_nsec * 1.0e-9);
-    start_time = PIDS_VAL(0, real, (pids_fetch->stacks[0]), info);
+    start_time = PIDS_VAL(0, real, (pids_fetch->stacks[0]));
 
     if (boot_time > start_time)
         *uptime_secs = boot_time - start_time;

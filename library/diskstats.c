@@ -1003,7 +1003,6 @@ PROCPS_EXPORT struct diskstats_result *xtra_diskstats_val (
         int relative_enum,
         const char *typestr,
         const struct diskstats_stack *stack,
-        struct diskstats_info *info,
         const char *file,
         int lineno)
 {
@@ -1023,5 +1022,4 @@ PROCPS_EXPORT struct diskstats_result *xtra_diskstats_val (
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
     }
     return &stack->head[relative_enum];
-    (void)info;
 } // end: xtra_diskstats_val

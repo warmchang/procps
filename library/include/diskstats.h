@@ -94,7 +94,7 @@ struct diskstats_info;
     struct diskstats_result *r = procps_diskstats_get( info, name, actual_enum ); \
     r ? r->result . type : 0; } )
 
-#define DISKSTATS_VAL( relative_enum, type, stack, info ) \
+#define DISKSTATS_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 

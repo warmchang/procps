@@ -1014,7 +1014,6 @@ PROCPS_EXPORT struct meminfo_result *xtra_meminfo_val (
         int relative_enum,
         const char *typestr,
         const struct meminfo_stack *stack,
-        struct meminfo_info *info,
         const char *file,
         int lineno)
 {
@@ -1034,5 +1033,4 @@ PROCPS_EXPORT struct meminfo_result *xtra_meminfo_val (
         fprintf(stderr, "%s line %d: was %s, expected %s\n", file, lineno, typestr, str);
     }
     return &stack->head[relative_enum];
-    (void)info;
 } // end: xtra_meminfo_val

@@ -135,7 +135,7 @@ struct stat_info;
     struct stat_result *r = procps_stat_get( info, actual_enum ); \
     r ? r->result . type : 0; } )
 
-#define STAT_VAL( relative_enum, type, stack, info ) \
+#define STAT_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 

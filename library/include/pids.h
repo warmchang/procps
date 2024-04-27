@@ -242,7 +242,7 @@ struct pids_fetch {
 struct pids_info;
 
 
-#define PIDS_VAL( relative_enum, type, stack, info ) \
+#define PIDS_VAL( relative_enum, type, stack ) \
     stack -> head [ relative_enum ] . result . type
 
 
