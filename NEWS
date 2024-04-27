@@ -12,6 +12,7 @@ procps-ng-NEXT
     external: procps_uptime_snprint uses given upseconds
     external: procps_container_uptime
     external: meminfo api adds SecPageTables, Unaccepted
+    external: 'info' parm removed from all 'VAL' macros    issue #332
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
   * ps: Add environ field
