@@ -1696,7 +1696,6 @@ void closeproc(PROCTAB *PT) {
     if (PT){
         if (PT->procfs) closedir(PT->procfs);
         if (PT->taskdir) closedir(PT->taskdir);
-        memset(PT,'#',sizeof(PROCTAB));
         free(PT);
     }
 }
