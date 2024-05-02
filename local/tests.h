@@ -3,6 +3,7 @@
 #define PROCPS_NG_TESTS_H
 
 #include <stdio.h>
+#include <stdlib.h>
 
 typedef int (*TestFunction)(void *data);
 

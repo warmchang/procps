@@ -358,6 +358,7 @@ src_tests_test_shm_LDADD = $(CYGWINFLAGS)
 
 check_PROGRAMS += \
 	library/tests/test_Itemtables \
+	library/tests/test_escape \
 	library/tests/test_pids \
 	library/tests/test_uptime \
 	library/tests/test_sysinfo \
@@ -407,6 +408,7 @@ check-lib: clean
 
 # Test programs not used by dejagnu but run directly
 TESTS = \
+	library/tests/test_escape \
 	library/tests/test_pids \
 	library/tests/test_uptime \
 	library/tests/test_sysinfo \
