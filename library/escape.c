@@ -1,8 +1,8 @@
 /*
  * escape.c - printing handling
  *
- * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
- * Copyright © 2016-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2011-2024 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2016-2024 Craig Small <csmall@dropbear.xyz>
  * Copyright © 1998-2005 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
@@ -20,6 +20,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
+#include <ctype.h>
 #include <limits.h>
 #include <stdio.h>
 #include <string.h>
@@ -34,75 +35,73 @@
   if ((bytes) >= INT_MAX) return 0; \
 } while (0)
 
-static const char UTF_tab[] = {
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x00 - 0x0F
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x10 - 0x1F
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x20 - 0x2F
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x30 - 0x3F
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x40 - 0x4F
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x50 - 0x5F
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x60 - 0x6F
-    1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, // 0x70 - 0x7F
-   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0x80 - 0x8F
-   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0x90 - 0x9F
-   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xA0 - 0xAF
-   -1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xB0 - 0xBF
-   -1,-1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xC0 - 0xCF
-    2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, // 0xD0 - 0xDF
-    3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, // 0xE0 - 0xEF
-    4, 4, 4, 4, 4,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1,-1, // 0xF0 - 0xFF
-};
 
-static const unsigned char ESC_tab[] = {
-   "@..............................." // 0x00 - 0x1F
-   "||||||||||||||||||||||||||||||||" // 0x20 - 0x3F
-   "||||||||||||||||||||||||||||||||" // 0x40 - 0x5f
-   "|||||||||||||||||||||||||||||||." // 0x60 - 0x7F
-   "????????????????????????????????" // 0x80 - 0x9F
-   "????????????????????????????????" // 0xA0 - 0xBF
-   "????????????????????????????????" // 0xC0 - 0xDF
-   "????????????????????????????????" // 0xE0 - 0xFF
-};
+/*
+ * Return the number of bytes this UTF-8 string uses
+ * Compliant with RFC 3629
+ *
+ * Returns how many bytes or -1 if invalid
+ */
+// FIXME: not future-proof
+static int u8charlen(const unsigned char *s, unsigned size) {
+   if (! size) return 0;
 
+   // 0xxxxxxx, U+0000 - U+007F
+   if (s[0] <= 0x7f) return 1;
+   if (size >= 2 && (s[1]&0xc0) == 0x80) {
+      // 110xxxxx 10xxxxxx, U+0080 - U+07FF
+      if (s[0] >= 0xc2 && s[0] <= 0xdf) return 2;
+      if (size >= 3 && (s[2]&0xc0) == 0x80) {
+         unsigned x = (unsigned)s[0] << 6 | (s[1] & 0x3f);
+         // 1110xxxx 10xxxxxx 10xxxxxx, U+0800 - U+FFFF minus U+D800 - U+DFFF
+         if ((x >= 0x3820 && x <= 0x3b5f) || (x >= 0x3b80 && x <= 0x3bff)) return 3;
+         if (size >= 4 && (s[3]&0xc0) == 0x80) {
+            // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx, U+010000 - U+10FFFF
+            if (x >= 0x3c10 && x <= 0x3d0f) return 4;
+         }
+      }
+   }
+
+   // invalid or incomplete sequence
+   return -1;
+}
+
+/*
+ * Given a bad locale/corrupt str, replace all non-printing stuff
+ */
 static inline void esc_all (unsigned char *str) {
-   unsigned char c;
-
-   // if bad locale/corrupt str, replace non-printing stuff
    while (*str) {
-      if ((c = ESC_tab[*str]) != '|')
-         *str = c;
+      if (!isprint(*str))
+          *str = '?';
       ++str;
    }
 }
 
 static inline void esc_ctl (unsigned char *str, int len) {
- #define setQ  { *str = '?'; n = 1; goto next_up; }
-   int i, n, x;
+   int n;
 
-   for (i = 0; i < len; ) {
-      n = UTF_tab[*str];
-      /* even with a proper locale, strings might be corrupt or we
-         might encounter one of those 32 unicode multibyte control
-         characters which begin at U+0080 (0xc280) */
-      if (n < 0 || i + n > len
-      || (*str == 0xc2 && str[1] >= 0x80 && str[1] <= 0x9f)) {
-         setQ
-      }
-      /* let's validate those utf-8 continuation bytes too, all of
-         which must take the binary form of 10xxxxxx */
-      for (x = 1; x < n; x++) {
-         if (str[x] < 0x80 || str[x] > 0xbf) {
-            setQ
-         }
-      }
-      // and eliminate those non-printing control characters
-      if (*str < 0x20 || *str == 0x7f)
+   if (len <= 0)
+      return;
+
+   while ((n = u8charlen(str, len) )) {
+      /* Escape the character to a '?' if
+       *  Not valid UTF so charlen is -1
+       *  Non-control chars below SPACE
+       *  DEL
+       *  32 unicode multibyte control characters which begin at U+0080 (0xc280)
+       */
+      if (
+         n < 0
+         || str[0] < 0x20
+         || str[0] == 0x7f
+         || (str[0] == 0xc2 && str[1] >= 0x80 && str[1] <= 0x9f)) {
+
          *str = '?';
-next_up:
+         n = 1;
+      }
       str += n;
-      i += n;
+      len -= n;
    }
- #undef setQ
 }
 
 int escape_str (char *dst, const char *src, int bufsize) {
