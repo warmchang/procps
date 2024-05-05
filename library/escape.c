@@ -43,16 +43,26 @@
  * Returns how many bytes or -1 if invalid
  */
 // FIXME: not future-proof
-static int u8charlen(const unsigned char *s, unsigned size) {
+static int u8charlen (const unsigned char *s, unsigned size) {
+   unsigned x;
+
    if (! size) return 0;
 
    // 0xxxxxxx, U+0000 - U+007F
    if (s[0] <= 0x7f) return 1;
-   if (size >= 2 && (s[1]&0xc0) == 0x80) {
+   if (size >= 2 && (s[1] & 0xc0) == 0x80) {
       // 110xxxxx 10xxxxxx, U+0080 - U+07FF
       if (s[0] >= 0xc2 && s[0] <= 0xdf) return 2;
-      if (size >= 3 && (s[2]&0xc0) == 0x80) {
-         unsigned x = (unsigned)s[0] << 6 | (s[1] & 0x3f);
+#ifndef OFF_UNICODE_PUA
+      if (size == 3) {
+         x = ((unsigned)s[0] << 16) + ((unsigned)s[1] << 8) + (unsigned)s[2];
+         // 11101110 10000000 10000000, U+E000 - primary PUA begin
+         // 11101111 10100011 10111111, U+F8FF - primary PUA end
+         if (x >= 0xee8080 && x <= 0xefa3bf) return -1;
+      }
+#endif
+      if (size >= 3 && (s[2] & 0xc0) == 0x80) {
+         x = (unsigned)s[0] << 6 | (s[1] & 0x3f);
          // 1110xxxx 10xxxxxx 10xxxxxx, U+0800 - U+FFFF minus U+D800 - U+DFFF
          if ((x >= 0x3820 && x <= 0x3b5f) || (x >= 0x3b80 && x <= 0x3bff)) return 3;
          if (size >= 4 && (s[3]&0xc0) == 0x80) {
