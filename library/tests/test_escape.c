@@ -55,7 +55,7 @@ int check_size_strlen(void *data)
     const char test_chars[][5] = {
         //"\x00",
         "\x44", "\x7f", "\xc2\x80", "\u0188", "\u07ff",
-        "\u0800", "\u8888", "\ud7ff", "\ue000", "\uffff",
+        "\u0800", "\u8888", "\ud7ff", "\uffff",
         "\U00010000", "\U00018888", "\U0010ffff"};
 
     testname = "escape: check u8charlen == strlen";
@@ -79,7 +79,7 @@ int check_size_negative(void *data)
         "\xe0\x9f\xbf", "\xed\xa0\x80", "\xed\xbf\xbf",
         "\xee\x00\x80","\xee\x80\x40", "\xdf\x7f",
         "\xfc\x8f\xbf\xbf", "\xfc\xbf\xbf", "\xf0\x80\xa0\xa0",
-        "\xf0\x8f\xbf\xbf", "\xf4\x90\x80\x80"};
+        "\xf0\x8f\xbf\xbf", "\xf4\x90\x80\x80", "\ue000", "\uf8ff"};
 
     testname = "escape: check u8charlen == -1";
     for (i=0; i < MAXTBL(test_chars); i++) {
