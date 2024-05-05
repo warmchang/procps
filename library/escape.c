@@ -54,7 +54,7 @@ static int u8charlen (const unsigned char *s, unsigned size) {
       // 110xxxxx 10xxxxxx, U+0080 - U+07FF
       if (s[0] >= 0xc2 && s[0] <= 0xdf) return 2;
 #ifndef OFF_UNICODE_PUA
-      if (size == 3) {
+      if (size >= 3) {
          x = ((unsigned)s[0] << 16) + ((unsigned)s[1] << 8) + (unsigned)s[2];
          // 11101110 10000000 10000000, U+E000 - primary PUA begin
          // 11101111 10100011 10111111, U+F8FF - primary PUA end
