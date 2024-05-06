@@ -53,19 +53,27 @@ static int u8charlen (const unsigned char *s, unsigned size) {
    if (size >= 2 && (s[1] & 0xc0) == 0x80) {
       // 110xxxxx 10xxxxxx, U+0080 - U+07FF
       if (s[0] >= 0xc2 && s[0] <= 0xdf) return 2;
-#ifndef OFF_UNICODE_PUA
-      if (size >= 3) {
-         x = ((unsigned)s[0] << 16) + ((unsigned)s[1] << 8) + (unsigned)s[2];
-         // 11101110 10000000 10000000, U+E000 - primary PUA begin
-         // 11101111 10100011 10111111, U+F8FF - primary PUA end
-         if (x >= 0xee8080 && x <= 0xefa3bf) return -1;
-      }
-#endif
       if (size >= 3 && (s[2] & 0xc0) == 0x80) {
+#ifndef OFF_UNICODE_PUA
+         x = ((unsigned)s[0] << 16) + ((unsigned)s[1] << 8) + (unsigned)s[2];
+         /* 11101110 10000000 10000000, U+E000 - primary PUA begin
+            11101111 10100011 10111111, U+F8FF - primary PUA end */
+         if (x >= 0xee8080 && x <= 0xefa3bf) return -1;
+#endif
          x = (unsigned)s[0] << 6 | (s[1] & 0x3f);
          // 1110xxxx 10xxxxxx 10xxxxxx, U+0800 - U+FFFF minus U+D800 - U+DFFF
          if ((x >= 0x3820 && x <= 0x3b5f) || (x >= 0x3b80 && x <= 0x3bff)) return 3;
-         if (size >= 4 && (s[3]&0xc0) == 0x80) {
+         if (size >= 4 && (s[3] & 0xc0) == 0x80) {
+#ifndef OFF_UNICODE_PUA
+            unsigned y;
+            y = ((unsigned)s[0] << 24) + ((unsigned)s[1] << 16) + ((unsigned)s[2] << 8) + (unsigned)s[3];
+            /* 11110011 10110000 10000000 10000000, U+F0000  - supplemental PUA-A begin
+               11110011 10111111 10111111 10111101, U+FFFFD  - supplemental PUA-A end */
+            if (y >= 0xf3b08080 && y <= 0Xf3bfbfbd) return -1;
+            /* 11110100 10000000 10000000 10000000, U+100000 - supplemental PUA-B begin
+               11110100 10001111 10111111 10111101, U+10FFFD - supplemental PUA-B end */
+            if (y >= 0xf4808080 && y <= 0Xf48fbfbd) return -1;
+#endif
             // 11110xxx 10xxxxxx 10xxxxxx 10xxxxxx, U+010000 - U+10FFFF
             if (x >= 0x3c10 && x <= 0x3d0f) return 4;
          }
