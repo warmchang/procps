@@ -79,7 +79,10 @@ int check_size_negative(void *data)
         "\xe0\x9f\xbf", "\xed\xa0\x80", "\xed\xbf\xbf",
         "\xee\x00\x80","\xee\x80\x40", "\xdf\x7f",
         "\xfc\x8f\xbf\xbf", "\xfc\xbf\xbf", "\xf0\x80\xa0\xa0",
-        "\xf0\x8f\xbf\xbf", "\xf4\x90\x80\x80", "\ue000", "\uf8ff"};
+        "\xf0\x8f\xbf\xbf", "\xf4\x90\x80\x80",
+        "\ue000", "\uf8ff",                    // main PUA    begin/end
+        "\U000F0000", "\U000FFFFD",            // supp PUA-A  begin/end
+        "\U00100000", "\U0010FFFD" };          // supp PUA-B  begin/end
 
     testname = "escape: check u8charlen == -1";
     for (i=0; i < MAXTBL(test_chars); i++) {
@@ -99,11 +102,11 @@ int check_esc_ctl(void *data)
 
     // Array of input,expected_output pairs
     char test_strs[][2][20] = {
-        { "A", "A" },                               // A 
+        { "A", "A" },                               // A
         { "\x7f B", "? B" },                        // DEL
         { "\xe2\x82\xac C", "\u20ac C"},            // Euro symbol
         { "\x90\x20\x70 D", "?\x20\x70 D"},         // C1 controls
-        { "\xF0\x9F\x98\x8A E",  "\U0001f60a E" },  // smilie                                      
+        { "\xF0\x9F\x98\x8A E",  "\U0001f60a E" },  // smilie
         { "\x90\x24\x71\x30\x76\xc2\x9c\xc2\x24\x71\x20\x69 F",
             "?$q0v???$q i F"}, //C1 control from perl example
         { "\e[1;31m G", "?[1;31m G"}, // ANSI color sequence
