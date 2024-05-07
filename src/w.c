@@ -831,33 +831,34 @@ int main(int argc, char **argv)
 			printf(_("   IDLE WHAT\n"));
 	}
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
-	if (sd_booted() > 0) {
-		char **sessions_list;
-		int sessions;
+	char **sessions_list;
+	int sessions = 0;
+
+	if (sd_booted() > 0)
+		sessions = sd_get_sessions (&sessions_list);
+
+	if (sessions < 0 && sessions != -ENOENT)
+		error(EXIT_FAILURE, -sessions, _("error getting sessions"));
+
+	if (sessions > 0) {
 		int i;
 
-		sessions = sd_get_sessions (&sessions_list);
-		if (sessions < 0 && sessions != -ENOENT)
-			error(EXIT_FAILURE, -sessions, _("error getting sessions"));
+		for (int i = 0; i < sessions; i++) {
+			char *name;
+			int r;
 
-		if (sessions >= 0) {
-			for (int i = 0; i < sessions; i++) {
-				char *name;
-				int r;
+			if ((r = sd_session_get_username(sessions_list[i], &name)) < 0)
+				error(EXIT_FAILURE, -r, _("get user name failed"));
 
-				if ((r = sd_session_get_username(sessions_list[i], &name)) < 0)
-					error(EXIT_FAILURE, -r, _("get user name failed"));
+			if (!match_user || (0 == strcmp(name, match_user)))
+				showinfo(sessions_list[i], name, NULL, longform, maxcmd,
+					from, userlen, fromlen, ip_addresses, pids,
+					pids_cache);
 
-                                if (!match_user || (0 == strcmp(name, match_user)))
-					showinfo(sessions_list[i], name, NULL, longform, maxcmd,
-						 from, userlen, fromlen, ip_addresses, pids,
-                                                 pids_cache);
-
-				free(name);
-				free(sessions_list[i]);
-			}
-			free(sessions_list);
+			free(name);
+			free(sessions_list[i]);
 		}
+		free(sessions_list);
 	} else {
 #endif
 #ifdef HAVE_UTMPX_H
