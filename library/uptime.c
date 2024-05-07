@@ -71,7 +71,9 @@ PROCPS_EXPORT int procps_users(void)
 
 #if defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)
     if (sd_booted() > 0)
-      return sd_get_sessions(NULL);
+        numuser = sd_get_sessions(NULL);
+    if (numuser > 0)
+        return numuser;
 #endif
 
 #ifdef HAVE_UTMP_X
