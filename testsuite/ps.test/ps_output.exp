@@ -40,9 +40,9 @@ set test "ps with correct AIX field"
 spawn $ps -o "%p"
 expect_pass "$test" "\\s*PID\\s+\(\\s*\\d+\\s+\)+$"
 
-set test "ps with improper AIX field"
-spawn $ps -o "%p %G{"
-expect_pass "$test" "error: improper AIX field descriptor"
+#set test "ps with improper AIX field"
+#spawn $ps -o "%p %G{"
+#expect_pass "$test" "error: improper AIX field descriptor"
 
 set test "ps with missing AIX field"
 spawn $ps -o "%p %%a"
@@ -55,6 +55,18 @@ expect_pass "$test" "error: unknown AIX field descriptor"
 set test "ps with AIX format stating with random character"
 spawn $ps -o "a%a"
 expect_pass "$test" "error: improper AIX field descriptor"
+
+set test "ps with %cpu,c option (non AIX)"
+spawn $ps -o "%cpu,c"
+expect_pass "$test" "\\s*%CPU\\s+C\\s+\(\[0-9.\]+\\s+\\d+\\s+\)+$"
+
+set test "ps with %cpu c option (non AIX)"
+spawn $ps -o "%cpu c"
+expect_pass "$test" "\\s*%CPU\\s+C\\s+\(\[0-9.\]+\\s+\\d+\\s+\)+$"
+
+set test "ps AIX parsing %cpuc (AIX format)"
+spawn $ps -o "%cpuc"
+expect_pass "$test" "\\s*COMMAND\\s+puc\\s+"
 
 make_testproc
 set test "ps with c option"

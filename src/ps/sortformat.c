@@ -140,7 +140,7 @@ static const char *aix_format_parse(sf_node *sfn){
     c = *walk++;
     if(c=='%')    goto get_desc;
     if(c==' ')    goto get_more;
-    if(c)         goto aix_oops;
+    if(c)         goto get_more;
     goto looks_ok;
   get_desc:
     c = *walk++;
@@ -315,7 +315,20 @@ static const char *format_parse(sf_node *sfn){
   if(0) improper: err=_("improper format list");
   if(0) badwidth: err=_("column widths must be unsigned decimal numbers");
   if(0) notmacro: err=_("can not set width for a macro (multi-column) format specifier");
-  if(strchr(sfn->sf,'%')) err = aix_format_parse(sfn);
+  /*
+   * Use the AIX parser if the field starts with '%' and is not
+   * literally "%cpu", "%mem", "%cpu " or "%mem " 
+   * as these are regular fields
+   * "%cpublah" is treated as %c publah and parsed as AIX format
+   * "%cpu blah" is an error
+   * %m is not a valid AIX format anyway
+   */
+  if (strchr(sfn->sf,'%')
+    && strcmp("%cpu", sfn->sf) != 0
+    && strncmp("%cpu ", sfn->sf,5) != 0
+    && strncmp("%cpu,", sfn->sf,5) != 0
+    && strncmp("%m", sfn->sf, 2) != 0)
+      err = aix_format_parse(sfn);
   return err;
 }
 

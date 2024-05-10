@@ -19,6 +19,7 @@ procps-ng-NEXT
   * ps: Add htprv and htshr fields for HugeTables
   * ps: restore lost tasks for options --sort with -H      issue #304
   * ps: add 'docker' containers field, similar to 'lxc'
+  * ps: Restore AIX free-format                            issue #323
   * slabtop: Add --human option for slab size
   * sysctl: Add glob excludes                              merge #206
   * top: added a 'CLS' scheduling class field, like ps
