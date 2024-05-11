@@ -197,7 +197,8 @@ typedef struct proc_t {
     int
         luid,           // loginuid        user id at login
         autogrp_id,     // autogroup       autogroup number (id)
-        autogrp_nice;   // autogroup       autogroup nice value
+        autogrp_nice,   // autogroup       autogroup nice value
+        fds;            // fd              number of open files
 } proc_t;
 
 // PROCTAB: data structure holding the persistent information readproc needs
@@ -277,12 +278,16 @@ typedef struct PROCTAB {
 // and let's put new flags here ...
 #define PROC_FILLAUTOGRP     0x01000000 // fill in proc_t autogroup stuff
 #define PROC_FILL_DOCKER     0x02000000 // fill in proc_t dockerid, if possible
+#define PROC_FILL_FDS        0x04000000 // fill in proc_t fds
 
 // it helps to give app code a few spare bits
 #define PROC_SPARE_1         0x10000000
 #define PROC_SPARE_2         0x20000000
 #define PROC_SPARE_3         0x40000000
 #define PROC_SPARE_4         0x80000000
+
+/* available PROC bits ...   0x.8......
+   ( when this one is used, we'll need a 'flags2' addition to PROCTAB ) */
 
 // Function definitions
 // Initialize a PROCTAB structure holding needed call-to-call persistent data

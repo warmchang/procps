@@ -111,6 +111,7 @@ enum pids_item {
     PIDS_NS_UTS,            //   ul_int         "
     PIDS_OOM_ADJ,           //    s_int        oom_score_adj
     PIDS_OOM_SCORE,         //    s_int        oom_score
+    PIDS_OPEN_FILES,        //    s_int        derived from fd/ (total entries)
     PIDS_PRIORITY,          //    s_int        stat: priority
     PIDS_PRIORITY_RT,       //    s_int        stat: rt_priority
     PIDS_PROCESSOR,         //    s_int        stat: task_cpu

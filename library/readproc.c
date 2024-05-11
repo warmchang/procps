@@ -1173,6 +1173,18 @@ static void autogroup_fill (const char *path, proc_t *p) {
 }
 
 
+static inline void stat_fd (const char *path, proc_t *p) {
+    char buf[PROCPATHLEN];
+    struct stat sb;
+
+    p->fds = 0;
+    snprintf(buf, sizeof(buf), "%s/fd", path);
+    // for the fd directory, st_size has a special meaning ...
+    if (0 == stat(buf, &sb))
+       p->fds = (int)sb.st_size;
+}
+
+
 ///////////////////////////////////////////////////////////////////////
 
 /* These are some nice GNU C expression subscope "inline" functions.
@@ -1320,6 +1332,9 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLAUTOGRP)               // value the 2 autogroup fields
         autogroup_fill(path, p);
 
+    if (flags & PROC_FILL_FDS)                  // value the proc_t.fds field
+        stat_fd(path, p);
+
     // openproc() ensured that a ppid will be present when needed ...
     if (rc == 0) {
         if (PT->hide_kernel && (p->ppid == 2 || p->tid == 2)) {
@@ -1456,6 +1471,9 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
 
     if (flags & PROC_FILLAUTOGRP)               // value the 2 autogroup fields
         autogroup_fill(path, t);
+
+    if (flags & PROC_FILL_FDS)                  // value the proc_t.fds field
+        stat_fd(path, t);
 
     // openproc() ensured that a ppid will be present when needed ...
     if (rc == 0) {

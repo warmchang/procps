@@ -255,6 +255,7 @@ REG_set(NS_USER,          ul_int,  ns.ns[6])
 REG_set(NS_UTS,           ul_int,  ns.ns[7])
 REG_set(OOM_ADJ,          s_int,   oom_adj)
 REG_set(OOM_SCORE,        s_int,   oom_score)
+REG_set(OPEN_FILES,       s_int,   fds)
 REG_set(PRIORITY,         s_int,   priority)
 REG_set(PRIORITY_RT,      s_int,   rtprio)
 REG_set(PROCESSOR,        s_int,   processor)
@@ -407,6 +408,7 @@ srtDECL(noop) {
 
 #define f_either   PROC_SPARE_1        // either status or stat (favor stat)
 #define f_exe      PROC_FILL_EXE
+#define f_fds      PROC_FILL_FDS
 #define f_grp      PROC_FILLGRP
 #define f_io       PROC_FILLIO
 #define f_login    PROC_FILL_LUID
@@ -549,6 +551,7 @@ static struct {
     { RS(NS_UTS),            f_ns,       NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(OOM_ADJ),           f_oom,      NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(OOM_SCORE),         f_oom,      NULL,      QS(s_int),     0,        TS(s_int)   },
+    { RS(OPEN_FILES),        f_fds,      NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(PRIORITY),          f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(PRIORITY_RT),       f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(PROCESSOR),         f_stat,     NULL,      QS(s_int),     0,        TS(s_int)   },
@@ -642,6 +645,7 @@ enum pids_item PIDS_logical_end = MAXTABLE(Item_table);
 
 //#undef f_either                 // needed later
 #undef f_exe
+#undef f_fds
 #undef f_grp
 #undef f_io
 #undef f_login
