@@ -1540,6 +1540,10 @@ static int pr_docker(char *restrict const outbuf, const proc_t *restrict const p
 setREL1(DOCKER_ID)
   return snprintf(outbuf, COLWID, "%s", rSv(DOCKER_ID, str, pp));
 }
+static int pr_fds(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(OPEN_FILES)
+  return snprintf(outbuf, COLWID, "%d", rSv(OPEN_FILES, s_int, pp));
+}
 
 ////////////////////////////// Test code /////////////////////////////////
 
@@ -1706,6 +1710,7 @@ static const format_struct format_array[] = { /*
 {"euser",     "EUSER",   pr_euser,         PIDS_ID_EUSER,            8,    LNX,  ET|USER},
 {"exe",       "EXE",     pr_exe,           PIDS_EXE,                27,    LNX,  PO|UNLIMITED},
 {"f",         "F",       pr_flag,          PIDS_FLAGS,               1,    XXX,  ET|RIGHT}, /*flags*/
+{"fds",       "FDS",     pr_fds,           PIDS_OPEN_FILES,          3,    LNX,  PO|RIGHT},
 {"fgid",      "FGID",    pr_fgid,          PIDS_FLAGS,               5,    LNX,  ET|RIGHT},
 {"fgroup",    "FGROUP",  pr_fgroup,        PIDS_ID_FGROUP,           8,    LNX,  ET|USER},
 {"flag",      "F",       pr_flag,          PIDS_FLAGS,               1,    DEC,  ET|RIGHT},
