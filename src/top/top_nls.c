@@ -393,6 +393,9 @@ static void build_two_nlstabs (void) {
 /* Translation Hint: maximum 'Docker' = 8 + */
    Head_nlstab[EU_DKR] = _("Docker");
    Desc_nlstab[EU_DKR] = _("Docker container id");
+/* Translation Hint: maximum 'nFD' = 3 */
+   Head_nlstab[EU_FDS] = _("nFD");
+   Desc_nlstab[EU_FDS] = _("Number of Open Files");
 }
 
 

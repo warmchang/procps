@@ -2025,8 +2025,9 @@ static struct {
    {    10,     -1,  A_right,  PIDS_NS_CGROUP      },  // ul_int   EU_NS7
    {    10,     -1,  A_right,  PIDS_NS_TIME        },  // ul_int   EU_NS8
    {     3,     -1,  A_left,   PIDS_SCHED_CLASSSTR },  // str      EU_CLS
-   {     8,     -1,  A_left,   PIDS_DOCKER_ID      }   // str      EU_DKR
-#define eu_LAST        EU_DKR
+   {     8,     -1,  A_left,   PIDS_DOCKER_ID      },  // str      EU_DKR
+   {     3,     -1,  A_right,  PIDS_OPEN_FILES     }   // str      EU_FDS
+#define eu_LAST        EU_FDS
 // xtra Fieldstab 'pseudo pflag' entries for the newlib interface . . . . . . .
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
@@ -6963,6 +6964,7 @@ static const char *task_show (const WIN_t *q, int idx) {
    /* s_int, scale_num */
          case EU_FV1:        // PIDS_FLT_MAJ_DELTA
          case EU_FV2:        // PIDS_FLT_MIN_DELTA
+         case EU_FDS:        // PIDS_OPEN_FILES
             cp = scale_num(rSv(i, s_int), W, Jn);
             break;
    /* s_int, make_num or make_str */
