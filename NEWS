@@ -12,6 +12,7 @@ procps-ng-NEXT
     external: procps_uptime_snprint uses given upseconds
     external: procps_container_uptime
     external: meminfo api adds SecPageTables, Unaccepted
+    external: pids api now provides open file descriptors
     external: 'info' parm removed from all 'VAL' macros    issue #332
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
@@ -20,12 +21,14 @@ procps-ng-NEXT
   * ps: restore lost tasks for options --sort with -H      issue #304
   * ps: add 'docker' containers field, similar to 'lxc'
   * ps: Restore AIX free-format                            issue #323
+  * ps: can display open file descriptors for each task
   * slabtop: Add --human option for slab size
   * sysctl: Add glob excludes                              merge #206
   * top: added a 'CLS' scheduling class field, like ps
   * top: exploit library addition of 'disk sleep'          issue #265
   * top: add 'docker' containers field, similar to 'lxc'
   * top: provides additional control over colors
+  * top: can display open file descriptors for each task
   * uptime: Add container uptime option                    issue #300
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305
