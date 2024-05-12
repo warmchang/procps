@@ -68,12 +68,22 @@ set test "ps AIX parsing %cpuc (AIX format)"
 spawn $ps -o "%cpuc"
 expect_pass "$test" "\\s*COMMAND\\s+puc\\s+"
 
-make_testproc
-set test "ps with c option"
-spawn $ps co command $testproc1_pid
-expect_pass "$test" "^COMMAND\\s+spcorp\\s*$"
-kill_testproc
-
 set test "ps with l and m options"
 spawn $ps -lm
 expect_fail "$test" "please report this bug"
+
+# The remaining tests require a test process
+make_testproc
+
+set test "ps with c option"
+spawn $ps co command $testproc1_pid
+expect_pass "$test" "^COMMAND\\s+spcorp\\s*$"
+
+set test "ps with fds output"
+set fd_count [ exec stat -c %s /proc/$testproc1_pid/fd ]
+spawn $ps -o fds $testproc1_pid
+expect_pass "$test" "^FDS\\s+$fd_count\\s*$"
+
+# End of test process
+kill_testproc
+
