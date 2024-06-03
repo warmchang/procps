@@ -4258,6 +4258,8 @@ system_default:
          p = configs_file(fp, SYS_RCDEFAULTS, &tmp_delay);
          fclose(fp);
          if (p) goto default_or_error;
+         // as this file ages, suppress the compatibility warning ...
+         Rc_compatibilty = 0;
       }
    }
 
