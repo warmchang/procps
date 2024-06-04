@@ -2661,7 +2661,7 @@ static void zap_fieldstab (void) {
       if (Cpu_cnt > 1000) {
          if (Cpu_pmax > 9999999.0) Cpu_pmax = 9999999.0;
       } else if (Cpu_cnt > 100) {
-         if (Cpu_cnt > 999999.0) Cpu_pmax = 999999.0;
+         if (Cpu_pmax > 999999.0) Cpu_pmax = 999999.0;
       } else if (Cpu_cnt > 10) {
          if (Cpu_pmax > 99999.0) Cpu_pmax = 99999.0;
       } else {
