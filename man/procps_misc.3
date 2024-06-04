@@ -8,7 +8,7 @@
 .\" version 2.1 of the License, or (at your option) any later version.
 .\"
 .\"
-.TH PROCPS_MISC 3 "2024-02-08" "libproc2"
+.TH PROCPS_MISC 3 "2024-06-04" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -127,6 +127,7 @@ and the \fIpretty\fR flag determines if the output is standard or pretty/short.
 .BR procps_users ()
 returns the number of users on the system. This value comes from
 .BR sd_get_sessions (3)
+and counting the sessions of user, user-early and user-incomplete class
 or enumerating through
 .BR getutent (3).
 .P

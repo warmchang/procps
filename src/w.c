@@ -844,9 +844,15 @@ int main(int argc, char **argv)
 		int i;
 
 		for (int i = 0; i < sessions; i++) {
-			char *name;
+			char *class, *name;
 			int r;
 
+			if ((r = sd_session_get_class(sessions_list[i], &class)) < 0)
+				error(EXIT_FAILURE, -r, _("session get class failed"));
+                        if (strncmp(class, "user", 4) != 0) { // user, user-early, user-incomplete
+                                free(class);
+                                continue;
+                        }
 			if ((r = sd_session_get_username(sessions_list[i], &name)) < 0)
 				error(EXIT_FAILURE, -r, _("get user name failed"));
 
@@ -855,6 +861,7 @@ int main(int argc, char **argv)
 					from, userlen, fromlen, ip_addresses, pids,
 					pids_cache);
 
+			free(class);
 			free(name);
 			free(sessions_list[i]);
 		}

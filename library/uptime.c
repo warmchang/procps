@@ -70,10 +70,30 @@ PROCPS_EXPORT int procps_users(void)
 #endif
 
 #if defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)
-    if (sd_booted() > 0)
-        numuser = sd_get_sessions(NULL);
-    if (numuser > 0)
-        return numuser;
+    if (sd_booted() > 0) {
+        char **sessions_list;
+        int sessions;
+
+        numuser = 0;
+
+        sessions = sd_get_sessions(&sessions_list);
+
+        if (sessions > 0) {
+            int i;
+
+            for (i = 0; i < sessions; i++) {
+                char *class;
+
+                if (sd_session_get_class(sessions_list[i], &class) < 0)
+                    continue;
+
+                if (strncmp(class, "user", 4) == 0) // user, user-early, user-incomplete
+                    numuser++;
+                free(class);
+            }
+            return numuser;
+        }
+    }
 #endif
 
 #ifdef HAVE_UTMP_X
