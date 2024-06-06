@@ -585,14 +585,14 @@ static int WriteSetting(
         errno = EPERM;
         xwarn(_("setting key \"%s\""), dotted_key);
 	free(dotted_key);
-        return rc;
+        return EXIT_FAILURE;
     }
 
     if (S_ISDIR(ts.st_mode)) {
         errno = EISDIR;
         xwarn(_("setting key \"%s\""), dotted_key);
 	free(dotted_key);
-        return rc;
+        return EXIT_FAILURE;
     }
 
     if (!DryRun) {
