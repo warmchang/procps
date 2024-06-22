@@ -572,11 +572,15 @@ static inline void stat_derive_unique (
     this->new.xidl
         = this->new.idle
         + this->new.iowait;
+    /* note: we exclude guest tics from xtot since ...
+             'user' already includes 'guest'
+             'nice' already includes 'gnice'
+       ( see linux sources: ./kernel/sched/cputime.c, kcpustat_cpu_fetch ) */
     this->new.xtot
-        = this->new.xusr + this->new.xsys + this->new.xidl
-        + this->new.stolen
-        + this->new.guest
-        + this->new.gnice;
+        = this->new.xusr
+        + this->new.xsys
+        + this->new.xidl
+        + this->new.stolen;
     this->new.xbsy
         = this->new.xtot - this->new.xidl;
 

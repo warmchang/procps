@@ -45,8 +45,8 @@ enum stat_item {
     STAT_TIC_IRQ,                 //  ull_int         "
     STAT_TIC_SOFTIRQ,             //  ull_int         "
     STAT_TIC_STOLEN,              //  ull_int         "
-    STAT_TIC_GUEST,               //  ull_int         "
-    STAT_TIC_GUEST_NICE,          //  ull_int         "
+    STAT_TIC_GUEST,               //  ull_int         " (note: also included in USER)
+    STAT_TIC_GUEST_NICE,          //  ull_int         " (note: also included in NICE)
 
     STAT_TIC_DELTA_USER,          //   sl_int        derived from above
     STAT_TIC_DELTA_NICE,          //   sl_int         "
@@ -63,7 +63,7 @@ enum stat_item {
     STAT_TIC_SUM_SYSTEM,          //  ull_int        derived from SYSTEM + IRQ + SOFTIRQ tics
     STAT_TIC_SUM_IDLE,            //  ull_int        derived from IDLE + IOWAIT tics
     STAT_TIC_SUM_BUSY,            //  ull_int        derived from SUM_TOTAL - SUM_IDLE tics
-    STAT_TIC_SUM_TOTAL,           //  ull_int        derived from sum of all 10 tics
+    STAT_TIC_SUM_TOTAL,           //  ull_int        derived from sum of all tics, minus 2 GUEST tics
 
     STAT_TIC_SUM_DELTA_USER,      //   sl_int        derived from above
     STAT_TIC_SUM_DELTA_SYSTEM,    //   sl_int         "
