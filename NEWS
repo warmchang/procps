@@ -5,6 +5,7 @@ procps-ng-NEXT
     internal: dont print 60s but increment minute          issue #302
     internal: stat api fixed remaining cpu distortions     issue #321
     internal: only count user sessions
+    internal: Recover from meminfo seek using LXC          Debian #1072831
     external: zswap & zswapped added to meminfo api
     external: schedule class added to pids api
     external: disk sleep added to pids api, sleep revised  issue #265

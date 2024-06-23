@@ -668,12 +668,20 @@ static int meminfo_read_failed (
     // clear out the soon to be 'current' values
     memset(&info->hist.new, 0, sizeof(struct meminfo_data));
 
-    if (-1 == info->meminfo_fd
-    && (-1 == (info->meminfo_fd = open(MEMINFO_FILE, O_RDONLY))))
-        return 1;
-
-    if (lseek(info->meminfo_fd, 0L, SEEK_SET) == -1)
-        return 1;
+    if (-1 == info->meminfo_fd) {
+    	if (-1 == (info->meminfo_fd = open(MEMINFO_FILE, O_RDONLY)))
+	    return 1;
+    }
+    else {
+	if (lseek(info->meminfo_fd, 0L, SEEK_SET) == -1)
+	    if (ESPIPE == errno) {
+		close(info->meminfo_fd);
+		if (-1 == (info->meminfo_fd = open(MEMINFO_FILE, O_RDONLY)))
+		    return 1;
+	    }
+	    else
+		return 1;
+    }
 
     for (;;) {
         if ((size = read(info->meminfo_fd, buf, sizeof(buf)-1)) < 0) {
