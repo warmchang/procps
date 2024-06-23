@@ -1,7 +1,7 @@
 /*
  * stat.c - cpu/numa related definitions for libproc2
  *
- * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2024 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
@@ -732,8 +732,10 @@ static int stat_read_failed (
     if (!info->stat_fp
     && (!(info->stat_fp = fopen(STAT_FILE, "r"))))
         return 1;
-    fflush(info->stat_fp);
-    rewind(info->stat_fp);
+    else {
+        fflush(info->stat_fp);
+        rewind(info->stat_fp);
+    }
 
  #define maxSIZ    info->stat_buf_size
  #define curSIZ  ( maxSIZ - tot_read )

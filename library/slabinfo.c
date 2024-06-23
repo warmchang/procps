@@ -1,7 +1,7 @@
 /*
  * slabinfo.c - slab pools related definitions for libproc2
  *
- * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2024 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2004-2006 Albert Cahalan
  * Copyright © 2003      Chris Rivera
@@ -484,12 +484,20 @@ static int slabinfo_read_failed (
     memset(info->nodes, 0, sizeof(struct slabs_node)*info->nodes_alloc);
     info->nodes_used = 0;
 
-    if (NULL == info->slabinfo_fp
-    && (info->slabinfo_fp = fopen(SLABINFO_FILE, "r")) == NULL)
+    if (!info->slabinfo_fp
+    && (!(info->slabinfo_fp = fopen(SLABINFO_FILE, "r"))))
         return 1;
-
-    if (fseek(info->slabinfo_fp, 0L, SEEK_SET) < 0)
-        return 1;
+    else {
+        if (-1 == fseek(info->slabinfo_fp, 0L, SEEK_SET)) {
+            /* a concession to libvirt lxc support, which has been
+               known to treat a /proc file as non-seekable ... */
+            if (ESPIPE != errno)
+                return 1;
+            fclose(info->slabinfo_fp);
+            if (!(info->slabinfo_fp = fopen(SLABINFO_FILE, "r")))
+                return 1;
+        }
+    }
 
     /* Parse the version string */
     if (!fgets(line, SLABINFO_LINE_LEN, info->slabinfo_fp))
@@ -808,10 +816,9 @@ PROCPS_EXPORT int procps_slabinfo_unref (
     if ((*info)->refcount < 1) {
         int errno_sav = errno;
 
-        if ((*info)->slabinfo_fp) {
+        if ((*info)->slabinfo_fp)
             fclose((*info)->slabinfo_fp);
-            (*info)->slabinfo_fp = NULL;
-        }
+
         if ((*info)->select_ext.extents)
             slabinfo_extents_free_all((&(*info)->select_ext));
         if ((*info)->select_ext.items)
