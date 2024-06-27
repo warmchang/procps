@@ -304,10 +304,10 @@ typedef          long long SIC_t;
 #else
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_MEMORY | Show_CMDLIN \
    | Show_COLORS | Show_FOREST | Show_HIROWS | Show_IDLEPS | Show_JRNUMS | Show_TASKON \
-   | Qsrt_NORMAL )
+   | Show_HIBOLD | Qsrt_NORMAL )
 #define DEF_GRAPHS2  2, 2
 #define DEF_SCALES2  SK_Gb, SK_Mb
-#define ALT_WINFLGS (DEF_WINFLGS | Show_HIBOLD) & ~Show_FOREST
+#define ALT_WINFLGS DEF_WINFLGS & ~Show_FOREST
 #define ALT_GRAPHS2  1, 1
 #endif
 
