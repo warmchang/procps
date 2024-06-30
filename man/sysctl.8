@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2011-2023 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2011-2024 Craig Small <csmall@dropbear.xyz>
 .\" Copyright (c) 2013-2023 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 2004-2006 Albert Cahalan
@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH SYSCTL "8" "2023-08-19" "procps-ng" "System Administration"
+.TH SYSCTL "8" "2024-06-30" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -133,7 +133,6 @@ Li.
 /usr/local/lib/sysctl.d/\fR*\fP.conf
 /usr/lib/sysctl.d/\fR*\fP.conf
 /lib/sysctl.d/\fR*\fP.conf
-/etc/sysctl.conf
 .TE
 .P
 All configuration files are sorted in lexicographic order, regardless of the
@@ -141,6 +140,10 @@ directory they reside in. Configuration files can either be completely
 replaced (by having a new configuration file with the same name in a
 directory of higher priority) or partially replaced (by having a configuration
 file that is ordered later).
+.P
+The file \fI/etc/sysctl.conf\fR is read last which means it can replace/override any
+parameters previously set in files in the listed directories.
+
 .SH EXAMPLES
 /sbin/sysctl \-a
 .br
