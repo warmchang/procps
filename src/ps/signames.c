@@ -1,7 +1,7 @@
 /*
  * signames.c - ps signal names
  *
- * Copyright © 2023      Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2023-2024 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2020      Luis Chamberlain <mcgrof@kernel.org>
  *
  * This library is free software; you can redistribute it and/or
@@ -140,7 +140,7 @@ int print_signame(char *restrict const outbuf, const char *restrict const sig, c
 	uint64_t mask, mask_in;
 	uint64_t test_val = 0;
 
-        if (1 != sscanf(sig, "%" PRIu64, &mask_in))
+        if (1 != sscanf(sig, "%" PRIx64, &mask_in))
             return 0;
         mask = mask_in;
 
