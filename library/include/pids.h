@@ -38,7 +38,7 @@ enum pids_item {
     PIDS_ADDR_STACK_START,  //   ul_int        stat: start_stack
     PIDS_AUTOGRP_ID,        //    s_int        autogroup
     PIDS_AUTOGRP_NICE,      //    s_int        autogroup
-    PIDS_CAP_PRM,           //      str        status: CapPrm Permitted Capabilities
+    PIDS_CAPS_PERMITTED,    //      str        status: CapPrm
     PIDS_CGNAME,            //      str        derived from CGROUP ':name='
     PIDS_CGROUP,            //      str        cgroup
     PIDS_CGROUP_V,          //     strv        cgroup, as *str[]

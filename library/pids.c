@@ -182,7 +182,7 @@ REG_set(ADDR_CURR_ESP,    ul_int,  kstk_esp)
 REG_set(ADDR_STACK_START, ul_int,  start_stack)
 REG_set(AUTOGRP_ID,       s_int,   autogrp_id)
 REG_set(AUTOGRP_NICE,     s_int,   autogrp_nice)
-DUP_set(CAP_PRM,                   capprm)
+DUP_set(CAPS_PERMITTED,            capprm)
 STR_set(CGNAME,                    cgname)
 STR_set(CGROUP,                    cgroup)
 VEC_set(CGROUP_V,                  cgroup_v)
@@ -479,7 +479,7 @@ static struct {
     { RS(ADDR_STACK_START),  f_stat,     NULL,      QS(ul_int),    0,        TS(ul_int)  },
     { RS(AUTOGRP_ID),        z_autogrp,  NULL,      QS(s_int),     0,        TS(s_int)   },
     { RS(AUTOGRP_NICE),      z_autogrp,  NULL,      QS(s_int),     0,        TS(s_int)   },
-    { RS(CAP_PRM),           f_status,   FF(str),   QS(str),       0,        TS(str)     },
+    { RS(CAPS_PERMITTED),    f_status,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGNAME),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP),            x_cgroup,   FF(str),   QS(str),       0,        TS(str)     },
     { RS(CGROUP_V),          v_cgroup,   FF(strv),  QS(strv),      0,        TS(strv)    },
