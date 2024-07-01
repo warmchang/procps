@@ -73,6 +73,9 @@ typedef struct proc_t {
         sigignore[18],  // status          mask of ignored signals
         sigcatch[18],   // status          mask of caught  signals
         _sigpnd[18];    // status          mask of PER TASK pending signals
+    char
+        // Capabilities
+        capprm[18];     // status          Permitted Capabilities
     unsigned long
         start_code,     // stat            address of beginning of code segment
         end_code,       // stat            address of end of code segment

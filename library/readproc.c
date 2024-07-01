@@ -305,6 +305,10 @@ ENTER(0x220);
         memcpy(P->_sigpnd, S, 16);
         P->_sigpnd[16] = '\0';
         continue;
+    case_CapPrm:
+        memcpy(P->capprm, S, 16);
+        P->capprm[16] = '\0';
+        continue;
     case_State:
         P->state = *S;
         continue;
@@ -391,7 +395,6 @@ ENTER(0x220);
     case_CapBnd:
     case_CapEff:
     case_CapInh:
-    case_CapPrm:
     case_FDSize:
     case_SigQ:
     case_VmHWM: // 2005, peak VmRSS unless VmRSS is bigger
