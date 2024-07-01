@@ -148,7 +148,7 @@ PROCPS_EXPORT int procps_sigmask_names(char *restrict const outbuf, const char *
             return -EINVAL;
         mask = mask_in;
 
-	for (i=1; i < NSIG; i++) {
+	for (i=0; i < NSIG; i++) {
 		test_val = mask_sig_val_num(i);
 		if (test_val & mask) {
                         n = strlen(sigstat_strsignal_abbrev(i, abbrev, SIGNAME_MAX));

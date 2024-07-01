@@ -52,6 +52,12 @@ Signal mask Particulars
 .RS 4
 .RI "int       \fB  procps_sigmask_names\fR (char *restrict const " outbuf ", const char *restrict const " sigmask ", const size_t " len ");"
 .RE
+.PP
+Capability Particulars
+.PP
+.RS 4
+.RI "int       \fB  procps_capability_names\fR (char *restrict const " outbuf ", const char *restrict const " capmask ", const size_t " len ");"
+.RE
 .P
 Link with \fI\-lproc2\fP.
 .SH DESCRIPTION
@@ -172,7 +178,21 @@ are blocked, ignored or caught (see
 .BR signal (7)).
 If the list of signals exceeds \fIlen\fR bytes, the string will be truncated and
 will end with a '+'. It is up to the calling program to ensure that \fIoutbuf\fR
-is correctly allocated with at least \fIlen\fRbytes.
+is correctly allocated with at least \fIlen\fR bytes.
+.P
+.BR procps_capability_names ()
+Fills \fIoutbuf\fR with a human-readable text string of up to \fIlen\fR
+bytes of the capabilites set in the hexadecimal capability mask \fIcapmask\fR.
+This is used to provide additional information from the capabilities as returned
+by the \fBprocps_pids_*\fR functions for the capabilities given to a process. See
+.BR capabilities (7)).
+If the list of capabilities exceeds \fIlen\fR bytes, the string will be truncated and
+will end with a '+'. It is up to the calling program to ensure that \fIoutbuf\fR
+is correctly allocated with at least \fIlen\fR bytes.
+.P
+For a process that has no capabilities or all capabilities the string will be
+"-" and "full" respectively.
+
 .SH RETURN VALUE
 .SS Functions Returning an \[oq]int\[cq] or \[oq]long\[cq]
 An error will be indicated by a negative number that

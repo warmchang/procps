@@ -18,6 +18,7 @@ procps-ng-NEXT
     external: pids api now provides open file descriptors
     external: 'info' parm removed from all 'VAL' macros    issue #332
     external: Add procps_sigmask_names
+    external: Add procps_capability_names
     external: Add PIDS_CAP__PRM Permitted Capabilities
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318

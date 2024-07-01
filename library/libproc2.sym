@@ -74,4 +74,5 @@ LIBPROC_2.1 {
 
 LIBPROC_2.2 {
         procps_sigmask_names;
+        procps_capability_names;
 } LIBPROC_2.1;

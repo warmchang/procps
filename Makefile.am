@@ -270,6 +270,8 @@ library_libproc2_la_LDFLAGS = \
 	-Wl,--version-script=$(top_srcdir)/library/libproc2.sym
 
 library_libproc2_la_SOURCES = \
+	library/capname.c \
+        local/capnames.h \
 	library/devname.c \
 	library/include/devname.h \
 	library/diskstats.c \
@@ -425,6 +427,41 @@ $(top_srcdir)/.version:
 	echo $(VERSION) > $@-t && mv $@-t $@
 dist-hook:
 	echo $(VERSION) > $(distdir)/.tarball-version
+
+# Generate capability names - if it needs updating
+define capnames_header
+/*
+ * capnames.h : Definition of Capability Names
+ *
+ * This is an auto-generated file, do not edit
+ */
+
+#ifndef PROCPS_CAPNAMES_H
+#define PROCPS_CAPNAMES_H
+
+static const char *cap_names[] = {
+endef
+define capnames_footer
+
+#endif /* CAPNAMES_H */
+endef
+export capnames_header
+export capnames_footer
+LNX_CAP_HEADER = /usr/include/linux/capability.h
+
+local/capnames.h: Makefile
+	@if [ -e $(LNX_CAP_HEADER) ] ; then \
+	  echo "$$capnames_header" > $@; \
+	  last_capname=`sed -n  -e  's/^#define\s*CAP_LAST_CAP\s*\([A-Z_]*\)$$/\1/p' $(LNX_CAP_HEADER)`; \
+	  capability_count=`sed -n  -e  "s/^#define\s*$$last_capname\s*\([0-9]*\)$$/\1/p" $(LNX_CAP_HEADER)`; \
+	  sed -n  -e  's/^#define\s*CAP_\([A-Z_]*\)\s*\([0-9]*\)$$/    [\2]  = \"\L\1\",/p'  $(LNX_CAP_HEADER) >> $@; \
+	  echo -e "};\n\n" >> $@; \
+	  echo "#define CAPABILITY_COUNT $$capability_count" >> $@;  \
+	  echo "$$capnames_footer" >> $@; \
+	  echo ""; \
+	else \
+	  echo "Header file $(LNX_CAP_HEADER) not found, cannot rebuild $@"; \
+	fi
 
 get-trans:
 	echo "Getting the latest translations from translationproject.org..."
