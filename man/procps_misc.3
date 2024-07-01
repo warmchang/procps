@@ -8,7 +8,7 @@
 .\" version 2.1 of the License, or (at your option) any later version.
 .\"
 .\"
-.TH PROCPS_MISC 3 "2024-06-04" "libproc2"
+.TH PROCPS_MISC 3 "2024-07-01" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -45,6 +45,12 @@ Namespace Particulars
 .RI "int       \fB  procps_ns_get_id\fR (const char *" name ");"
 .RI "const char\fB *procps_ns_get_name\fR (int " id ");"
 .RI "int       \fB  procps_ns_read_pid\fR (int " pid ", struct procps_ns *" nsp ");"
+.RE
+.PP
+Signal mask Particulars
+.PP
+.RS 4
+.RI "int       \fB  procps_sigmask_names\fR (char *restrict const " outbuf ", const char *restrict const " sigmask ", const size_t " len ");"
 .RE
 .P
 Link with \fI\-lproc2\fP.
@@ -156,6 +162,17 @@ enum namespace_type {
 };
 .fi
 .RE
+.P
+.BR procps_sigmask_names ()
+Fills \fIoutbuf\fR with a human-readable text string of up to \fIlen\fR
+bytes of the signals set in the hexadecimal signal mask \fIsigmask\fR.
+This is used to provide additional information from the signal masks as returned
+by the \fBprocps_pids_*\fR functions for the signal masks of a pid for signals that
+are blocked, ignored or caught (see
+.BR signal (7)).
+If the list of signals exceeds \fIlen\fR bytes, the string will be truncated and
+will end with a '+'. It is up to the calling program to ensure that \fIoutbuf\fR
+is correctly allocated with at least \fIlen\fRbytes.
 .SH RETURN VALUE
 .SS Functions Returning an \[oq]int\[cq] or \[oq]long\[cq]
 An error will be indicated by a negative number that
@@ -185,4 +202,5 @@ contains the set of namespaces for a particular
 .BR procps_pids (3),
 .BR getutent (3),
 .BR sd_get_sessions (3),
-.BR proc (5).
+.BR proc (5),
+.BR signals (7).

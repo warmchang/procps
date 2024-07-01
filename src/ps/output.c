@@ -2,7 +2,7 @@
  * output.c - ps output definitions
  *
  * Copyright © 2015-2023 Jim Warner <james.warner@comcast.net
- * Copyright © 2004-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2004-2024 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2011      Lukas Nykryn <lnykryn@redhat.com>
  * Copyright © 1999-2004 Albert Cahalan
  *
@@ -1112,7 +1112,7 @@ static int help_pr_sig(char *restrict const outbuf, const char *restrict const s
   if (signal_names) {
     int rightward;
     rightward = max_rightward;
-    if ( (ret = print_signame(outbuf, sig, rightward)) > 0)
+    if ( (ret = procps_sigmask_names(outbuf, sig, rightward)) > 0)
         return ret;
   }
 

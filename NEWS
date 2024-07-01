@@ -17,6 +17,7 @@ procps-ng-NEXT
     external: meminfo api adds SecPageTables, Unaccepted
     external: pids api now provides open file descriptors
     external: 'info' parm removed from all 'VAL' macros    issue #332
+    external: Add procps_sigmask_names
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
   * ps: Add environ field

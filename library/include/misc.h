@@ -86,6 +86,8 @@ const char *procps_ns_get_name (const int id);
 int procps_ns_get_id (const char *name);
 int procps_ns_read_pid (const int pid, struct procps_ns *nsp);
 
+// Signal names
+int procps_sigmask_names(char *restrict const outbuf, const char *restrict const sigmask, const size_t len);
 
 #ifdef __cplusplus
 }

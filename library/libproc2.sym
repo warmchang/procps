@@ -71,3 +71,7 @@ LIBPROC_2.1 {
 	procps_users;
 	procps_uptime_snprint;
 } LIBPROC_2;
+
+LIBPROC_2.2 {
+        procps_sigmask_names;
+} LIBPROC_2.1;
