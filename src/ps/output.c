@@ -1151,6 +1151,10 @@ setREL1(SIGCATCH)
   return help_pr_sig(outbuf, rSv(SIGCATCH, str, pp));
 }
 
+static int pr_pcap(char *restrict const outbuf, const proc_t *restrict const pp){
+setREL1(CAP_PRM)
+  return snprintf(outbuf, COLWID, "%s", rSv(CAP_PRM, str, pp));
+}
 static int pr_uss(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SMAP_PRV_TOTAL)
   return snprintf(outbuf, COLWID, "%lu", rSv(SMAP_PRV_TOTAL, ul_int, pp));
@@ -1785,6 +1789,7 @@ static const format_struct format_array[] = { /*
 {"p_ru",      "P_RU",    pr_nop,           PIDS_noop,                6,    BSD,  AN|RIGHT},
 {"paddr",     "PADDR",   pr_nop,           PIDS_noop,                6,    BSD,  AN|RIGHT},
 {"pagein",    "PAGEIN",  pr_majflt,        PIDS_FLT_MAJ,             6,    XXX,  AN|RIGHT},
+{"pcap",      "PCAP",    pr_pcap,          PIDS_CAP_PRM,             9,    BSD,  TO|RIGHT}, /*permitted caps*/
 {"pcpu",      "%CPU",    pr_pcpu,          PIDS_UTILIZATION,         4,    U98,  ET|RIGHT}, /*%cpu*/
 {"pending",   "PENDING", pr_sig,           PIDS_SIGNALS,             9,    BSD,  ET|SIGNAL}, /*sig*/
 {"pgid",      "PGID",    pr_pgid,          PIDS_ID_PGRP,             5,    U98,  PO|PIDMAX|RIGHT},

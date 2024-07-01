@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH PS "1" "2024-01-30" "procps-ng" "User Commands"
+.TH PS "1" "2024-07-01" "procps-ng" "User Commands"
 .\"
 .\" Ragged-right text.
 .na
@@ -1472,6 +1472,12 @@ displays the Unix user identifier of the owner of the session of a process,
 if systemd support has been included.
 T}
 
+pcap    PCAP    T{
+Permitted Capabilites of the process, displayed as a hexadecimal bitmask.
+See
+.IR capabilities (7).
+T}
+
 pcpu	%CPU	T{
 see
 .BR %cpu .
@@ -2066,7 +2072,9 @@ names across languages.
 .BR pstree (1),
 .BR top (1),
 .BR strftime (3),
-.BR proc (5).
+.BR proc (5),
+.BR capabilities (7).
+
 .SH STANDARDS
 This
 .B ps

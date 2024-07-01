@@ -28,6 +28,7 @@ procps-ng-NEXT
   * ps: Restore AIX free-format                            issue #323
   * ps: can display open file descriptors for each task
   * ps: Fix signames scanning                              issue #341
+  * ps: Add -o pcap to show permitted capabilities
   * slabtop: Add --human option for slab size
   * sysctl: Add glob excludes                              merge #206
   * top: added a 'CLS' scheduling class field, like ps
