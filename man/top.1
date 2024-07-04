@@ -1,7 +1,7 @@
 .ig
 . manual page for NEW and IMPROVED linux top
 .
-. Copyright (c) 2002-2023 Jim Warner <james.warner@comcast.net
+. Copyright (c) 2002-2024 Jim Warner <james.warner@comcast.net
 .
 . This file may be copied under the terms of the GNU Public License.
 ..
@@ -59,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 "June 2024" "procps-ng" "User Commands"
+.TH TOP 1 "July 2024" "procps-ng" "User Commands"
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -1352,12 +1352,12 @@ depending on the context in which they are issued.
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z,
-        ^G, ^K, ^N, ^P, ^U, ^L, ^R
+        ^E, ^G, ^K, ^N, ^P, ^U, ^L, ^R
   4b.\fI Summary-Area-Commands \fR
         C, l, t, m, 1, 2, 3, 4, 5, !
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
-        Content:     c, F, f, O, o, S, U, u, V, v, ^E
+        Content:     c, F, f, O, o, S, U, u, V, v
         Size:        #, i, n
         Sorting:     <, >, f, R
   4d.\fI Color-Mapping \fR
@@ -1657,6 +1657,22 @@ and available to all of these \[oq]Ctrl\[cq] commands,
 the tab key can be used to highlight individual elements in the bottom
 window.
 .RS -7
+
+.TP 7
+\ \ \fB^E\fR\ \ :\fIScale-CPU-Time-fields\fR (Ctrl key + \[oq]e\[cq])
+The \[oq]time\[cq] fields are normally displayed with the greatest
+precision their widths permit.
+This toggle reduces that precision until it wraps.
+It also illustrates the scaling those fields \fImight\fR experience
+automatically, which usually depends on how long the system runs.
+
+For example, if \[oq]MMM:SS.hh\[cq] is shown,
+each ^E keystroke would change it to:
+\[oq]MM:SS\[cq],
+\[oq]Hours,MM\[cq],
+\[oq]Days+Hours\[cq] and finally \[oq]Weeks+Days\[cq].
+
+Not all time fields are subject to the full range of such scaling.
 
 .TP 7
 \ \ \fB^L\fR\ \ :\fILogged-Messages \fR (Ctrl key + \[oq]l\[cq])
@@ -2008,22 +2024,6 @@ vertical scrolling.
 
 If the target process has not forked any children, this key has no effect.
 It also has no effect when not in forest view mode.
-
-.TP 7
-\ \ \fB^E\fR\ \ :\fIScale-CPU-Time-fields\fR (Ctrl key + \[oq]e\[cq])
-The \[oq]time\[cq] fields are normally displayed with the greatest
-precision their widths permit.
-This toggle reduces that precision until it wraps.
-It also illustrates the scaling those fields \fImight\fR experience
-automatically, which usually depends on how long the system runs.
-
-For example, if \[oq]MMM:SS.hh\[cq] is shown,
-each ^E keystroke would change it to:
-\[oq]MM:SS\[cq],
-\[oq]Hours,MM\[cq],
-\[oq]Days+Hours\[cq] and finally \[oq]Weeks+Days\[cq].
-
-Not all time fields are subject to the full range of such scaling.
 
 .\" ..................................................
 .PP
