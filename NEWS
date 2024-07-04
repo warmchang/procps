@@ -39,6 +39,7 @@ procps-ng-NEXT
   * top: can display open file descriptors for each task
   * top: corrected cpu % for hosts with qemu processes     issue #339
   * top: remains functional if /proc mounted subset=pid
+  * top: can display a task's permitted capabilities (^A)
   * uptime: Add container uptime option                    issue #300
   * w: Don't segfault with -s option                       issue #301
   * w: Cache pids list                                     issue #305

@@ -1,6 +1,6 @@
 /* top_nls.c - provide the basis for future nls translations */
 /*
- * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net
+ * Copyright © 2011-2024 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -616,6 +616,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[AGNI_invalid_txt] = _("valid AGNI range is -20 to +19");
    Norm_nlstab[AGNI_notopen_fmt] = _("autogroup open failed, %s");
    Norm_nlstab[AGNI_nowrite_fmt] = _("autogroup write failed, %s");
+   Norm_nlstab[X_BOT_capprm_fmt] = _("permitted capabilities for pid %d, %s");
    Norm_nlstab[X_BOT_cmdlin_fmt] = _("command line for pid %d, %s");
    Norm_nlstab[X_BOT_ctlgrp_fmt] = _("control groups for pid %d, %s");
    Norm_nlstab[X_BOT_envirn_fmt] = _("environment for pid %d, %s");

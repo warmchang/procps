@@ -1,6 +1,6 @@
 /* top_nls.h - provide the basis for future nls translations */
 /*
- * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net
+ * Copyright © 2011-2024 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -84,7 +84,7 @@ enum norm_nls {
    WORD_eachcpu_fmt, WORD_exclude_txt, WORD_include_txt, WORD_noneone_txt,
    WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt,
    XTRA_badflds_fmt, XTRA_fixwide_fmt, XTRA_modebad_txt, XTRA_vforest_fmt,
-   XTRA_warncfg_txt, XTRA_warnold_txt, XTRA_winsize_txt,
+   XTRA_warncfg_txt, XTRA_warnold_txt, XTRA_winsize_txt, X_BOT_capprm_fmt,
    X_BOT_cmdlin_fmt, X_BOT_ctlgrp_fmt, X_BOT_envirn_fmt, X_BOT_msglog_txt,
    X_BOT_namesp_fmt, X_BOT_nodata_txt, X_BOT_supgrp_fmt, X_RESTRICTED_txt,
    X_SEMAPHORES_fmt, X_THREADINGS_fmt,

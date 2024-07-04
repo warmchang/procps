@@ -2029,20 +2029,22 @@ static struct {
 #define eu_CMDLINE     eu_LAST +1
 #define eu_TICS_ALL_C  eu_LAST +2
 #define eu_ID_FUID     eu_LAST +3
-#define eu_CMDLINE_V   eu_LAST +4
-#define eu_ENVIRON_V   eu_LAST +5
-#define eu_TREE_HID    eu_LAST +6
-#define eu_TREE_LVL    eu_LAST +7
-#define eu_TREE_ADD    eu_LAST +8
+#define eu_CAPABILITY  eu_LAST +4
+#define eu_CMDLINE_V   eu_LAST +5
+#define eu_ENVIRON_V   eu_LAST +6
+#define eu_TREE_HID    eu_LAST +7
+#define eu_TREE_LVL    eu_LAST +8
+#define eu_TREE_ADD    eu_LAST +9
 #define eu_RESET       eu_TREE_HID       // demarcation for reset to zero (PIDS_extra)
-   , {  -1, -1, -1,  PIDS_CMDLINE     }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
-   , {  -1, -1, -1,  PIDS_TICS_ALL_C  }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
-   , {  -1, -1, -1,  PIDS_ID_FUID     }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
-   , {  -1, -1, -1,  PIDS_CMDLINE_V   }  // strv     ( if Ctrlk,       eu_CMDLINE_V  )
-   , {  -1, -1, -1,  PIDS_ENVIRON_V   }  // strv     ( if CtrlN,       eu_ENVIRON_V  )
-   , {  -1, -1, -1,  PIDS_extra       }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
-   , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_LVL   )
-   , {  -1, -1, -1,  PIDS_extra       }  // s_int    ( if Show_FOREST, eu_TREE_ADD   )
+   , {  -1, -1, -1,  PIDS_CMDLINE        }  // str      ( if Show_CMDLIN, eu_CMDLINE    )
+   , {  -1, -1, -1,  PIDS_TICS_ALL_C     }  // ull_int  ( if Show_CTIMES, eu_TICS_ALL_C )
+   , {  -1, -1, -1,  PIDS_ID_FUID        }  // u_int    ( if a usrseltyp, eu_ID_FUID    )
+   , {  -1, -1, -1,  PIDS_CAPS_PERMITTED }  // str      ( if kbd_CtrlA,   eu_CAPABILITY )
+   , {  -1, -1, -1,  PIDS_CMDLINE_V      }  // strv     ( if kbd_CtrlK,   eu_CMDLINE_V  )
+   , {  -1, -1, -1,  PIDS_ENVIRON_V      }  // strv     ( if kbd_CtrlN,   eu_ENVIRON_V  )
+   , {  -1, -1, -1,  PIDS_extra          }  // s_ch     ( if Show_FOREST, eu_TREE_HID   )
+   , {  -1, -1, -1,  PIDS_extra          }  // s_int    ( if Show_FOREST, eu_TREE_LVL   )
+   , {  -1, -1, -1,  PIDS_extra          }  // s_int    ( if Show_FOREST, eu_TREE_ADD   )
  #undef A_left
  #undef A_right
 };
@@ -5290,6 +5292,9 @@ static void *bot_item_hlp (struct pids_stack *p) {
       case eu_CMDLINE_V:
       case eu_ENVIRON_V:
          return p->head[Bot_item[0]].result.strv;
+      case eu_CAPABILITY:
+         procps_capability_names(buf, PID_VAL(eu_CAPABILITY, str, p), sizeof(buf));
+         return buf;
       default:
          return p->head[Bot_item[0]].result.str;
    }
@@ -5723,6 +5728,9 @@ static void keys_global (int ch) {
          break;
       case '0':
          Rc.zero_suppress = !Rc.zero_suppress;
+         break;
+      case kbd_CtrlA:
+         bot_item_toggle(eu_CAPABILITY, N_fmt(X_BOT_capprm_fmt), BOT_SEP_CMA);
          break;
       case kbd_CtrlE:
 #ifndef SCALE_FORMER
@@ -6718,8 +6726,8 @@ static void do_key (int ch) {
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK, kbd_CtrlL
-         , kbd_CtrlN, kbd_CtrlP, kbd_CtrlR, kbd_CtrlU
+         , kbd_CtrlA, kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK
+         , kbd_CtrlL, kbd_CtrlN, kbd_CtrlP, kbd_CtrlR, kbd_CtrlU
          , kbd_ENTER, kbd_SPACE, kbd_BTAB, '\0' } },
       { keys_summary,
  #ifdef CORE_TYPE_NO
