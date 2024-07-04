@@ -1,6 +1,6 @@
 /* top.c - Source file:         show Linux processes */
 /*
- * Copyright © 2002-2023 Jim Warner <james.warner@comcast.net
+ * Copyright © 2002-2024 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -120,12 +120,12 @@ static int   Screen_cols, Screen_rows, Max_lines;
 #define      BOT_SEP_SPC  ' '
         // 1 for horizontal separator
 #define      BOT_RSVD  1
-#define      BOT_KEEP  Bot_show_func = NULL
-#define      BOT_TOSS  do { Bot_show_func = NULL; Bot_item[0] = BOT_DELIMIT; \
-                Bot_task = Bot_rsvd = Bot_what = 0; \
-                Bot_indx = BOT_UNFOCUS; \
-                } while(0)
-static int   Bot_task,
+#define      BOT_KEEP  { Bot_new = 0; }
+#define      BOT_TOSS  { Bot_new = Bot_task = Bot_what = Bot_rsvd = 0; \
+                Bot_item[0] = BOT_DELIMIT; \
+                Bot_indx = BOT_UNFOCUS; }
+static int   Bot_new,
+             Bot_task,
              Bot_what,
              Bot_rsvd,
              Bot_indx = BOT_UNFOCUS,
@@ -135,7 +135,6 @@ static char  Bot_sep,
              Bot_buf[BOTBUFSIZ];       // the 'environ' can be huge
 typedef int(*BOT_f)(const void *, const void *);
 static BOT_f Bot_focus_func;
-static void(*Bot_show_func)(void);
 
         /* This is really the number of lines needed to display the summary
            information (0 - nn), but is used as the relative row where we
@@ -2269,7 +2268,7 @@ static void build_headers (void) {
          if (EU_CMD == f) ckCMDS(w);
          else ckITEM(f);
 
-         // lastly, accommodate any special non-display 'tagged' needs...
+         // lastly, accommodate any special 'bottom' window needs ...
          i = 0;
          while (Bot_item[i] > BOT_DELIMIT) {
             ckITEM(Bot_item[i]);
@@ -5354,11 +5353,11 @@ static void bot_item_toggle (int what, const char *head, char sep) {
             Bot_focus_func = (BOT_f)bot_focus_str;
             break;
       }
-      Bot_sep = sep;
+      Bot_new  = 1;
+      Bot_sep  = sep;
       Bot_what = what;
       Bot_indx = BOT_UNFOCUS;
       Bot_head = (char *)head;
-      Bot_show_func = bot_item_show;
       Bot_task = PID_VAL(EU_PID, s_int, Curwin->ppt[Curwin->begtask]);
    }
 } // end: bot_item_toggle
@@ -7398,7 +7397,7 @@ static void frame_make (void) {
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
-   if (Bot_show_func) Bot_show_func();
+   if (Bot_new) bot_item_show();
    fflush(stdout);
 
    /* we'll deem any terminal not supporting tgoto as dumb and disable
