@@ -1112,7 +1112,7 @@ static int help_pr_sig(char *restrict const outbuf, const char *restrict const s
   if (signal_names) {
     int rightward;
     rightward = max_rightward;
-    if ( (ret = procps_sigmask_names(outbuf, sig, rightward)) > 0)
+    if ( (ret = procps_sigmask_names(outbuf, rightward, sig)) > 0)
         return ret;
   }
 
@@ -1157,7 +1157,7 @@ setREL1(CAPS_PERMITTED)
 }
 static int pr_pcaps(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(CAPS_PERMITTED)
-  return procps_capability_names(outbuf, rSv(CAPS_PERMITTED, str, pp), COLWID);
+  return procps_capmask_names(outbuf, COLWID, rSv(CAPS_PERMITTED, str, pp));
 }
 static int pr_uss(char *restrict const outbuf, const proc_t *restrict const pp){
 setREL1(SMAP_PRV_TOTAL)

@@ -5293,7 +5293,7 @@ static void *bot_item_hlp (struct pids_stack *p) {
       case eu_ENVIRON_V:
          return p->head[Bot_item[0]].result.strv;
       case eu_CAPABILITY:
-         procps_capability_names(buf, PID_VAL(eu_CAPABILITY, str, p), sizeof(buf));
+         procps_capmask_names(buf, sizeof(buf), PID_VAL(eu_CAPABILITY, str, p));
          return buf;
       default:
          return p->head[Bot_item[0]].result.str;

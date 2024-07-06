@@ -8,7 +8,7 @@
 .\" version 2.1 of the License, or (at your option) any later version.
 .\"
 .\"
-.TH PROCPS_MISC 3 "2024-07-01" "libproc2"
+.TH PROCPS_MISC 3 "2024-07-06" "libproc2"
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -47,17 +47,13 @@ Namespace Particulars
 .RI "int       \fB  procps_ns_read_pid\fR (int " pid ", struct procps_ns *" nsp ");"
 .RE
 .PP
-Signal mask Particulars
+Mask Name Resolving
 .PP
 .RS 4
-.RI "int       \fB  procps_sigmask_names\fR (char *restrict const " outbuf ", const char *restrict const " sigmask ", const size_t " len ");"
+.RI "int \fBprocps_sigmask_names\fR (char *const " str ", size_t " size " , const char *" sigmask ");"
+.RI "int \fBprocps_capmask_names\fR (char *const " str ", size_t " size ",  const char *" capmask ");"
 .RE
 .PP
-Capability Particulars
-.PP
-.RS 4
-.RI "int       \fB  procps_capability_names\fR (char *restrict const " outbuf ", const char *restrict const " capmask ", const size_t " len ");"
-.RE
 .P
 Link with \fI\-lproc2\fP.
 .SH DESCRIPTION
@@ -170,25 +166,22 @@ enum namespace_type {
 .RE
 .P
 .BR procps_sigmask_names ()
-Fills \fIoutbuf\fR with a human-readable text string of up to \fIlen\fR
-bytes of the signals set in the hexadecimal signal mask \fIsigmask\fR.
-This is used to provide additional information from the signal masks as returned
-by the \fBprocps_pids_*\fR functions for the signal masks of a pid for signals that
-are blocked, ignored or caught (see
-.BR signal (7)).
-If the list of signals exceeds \fIlen\fR bytes, the string will be truncated and
-will end with a '+'. It is up to the calling program to ensure that \fIoutbuf\fR
-is correctly allocated with at least \fIlen\fR bytes.
+Fills \fIstr\fR with a human-readable text string of up to \fIsize\fR
+bytes of the signals set in the hexadecimal signal mask \fIsigmask\fR,
+see
+.BR signal (7).
+If the list of signals exceeds \fIsize\fR bytes, the string will be truncated and
+will end with a '+'. It is up to the calling program to ensure that \fIstr\fR
+is correctly allocated with at least \fIsize\fR bytes.
 .P
-.BR procps_capability_names ()
-Fills \fIoutbuf\fR with a human-readable text string of up to \fIlen\fR
-bytes of the capabilites set in the hexadecimal capability mask \fIcapmask\fR.
-This is used to provide additional information from the capabilities as returned
-by the \fBprocps_pids_*\fR functions for the capabilities given to a process. See
-.BR capabilities (7)).
-If the list of capabilities exceeds \fIlen\fR bytes, the string will be truncated and
-will end with a '+'. It is up to the calling program to ensure that \fIoutbuf\fR
-is correctly allocated with at least \fIlen\fR bytes.
+.BR procps_capmask_names ()
+Fills \fIstr\fR with a human-readable text string of up to \fIsize\fR
+bytes of the capabilites set in the hexadecimal capability mask \fIcapmask\fR,
+see
+.BR capabilities (7).
+If the list of capabilities exceeds \fIsize\fR bytes, the string will be truncated and
+will end with a '+'. It is up to the calling program to ensure that \fIstr\fR
+is correctly allocated with at least \fIsize\fR bytes.
 .P
 For a process that has no capabilities or all capabilities the string will be
 "-" and "full" respectively.
@@ -223,4 +216,5 @@ contains the set of namespaces for a particular
 .BR getutent (3),
 .BR sd_get_sessions (3),
 .BR proc (5),
-.BR signals (7).
+.BR capabilities (7),
+.BR signal (7).

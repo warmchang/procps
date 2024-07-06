@@ -86,11 +86,13 @@ const char *procps_ns_get_name (const int id);
 int procps_ns_get_id (const char *name);
 int procps_ns_read_pid (const int pid, struct procps_ns *nsp);
 
-// Signal names
-int procps_sigmask_names(char *restrict const outbuf, const char *restrict const sigmask, const size_t len);
+// //////////////////////////////////////////////////////////////////
+// Mask Name Resolving //////////////////////////////////////////////
+//
+int procps_sigmask_names(char *str, size_t size, const char *sigmask);
 
-// Capability names
-int procps_capability_names(char *restrict const buf, const char *restrict const capmask, const size_t buflen);
+int procps_capmask_names(char *str, size_t size, const char *capmask);
+
 #ifdef __cplusplus
 }
 #endif

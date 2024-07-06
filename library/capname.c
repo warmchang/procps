@@ -52,29 +52,31 @@ static bool capability_isset(const uint64_t mask, const int cnum)
     return (mask & ((uint64_t) 1 << (cnum)));
 }
 
-PROCPS_EXPORT int procps_capability_names(char *restrict const buf, const char *restrict const capmask, const size_t buflen)
+PROCPS_EXPORT int procps_capmask_names(
+        char *str,
+        size_t size,
+        const char *capmask)
 {
     unsigned int i;
-    char *c = buf;
-    size_t len = buflen;
+    char *c = str;
     uint64_t mask_in;
 
     // buffer must be at least 2 for "-\0"
-    if (buf == NULL || capmask == NULL || buflen < 2)
+    if (str == NULL || capmask == NULL || size < 2)
         return -EINVAL;
 
     if (1 != sscanf(capmask, "%" PRIx64, &mask_in))
         return -EINVAL;
 
     if (mask_in == 0) {
-        strcpy(buf, "-");
+        strcpy(str, "-");
         return 1;
     }
     
     if (mask_in == FULL_CAP_MASK) {
         size_t namelen;
         namelen = strlen(FULL_CAP);
-        if (namelen+1 >= len) {
+        if (namelen+1 >= size) {
             strcpy(c, "+");
             return 1;
         }
@@ -88,19 +90,19 @@ PROCPS_EXPORT int procps_capability_names(char *restrict const buf, const char *
             if (cap_names[i] != NULL) { // We have a name for this capability
                 int namelen;
                 namelen = strlen(cap_names[i]);
-                if (namelen+1 >= len) {
+                if (namelen+1 >= size) {
                     strcpy(c, "+");
-                    len -= 1;
+                    size -= 1;
                     c += 1;
                     break;
                 } else {
-                    namelen = snprintf(c, len, (c==buf)?"%s":",%s",
+                    namelen = snprintf(c, size, (c==str)?"%s":",%s",
                             cap_names[i]);
-                    len -= namelen;
+                    size -= namelen;
                     c+= namelen;
                 }
             }
         }
     }
-    return (int) (c-buf);
+    return (int) (c-str);
 }

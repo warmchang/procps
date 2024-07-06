@@ -131,17 +131,19 @@ static uint64_t mask_sig_val_num(int signum)
 	return ((uint64_t) 1 << (signum -1));
 }
 
-PROCPS_EXPORT int procps_sigmask_names(char *restrict const outbuf, const char *restrict const sigmask, const size_t len_in)
+PROCPS_EXPORT int procps_sigmask_names(
+        char *str,
+        size_t size,
+        const char *sigmask)
 {
 	unsigned int i;
 	char abbrev[SIGNAME_MAX];
 	unsigned int n = 0;
-	char *c = outbuf;
-        size_t len = len_in;
+	char *c = str;
 	uint64_t mask, mask_in;
 	uint64_t test_val = 0;
 
-        if (outbuf == NULL || sigmask == NULL || len_in == 0)
+        if (str == NULL || sigmask == NULL || size == 0)
             return -EINVAL;
 
         if (1 != sscanf(sigmask, "%" PRIx64, &mask_in))
@@ -152,24 +154,24 @@ PROCPS_EXPORT int procps_sigmask_names(char *restrict const outbuf, const char *
 		test_val = mask_sig_val_num(i);
 		if (test_val & mask) {
                         n = strlen(sigstat_strsignal_abbrev(i, abbrev, SIGNAME_MAX));
-                        if (n+1 >= len) { // +1 for the '+'
+                        if (n+1 >= size) { // +1 for the '+'
                             strcpy(c, "+");
-                            len -= 1;
+                            size -= 1;
                             c += 1;
                             break;
                         } else {
-			    n = snprintf(c, len, (c==outbuf)?"%s":",%s",
+			    n = snprintf(c, size, (c==str)?"%s":",%s",
 				     sigstat_strsignal_abbrev(i, abbrev,
 					   		      SIGNAME_MAX));
-			    len -= n;
+			    size -= n;
 			    c+=n;
                         }
 		}
 	}
-        if (c == outbuf) {
-            n = snprintf(c, len, "%c", '-');
-            len -= n;
+        if (c == str) {
+            n = snprintf(c, size, "%c", '-');
+            size -= n;
             c += n;
         }
-	return (int) (c-outbuf);
+	return (int) (c-str);
 }
