@@ -1368,7 +1368,7 @@ depending on the context in which they are issued.
         C, Up, Dn, Left, Right, PgUp, PgDn, Home, End
   5d.\fI Searching-in-a-Window \fR
         L, &
-  5e.\fI Filtering-in-a-Window
+  5e.\fI Filtering-in-a-Window \fR
         O, o, ^O, =, +
 .fi
 
@@ -2290,7 +2290,7 @@ unexpected results initially.
 
 Additionally, there are special provisions for any variable width field
 when positioned as the last displayed field.
-Once that field is reached via the right arrow key, and is thus the only
+Once that field is reached via the right \*(KA, and is thus the only
 column shown, you can continue scrolling horizontally within such a field.
 \*(XC \[oq]C\[cq] \*(CI below for additional information.
 
@@ -2325,7 +2325,7 @@ corner of the \*(CW.
 The additional \[oq]\fB+\ nn\fR\[cq] represents the displacement into a
 variable width column when it has been scrolled horizontally.
 Such displacement occurs in normal 8 character tab stop amounts via
-the right and left arrow keys.
+the right and left \*(KAs.
 
 .RS +4
 .TP 4
@@ -2594,7 +2594,7 @@ The legacy version is written as
 with a leading period.
 
 A newly created \*(CF is written as
-procps/your\-name\-4\-\*(We' + \[oq]rc\[cq]
+\[oq]procps/your\-name\-4\-\*(We\[cq] + \[oq]rc\[cq]
 without a leading period.
 The procps directory will be subordinate to either $XDG_CONFIG_HOME when
 set as an absolute path or the $HOME/.config directory.
@@ -2920,15 +2920,15 @@ If necessary,
 use the \[oq]c\[cq] \*(CT to display command lines and ensure that
 forest view mode is active with the \[oq]V\[cq] \*(CT.
 
-Then use the up/down arrow keys to position the display so that some
+Then use the up/down \*(KAs to position the display so that some
 truncated command lines are shown (\[oq]+\[cq] in last position).
 You may have to resize your xterm to produce truncation.
 
 Lastly, use the \[oq]j\[cq] \*(CT to make the COMMAND column right
 justified.
 
-Now use the right arrow key to reach the COMMAND column.
-Continuing with the right arrow key, watch closely the direction
+Now use the right \*(KA to reach the COMMAND column.
+Continuing with the right \*(KA, watch closely the direction
 of travel for the command lines being shown.
 
 .br
