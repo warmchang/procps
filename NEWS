@@ -46,6 +46,7 @@ procps-ng-NEXT
   * w: Cache pids list                                     issue #305
   * w: Add container uptime option
   * watch: use clock_gettime                               issue #295
+  * watch.1: --chgexit only works for visible changes      Debian #729569
   * hugetop: a new utility to show huge page information   merge #214
 
 procps-ng-4.0.4

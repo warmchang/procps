@@ -1,6 +1,6 @@
 .\"
 .\" Copyright (c) 2023 Roman Žilka <roman.zilka@gmail.com>
-.\" Copyright (c) 2009-2023 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2009-2024 Craig Small <csmall@dropbear.xyz>
 .\" Copyright (c) 2018-2023 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 2003      Albert Cahalan
@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH WATCH 1 "2023-07-31" "procps-ng" "User Commands"
+.TH WATCH 1 "2024-07-19" "procps-ng" "User Commands"
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -49,7 +49,9 @@ of \fBwatch\fR will be the code \fIcommand\fR exits with. If signal \fBn\fR is
 the cause of \fIcommand\fR termination, the exit code will be 128 + \fBn\fR.
 .TP
 \fB\-g\fR, \fB\-\-chgexit\fR
-Exit when the output of \fIcommand\fR changes.
+Exit when the visible output of \fIcommand\fR changes. Changes that are off
+the screen due to small screen size or large output will not cause \fBwatch\fR
+to exit.
 .TP
 \fB\-n\fR, \fB\-\-interval\fR \fIseconds\fR
 Specify update interval. Values smaller than 0.1 and larger than 2678400 (31
