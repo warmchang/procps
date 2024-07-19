@@ -1,7 +1,7 @@
 /*
  * Sysctl - A utility to read and manipulate the sysctl parameters
  *
- * Copyright © 2009-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2009-2024 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2012-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2017-2018 Werner Fink <werner@suse.de>
  * Copyright © 2014      Jaromir Capik <jcapik@redhat.com>
@@ -65,6 +65,12 @@ static const char *DEPRECATED[] = {
 	"retrans_time",
 	""
 };
+/* Verboten parameters must never be read as they cause side-effects */
+static const char *VERBOTEN[] = {
+    "stat_refresh",
+    NULL
+};
+
 static bool IgnoreDeprecated;
 static bool NameOnly;
 static bool PrintName;
@@ -479,6 +485,16 @@ static int is_deprecated(char *filename)
 	return 0;
 }
 
+static bool is_verboten(const char *filename)
+{
+	int i;
+	for (i = 0; VERBOTEN[i]; i++) {
+		if (strcmp(VERBOTEN[i], filename) == 0)
+			return TRUE;
+	}
+	return FALSE;
+}
+
 /*
  * Display all the sysctl settings
  */
@@ -502,6 +518,8 @@ static int DisplayAll(const char *restrict const path)
 			char *restrict tmpdir;
 			if (IgnoreDeprecated && is_deprecated(de->d_name))
 				continue;
+                        if (is_verboten(de->d_name))
+                            continue;
 			tmpdir =
 			    (char *restrict) xmalloc(strlen(path) +
 						     strlen(de->d_name) +

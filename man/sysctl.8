@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH SYSCTL "8" "2024-06-30" "procps-ng" "System Administration"
+.TH SYSCTL "8" "2024-07-19" "procps-ng" "System Administration"
 .SH NAME
 sysctl \- configure kernel parameters at runtime
 .SH SYNOPSIS
@@ -74,7 +74,7 @@ are files, which are read in the order they are specified.
 The file argument may be specified as regular expression.
 .TP
 \fB\-a\fR, \fB\-\-all\fR
-Display all values currently available.
+Display all values currently available except deprecated and verboten parameters.
 .TP
 \fB\-\-deprecated\fR
 Include deprecated parameters to
@@ -119,7 +119,19 @@ Display help text and exit.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
-.SH SYSTEM FILE PRECEDENCE
+.SH FILES
+.TS
+Li.
+/proc/sys
+/etc/sysctl.d/\fR*\fP.conf
+/run/sysctl.d/\fR*\fP.conf
+/usr/local/lib/sysctl.d/\fR*\fP.conf
+/usr/lib/sysctl.d/\fR*\fP.conf
+/lib/sysctl.d/\fR*\fP.conf
+/etc/sysctl.conf
+.TE
+.SH NOTES
+.SS System file precedence
 When using the \fB\-\-system\fR option,
 .B sysctl
 will read files from directories in the following list in given
@@ -144,6 +156,26 @@ file that is ordered later).
 The file \fI/etc/sysctl.conf\fR is read last which means it can replace/override any
 parameters previously set in files in the listed directories.
 
+.SS Deprecated parameters
+The
+.B base_reachable_time
+and
+.B retrans_time
+are deprecated.  The
+.B sysctl
+command does not allow changing values of these
+parameters.  Users who insist to use deprecated kernel interfaces should push values
+to \fB/proc\fR file system by other means.  For example:
+.PP
+echo 256 > /proc/sys/net/ipv6/neigh/eth0/base_reachable_time
+
+.SS Verboten parameters
+Certain kernel parameters should not be read due to side-effects and will be
+skipped by \fBsysctl\fR using the \fB\-\-all\fR option.
+.TP
+.B stat_refresh
+This parameter returns no value but flushes per-cpu vm statistics.
+
 .SH EXAMPLES
 /sbin/sysctl \-a
 .br
@@ -160,37 +192,10 @@ parameters previously set in files in the listed directories.
 /sbin/sysctl \-a \-\-pattern 'net.ipv4.conf.(eth|wlan)0.arp'
 .br
 /sbin/sysctl \-\-pattern '\[char94]net.ipv6' \-\-system
-.SH DEPRECATED PARAMETERS
-The
-.B base_reachable_time
-and
-.B retrans_time
-are deprecated.  The
-.B sysctl
-command does not allow changing values of these
-parameters.  Users who insist to use deprecated kernel interfaces should push values
-to \fB/proc\fR file system by other means.  For example:
-.PP
-echo 256 > /proc/sys/net/ipv6/neigh/eth0/base_reachable_time
-.SH FILES
-.TS
-Li.
-/proc/sys
-/etc/sysctl.d/\fR*\fP.conf
-/run/sysctl.d/\fR*\fP.conf
-/usr/local/lib/sysctl.d/\fR*\fP.conf
-/usr/lib/sysctl.d/\fR*\fP.conf
-/lib/sysctl.d/\fR*\fP.conf
-/etc/sysctl.conf
-.TE
 .SH SEE ALSO
 .BR proc (5),
 .BR sysctl.conf (5),
 .BR regex (7)
-.SH AUTHOR
-.MT staikos@0wned.org
-George Staikos
-.ME
 .SH "REPORTING BUGS"
 Please send bug reports to
 .MT procps@freelists.org
