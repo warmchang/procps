@@ -5150,7 +5150,7 @@ static int bot_focus_str (const char *hdr, const char *str) {
    char tmp[BIGBUFSIZ];
    int n, x;
 
-   if (str) {
+   if (hdr) {
       // we're a little careless with overhead here (it's a one time cost)
       memset(Bot_buf, '\0', sizeof(Bot_buf));
       n = strlen(str);
@@ -5200,7 +5200,7 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
    char tmp[SCREENMAX], *p;
    int i, n, x;
 
-   if (strv) {
+   if (hdr) {
       // we're a little careless with overhead here (it's a one time cost)
       memset(Bot_buf, '\0', sizeof(Bot_buf));
       n = (char *)&strv[0] - strv[0];
@@ -5607,6 +5607,59 @@ static void write_rcfile (void) {
    *  These routines exist just to keep the do_key() function
    *  a reasonably modest size. */
 
+static void keys_bottom (int ch) {
+   static int max_indx;
+
+   switch (ch) {
+      case kbd_CtrlA:
+         bot_item_toggle(eu_CAPABILITY, N_fmt(X_BOT_capprm_fmt), BOT_SEP_CMA);
+         break;
+      case kbd_CtrlG:
+         bot_item_toggle(EU_CGR, N_fmt(X_BOT_ctlgrp_fmt), BOT_SEP_SLS);
+         break;
+      case kbd_CtrlK:
+         // with string vectors, the 'separator' may serve a different purpose
+         bot_item_toggle(eu_CMDLINE_V, N_fmt(X_BOT_cmdlin_fmt), BOT_SEP_SPC);
+         break;
+      case kbd_CtrlL:
+         bot_item_toggle(BOT_MSG_LOG, N_txt(X_BOT_msglog_txt), BOT_SEP_SMI);
+         break;
+      case kbd_CtrlN:
+         // with string vectors, the 'separator' may serve a different purpose
+         bot_item_toggle(eu_ENVIRON_V, N_fmt(X_BOT_envirn_fmt), BOT_SEP_SPC);
+         break;
+      case kbd_CtrlP:
+         bot_item_toggle(BOT_ITEM_NS, N_fmt(X_BOT_namesp_fmt), BOT_SEP_CMA);
+         break;
+      case kbd_CtrlU:
+         bot_item_toggle(EU_SGN, N_fmt(X_BOT_supgrp_fmt), BOT_SEP_CMA);
+         break;
+      case kbd_TAB:
+         if (BOT_PRESENT) {
+            // account for a change of toggles or a change of direction ...
+            max_indx = Bot_focus_func(NULL, NULL);
+            if (Bot_indx > max_indx) Bot_indx = BOT_UNFOCUS;
+            ++Bot_indx;
+            if (Bot_indx > max_indx) Bot_indx = BOT_UNFOCUS;
+            max_indx = Bot_focus_func(NULL, NULL);
+         }
+         break;
+      case kbd_BTAB:
+         if (BOT_PRESENT) {
+            // account for a change of toggles or a change of direction ...
+            max_indx = Bot_focus_func(NULL, NULL);
+            if (Bot_indx <= BOT_UNFOCUS) Bot_indx = max_indx + 1;
+            --Bot_indx;
+            if (Bot_indx <= BOT_UNFOCUS) Bot_indx = max_indx + 1;
+            max_indx = Bot_focus_func(NULL, NULL);
+         }
+         break;
+      default:                    // keep gcc happy
+         break;
+   }
+} // end: keys_bottom
+
+
 static void keys_global (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
    int i, num, def, pid;
@@ -5729,39 +5782,12 @@ static void keys_global (int ch) {
       case '0':
          Rc.zero_suppress = !Rc.zero_suppress;
          break;
-      case kbd_CtrlA:
-         bot_item_toggle(eu_CAPABILITY, N_fmt(X_BOT_capprm_fmt), BOT_SEP_CMA);
-         break;
       case kbd_CtrlE:
 #ifndef SCALE_FORMER
          Rc.tics_scaled++;
          if (Rc.tics_scaled > TICS_AS_LAST)
             Rc.tics_scaled = 0;
 #endif
-         break;
-      case kbd_CtrlG:
-         bot_item_toggle(EU_CGR, N_fmt(X_BOT_ctlgrp_fmt), BOT_SEP_SLS);
-         break;
-      case kbd_CtrlI:
-         if (BOT_PRESENT) {
-            ++Bot_indx;
-            if (Bot_indx > Bot_focus_func(NULL, NULL))
-               Bot_indx = BOT_UNFOCUS;
-         }
-         break;
-      case kbd_CtrlK:
-         // with string vectors, the 'separator' may serve a different purpose
-         bot_item_toggle(eu_CMDLINE_V, N_fmt(X_BOT_cmdlin_fmt), BOT_SEP_SPC);
-         break;
-      case kbd_CtrlL:
-         bot_item_toggle(BOT_MSG_LOG, N_txt(X_BOT_msglog_txt), BOT_SEP_SMI);
-         break;
-      case kbd_CtrlN:
-         // with string vectors, the 'separator' may serve a different purpose
-         bot_item_toggle(eu_ENVIRON_V, N_fmt(X_BOT_envirn_fmt), BOT_SEP_SPC);
-         break;
-      case kbd_CtrlP:
-         bot_item_toggle(BOT_ITEM_NS, N_fmt(X_BOT_namesp_fmt), BOT_SEP_CMA);
          break;
       case kbd_CtrlR:
          if (Secure_mode)
@@ -5787,17 +5813,6 @@ static void keys_global (int ch) {
                   }
                }
             }
-         }
-         break;
-      case kbd_CtrlU:
-         bot_item_toggle(EU_SGN, N_fmt(X_BOT_supgrp_fmt), BOT_SEP_CMA);
-         break;
-      case kbd_BTAB:
-         if (BOT_PRESENT) {
-            --Bot_indx;
-            num = Bot_focus_func(NULL, NULL);
-            if (Bot_indx <= BOT_UNFOCUS)
-               Bot_indx = num + 1;
          }
          break;
       case kbd_ENTER:             // these two have the effect of waking us
@@ -6723,12 +6738,13 @@ static void do_key (int ch) {
       void (*func)(int ch);
       char keys[SMLBUFSIZ];
    } key_tab[] = {
+      { keys_bottom,
+         { kbd_CtrlA, kbd_CtrlG, kbd_CtrlK, kbd_CtrlL, kbd_CtrlN
+         , kbd_CtrlP, kbd_CtrlU, kbd_TAB, kbd_BTAB, '\0' } },
       { keys_global,
          { '?', 'B', 'd', 'E', 'e', 'f', 'g', 'H', 'h'
          , 'I', 'k', 'r', 's', 'X', 'Y', 'Z', '0'
-         , kbd_CtrlA, kbd_CtrlE, kbd_CtrlG, kbd_CtrlI, kbd_CtrlK
-         , kbd_CtrlL, kbd_CtrlN, kbd_CtrlP, kbd_CtrlR, kbd_CtrlU
-         , kbd_ENTER, kbd_SPACE, kbd_BTAB, '\0' } },
+         , kbd_CtrlE, kbd_CtrlR, kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
  #ifdef CORE_TYPE_NO
          { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },

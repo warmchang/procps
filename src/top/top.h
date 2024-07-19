@@ -168,6 +168,7 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_ESC    '\033'
 #define kbd_SPACE  ' '
 #define kbd_ENTER  '\n'
+#define kbd_TAB    '\t'
 #define kbd_UP     129
 #define kbd_DOWN   130
 #define kbd_LEFT   131
@@ -183,7 +184,6 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_CtrlA  '\001'
 #define kbd_CtrlE  '\005'
 #define kbd_CtrlG  '\007'
-#define kbd_CtrlI  '\011'
 #define kbd_CtrlK  '\013'
 #define kbd_CtrlL  '\014'
 #define kbd_CtrlN  '\016'
@@ -769,6 +769,7 @@ typedef struct WIN_t {
 //atic void          other_filters (int ch);
 //atic void          write_rcfile (void);
 /*------  Interactive Input Secondary support (do_key helpers)  ----------*/
+//atic void          keys_bottom (int ch);
 //atic void          keys_global (int ch);
 //atic void          keys_summary (int ch);
 //atic void          keys_task (int ch);
