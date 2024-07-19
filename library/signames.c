@@ -60,6 +60,61 @@
  * specific.
  */
 
+#if !HAVE_SIGABBREV_NP
+static inline const char *sigabbrev_np(int sig)
+{
+#define SIGABBREV(a_) case SIG##a_: return #a_
+    switch(sig) {
+        SIGABBREV(HUP);
+        SIGABBREV(INT);
+        SIGABBREV(QUIT);
+        SIGABBREV(ILL);
+        SIGABBREV(TRAP);
+        SIGABBREV(ABRT);
+        SIGABBREV(BUS);
+        SIGABBREV(FPE);
+        SIGABBREV(KILL);
+        SIGABBREV(USR1);
+        SIGABBREV(SEGV);
+        SIGABBREV(USR2);
+        SIGABBREV(PIPE);
+        SIGABBREV(ALRM);
+        SIGABBREV(TERM);
+#ifdef SIGSTKFLT
+        SIGABBREV(STKFLT);
+#endif
+        SIGABBREV(CHLD);
+        SIGABBREV(CONT);
+        SIGABBREV(STOP);
+        SIGABBREV(TSTP);
+        SIGABBREV(TTIN);
+        SIGABBREV(TTOU);
+        SIGABBREV(URG);
+        SIGABBREV(XCPU);
+        SIGABBREV(XFSZ);
+        SIGABBREV(VTALRM);
+        SIGABBREV(PROF);
+        SIGABBREV(WINCH);
+        SIGABBREV(POLL);
+#ifdef SIGPWR               // absent in kFreeBSD (Debian #832148)
+        SIGABBREV(PWR);
+#endif
+        SIGABBREV(SYS);
+#ifdef SIGLOST              // Hurd (gitlab#93)
+        SIGABBREV(LOST);
+#endif
+#if defined __sun || defined __SUN || defined __solaris__ || defined __SOLARIS__
+        case 0: return "EXIT";
+#endif
+#if defined _AIX || defined __AIX__ || defined __aix__
+        case 0: return "NULL";
+#endif
+    };
+#undef SIGABBREV
+    return NULL;
+}
+
+#endif /* HAVE_SIGABBREV_NP */
 /*
  * As per glibc:
  *
@@ -88,11 +143,8 @@ static const char *sigstat_strsignal_abbrev(int sig, char *abbrev, size_t len)
 	 */
 	if (sig < __SIGRTMIN) {
                 const char *signame = NULL;
-#ifdef HAVE_SIGABBREV_NP
                 signame = sigabbrev_np(sig);
-#else
-                signame = signal_number_to_name(sig);
-#endif /* HAVE_SIGABBREV_NP */
+
                 if (signame != NULL && signame[0] != '\0') {
                     strncpy(abbrev, signame, len);
                     return abbrev;
