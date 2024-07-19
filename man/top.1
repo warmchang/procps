@@ -120,7 +120,8 @@ The remaining Table of Contents
           2. Content
           3. Size
           4. Sorting
-       d. COLOR Mapping
+       d. BOTTOM WINDOW Commands
+       e. COLOR Mapping
     5. ALTERNATE\-DISPLAY Provisions
        a. WINDOWS Overview
        b. COMMANDS for Windows
@@ -1352,7 +1353,7 @@ depending on the context in which they are issued.
   4a.\fI Global-Commands \fR
         <Ent/Sp> ?, =, 0,
         A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z,
-        ^E, ^G, ^K, ^N, ^P, ^U, ^L, ^R
+        ^E, ^R
   4b.\fI Summary-Area-Commands \fR
         C, l, t, m, 1, 2, 3, 4, 5, !
   4c.\fI Task-Area-Commands \fR
@@ -1360,7 +1361,9 @@ depending on the context in which they are issued.
         Content:     c, F, f, O, o, S, U, u, V, v
         Size:        #, i, n
         Sorting:     <, >, f, R
-  4d.\fI Color-Mapping \fR
+  4d.\fI Bottom-Window-Commands \fR
+        ^A, ^G, ^K, ^L, ^N, ^P, ^U, Tab, Shift+Tab
+  4e.\fI Color-Mapping \fR
         <Ret>, a, B, b, H, M, q, S, T, w, z, @, 0 \- 7
   5b.\fI Commands-for-Windows \fR
         \-, _, =, +, A, a, G, g, w
@@ -1615,50 +1618,7 @@ are summarized here for future reference.
 \ \ \ \fBZ\fR\ \ :\fIChange-Color-Mapping \fR
 This key will take you to a separate screen where you can change the
 colors for the \*(CW, or for all windows.
-For details regarding this \*(CI \*(Xt 4d. COLOR Mapping.
-
-.P
-\ \ \fB^A\fR\ \ :\fIDisplay-Capabilities \fR         (Ctrl key + \[oq]a\[cq])
-.br
-\ \ \fB^G\fR\ \ :\fIDisplay-Control-Groups \fR       (Ctrl key + \[oq]g\[cq])
-.br
-\ \ \fB^K\fR\ \ :\fIDisplay-Cmdline \fR              (Ctrl key + \[oq]k\[cq])
-.br
-\ \ \fB^N\fR\ \ :\fIDisplay-Environment \fR          (Ctrl key + \[oq]n\[cq])
-.br
-\ \ \fB^P\fR\ \ :\fIDisplay-Namesspaces \fR          (Ctrl key + \[oq]p\[cq])
-.br
-\ \ \fB^U\fR\ \ :\fIDisplay-Supplementary-Groups \fR (Ctrl key + \[oq]u\[cq])
-.br
-.RS +7
-Applied to the first process displayed, these commands will show
-that task's full (potentially wrapped) information.
-Such data will be displayed in a separate window at the bottom of
-the screen while normal \*(We monitoring continues.
-
-Keying the\fI same\fR \[oq]Ctrl\[cq] command a second time removes that
-separate window as does the \[oq]=\[cq] command.
-Keying a different \[oq]Ctrl\[cq] combination,
-while one is already active,
-immediately transitions to the new information.
-
-Notable among these provisions is the Ctrl+N (environment) command.
-Its output can be extensive and not easily read when line wrapped.
-A more readable version can be achieved with an \[oq]Inspect\[cq] entry
-in the rcfile like the following.
-
-.nf
-    pipe ^I Environment ^I cat /proc/%d/environ | tr '\\0' '\\n'
-.fi
-
-\*(XC \[oq]Y\[cq] \*(CI above and topic 6b. ADDING INSPECT Entries for
-additional information.
-
-As an alternative to \[oq]Inspect\[cq],
-and available to all of these \[oq]Ctrl\[cq] commands,
-the tab key can be used to highlight individual elements in the bottom
-window.
-.RS -7
+For details regarding this \*(CI \*(Xt 4e. COLOR Mapping.
 
 .TP 7
 \ \ \fB^E\fR\ \ :\fIScale-CPU-Time-fields\fR (Ctrl key + \[oq]e\[cq])
@@ -1675,14 +1635,6 @@ each ^E keystroke would change it to:
 \[oq]Days+Hours\[cq] and finally \[oq]Weeks+Days\[cq].
 
 Not all time fields are subject to the full range of such scaling.
-
-.TP 7
-\ \ \fB^L\fR\ \ :\fILogged-Messages \fR (Ctrl key + \[oq]l\[cq])
-The 10 most recent messages are displayed in a separate window at
-the bottom of the screen while normal \*(We monitoring continues.
-Keying \[oq]^L\[cq] a second time removes that window as does the
-\[oq]=\[cq] command.
-Use the tab key to highlight individual messages.
 
 .TP 7
 *\ \fB^R\fR\ \ :\fIRenice-an-Autogroup \fR (Ctrl key + \[oq]r\[cq])
@@ -2110,7 +2062,55 @@ when running \*(We with column highlighting turned \*F.
 Using this \*(CI you can alternate between high-to-low and low-to-high sorts.
 
 .\" ......................................................................
-.SS 4d. COLOR Mapping
+.SS 4d. BOTTOM WINDOW Commands
+.\" ----------------------------------------------------------------------
+These keys invoke a separate window at the bottom of the screen while
+normal \*(We monitoring continues uninterrupted.
+Keying the\fI same\fR \[oq]Ctrl\[cq] command a second time removes that
+separate window as does the \[oq]=\[cq] command.
+
+.P
+\ \ \ \fB^A\fR\ \ :\fIDisplay-Capabilities \fR         (Ctrl key + \[oq]a\[cq])
+.br
+\ \ \ \fB^G\fR\ \ :\fIDisplay-Control-Groups \fR       (Ctrl key + \[oq]g\[cq])
+.br
+\ \ \ \fB^K\fR\ \ :\fIDisplay-Cmdline \fR              (Ctrl key + \[oq]k\[cq])
+.br
+\ \ \ \fB^L\fR\ \ :\fIDisplay-Logged-Messages \fR      (Ctrl key + \[oq]l\[cq])
+.br
+\ \ \ \fB^N\fR\ \ :\fIDisplay-Environment \fR          (Ctrl key + \[oq]n\[cq])
+.br
+\ \ \ \fB^P\fR\ \ :\fIDisplay-Namesspaces \fR          (Ctrl key + \[oq]p\[cq])
+.br
+\ \ \ \fB^U\fR\ \ :\fIDisplay-Supplementary-Groups \fR (Ctrl key + \[oq]u\[cq])
+.br
+
+Except for the Ctrl+L command, all the above keys are applied to the first
+process displayed and will show that task's full (potentially wrapped) information.
+Thus, the Up/Down \*(KAs or their aliases will be important.
+
+The \fBTab\fR key or \fBShift+Tab\fR combination can be used to highlight individual
+elements being displayed in the bottom window.
+
+Notable among these provisions is the Ctrl+N (environment) command.
+Its output can be extensive and not easily read when line wrapped.
+A more readable version can be achieved with an \[oq]Inspect\[cq] entry
+in the rcfile like the following.
+
+.nf
+    pipe ^I Environment ^I cat /proc/%d/environ | tr '\\0' '\\n'
+.fi
+
+\*(XC \[oq]Y\[cq] \*(CI above and topic 6b. ADDING INSPECT Entries for
+additional information.
+
+Unlike the other commands, Ctrl+L (logged messages) is not associated
+with a specific task.
+Rather, up to 10 of the most recent messages issued by \*(We are
+recalled for review.
+
+.\" ......................................................................
+.SS 4e. COLOR Mapping
 .\" ----------------------------------------------------------------------
 When you issue the \[oq]Z\[cq] \*(CI,
 you will be presented with a separate screen.
