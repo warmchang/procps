@@ -927,6 +927,12 @@ static void sum_format(void)
     printf(_("%13lu K paged out\n"), VMSTAT_GET(vm_info, VMSTAT_PGPGOUT, ul_int));
     printf(_("%13lu pages swapped in\n"), VMSTAT_GET(vm_info, VMSTAT_PSWPIN, ul_int));
     printf(_("%13lu pages swapped out\n"), VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int));
+    printf(_("%13lu pages alloc in dma\n"), VMSTAT_GET(vm_info, VMSTAT_PGALLOC_DMA, ul_int));
+    printf(_("%13lu pages alloc in dma32\n"), VMSTAT_GET(vm_info, VMSTAT_PGALLOC_DMA32, ul_int));
+    printf(_("%13lu pages alloc in high\n"), VMSTAT_GET(vm_info, VMSTAT_PGALLOC_HIGH, ul_int));
+    printf(_("%13lu pages alloc in movable\n"), VMSTAT_GET(vm_info, VMSTAT_PGALLOC_MOVABLE, ul_int));
+    printf(_("%13lu pages alloc in normal\n"), VMSTAT_GET(vm_info, VMSTAT_PGALLOC_NORMAL, ul_int));
+    printf(_("%13lu pages free\n"), VMSTAT_GET(vm_info, VMSTAT_PGFREE, ul_int));
     printf(_("%13lu interrupts\n"), SYSv(sstat_INT));
     printf(_("%13lu CPU context switches\n"), SYSv(sstat_CTX));
     printf(_("%13lu boot time\n"), SYSv(sstat_TOB));
