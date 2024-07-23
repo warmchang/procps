@@ -42,7 +42,6 @@
 //#define INSP_SAVEBUF            /* preserve 'Insp_buf' contents via a file */
 //#define INSP_SLIDE_1            /* when scrolling left/right, don't move 8 */
 //#define MEMGRAPH_OLD            /* don't use 'available' when graphing Mem */
-//#define NLS_INCLUDED            /* provides for excluding from translation */
 //#define NLS_VALIDATE            /* ensure the integrity of four nls tables */
 //#define OFF_SCROLLBK            /* disable tty emulators scrollback buffer */
 //#define OFF_STDERROR            /* disable our stderr buffering (redirect) */

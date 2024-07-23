@@ -29,24 +29,6 @@
 #endif
 
 
-        /*
-         * The provision excluding some strings is intended to be
-         * used very sparingly. It exists in case we collide with
-         * some translation project person in a position to delay
-         * a future release over his or her personal preferences.
-         *
-         * If it's ever enabled, it will produce a fatal compiler
-         * error as our only option since those gettext tools are
-         * far too primitive to be influenced with a conditional.
-         * They always ignore a '_X()' macro no matter its state. */
-
-#ifndef NLS_INCLUDED
-# define _X(str)  (str)
-#else
-# define _X(str)
-# error instead of this #define, restore the true gettext macro(s)
-#endif
-
         // Programmer Note(s):
         //  Preparation ---------------------------------------------
         //    Unless you have *something* following the gettext macro,
@@ -418,7 +400,12 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[EXIT_signals_fmt] = _(""
       "\tsignal %d (%s) was caught by %s, please\n"
       "\tsend bug reports to <procps@freelists.org>\n");
-   Norm_nlstab[HELP_cmdline_fmt] = _X("\n"
+/* Translation Hint:
+   . The following help text has been right-justified as an English only
+   . exercise. There is absolutely no requirement that your translations
+   . need conform to such a convention.
+   . */
+   Norm_nlstab[HELP_cmdline_fmt] = _("\n"
       "Usage:\n"
       " %s [options]\n"
       "\n"
