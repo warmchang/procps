@@ -32,9 +32,12 @@
 #ifdef WITH_WATCH8BIT
 # define _XOPEN_SOURCE_EXTENDED 1
 # include <wctype.h>
-# include <ncursesw/ncurses.h>
 #else
 # include <ctype.h>
+#endif
+#ifdef HAVE_NCURSESW_NCURSES_H
+# include <ncursesw/ncurses.h>
+#else
 # include <ncurses.h>
 #endif
 #include <assert.h>
