@@ -985,7 +985,7 @@ static int vmstat_make_hash_failed (
         struct vmstat_info *info)
 {
  #define htVAL(f) e.key = STRINGIFY(f); e.data = &info->hist.new. f; \
-  if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) return 1;
+  if (!hsearch_r(e, ENTER, &ep, &info->hashtab)) goto err_return;
     ENTRY e, *ep;
     size_t n;
 
@@ -1147,6 +1147,8 @@ static int vmstat_make_hash_failed (
     htVAL(zone_reclaim_failed)
 
     return 0;
+ err_return:
+    return 1;
  #undef htVAL
 } // end: vmstat_make_hash_failed
 
