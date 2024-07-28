@@ -63,31 +63,36 @@ Verbose; explain what is being done.
 .BR \-w , \ \-\-warnings
 Enable warnings.  This option has not been implemented.
 .TP
-\fB\-h\fR, \fB\-\-help\fR
+.BR \-h , \ \-\-help
 Display help text and exit.
 .TP
-\fB\-V\fR, \fB\-\-version\fR
+.BR \-V , \ \-\-version
 Display version information.
 .SH "PROCESS SELECTION OPTIONS"
 Selection criteria can be: terminal, user, pid, command.  The options
 below may be used to ensure correct interpretation.
 .TP
-\fB\-t\fR, \fB\-\-tty\fR \fItty\fR
+.BI \-t \ tty\fR,\c
+.BI \-\-tty \ tty
 The next expression is a terminal (tty or pty).
 .TP
-\fB\-u\fR, \fB\-\-user\fR \fIuser\fR
+.BI \-u \ user\fR,\c
+.BI \-\-user \ user
 The next expression is a username.
 .TP
-\fB\-p\fR, \fB\-\-pid\fR \fIpid\fR
+.BI \-p \ pid\fR,\c
+.BI \-\-pid \ pid
 The next expression is a process ID number.
 .TP
-\fB\-c\fR, \fB\-\-command\fR \fIcommand\fR
+.BI \-c \ command\fR,\c
+.BI \-\-command \ command
 The next expression is a command name.
 .TP
-\fB\-\-ns \fIpid\fR
+.BI \-\-ns \ pid
 Match the processes that belong to the same namespace as pid.
 .TP
-\fB\-\-nslist\fR \fIns\/\fR,\,\fI.\|.\|.\/\fR
+.BR \-\-nslist \ \c
+.IR ns ,.\|.\|.
 list which namespaces will be considered for the \fB\-\-ns\fP option.
 Available namespaces: ipc, mnt, net, pid, user, uts.
 .SH SIGNALS
