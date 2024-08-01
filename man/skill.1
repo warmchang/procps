@@ -9,7 +9,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH SKILL 1 "2023-08-19" "procps-ng" "User Commands"
+.TH SKILL 1 "2024-08-01" "procps-ng" "User Commands"
 .SH NAME
 skill, snice \- send a signal or report process status
 .SH SYNOPSIS
@@ -72,27 +72,22 @@ Display version information.
 Selection criteria can be: terminal, user, pid, command.  The options
 below may be used to ensure correct interpretation.
 .TP
-.BI \-t \ tty\fR,\c
-.BI \-\-tty \ tty
+.BI \-t \ tty\fR, \-\-tty \ tty
 The next expression is a terminal (tty or pty).
 .TP
-.BI \-u \ user\fR,\c
-.BI \-\-user \ user
+.BI \-u \ user\fR, \-\-user \ user
 The next expression is a username.
 .TP
-.BI \-p \ pid\fR,\c
-.BI \-\-pid \ pid
+.BI \-p \ pid\fR, \-\-pid \ pid
 The next expression is a process ID number.
 .TP
-.BI \-c \ command\fR,\c
-.BI \-\-command \ command
+.BI \-c \ command\fR, \-\-command \ command
 The next expression is a command name.
 .TP
 .BI \-\-ns \ pid
 Match the processes that belong to the same namespace as pid.
 .TP
-.BR \-\-nslist \ \c
-.IR ns ,.\|.\|.
+.RI \fB\-\-nslist \ ns , .\|.\|.
 list which namespaces will be considered for the \fB\-\-ns\fP option.
 Available namespaces: ipc, mnt, net, pid, user, uts.
 .SH SIGNALS
