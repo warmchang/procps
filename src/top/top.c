@@ -5610,7 +5610,7 @@ static void write_rcfile (void) {
    *  a reasonably modest size. */
 
 static void keys_bottom (int ch) {
-   static int max_indx;
+   int max_indx;
 
    switch (ch) {
       case kbd_CtrlA:
@@ -5643,7 +5643,7 @@ static void keys_bottom (int ch) {
             if (Bot_indx > max_indx) Bot_indx = BOT_UNFOCUS;
             ++Bot_indx;
             if (Bot_indx > max_indx) Bot_indx = BOT_UNFOCUS;
-            max_indx = Bot_focus_func(NULL, NULL);
+            Bot_focus_func(NULL, NULL);
          }
          break;
       case kbd_BTAB:
@@ -5653,7 +5653,7 @@ static void keys_bottom (int ch) {
             if (Bot_indx <= BOT_UNFOCUS) Bot_indx = max_indx + 1;
             --Bot_indx;
             if (Bot_indx <= BOT_UNFOCUS) Bot_indx = max_indx + 1;
-            max_indx = Bot_focus_func(NULL, NULL);
+            Bot_focus_func(NULL, NULL);
          }
          break;
       default:                    // keep gcc happy
