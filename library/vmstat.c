@@ -992,7 +992,7 @@ static int vmstat_make_hash_failed (
     n = sizeof(struct vmstat_data) / sizeof(unsigned long);
     // we'll follow the hsearch recommendation of an extra 25%
     if (!hcreate_r(n + (n / 4), &info->hashtab))
-        return 1;
+        goto err_return;
 
     htVAL(allocstall_dma)
     htVAL(allocstall_dma32)

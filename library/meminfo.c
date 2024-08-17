@@ -574,7 +574,7 @@ static int meminfo_make_hash_failed (
     n = sizeof(struct meminfo_data) / sizeof(unsigned long);
     // we'll follow the hsearch recommendation of an extra 25%
     if (!hcreate_r(n + (n / 4), &info->hashtab))
-        return 1;
+        goto err_return;
 
     htVAL(Active)
     htXTRA(Active(anon), Active_anon)
