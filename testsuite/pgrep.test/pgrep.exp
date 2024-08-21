@@ -11,7 +11,7 @@ set not_gid [ expr { $gid + 1 } ]
 set ps "${topdir}src/ps/pscommand"
 set tty [ get_tty ]
 
-set test "pgprep with no arguments"
+set test "pgrep with no arguments"
 spawn $pgrep
 expect_pass "$test" "^\(lt-\)\?pgrep: no matching criteria specified\\s*"
 
