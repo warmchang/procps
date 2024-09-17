@@ -501,9 +501,6 @@ extern void reset_sortformat(void);
 extern int want_this_proc(proc_t *buf);
 extern const char *select_bits_setup(void);
 
-/* signames.c */
-int print_signame(char *restrict const outbuf, const char *restrict const sig, const size_t len);
-
 /* help.c */
 extern void __attribute__ ((__noreturn__)) do_help(const char *opt, int rc);
 
