@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH PS "1" "2024-07-01" "procps-ng" "User Commands"
+.TH PS "1" "2024-09-17" "procps-ng" "User Commands"
 .\"
 .\" Ragged-right text.
 .na
@@ -461,7 +461,7 @@ option can act like
 (user\-defined output format with some common fields predefined) or can be
 used to specify sort order.  Heuristics are used to determine the behavior of
 this option.  To ensure that the desired behavior is obtained (sorting or
-formatting), specify the option in some other way (e.g.  with
+formatting), specify the option in some other way (e.g., with
 .B \-O
 or
 .BR \-\-sort ).
@@ -567,10 +567,9 @@ Set screen width.
 .B \-\-cumulative
 Include some dead child process data (as a sum with the parent).
 .TP
-.TP
 .BI \-D \ format
-Set the date format of the \fBlstart\fR field to \fIformat\fR. This format is parsed
-by
+Set the date format of the \fBlstart\fR field to \fIformat\fR.
+This format is parsed by
 .BR strftime (3)
 and should be a maximum of 24 characters to not mis-align columns.
 .TP
@@ -652,7 +651,7 @@ option can act like
 (user\-defined output format with some common fields predefined) or can be
 used to specify sort order.  Heuristics are used to determine the behavior of
 this option.  To ensure that the desired behavior is obtained (sorting or
-formatting), specify the option in some other way (e.g.  with
+formatting), specify the option in some other way (e.g., with
 .B \-O
 or
 .BR \-\-sort ).
@@ -700,7 +699,8 @@ For example:
 .TP
 .B \-\-signames
 Show signal masks using abbreviated signal names and expands the collumn.
-If the column width cannot show all signals, the column will end with a plus "\fI+\fR".
+If the column width cannot show all signals,
+the column will end with a plus "\fI+\fR".
 Columns with only a hyphen have no signals.
 .TP
 .B w
@@ -868,7 +868,7 @@ option doesn't use these keys, but the specifiers described below in the
 section.  Note that the values used in sorting are the internal values
 .B ps
 uses and not the "cooked" values used in some of the output format fields
-(e.g.  sorting on tty will sort into device number, not according to the
+(e.g., sorting on tty will sort into device number, not according to the
 terminal name displayed).  Pipe
 .B ps
 output into the
@@ -1052,8 +1052,10 @@ minutes of cpu time.
 T}
 
 c	C	T{
-processor utilization. Currently, this is the integer value of the percent
-usage over the lifetime of the process.  (see
+processor utilization.
+Currently, this is the integer value of the percent
+usage over the lifetime of the process.
+(see
 .BR %cpu ).
 T}
 
@@ -1189,7 +1191,8 @@ cumulative CPU time in seconds (alias
 T}
 
 cuc	%CUC	T{
-The CPU utilization of a process, including dead children, in an extended "##.###" format.
+The CPU utilization of a process, including dead children,
+in an extended "##.###" format.
 (see also
 .BR %cpu ,
 .BR c ,
@@ -1214,11 +1217,12 @@ If a process is not running inside a container, a dash ('\-') will be shown.
 T}
 
 drs	DRS	T{
-data resident set size, the amount of private memory \fIreserved\fR by a process.
-It is also known as DATA. Such memory may not yet be mapped to
+data resident set size,
+the amount of private memory \fIreserved\fR by a process.
+It is also known as DATA.
+Such memory may not yet be mapped to
 .B rss
-but will always be included
-included in the
+but will always be included in the
 .B vsz
 amount.
 T}
@@ -1236,12 +1240,14 @@ otherwise.  (alias
 T}
 
 eip	EIP	T{
-instruction pointer. As of kernel 4.9.xx will be zeroed out unless task is
+instruction pointer.
+As of kernel 4.9.xx will be zeroed out unless task is
 exiting or being core dumped.
 T}
 
 esp	ESP	T{
-stack pointer. As of kernel 4.9.xx will be zeroed out unless task is
+stack pointer.
+As of kernel 4.9.xx will be zeroed out unless task is
 exiting or being core dumped.
 T}
 
@@ -1270,7 +1276,8 @@ option can be used to force the decimal representation.  (alias
 T}
 
 exe	EXE	T{
-path to the executable. Useful if path cannot be printed via
+path to the executable.
+Useful if path cannot be printed via
 .BR cmd ", " comm
 or
 .B args
@@ -1375,7 +1382,8 @@ the
 T}
 
 lstart	STARTED	T{
-time the command started. This will be in the form "DDD mmm HH:MM:SS YYY"
+time the command started.
+This will be in the form "DDD mmm HH:MM:SS YYY"
 unless changed by the \fB\-D\fR option.
 T}
 
@@ -1427,7 +1435,8 @@ See
 T}
 
 ni	NI	T{
-nice value. This ranges from 19 (nicest) to \-20 (not nice to others),
+nice value.
+This ranges from 19 (nicest) to \-20 (not nice to others),
 see
 .IR nice (1).
 (alias
@@ -1457,12 +1466,14 @@ if you want the kernel function name).
 T}
 
 oom	OOM	T{
-Out of Memory Score. The value, ranging from 0 to +1000, used to select
+Out of Memory Score.
+The value, ranging from 0 to +1000, used to select
 task(s) to kill when memory is exhausted.
 T}
 
 oomadj	OOMADJ	T{
-Out of Memory Adjustment Factor. The value is added to the current out of
+Out of Memory Adjustment Factor.
+The value is added to the current out of
 memory score which is then used to determine which task to kill when memory
 is exhausted.
 T}
@@ -1492,16 +1503,20 @@ see
 T}
 
 pending	PENDING	T{
-mask of the pending signals. See
+mask of the pending signals.
+See
 .IR signal (7).
 Signals pending on the process are distinct from signals pending on
-individual threads.  Use the
+individual threads.
+Use the
 .B m
 option or the
 .B \-m
-option to see both.  According to the width of the field, a 32 or 64 bits
-mask in hexadecimal
-format is displayed, unless the \fB\-\-signames\fR option is used.  (alias
+option to see both.
+According to the width of the field, a 32 or 64 bits mask in hexadecimal
+format is displayed,
+unless the \fB\-\-signames\fR option is used.
+(alias
 .BR sig ).
 T}
 
@@ -1575,12 +1590,14 @@ processor that process last executed on.
 T}
 
 pss	PSS	T{
-Proportional share size, the non-swapped physical memory, with shared memory
-proportionally accounted to all tasks mapping it.
+Proportional share size,
+the non-swapped physical memory,
+with shared memory proportionally accounted to all tasks mapping it.
 T}
 
 rbytes	RBYTES	T{
-Number of bytes which this process really did cause to be fetched from the storage layer.
+Number of bytes which this process really did cause to be fetched from the
+storage layer.
 T}
 
 rchars	RCHARS	T{
@@ -1762,7 +1779,8 @@ see
 T}
 
 stime	STIME	T{
-see \fBstart_time\fR. (alias \fBstart_time\fR).
+see \fBstart_time\fR.
+(alias \fBstart_time\fR).
 T}
 
 suid	SUID	T{
@@ -1857,7 +1875,8 @@ connected to, or \-1 if the process is not connected to a tty.
 T}
 
 trs	TRS	T{
-text resident set size, the amount of physical memory devoted to executable code.
+text resident set size,
+the amount of physical memory devoted to executable code.
 T}
 
 tt	TT	T{
@@ -1958,7 +1977,8 @@ name of the kernel function in which the process is sleeping.
 T}
 
 wchars	WCHARS	T{
-Number of bytes which this task has caused, or shall cause to be written to disk.
+Number of bytes which this task has caused,
+or shall cause to be written to disk.
 T}
 
 wops	WOPS	T{
@@ -1995,9 +2015,9 @@ Date format.
 .TP
 .B LIBPROC_HIDE_KERNEL
 Set this to any value to hide kernel threads normally displayed with the
-.B -e
+.B \-e
 option. This is equivalent to selecting
-.B --ppid 2 -p 2 --deselect
+.B \-\-ppid 2 \-p 2 \-\-deselect
 instead. Also works in BSD mode.
 .TP
 .B PS_COLORS
@@ -2072,7 +2092,6 @@ month name in English. The fields \fBlstart\fR and \fBstime\fR will show
 the abbreviated month name in the configured locale but may exceed the
 column width due to the different lengths for abbreviated month and day
 names across languages.
-.PP
 .SH "SEE ALSO"
 .BR pgrep (1),
 .BR pstree (1),
@@ -2107,7 +2126,7 @@ was originally written by
 Branko Lankester
 .ME .
 .MT johnsonm@\:redhat.\:com
-Michael K. Johnson
+Michael K.\& Johnson
 .ME
 re\-wrote it significantly to use the proc filesystem, changing a few things
 in the process.
