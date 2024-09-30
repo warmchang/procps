@@ -564,12 +564,14 @@ static void showinfo(
         char *sd_tty;
 
         if (sd_session_get_tty(session, &sd_tty) >= 0) {
-            for (i = 0; i < strlen (sd_tty); i++)
+	    for (i = 0; i < UT_LINESIZE; i++) {
+		if (sd_tty[i] == '\0') break;
                 /* clean up tty if garbled */
 	        if (isalnum(sd_tty[i]) || (sd_tty[i] == '/'))
 		    tty[i + 5] = sd_tty[i];
 		else
 		    tty[i + 5] = '\0';
+	    }
 	    free(sd_tty);
 	}
     } else {
