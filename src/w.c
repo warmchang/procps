@@ -630,8 +630,10 @@ static void showinfo(
     if (u && *u->ut_line == ':')
         /* idle unknown for xdm logins */
         printf(" ?xdm? ");
-    else
+    else if (tty[5])
         print_time_ival7(idletime(tty), 0, stdout);
+    else
+	printf("       ");
 
     /* jpcpu/pcpu */
     if (longform) {
