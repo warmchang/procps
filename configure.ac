@@ -168,21 +168,6 @@ AC_TRY_COMPILE([#include <errno.h>],
 		AC_MSG_RESULT(yes),
 		AC_MSG_RESULT(no))
 
-AC_CHECK_FUNC([pidfd_open], [enable_pidwait=yes], [
-  AC_MSG_CHECKING([for __NR_pidfd_open])
-  AC_COMPILE_IFELSE([AC_LANG_SOURCE([
-#include <sys/syscall.h>
-#ifndef __NR_pidfd_open
-#error __NR_pidfd_open not defined
-#endif
-    ])], [enable_pidwait=yes], [enable_pidwait=no])
-  AC_MSG_RESULT([$enable_pidwait])
-])
-if test "$enable_pidwait" = yes; then
-  AC_DEFINE([ENABLE_PIDWAIT], [1], [Enable pidwait])
-fi
-AM_CONDITIONAL([BUILD_PIDWAIT], [test x$enable_pidwait = xyes])
-
 dnl watch8bit must be before the AC_ARG_WITH set as it sets up ncurses
 AC_SUBST([WITH_WATCH8BIT])
 AC_ARG_ENABLE([watch8bit],
@@ -318,6 +303,36 @@ AC_ARG_ENABLE([pidof],
   [], [enable_pidof=yes]
 )
 AM_CONDITIONAL(BUILD_PIDOF, test "x$enable_pidof" = xyes)
+
+# If pidwait is enabled, we need either pidfd_open() or __NR_pidfd_open need to be defined
+# Cannot use AC_CHECK_FUNC as it (incorrectly) passes with pidfd_open missing
+AC_ARG_ENABLE([pidwait],
+  AS_HELP_STRING([--disable-pidwait], [do not build pidwait]),
+  [], [
+    enable_pidwait=yes
+    AC_DEFINE(ENABLE_PIDWAIT, 1, [enable pidwait])
+  ]
+)
+AM_CONDITIONAL(BUILD_PIDWAIT, test "x$enable_pidwait" = xyes)
+AC_MSG_CHECKING([for pidfd_open()])
+AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[ [pidfd_open(1,1)]]])],
+  have_pidfd_open=yes; AC_MSG_RESULT([yes]) ,
+  have_pidfd_open=no; AC_MSG_RESULT([no])
+  )
+
+AS_IF([[test "x$enable_pidwait" = xyes -a "x$have_pidfd_open" = xno]],
+   AC_MSG_CHECKING([for __NR_pidfd_open])
+   AC_COMPILE_IFELSE([AC_LANG_SOURCE([
+#include <sys/syscall.h>
+#ifndef __NR_pidfd_open
+#error __NR_pidfd_open not defined
+#endif
+      ])],
+      AC_MSG_RESULT([yes]),
+      AC_MSG_RESULT([no])
+      AC_MSG_ERROR([Neither pidfd_open or __NR_pidfd_open found. Disable pidwait with configure option --disable-pidwait])
+    )
+   ,[])
 
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),

@@ -20,6 +20,7 @@ procps-ng-NEXT
     external: Add procps_sigmask_names
     external: Add procps_capability_names
     external: Add PIDS_CAP__PRM Permitted Capabilities
+  * build-sys: Added --disable-pidwait and fixed logic     issue #352
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
   * ps: Add environ field
