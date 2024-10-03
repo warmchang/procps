@@ -91,6 +91,9 @@ PROCPS_EXPORT int procps_users(void)
                     numuser++;
                 free(class);
             }
+	    for (i = 0; i < sessions; i++)
+	      free(sessions_list[i]);
+	    free(sessions_list);
             return numuser;
         }
     }
