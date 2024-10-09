@@ -1,4 +1,6 @@
-[![build status](https://gitlab.com/ci/projects/2142/status.png?ref=master)](https://gitlab.com/ci/projects/2142?ref=master)
+[![pipeline status](https://gitlab.com/procps-ng/procps/badges/master/pipeline.svg)](https://gitlab.com/procps-ng/procps/-/commits/master)
+[![Latest Release](https://gitlab.com/procps-ng/procps/-/badges/release.svg)](https://gitlab.com/procps-ng/procps/-/releases)
+
 procps
 ======
 
@@ -43,7 +45,7 @@ be tracked. This is especially problematic when the report conerns something
 that will take time to resolve.
 
 If you need to report bugs, there is more details on the
-[Bug Reporting](https://gitlab.com/procps-ng/procps/blob/master/Documentation/bugs.md)
+[Bug Reporting](https://gitlab.com/procps-ng/procps/-/blob/master/doc/bugs.md)
 page.
 
 ## Email List
