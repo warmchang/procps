@@ -1,6 +1,6 @@
 .\"
 .\" Copyright (c) 2016-2023 Jim Warner <james.warner@comcast.net>
-.\" Copyright (c) 2019-2023 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2019-2024 Craig Small <csmall@dropbear.xyz>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 1999      George Staikos <staikos@0wned.org>
 .\"
@@ -10,57 +10,39 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH SYSCTL.CONF "5" "2021-09-15" "procps-ng" "File Formats"
+.TH SYSCTL.CONF 5 2024-10-24 "File Formats"
 .SH NAME
-sysctl.conf \- sysctl preload/configuration file
+sysctl.conf \- Kernel configuration parameters
 .SH DESCRIPTION
 .B sysctl.conf
-is a simple file containing sysctl values to be read in and set by
-.BR sysctl .
-The syntax is simply as follows:
+is a set of configuration files that contain values to be read in and set by
+.BR sysctl (8)\.
+.PP
+This man page describes the configuration files for \fBprocps sysctl\fR.
+If you are using
+.BR systemd-sysctl (8)
+then refer to
+.BR sysctl.d (5)
+and note that it won't use the file \fI/etc/sysctl.conf\FR.
+.SH CONFIGURATION FORMAT
+Each line of the files contain a kernel parameter in the format of
 .RS
 .sp
 .nf
 .ne 7
-# comment
-; comment
-.P
 token = value
 .fi
 .RE
-.PP
-Note that blank lines are ignored, and whitespace before and after a token or
-value is ignored, although a value can contain whitespace within.  Lines which
-begin with a \fI#\fR or \fI;\fR are considered comments and ignored.
+.P
+Blank lines or lines that start with "#" or ";" are ignored.
 .P
 If a line begins with a single \-, any attempts to set the value that fail will be
 ignored.
-.SH NOTES
-As the
-.I /etc/sysctl.conf
-file is used to override default kernel parameter values, only a small number of parameters is predefined in the file.
-Use
-.RB \[lq] "sysctl \-a" \[rq]
-or follow
-.BR sysctl (8)
-to list all possible parameters. The description of individual parameters can be found in the kernel documentation.
-.P
-Maximum supported line length of the value is 4096 characters due
-to a limitation of \fI/proc\fR entries in Linux kernel.
-.SH EXAMPLE
-.RS
-.sp
-.nf
-.ne 7
-# sysctl.conf sample
-#
-  kernel.domainname = example.com
-; this one has a space which will be written to the sysctl!
-  kernel.modprobe = /sbin/mod probe
-.fi
-.RE
-.PP
 .SH FILES
+.BR sysctl (8)
+when run with the \fB\-\-system\fR option will read files from directories
+in the following list in given order:
+.P
 .TS
 Li.
 /etc/sysctl.d/\fR*\fP.conf
@@ -68,22 +50,29 @@ Li.
 /usr/local/lib/sysctl.d/\fR*\fP.conf
 /usr/lib/sysctl.d/\fR*\fP.conf
 /lib/sysctl.d/\fR*\fP.conf
-/etc/sysctl.conf
 .TE
 .P
-The paths where
-.B sysctl
-preload files usually exist.  See also
-.B sysctl
-option
-.IR \-\-system .
+The file \fI/etc/sysctl.conf\fR is read last. This file is not used by
+.BR systemd-sysctl (8)
+which means some kernel parameters will not be set depending on the
+version of \fBsysctl\fR that is installed.
+.SH BUGS
+Maximum supported line length of the value is 4096 characters due
+to a limitation of \fI/proc\fR entries in Linux kernel.
+.SH EXAMPLES
+.RS
+.sp
+.nf
+.ne 7
+#
+#
+kernel.domainname = example.com
+; this one has a space which will be written to the sysctl!
+kernel.modprobe = /sbin/mod probe
+.fi
+.RE
+.PP
 .SH SEE ALSO
-.BR sysctl (8)
-.SH AUTHOR
-.MT staikos@0wned.org
-George Staikos
-.ME
-.SH "REPORTING BUGS"
-Please send bug reports to
-.MT procps@freelists.org
-.ME .
+.BR sysctl.d (5),
+.BR sysctl (8),
+.BR systemd-sysctl (8).
