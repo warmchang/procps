@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2002-2023 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2002-2024 Craig Small <csmall@dropbear.xyz>
 .\" Copyright (c) 2011-2023 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 1998-2003 Albert Cahalan
@@ -9,7 +9,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH KILL 1 "2023-12-27" "procps-ng" "User Commands"
+.TH KILL 1 2023-12-27 procps-ng
 .SH NAME
 kill \- send a signal to a process
 .SH SYNOPSIS
@@ -68,11 +68,16 @@ will convert signal number to signal name, or other way round.
 .TP
 .BR \-L , \ \-\-table
 List signal names in a nice table.
-.TP
 .SH NOTES
 Your shell (command line interpreter) may have a built-in kill
 command.  You may need to run the command described here as /bin/kill
 to solve the conflict.
+.PP
+If you use negative PID values, you will need to specify a signal as well so that
+.B kill
+knows if the option is for the PID or the signal number. For example, issuing
+the command with the single option \fB\-9\fR it is not clear if you
+mean signal 9 (SIGKILL) or process group 9.
 .SH EXAMPLES
 .TP
 .B kill \-9 \-1
@@ -86,6 +91,10 @@ List the available signal choices in a nice table.
 .TP
 .B kill 123 543 2341 3453
 Send the default signal, SIGTERM, to all those processes.
+.TP
+.B kill -SIGTERM -123
+Send the signal SIGTERM to process group 123. The signal name or number is
+required if specifying process groups with a negative PID.
 .SH "SEE ALSO"
 .BR kill (2),
 .BR killall (1),
@@ -95,16 +104,6 @@ Send the default signal, SIGTERM, to all those processes.
 .BR signal (7),
 .BR sigqueue (3),
 .BR skill (1)
-.SH STANDARDS
-This command meets appropriate standards. The
-.B \-L
-flag is Linux-specific.
-.SH AUTHOR
-.MT albert@users.sf.net
-Albert Cahalan
-.ME
-wrote kill in 1999 to replace a bsdutils one that was not standards
-compliant.  The util-linux one might also work correctly.
 .SH "REPORTING BUGS"
 Please send bug reports to
 .MT procps@freelists.org

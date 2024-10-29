@@ -1,7 +1,7 @@
 /*
  * kill.c - send a signal to process
  *
- * Copyright © 1995-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 1995-2024 Craig Small <csmall@dropbear.xyz>
  * Copyright © 1998-2002 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
@@ -134,7 +134,7 @@ int main(int argc, char **argv)
             } else {
                 /* Special case for signal digit negative
                  * PIDs */
-		pid = (long)('0' - optopt);
+                pid = strtol_or_err(argv[optind], _("failed to parse argument"));
 		if (!execute_kill((pid_t) pid, signo, use_sigqueue, sigval))
 		    exitvalue = EXIT_FAILURE;
                 exit(exitvalue);
