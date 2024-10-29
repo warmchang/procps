@@ -3890,9 +3890,8 @@ static void config_insp (FILE *fp, char *buf, size_t size) {
       int n, x;
       char *s1, *s2, *s3;
 
-      if (i < 0 || (size_t)i >= INT_MAX / sizeof(struct I_ent)) break;
-      if (lraw >= INT_MAX - size) break;
-
+      if (i < 0 || (size_t)i >= (size_t)INT_MAX / sizeof(struct I_ent)) break;
+      if (lraw >= (size_t)INT_MAX - size) break;
       if (!buf[0] && !fgets(buf, size, fp)) break;
       lraw += strlen(buf) +1;
       Inspect.raw = alloc_r(Inspect.raw, lraw);
