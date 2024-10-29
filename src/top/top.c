@@ -251,14 +251,14 @@ static const char Osel_filterI_fmt[] = "\ttype=%d,\t" OSEL_FILTER "%*s\n";
         /* Support for adjoining display (if terminal is wide enough) */
 #ifdef TOG4_SEP_OFF
 static char Adjoin_sp[] =  "  ";
-#define ADJOIN_space  (sizeof(Adjoin_sp) - 1)    // 1 for null
+#define ADJOIN_space  (int)(sizeof(Adjoin_sp) - 1)    // 1 for null
 #else
 #ifdef TOG4_SEP_STD
 static char Adjoin_sp[] =  "~1 ~6 ";
 #else
 static char Adjoin_sp[] =  " ~6 ~1";
 #endif
-#define ADJOIN_space  (sizeof(Adjoin_sp) - 5)    // 1 for null + 4 unprintable
+#define ADJOIN_space  (int)(sizeof(Adjoin_sp) - 5)    // 1 for null + 4 unprintable
 #endif
 #define ADJOIN_limit  8
 
