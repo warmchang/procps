@@ -2839,14 +2839,16 @@ static void *tasks_refresh (void *unused) {
 #ifdef THREADED_TSK
       sem_wait(&Semaphore_tasks_beg);
 #endif
-      clock_gettime(CLOCK_BOOTTIME, &ts);
-      uptime_cur = (ts.tv_sec + ts.tv_nsec * 1.0e-9);
-      et = uptime_cur - uptime_sav;
-      if (et < 0.01) et = 0.005;
-      uptime_sav = uptime_cur;
-      // if in Solaris mode, adjust our scaling for all cpus
-      Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
-
+      if (0 != clock_gettime(CLOCK_BOOTTIME, &ts))
+         Frame_etscale = 0;
+      else {
+         uptime_cur = (ts.tv_sec + ts.tv_nsec * 1.0e-9);
+         et = uptime_cur - uptime_sav;
+         if (et < 0.01) et = 0.005;
+         uptime_sav = uptime_cur;
+         // if in Solaris mode, adjust our scaling for all cpus
+         Frame_etscale = 100.0f / ((float)Hertz * (float)et * (Rc.mode_irixps ? 1 : Cpu_cnt));
+      }
       what = Thread_mode ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
       if (Monpidsidx) {
          what |= PIDS_SELECT_PID;
