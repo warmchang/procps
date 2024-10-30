@@ -540,9 +540,9 @@ static void output_header(void)
 		if (lheader_len == -1)
 			endwin_xerr(1, "%s()", __func__);
 #ifdef WITH_WATCH8BIT
-		// never freed
 		wlheader_wid = mbswidth(lheader, &wlheader);
 		if (wlheader_wid == -1) {
+			free(wlheader);
 			wlheader = L"";
 			wlheader_wid = 0;
 		}
@@ -551,6 +551,7 @@ static void output_header(void)
 		// never freed
 		wcommand_wid = mbswidth(command, &wcommand);
 		if (wcommand_wid == -1) {
+			free(wcommand);
 			wcommand = L"";
 			wcommand_wid = 0;
 		}
