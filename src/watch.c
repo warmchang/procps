@@ -986,7 +986,7 @@ static uint8_t run_command(void)
 				// letting all non-printables >=128 get through.
 				if (! iswprint(c))
 					continue;
-				cwid = wcwidth(c);
+				cwid = wcwidth((wchar_t)c);
 				assert(cwid >= 0 && cwid <= 2);
 #else
 				if (! isprint(c))
