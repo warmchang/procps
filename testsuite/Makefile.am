@@ -4,11 +4,13 @@ export DEJAGNU
 # Programs that are expected across the board.
 DEJATOOL =
 
-noinst_PROGRAMS = test-schedbatch test-hugetlb
+noinst_PROGRAMS = test-schedbatch test-hugetlb test-zombie
 
 test_schedbatch_SOURCES = ps.test/test-schedbatch.c
 
 test_hugetlb_SOURCES = ps.test/test-hugetlb.c
+
+test_zombie_SOURCES = ps.test/test-zombie.c
 
 if LINUX
 # These should be in defined in 'across the board' scope, but are

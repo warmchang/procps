@@ -32,6 +32,7 @@ procps-ng-NEXT
   * ps: can display open file descriptors for each task
   * ps: Fix signames scanning                              issue #341
   * ps: Add -o pcap,pcaps to show permitted capabilities
+  * ps: Zombies show <defunct> in the commandname          issue #355
   * slabtop: Add --human option for slab size
   * sysctl: Add glob excludes                              merge #206
   * sysctl: --all skips stat_refresh                       Debian #978688

@@ -400,33 +400,52 @@ Modifications to the arguments are not shown.
 
 #define OUTBUF_SIZE_AT(endp) \
   (((endp) >= outbuf && (endp) < outbuf + OUTBUF_SIZE) ? (outbuf + OUTBUF_SIZE) - (endp) : 0)
+/*
+ * Both pr_args and pr_comm almost do the same thing, but CMDLINE or CMD is determined 
+ * by which function is called, then what flags are set (and they're different for
+ * each function). The printing part is identical
+ */
 
+static int pr_cmd_or_cmdline(
+        char *restrict const outbuf,
+        const proc_t *restrict const pp,
+        const bool use_cmdline)
+{
+    char *endp;
+    int rightward, fh;
+setREL4(CMDLINE,CMD,ENVIRON,STATE)
+    endp = outbuf;
+    rightward = max_rightward;
+    fh = forest_helper(outbuf);
+    endp += fh;
+    rightward -= fh;
+    if (use_cmdline) {
+        endp += escape_str(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
+    } else {
+        endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
+        if ( rSv(STATE, s_ch, pp) == 'Z') {
+            endp += escape_str(endp," <defunct>", OUTBUF_SIZE_AT(endp), &rightward);
+        }
+    }
+    if(bsd_e_option && rightward>1) {
+        char *e = rSv(ENVIRON, str, pp);
+        if (*e != '-' || *(e+1) != '\0') {
+            *endp++ = ' ';
+            rightward--;
+            escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
+        }
+    }
+    return max_rightward-rightward;
+}
 /*
  * "args", "cmd", "command" are all the same:  long  unless  c
  * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
  * ( determinations are made in display.c, we mostly deal with results ) */
 static int pr_args(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp;
-  int rightward, fh;
-setREL3(CMDLINE,CMD,ENVIRON)
-  endp = outbuf;
-  rightward = max_rightward;
-  fh = forest_helper(outbuf);
-  endp += fh;
-  rightward -= fh;
-  if (!bsd_c_option)
-    endp += escape_str(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
-  else
-    endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
-  if(bsd_e_option && rightward>1) {
-    char *e = rSv(ENVIRON, str, pp);
-    if(*e != '-' || *(e+1) != '\0') {
-      *endp++ = ' ';
-      rightward--;
-      escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
-    }
-  }
-  return max_rightward-rightward;
+    if (!bsd_c_option)
+        return pr_cmd_or_cmdline(outbuf, pp, true);
+    else
+        return pr_cmd_or_cmdline(outbuf, pp, false);
 }
 
 /*
@@ -434,27 +453,10 @@ setREL3(CMDLINE,CMD,ENVIRON)
  * "comm", "ucmd", "ucomm"  are all the same:  short unless -f
  * ( determinations are made in display.c, we mostly deal with results ) */
 static int pr_comm(char *restrict const outbuf, const proc_t *restrict const pp){
-  char *endp;
-  int rightward, fh;
-setREL3(CMD,CMDLINE,ENVIRON)
-  endp = outbuf;
-  rightward = max_rightward;
-  fh = forest_helper(outbuf);
-  endp += fh;
-  rightward -= fh;
-  if(unix_f_option)
-    endp += escape_str(endp, rSv(CMDLINE, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
-  else
-    endp += escape_str(endp, rSv(CMD, str, pp), OUTBUF_SIZE_AT(endp), &rightward);
-  if(bsd_e_option && rightward>1) {
-    char *e = rSv(ENVIRON, str, pp);
-    if(*e != '-' || *(e+1) != '\0') {
-      *endp++ = ' ';
-      rightward--;
-      escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
-    }
-  }
-  return max_rightward-rightward;
+    if (unix_f_option)
+        return pr_cmd_or_cmdline(outbuf, pp, true);
+    else
+        return pr_cmd_or_cmdline(outbuf, pp, false);
 }
 
 static int pr_cgname(char *restrict const outbuf,const proc_t *restrict const pp) {
