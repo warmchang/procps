@@ -224,6 +224,18 @@ proc kill_testshm_proc { } {
     kill_process $testshmproc_pid
 }
 
+proc make_schedbatch_proc { nice_val } {
+    global schedbatch_proc_pid topdir
+    set schedbatch_path "${topdir}testsuite/test-schedbatch"
+
+    set schedbatch_proc_pid [ spawn $schedbatch_path $nice_val ]
+}
+
+proc kill_schedbatch_proc { } {
+    global schedbatch_proc_pid
+    kill_process $schedbatch_proc_pid
+}
+
 proc kill_testproc { } {
     global testproc_path testproc1_pid testproc2_pid
 

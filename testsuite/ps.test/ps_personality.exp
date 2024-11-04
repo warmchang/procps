@@ -15,4 +15,4 @@ foreach { pers match } $pers_match  {
   spawn $ps
   expect_pass "$test" $match
 }
-
+set env(PS_PERSONALITY) ""
