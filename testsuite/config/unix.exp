@@ -236,6 +236,23 @@ proc kill_schedbatch_proc { } {
     kill_process $schedbatch_proc_pid
 }
 
+
+proc make_zombie_proc { } {
+    global zombie_ppid zombie_pid topdir
+
+    set zombie_realpath "${topdir}testsuite/test-zombie"
+    set zombie_ppid [ spawn $zombie_realpath ]
+    set zombie_pid ""
+    expect {
+        -re "Zombie pid: (\[0-9\]+)" { set zombie_pid $expect_out(1,string) }
+    }
+}
+
+proc kill_zombie_proc { } {
+    global zombie_ppid
+    kill_process $zombie_ppid
+}
+
 proc kill_testproc { } {
     global testproc_path testproc1_pid testproc2_pid
 
