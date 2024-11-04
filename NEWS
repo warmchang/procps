@@ -34,6 +34,7 @@ procps-ng-NEXT
   * ps: Add -o pcap,pcaps to show permitted capabilities
   * ps: Zombies show <defunct> in the commandname          issue #355
   * slabtop: Add --human option for slab size
+  * snice: Minor fix for help screen                       Debian #1086441
   * sysctl: Add glob excludes                              merge #206
   * sysctl: --all skips stat_refresh                       Debian #978688
   * top: added a 'CLS' scheduling class field, like ps

@@ -343,7 +343,7 @@ static void __attribute__ ((__noreturn__)) skillsnice_usage(FILE * out)
     fputs(_(" --ns <pid>               match the processes that belong to the same\n"
         "                          namespace as <pid>\n"), out);
     fputs(_(" --nslist <ns,...>        list which namespaces will be considered for\n"
-        "                          the --ns option; available namespaces are\n:"
+        "                          the --ns option; available namespaces are:\n"
             "                          ipc, mnt, net, pid, user, uts\n"), out);
 
     fputs(USAGE_SEPARATOR, out);
