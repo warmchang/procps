@@ -12,67 +12,92 @@
 .\"
 .TH SYSCTL.CONF 5 2024-10-24 procps-ng
 .SH NAME
-sysctl.conf \- Kernel configuration parameters
+sysctl.conf \- Linux kernel configuration parameters
 .SH DESCRIPTION
 .B sysctl.conf
-is a set of configuration files that contain values to be read in and set by
-.BR sysctl (8)\.
+is a set of configuration files that contain
+Linux kernel configuration parameters
+to be read and set by
+.BR sysctl (8).
 .PP
-This man page describes the configuration files for \fBprocps sysctl\fR.
+This man page describes the configuration files for
+.I procps
+.BR sysctl .
 If you are using
-.BR systemd-sysctl (8)
-then refer to
+.BR systemd\-sysctl (8),
+refer to
 .BR sysctl.d (5)
-and note that it won't use the file \fI/etc/sysctl.conf\FR.
-.SH CONFIGURATION FORMAT
-Each line of the files contain a kernel parameter in the format of
+and note that it won't use the file
+.IR \%/etc/\:\%sysctl\:\%.conf .
+.SS "Configuration Format"
+Each line of a file read by
+.I procps
+.B sysctl
+describes a kernel parameter in the following format.
+.P
 .RS
-.sp
-.nf
-.ne 7
+.EX
 token = value
-.fi
+.EE
 .RE
 .P
-Blank lines or lines that start with "#" or ";" are ignored.
+Blank lines and lines that start with
+.RB \[lq] # \[rq]
+or
+.RB \[lq] ; \[rq]
+are ignored.
 .P
-If a line begins with a single \-, any attempts to set the value that fail will be
-ignored.
+If a line begins with a single
+.RB \[lq] \- \[rq],
+a failing attempt to set the value is ignored.
 .SH FILES
-.BR sysctl (8)
-when run with the \fB\-\-system\fR option will read files from directories
-in the following list in given order:
+.I procps
+.BR sysctl ,
+when run with the
+.B \%\-\-system
+option,
+reads files from directories
+in the order shown below.
 .P
-.TS
-Li.
-/etc/sysctl.d/\fR*\fP.conf
-/run/sysctl.d/\fR*\fP.conf
-/usr/local/lib/sysctl.d/\fR*\fP.conf
-/usr/lib/sysctl.d/\fR*\fP.conf
-/lib/sysctl.d/\fR*\fP.conf
-.TE
-.P
-The file \fI/etc/sysctl.conf\fR is read last. This file is not used by
-.BR systemd-sysctl (8)
-which means some kernel parameters will not be set depending on the
-version of \fBsysctl\fR that is installed.
-.SH BUGS
-Maximum supported line length of the value is 4096 characters due
-to a limitation of \fI/proc\fR entries in Linux kernel.
-.SH EXAMPLES
 .RS
-.sp
-.nf
-.ne 7
+.TP
+.IR /etc/sysctl.d/ * .conf
+.TQ
+.IR /run/sysctl.d/ * .conf
+.TQ
+.IR /usr/local/lib/sysctl.d/ * .conf
+.TQ
+.IR /usr/lib/sysctl.d/ * .conf
+.TQ
+.IR /lib/sysctl.d/ * .conf
+.RE
+.P
+Finally,
+.I procps
+.B sysctl
+reads
+.IR \%/etc/\:\%sysctl\:\%.conf .
+This file is not used by
+.BR systemd\-sysctl ,
+which means that some kernel parameters are not set depending on the
+implementation of
+.B sysctl
+that is installed.
+.SH BUGS
+The maximum supported length of
+.I value
+is 4096 characters due to a limitation on
+.I /proc
+entry length in the Linux kernel.
+.SH EXAMPLES
+.EX
 #
 #
 kernel.domainname = example.com
-; this one has a space which will be written to the sysctl!
+; A value containing a space is written to the sysctl.
 kernel.modprobe = /sbin/mod probe
-.fi
-.RE
-.PP
-.SH SEE ALSO
+.EE
+.SH "SEE ALSO"
 .BR sysctl.d (5),
 .BR sysctl (8),
-.BR systemd-sysctl (8).
+.BR systemd\-sysctl (8)
