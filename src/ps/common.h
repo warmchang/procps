@@ -219,6 +219,7 @@ makEXT(noop)
 #define SEL_COMM 13
 #define SEL_PPID 14
 #define SEL_PID_QUICK 15
+#define SEL_PID_TRY_QUICK 16
 
 /* Since an enum could be smashed by a #define, it would be bad. */
 #define U98  0 /* Unix98 standard */    /* This must be 0 */

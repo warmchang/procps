@@ -423,7 +423,7 @@ static const char *parse_sysv_option(void){
       if(!arg) return _("list of process IDs must follow -p");
       err=parse_list(arg, parse_pid);
       if(err) return err;
-      selection_list->typecode = SEL_PID;
+      selection_list->typecode = SEL_PID_TRY_QUICK;
       return NULL; /* can't have any more options */
     case 'q': /* end */
       trace("-q quick select by PID.\n");
@@ -695,7 +695,7 @@ static const char *parse_bsd_option(void){
       if(!arg) return _("list of process IDs must follow p");
       err=parse_list(arg, parse_pid);
       if(err) return err;
-      selection_list->typecode = SEL_PID;
+      selection_list->typecode = SEL_PID_TRY_QUICK;
       return NULL; /* can't have any more options */
     case 'q': /* end */
       trace("q Quick select by process ID\n");
@@ -965,7 +965,7 @@ static const char *parse_gnu_option(void){
     if(!arg) return _("list of process IDs must follow --pid");
     err=parse_list(arg, parse_pid);
     if(err) return err;
-    selection_list->typecode = SEL_PID;
+    selection_list->typecode = SEL_PID_TRY_QUICK;
     return NULL;
   case_pid_quick:
     trace("--quick-pid\n");

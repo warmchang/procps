@@ -508,14 +508,37 @@ static void arg_check_conflicts(void)
 {
   int selection_list_len;
   int has_quick_pid;
+  int has_try_quick_pid;
   selection_node *walk = selection_list;
   has_quick_pid = 0;
+  has_try_quick_pid = 0;
   selection_list_len = 0;
 
   while (walk) {
     if (walk->typecode == SEL_PID_QUICK) has_quick_pid++;
+    else if (walk->typecode == SEL_PID_TRY_QUICK) has_try_quick_pid++;
     walk = walk->next;
     selection_list_len++;
+  }
+
+  if (has_try_quick_pid > 0) {
+    int sel_pid;
+
+    if (has_try_quick_pid > 1 ||
+        has_quick_pid > 0 ||
+        selection_list_len > (has_try_quick_pid + has_quick_pid) ||
+        forest_type ||
+        sort_list ||
+        negate_selection) {
+      sel_pid = SEL_PID;
+    } else {
+      sel_pid = SEL_PID_QUICK;
+      has_quick_pid += has_try_quick_pid;
+    }
+
+    for (walk = selection_list; walk; walk = walk->next) {
+      if (walk->typecode == SEL_PID_TRY_QUICK) walk->typecode = sel_pid;
+    }
   }
 
   /* -q doesn't allow multiple occurrences */
