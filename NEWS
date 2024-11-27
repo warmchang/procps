@@ -24,6 +24,7 @@ procps-ng-NEXT
   * kill: Correctly parse negative pids                    issue #354
   * pgrep: select process by environment variable          issue #167
   * pgrep: Rework pidfile reading to include stdin         issue #318
+  * pmap: Don't escape correct UTF-8 characters
   * ps: Add environ field
   * ps: Add htprv and htshr fields for HugeTables
   * ps: restore lost tasks for options --sort with -H      issue #304

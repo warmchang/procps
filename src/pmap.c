@@ -195,9 +195,13 @@ static void discover_shm_minor(void)
 			*tmp = '\0';
 		tmp = mapbuf_b;
 		while (*tmp) {
-			if (!isprint(*tmp))
+			int n = mblen(tmp, strlen(tmp));
+			if (n < 0) {
 				*tmp = '?';
-			tmp++;
+				tmp++;
+			} else {
+				tmp += n;
+			}
 		}
 		if (start > (unsigned long)addr)
 			continue;
@@ -664,9 +668,13 @@ static int one_proc (struct pids_stack *p)
 			*tmp = '\0';
 		tmp = mapbuf;
 		while (*tmp) {
-			if (!isprint(*tmp))
+			int n = mblen(tmp, strlen(tmp));
+			if (n < 0) {
 				*tmp = '?';
-			tmp++;
+				tmp++;
+			} else {
+				tmp += n;
+			}
 		}
 
 		diff = end - start_To_Avoid_Warning;
