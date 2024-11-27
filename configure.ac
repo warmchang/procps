@@ -315,8 +315,8 @@ AC_ARG_ENABLE([pidwait],
 )
 AM_CONDITIONAL(BUILD_PIDWAIT, test "x$enable_pidwait" = xyes)
 AC_MSG_CHECKING([for pidfd_open()])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[ [pidfd_open(1,1)]]])],
-  have_pidfd_open=yes; AC_MSG_RESULT([yes]) ,
+AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[pidfd_open(1,1)]])],
+  have_pidfd_open=yes; AC_DEFINE(HAVE_PIDFD_OPEN, 1, [pidfd_open is defined]) AC_MSG_RESULT([yes]),
   have_pidfd_open=no; AC_MSG_RESULT([no])
   )
 
