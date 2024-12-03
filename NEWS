@@ -1,6 +1,7 @@
 procps-ng-NEXT
 ---------------
   * library
+    increment current, revision and age to 0: 1:0:0
     internal: days/users when value is 0                   issue #303
     internal: dont print 60s but increment minute          issue #302
     internal: stat api fixed remaining cpu distortions     issue #321
