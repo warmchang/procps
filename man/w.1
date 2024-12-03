@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH W 1 2024-02-08 procps-ng
+.TH W 1 2024-12-03 procps-ng
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
@@ -95,12 +95,13 @@ Override the default width of the from column.  Defaults to 16.
 .SH FILES
 .TP
 .I /var/run/utmp
-information about who is currently logged on
+information about who is currently logged on, only for non-systemd hosts.
 .TP
 .I /proc
 process information
 .SH "SEE ALSO"
 .BR free (1),
+.BR loginctl (1),
 .BR ps (1),
 .BR top (1),
 .BR uptime (1),
