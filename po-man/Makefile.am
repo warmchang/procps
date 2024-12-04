@@ -41,7 +41,11 @@ all-local-no:
 all-local-yes: man.stamp
 
 # FIXME: Use a stamp file until po4a supports them internally.
-man.stamp: check-po4a
+man.stamp:
+	@if test -z '$(PO4A)'; then \
+		echo "error: You need to install the po4a package."; \
+		exit 1; \
+	fi
 	$(PO4A_V) $(PO4A) $(PO4A_OPTS) --no-update $(srcdir)/po4a.cfg
 	$(AM_V_at) touch $@
 
@@ -52,21 +56,19 @@ clean-local-yes:
 	rm -rf $(LINGUAS_DIST)
 	$(AM_V_at) rm -f man.stamp
 
-.PHONY: update-po check-po4a
+.PHONY: update-po
 
 procps-man.pot: $(src_MANS)
 #	parafiles = $(patsubst %,-m%,$(subst :, ,$(src_MANS)))
 #	parafiles = $(src_MANS:doc=Ente)
 	po4a-gettextize -M utf8 --option groff_code=verbatim --option generated --option untranslated="a.RE,\|" --option unknown_macros=untranslated -f man $(patsubst %,-m%,$(subst :, ,$(src_MANS))) -p $@
 
-update-po: check-po4a
-	$(PO4A_V) $(PO4A) $(PO4A_OPTS) --no-translations --force $(srcdir)/po4a.cfg
-
-check-po4a:
+update-po:
 	@if test -z '$(PO4A)'; then \
 		echo "error: You need to install the po4a package."; \
 		exit 1; \
 	fi
+	$(PO4A_V) $(PO4A) $(PO4A_OPTS) --no-translations --force $(srcdir)/po4a.cfg
 
 install-data-local:
 	for lang in $(LINGUAS) ; do \
