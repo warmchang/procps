@@ -874,6 +874,15 @@ static int signal_option(int *argc, char **argv)
 }
 
 #if defined(ENABLE_PIDWAIT) && !defined(HAVE_PIDFD_OPEN)
+
+#ifndef __NR_pidfd_open
+#ifdef __alpha__
+#define __NR_pidfd_open 544
+#else
+#define __NR_pidfd_open 434
+#endif
+#endif
+
 static int pidfd_open (pid_t pid, unsigned int flags)
 {
 	return syscall(__NR_pidfd_open, pid, flags);

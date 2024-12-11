@@ -325,7 +325,7 @@ AS_IF([[test "x$enable_pidwait" = xyes -a "x$have_pidfd_open" = xno]],
    AC_COMPILE_IFELSE([AC_LANG_SOURCE([
 #include <sys/syscall.h>
 #ifndef __NR_pidfd_open
-#error __NR_pidfd_open not defined
+#warning __NR_pidfd_open not defined; using our definition
 #endif
       ])],
       AC_MSG_RESULT([yes]),
