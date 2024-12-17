@@ -68,10 +68,10 @@ endif
 lib_LTLIBRARIES = \
 	library/libproc2.la
 
-dist_man_MANS = \
+# pkill.1 is a `so` stub; omit it from CHECKABLEMANS.
+CHECKABLEMANS = \
 	man/free.1 \
 	man/pgrep.1 \
-	man/pkill.1 \
 	man/pmap.1 \
 	man/uptime.1 \
 	man/vmstat.8 \
@@ -79,7 +79,25 @@ dist_man_MANS = \
 	man/procps_pids.3 \
 	man/procps_misc.3
 
+dist_man_MANS = \
+	man/free.1 \
+	man/pgrep.1 \
+	man/pmap.1 \
+	man/uptime.1 \
+	man/vmstat.8 \
+	man/procps.3 \
+	man/procps_pids.3 \
+	man/procps_misc.3
+	man/pkill.1
+
 if !CYGWIN
+CHECKABLEMANS += \
+	man/pwdx.1 \
+	man/tload.1 \
+	man/sysctl.8 \
+	man/sysctl.conf.5 \
+	man/ps.1
+
 dist_man_MANS += \
 	man/pwdx.1 \
 	man/tload.1 \
@@ -88,6 +106,7 @@ dist_man_MANS += \
 	man/ps.1
 
 if BUILD_PIDWAIT
+# pidwait.1 is a `so` stub; omit it from CHECKABLEMANS.
 dist_man_MANS += man/pidwait.1
 endif
 endif
@@ -120,6 +139,7 @@ bin_PROGRAMS += src/pidof
 else
 usrbin_exec_PROGRAMS += src/pidof
 endif
+CHECKABLEMANS += man/pidof.1
 dist_man_MANS += man/pidof.1
 src_pidof_SOURCES = src/pidof.c local/fileutils.c
 else
@@ -133,6 +153,7 @@ usrbin_exec_PROGRAMS += src/kill
 else
 bin_PROGRAMS += src/kill
 endif
+CHECKABLEMANS += man/kill.1
 dist_man_MANS += man/kill.1
 src_kill_SOURCES = src/kill.c local/strutils.c local/fileutils.c local/signals.c
 src_kill_LDADD = $(LTLIBINTL)
@@ -147,6 +168,7 @@ else
 bin_PROGRAMS += src/w
 endif
 
+CHECKABLEMANS += man/w.1
 dist_man_MANS += man/w.1
 src_w_SOURCES = src/w.c local/fileutils.c
 src_w_LDADD = $(LDADD)
@@ -171,13 +193,21 @@ usrbin_exec_PROGRAMS += \
 	src/top/top
 endif
 
+CHECKABLEMANS += \
+	man/watch.1 \
+	man/top.1
+
 dist_man_MANS += \
 	man/watch.1 \
 	man/top.1
+
 if !CYGWIN
 bin_PROGRAMS += \
 	src/slabtop \
 	src/hugetop
+CHECKABLEMANS += \
+	man/slabtop.1 \
+	man/hugetop.1
 dist_man_MANS += \
 	man/slabtop.1 \
 	man/hugetop.1
@@ -219,6 +249,9 @@ usrbin_exec_PROGRAMS += \
 endif
 src_skill_SOURCES = src/skill.c local/strutils.c local/fileutils.c local/signals.c
 src_snice_SOURCES = src/skill.c local/strutils.c local/fileutils.c local/signals.c
+CHECKABLEMANS += \
+	man/skill.1 \
+	man/snice.1
 dist_man_MANS += \
 	man/skill.1 \
 	man/snice.1
@@ -423,6 +456,11 @@ TESTS = \
 
 # Automake should do this, but it doesn't
 check: $(check_PROGRAMS) $(PROGRAMS)
+
+# `CHECKSTYLE` can be cranked up to 3 if top(1) and hugetop(1) stop
+# using blank lines and lines with leading spaces for formatting.
+check-man:
+	groff -t -z -ww -rCHECKSTYLE=2 -man $(CHECKABLEMANS)
 
 $(top_srcdir)/.version:
 	touch $(top_srcdir)/.version
