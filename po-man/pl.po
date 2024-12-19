@@ -4,14 +4,14 @@
 # Przemek Borys <pborys@dione.ids.pl>, 1999.
 # Andrzej Krzysztofowicz <ankry@green.mf.pg.gda.pl>, 2002.
 # Robert Luberda <robert@debian.org>, 2004, 2013, 2014, 2017.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2022.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2023.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-man 4.0.1rc3\n"
+"Project-Id-Version: procps-ng-man 4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2024-12-03 17:50+1100\n"
-"PO-Revision-Date: 2022-10-26 21:05+0200\n"
+"POT-Creation-Date: 2024-12-17 09:15+1100\n"
+"PO-Revision-Date: 2023-09-04 21:15+0200\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -30,7 +30,7 @@ msgstr "FREE"
 #: ../man/free.1:14
 #, no-wrap
 msgid "2023-05-02"
-msgstr ""
+msgstr "2023-05-02"
 
 #. type: TH
 #: ../man/free.1:14 ../man/kill.1:12 ../man/pgrep.1:13 ../man/pidof.1:13
@@ -112,6 +112,9 @@ msgid ""
 "the physical and swap memory minus a few reserved bits and kernel binary "
 "code."
 msgstr ""
+"Całkowita użyteczna pamięć (MemTotal oraz SwapTotal w /proc/meminfo). "
+"Obejmuje pamięć fizyczną i obszar wymiany minus kilka zarezerwowanych partii "
+"oraz binarny kod jądra."
 
 #. type: TP
 #: ../man/free.1:30
@@ -419,10 +422,9 @@ msgstr "Wyświetlanie szczegółowych statystyk niskiej i wysokiej pamięci."
 
 #. type: TP
 #: ../man/free.1:122
-#, fuzzy, no-wrap
-#| msgid "B<-s>, B<--since>"
+#, no-wrap
 msgid "B<-L>, B<--line>"
-msgstr "B<-s>, B<--since>"
+msgstr "B<-L>, B<--line>"
 
 #. type: Plain text
 #: ../man/free.1:127
@@ -430,6 +432,8 @@ msgid ""
 "Show output on a single line, often used with the B<-s> option to show "
 "memory statistics repeatedly."
 msgstr ""
+"Wyjście w pojedynczej linii, używane zwykle z opcją B<-s> do wielokrotnego "
+"pokazywania statystyk pamięci."
 
 #. type: TP
 #: ../man/free.1:127
@@ -559,10 +563,11 @@ msgstr ""
 #: ../man/tload.1:71 ../man/uptime.1:74 ../man/vmstat.8:200 ../man/w.1:123
 #: ../man/watch.1:174 ../man/top.1:2945
 #, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
+#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
 msgid "Please send bug reports to E<.MT procps@freelists.org> E<.ME .>"
 msgstr ""
-"Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<.UE>"
+"Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
+"UE .>"
 
 #. type: SH
 #: ../man/free.1:163 ../man/kill.1:199 ../man/pgrep.1:325 ../man/pidof.1:74
@@ -583,21 +588,21 @@ msgstr "B<ps>(1), B<slabtop>(1), B<top>(1), B<vmstat>(8)."
 #: ../man/kill.1:12
 #, no-wrap
 msgid "KILL"
-msgstr ""
+msgstr "KILL"
 
 #. type: TH
 #: ../man/kill.1:12
 #, fuzzy, no-wrap
-#| msgid "2022-08-31"
+#| msgid "2023-01-17"
 msgid "2023-12-27"
-msgstr "2022-08-31"
+msgstr "2023-01-17"
 
 #. type: Plain text
 #: ../man/kill.1:15
 #, fuzzy
-#| msgid "pmap - report memory map of a process"
+#| msgid "kill - send a signal to a process"
 msgid "kill - send a signal to one or more processes"
-msgstr "pmap - informacje o odwzorowaniu pamięci procesu"
+msgstr "kill - wysłanie sygnału do procesu"
 
 #. type: Plain text
 #: ../man/kill.1:22
@@ -628,31 +633,40 @@ msgstr ""
 #. type: Plain text
 #: ../man/kill.1:49
 #, fuzzy
-#| msgid "B<-l>, B<--list-name>"
+#| msgid "B<-l>, B<--list> [I<signal>]"
 msgid "B<kill -l>\\ [I<signal>]"
-msgstr "B<-l>, B<--list-name>"
+msgstr "B<-l>, B<--list> [I<sygnał>]"
 
 #. type: Plain text
 #: ../man/kill.1:52
 #, fuzzy
-#| msgid "B<-l>, B<--list-name>"
+#| msgid "B<-l>, B<--list> [I<signal>]"
 msgid "B<kill --list>\\ [I<signal>]"
-msgstr "B<-l>, B<--list-name>"
+msgstr "B<-l>, B<--list> [I<sygnał>]"
 
 #. type: Plain text
 #: ../man/kill.1:54
 msgid "B<kill -L>"
-msgstr ""
+msgstr "B<kill -L>"
 
 #. type: Plain text
 #: ../man/kill.1:56
 #, fuzzy
-#| msgid "B<-L>, B<--logpidfile>"
+#| msgid "B<kill -L>"
 msgid "B<kill --table>"
-msgstr "B<-L>, B<--logpidfile>"
+msgstr "B<kill -L>"
 
 #. type: Plain text
 #: ../man/kill.1:97
+#, fuzzy
+#| msgid ""
+#| "The default signal for kill is TERM.  Use B<-l> or B<-L> to list "
+#| "available signals.  Particularly useful signals include HUP, INT, KILL, "
+#| "STOP, CONT, and 0.  Alternate signals may be specified in three ways: "
+#| "B<-9>, B<-SIGKILL> or B<-KILL>.  Negative PID values may be used to "
+#| "choose whole process groups; see the PGID column in ps command output.  A "
+#| "PID of B<-1> is special; it indicates all processes except the kill "
+#| "process itself and init."
 msgid ""
 "B<kill> sends a signal to one or more processes by I<pid> or I<pgid>, a "
 "process or process group identifier.  B<signal>(7)  explains the varieties "
@@ -664,15 +678,22 @@ msgid ""
 "the PGID column in B<ps>(1)  command output.  A I<pid> of B<-1> is special; "
 "it indicates all processes except the B<kill> process itself and B<init>(8)."
 msgstr ""
+"Domyślnym sygnałem dla programu kill jest TERM. Listę dostępnych sygnałów "
+"można uzyskać przy użyciu opcji B<-l> lub B<-L>. W szczególności przydatne "
+"sygnały obejmują HUP, INT, KILL, STOP, CONT oraz 0. Alternatywny sygnał "
+"można podać na trzy sposoby: B<-9>, B<-SIGKILL>, B<-KILL>. Można użyć "
+"ujemnych wartości PID, aby wybrać całe grupy procesów - patrz kolumna PGID w "
+"wyjściu polecenia ps. Wartość PID B<-1> jest specjalna: oznacza wszystkie "
+"procesy oprócz samego procesu kill oraz procesu init."
 
 #. type: Plain text
 #: ../man/kill.1:112
 #, fuzzy
 #| msgid ""
-#| "Use B<sigqueue(3)> rather than B<kill(2)> and the value argument is used "
-#| "to specify an integer to be sent with the signal. If the receiving "
+#| "Use B<sigqueue>(3)  rather than B<kill>(2)  and the value argument is "
+#| "used to specify an integer to be sent with the signal. If the receiving "
 #| "process has installed a handler for this signal using the SA_SIGINFO flag "
-#| "to B<sigaction(2)> , then it can obtain this data via the si_value field "
+#| "to B<sigaction>(2), then it can obtain this data via the si_value field "
 #| "of the siginfo_t structure."
 msgid ""
 "The B<-q> option uses an alternative signaling method to to additionally "
@@ -681,11 +702,11 @@ msgid ""
 "B<sigaction>(2), then it can obtain this datum via the I<\\%si_value> field "
 "of the I<\\%siginfo_t> structure."
 msgstr ""
-"Użycie B<sigqueue(3)> zamiast B<kill(2)>, a argument będący wartością "
+"Użycie B<sigqueue>(3) zamiast B<kill>(2), a argument będący wartością "
 "określa liczbę całkowitą do wysłania wraz z sygnałem. Jeśli proces "
 "odbierający ma zainstalowaną procedurę obsługi dla tego sygnału przy użyciu "
-"flagi SA_SIGINFO wywołania B<sigaction(2)>, może następnie odebrać te dane w "
-"poli si_value struktury siginfo_t."
+"flagi SA_SIGINFO wywołania B<sigaction>(2), może następnie odebrać te dane w "
+"polu si_value struktury siginfo_t."
 
 #. type: TP
 #: ../man/kill.1:113 ../man/pgrep.1:57
@@ -719,9 +740,9 @@ msgstr ""
 #. type: TP
 #: ../man/kill.1:134
 #, fuzzy, no-wrap
-#| msgid "B<-n>, B<--newest>"
+#| msgid "B<-q>I<\\ pidlist>"
 msgid "B<-q>I<\\ value>"
-msgstr "B<-n>, B<--newest>"
+msgstr "B<-q>I<\\ lista\\ pidów>"
 
 #. type: TQ
 #: ../man/kill.1:136
@@ -747,9 +768,9 @@ msgstr "B<->I<sygnał>"
 #. type: TQ
 #: ../man/kill.1:150
 #, fuzzy, no-wrap
-#| msgid "B<-l>, B<--list-name>"
+#| msgid "B<-l>, B<--list> [I<signal>]"
 msgid "B<--list>\\ [I<signal>]"
-msgstr "B<-l>, B<--list-name>"
+msgstr "B<-l>, B<--list> [I<sygnał>]"
 
 #. type: Plain text
 #: ../man/kill.1:161
@@ -763,7 +784,7 @@ msgstr ""
 #: ../man/kill.1:161 ../man/ps.1:718
 #, no-wrap
 msgid "B<-L>"
-msgstr ""
+msgstr "B<-L>"
 
 #. type: TQ
 #: ../man/kill.1:163
@@ -774,8 +795,10 @@ msgstr "B<--tebi>"
 
 #. type: Plain text
 #: ../man/kill.1:166
+#, fuzzy
+#| msgid "List signal names in a nice table."
 msgid "List signal names in tabular format."
-msgstr ""
+msgstr "Lista nazw sygnałów w ładnej tabelce."
 
 #. type: SH
 #: ../man/kill.1:166 ../man/pgrep.1:292 ../man/slabtop.1:112
@@ -786,11 +809,19 @@ msgstr "UWAGI"
 
 #. type: Plain text
 #: ../man/kill.1:172
+#, fuzzy
+#| msgid ""
+#| "Your shell (command line interpreter) may have a built-in kill command.  "
+#| "You may need to run the command described here as /bin/kill to solve the "
+#| "conflict."
 msgid ""
 "The shell (command-line interpreter) often has a built-in \\[lq]kill\\[rq] "
 "command.  You may need to run the command described here as I</bin/\\:kill> "
 "to override the shell built-in."
 msgstr ""
+"Używana powłoka (interpreter linii poleceń) może mieć wbudowane polecenie "
+"kill. Może być konieczne wywoływanie opisanego tu polecenia jako /bin/kill, "
+"aby rozwiązać konflikt."
 
 #. type: Plain text
 #: ../man/kill.1:183
@@ -811,20 +842,24 @@ msgstr "PRZYKŁADY"
 
 #. type: TP
 #: ../man/kill.1:184
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "B<kill -9 -1>"
 msgid "B<kill -HUP -1>"
-msgstr ""
+msgstr "B<kill -9 -1>"
 
 #. type: Plain text
 #: ../man/kill.1:187
+#, fuzzy
+#| msgid "Send the default signal, SIGTERM, to all those processes."
 msgid "Send hangup signal to all the processes you can."
 msgstr ""
+"Wysłanie domyślnego sygnału - SIGTERM - do wszystkich podanych procesów."
 
 #. type: TP
 #: ../man/kill.1:187
 #, no-wrap
 msgid "B<kill -l 11>"
-msgstr ""
+msgstr "B<kill -l 11>"
 
 #. type: Plain text
 #: ../man/kill.1:190
@@ -833,38 +868,42 @@ msgstr ""
 
 #. type: TP
 #: ../man/kill.1:190
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "B<kill 123 543 2341 3453>"
 msgid "B<kill 123 543>"
-msgstr ""
+msgstr "B<kill 123 543 2341 3453>"
 
 #. type: Plain text
 #: ../man/kill.1:196
+#, fuzzy
+#| msgid "Send the default signal, SIGTERM, to all those processes."
 msgid "Send the default signal, SIGTERM, to processes 123 and 543."
 msgstr ""
+"Wysłanie domyślnego sygnału - SIGTERM - do wszystkich podanych procesów."
 
 #. type: TP
 #: ../man/kill.1:196
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "B<kill -9 -1>"
 msgid "B<kill -SIGTERM -123>"
-msgstr ""
+msgstr "B<kill -9 -1>"
 
 #. type: Plain text
 #: ../man/kill.1:199
+#, fuzzy
+#| msgid "Send the default signal, SIGTERM, to all those processes."
 msgid "Send the signal SIGTERM to process group 123."
 msgstr ""
+"Wysłanie domyślnego sygnału - SIGTERM - do wszystkich podanych procesów."
 
 #. type: Plain text
 #: ../man/kill.1:208
-#, fuzzy
-#| msgid ""
-#| "B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
-#| "B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)"
 msgid ""
 "B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), B<renice>(1), "
 "B<signal>(7), B<sigqueue>(3), B<skill>(1)"
 msgstr ""
-"B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
-"B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)"
+"B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), B<renice>(1), "
+"B<signal>(7), B<sigqueue>(3), B<skill>(1)"
 
 #. type: SH
 #: ../man/kill.1:208 ../man/pgrep.1:339 ../man/pmap.1:96 ../man/pwdx.1:38
@@ -986,6 +1025,11 @@ msgid ""
 "with B<--require-handler> to filter to processes with a userspace signal "
 "handler present for a particular signal."
 msgstr ""
+"Określenie sygnału do wysłania do każdego pasującego procesu. Można użyć "
+"nazwy liczbowej lub symbolicznej. W trybie B<pgrep> lub B<pidwait> można "
+"użyć tylko długiej opcji i nie ma to efektu poza przypadkiej użycia w "
+"połączeniu z B<--require-handler> do filtrowania procesów z obecną procedurą "
+"obsługi konkretnego sygnału w przestrzeni użytkownika."
 
 #. type: TP
 #: ../man/pgrep.1:69
@@ -1294,8 +1338,8 @@ msgstr "B<-F>, B<--pidfile> I<plik>"
 #: ../man/pgrep.1:186
 #, fuzzy
 #| msgid ""
-#| "Read I<PID>s from I<file>.  This option is more useful for "
-#| "B<pkill>orB<pidwait> than B<pgrep>."
+#| "Read I<PID>s from I<file>.  This option is more useful for B<pkill> or "
+#| "B<pidwait> than B<pgrep>."
 msgid ""
 "Read I<PID>s from I<file>.  This option is more useful for B<pkill> or "
 "B<pidwait> than B<pgrep>.  The filename \"-\" can be used to read from "
@@ -1344,10 +1388,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/pgrep.1:202
-#, fuzzy, no-wrap
-#| msgid "B<-n>, B<--one-header>"
+#, no-wrap
 msgid "B<-H>, B<--require-handler>"
-msgstr "B<-n>, B<--one-header>"
+msgstr "B<-H>, B<--require-handler>"
 
 #. type: Plain text
 #: ../man/pgrep.1:206
@@ -1355,6 +1398,8 @@ msgid ""
 "Only match processes with a userspace signal handler present for the signal "
 "to be sent."
 msgstr ""
+"Dopasowanie tylko procesów z obecną w przestrzeni użytkownika procedurą "
+"obsługi sygnału do wysłania."
 
 #. type: TP
 #: ../man/pgrep.1:206
@@ -1411,10 +1456,6 @@ msgstr "B<--nslist >I<nazwa>B<,...>"
 
 #. type: Plain text
 #: ../man/pgrep.1:223
-#, fuzzy
-#| msgid ""
-#| "Match only the provided namespaces. Available namespaces: ipc, mnt, net, "
-#| "pid, user,uts."
 msgid ""
 "Match only the provided namespaces. Available namespaces: ipc, mnt, net, "
 "pid, user, uts."
@@ -1430,13 +1471,6 @@ msgstr "B<-q>, B<--queue >I<wartość>"
 
 #. type: Plain text
 #: ../man/pgrep.1:235
-#, fuzzy
-#| msgid ""
-#| "Use B<sigqueue(3)> rather than B<kill(2)> and the value argument is used "
-#| "to specify an integer to be sent with the signal. If the receiving "
-#| "process has installed a handler for this signal using the SA_SIGINFO flag "
-#| "to B<sigaction(2)> , then it can obtain this data via the si_value field "
-#| "of the siginfo_t structure."
 msgid ""
 "Use B<sigqueue>(3)  rather than B<kill>(2)  and the value argument is used "
 "to specify an integer to be sent with the signal. If the receiving process "
@@ -1444,11 +1478,11 @@ msgid ""
 "B<sigaction>(2), then it can obtain this data via the si_value field of the "
 "siginfo_t structure."
 msgstr ""
-"Użycie B<sigqueue(3)> zamiast B<kill(2)>, a argument będący wartością "
+"Użycie B<sigqueue>(3) zamiast B<kill>(2), a argument będący wartością "
 "określa liczbę całkowitą do wysłania wraz z sygnałem. Jeśli proces "
 "odbierający ma zainstalowaną procedurę obsługi dla tego sygnału przy użyciu "
-"flagi SA_SIGINFO wywołania B<sigaction(2)>, może następnie odebrać te dane w "
-"poli si_value struktury siginfo_t."
+"flagi SA_SIGINFO wywołania B<sigaction>(2), może następnie odebrać te dane w "
+"polu si_value struktury siginfo_t."
 
 #. type: Plain text
 #: ../man/pgrep.1:238 ../man/pmap.1:76 ../man/slabtop.1:64 ../man/sysctl.8:122
@@ -1557,16 +1591,13 @@ msgstr "B<0>"
 
 #. type: Plain text
 #: ../man/pgrep.1:283
-#, fuzzy
-#| msgid ""
-#| "One or more processes matched the criteria. For pkill and pidwait, one or "
-#| "more processes must also have been successfully signalled or waited for."
 msgid ""
 "One or more processes matched the criteria. For B<pkill> and B<pidwait>, one "
 "or more processes must also have been successfully signalled or waited for."
 msgstr ""
-"Jeden lub więcej procesów pasowało do warunków. W przypadku pkill i pidwait, "
-"musi udać się wysłać sygnał lub zaczekać na przynajmniej jeden proces."
+"Jeden lub więcej procesów pasowało do warunków. W przypadku B<pkill> i "
+"B<pidwait>, musi udać się wysłać sygnał lub zaczekać na przynajmniej jeden "
+"proces."
 
 #. type: TP
 #: ../man/pgrep.1:283 ../man/pidof.1:65 ../man/pmap.1:82 ../man/watch.1:117
@@ -1585,7 +1616,7 @@ msgstr ""
 #: ../man/pgrep.1:286 ../man/watch.1:120
 #, no-wrap
 msgid "B<2>"
-msgstr ""
+msgstr "B<2>"
 
 #. type: Plain text
 #: ../man/pgrep.1:289
@@ -1596,7 +1627,7 @@ msgstr "Błąd składni w linii poleceń."
 #: ../man/pgrep.1:289
 #, no-wrap
 msgid "B<3>"
-msgstr ""
+msgstr "B<3>"
 
 #. type: Plain text
 #: ../man/pgrep.1:292
@@ -1627,16 +1658,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/pgrep.1:309
-#, fuzzy
-#| msgid ""
-#| "The B<-O --older> option will silently fail if /proc is mounted with the "
-#| "I<subset=pid> option."
 msgid ""
 "The B<-O --older> option will silently fail if I</proc> is mounted with the "
 "I<subset=pid> option."
 msgstr ""
-"Opcja B<-O --older> cicho się nie powiedzie, jeśli /proc jest zamontowany z "
-"opcją I<subset=pid>."
+"Opcja B<-O --older> cicho się nie powiedzie, jeśli I</proc> jest zamontowany "
+"z opcją I<subset=pid>."
 
 #. type: Plain text
 #: ../man/pgrep.1:318
@@ -1663,16 +1690,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/pgrep.1:335
-#, fuzzy
-#| msgid ""
-#| "B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
-#| "B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)"
 msgid ""
 "B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
 "B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)."
 msgstr ""
 "B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
-"B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)"
+"B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)."
 
 #. type: SH
 #: ../man/pgrep.1:335 ../man/pidof.1:77 ../man/pwdx.1:33 ../man/skill.1:117
@@ -1692,25 +1715,32 @@ msgstr "E<.UR kjetilho@ifi.uio.no> Kjetil Torgrim Homme E<.UE>"
 #: ../man/pidof.1:13
 #, no-wrap
 msgid "PIDOF"
-msgstr ""
+msgstr "PIDOF"
 
 #. type: TH
 #: ../man/pidof.1:13
 #, no-wrap
 msgid "2023-01-16"
-msgstr ""
+msgstr "2023-01-16"
 
 #. type: Plain text
 #: ../man/pidof.1:16
 msgid "pidof - find the process ID of a running program"
-msgstr ""
+msgstr "pidof - znalezienie ID procesu działającego programu"
 
 #. type: Plain text
 #: ../man/pidof.1:30
+#, fuzzy
+#| msgid ""
+#| "B<pidof> [B<-s>] [B<-c>] [B<-q>] [B<-w>] [B<-x>] [B<-o> I<omitpid[,"
+#| "omitpid...]...>] [B<-t>] [B<-S> I<separator>] I<program> I<[>B<program..."
+#| ">I<]>"
 msgid ""
 "B<pidof> [B<-s>] [B<-c>] [B<-q>] [B<-w>] [B<-x>] [B<-o> I<omitpid>[,.\\|.\\|."
 "\\&]] \\&.\\|.\\|.\\& [B<-t>] [B<-S> I<separator>] I<program> .\\|.\\|."
 msgstr ""
+"B<pidof> [B<-s>] [B<-c>] [B<-q>] [B<-w>] [B<-x>] [B<-o> I<pomiń-pid[,pomiń-"
+"pid...]...>] [B<-t>] [B<-S> I<separator>] I<program> I<[>B<program...>I<]>"
 
 #. type: Plain text
 #: ../man/pidof.1:34
@@ -1718,23 +1748,25 @@ msgid ""
 "B<Pidof> finds the process id's (pids) of the named programs. It prints "
 "those id's on the standard output."
 msgstr ""
+"B<Pidof> znajduje identyfikatory procesów (pidy) programów o podanych "
+"nazwach. Identyfikatory są wypisywane na standardowe wyjście."
 
 #. type: IP
 #: ../man/pidof.1:35
 #, no-wrap
 msgid "B<-s>"
-msgstr ""
+msgstr "B<-s>"
 
 #. type: Plain text
 #: ../man/pidof.1:37
 msgid "Single shot - this instructs the program to only return one I<pid>."
-msgstr ""
+msgstr "Pojedynczy strzał - program zwróci tylko jeden I<pid>."
 
 #. type: TP
 #: ../man/pidof.1:37 ../man/ps.1:400
 #, no-wrap
 msgid "B<-c>"
-msgstr ""
+msgstr "B<-c>"
 
 #. type: Plain text
 #: ../man/pidof.1:41
@@ -1743,24 +1775,30 @@ msgid ""
 "option is ignored for non-root users, as they will be unable to check the "
 "current root directory of processes they do not own."
 msgstr ""
+"Zwracanie tylko identyfikatorów procesów działających w tym samym katalogu "
+"głównym. Ta opcja jest ignorowana dla użytkowników bez praw roota, ponieważ "
+"nie mają oni możliwości sprawdzenia katalogu głównego procesów, których nie "
+"są właścicielami."
 
 #. type: IP
 #: ../man/pidof.1:41
 #, no-wrap
 msgid "B<-q>"
-msgstr ""
+msgstr "B<-q>"
 
 #. type: Plain text
 #: ../man/pidof.1:43
 msgid ""
 "Quiet mode, suppress any output and only sets the exit status accordingly."
 msgstr ""
+"Tryb cichy - pominięcie całego wyjścia i ustawienie tylko odpowiedniego "
+"statusu zakończenia."
 
 #. type: TP
 #: ../man/pidof.1:43 ../man/ps.1:708
 #, no-wrap
 msgid "B<-w>"
-msgstr ""
+msgstr "B<-w>"
 
 #. type: Plain text
 #: ../man/pidof.1:46
@@ -1768,12 +1806,14 @@ msgid ""
 "Show also processes that do not have visible command line (e.g. kernel "
 "worker threads)."
 msgstr ""
+"Pokazanie także procesów, które nie mają widocznej linii polecenia (np. "
+"wątków jądra)."
 
 #. type: TP
 #: ../man/pidof.1:46 ../man/sysctl.8:113
 #, no-wrap
 msgid "B<-x>"
-msgstr ""
+msgstr "B<-x>"
 
 #. type: Plain text
 #: ../man/pidof.1:49
@@ -1781,13 +1821,14 @@ msgid ""
 "Scripts too - this causes the program to also return process id's of shells "
 "running the named scripts."
 msgstr ""
+"Także skrypty - powoduje to, że program zwróci także identyfikatory procesów "
+"powłok uruchamiających skrypty o podanych nazwach."
 
 #. type: IP
 #: ../man/pidof.1:49
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<-o> I<omitpid>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<-o> I<pomiń-pid>"
 
 #. type: Plain text
 #: ../man/pidof.1:53
@@ -1796,23 +1837,26 @@ msgid ""
 "B<%PPID> can be used to name the parent process of the B<pidof> program, in "
 "other words the calling shell or shell script."
 msgstr ""
+"Pominięcie przez B<pidof> procesów o podanych identyfikatorach. Można podać "
+"pid specjalny B<%PPID>, aby określić proces rodzica programu B<pidof>, "
+"innymi słowy powłokę lub skrypt go wywołujący."
 
 #. type: IP
 #: ../man/pidof.1:53
 #, no-wrap
 msgid "B<-t>"
-msgstr ""
+msgstr "B<-t>"
 
 #. type: Plain text
 #: ../man/pidof.1:55
 msgid "Shows all thread ids instead of pids."
-msgstr ""
+msgstr "Pokazanie wszystkich identyfikatorów wątków zamiast pidów."
 
 #. type: IP
 #: ../man/pidof.1:55
 #, no-wrap
 msgid "B<-S> I<separator>"
-msgstr ""
+msgstr "B<-S> I<separator>"
 
 #. type: Plain text
 #: ../man/pidof.1:61
@@ -1821,16 +1865,19 @@ msgid ""
 "one pids are printed for the program.  The B<-d> option is an alias for this "
 "option for sysvinit B<pidof> compatibility."
 msgstr ""
+"Używanie podanego I<separatora> między pidami. Używane tylko w przypadku "
+"wypisywania więcej niż jednego pidu dla programu. Opcja B<-d> jest aliasem "
+"dla tej opcji w celu zgodności z programem B<pidof> z pakietu sysvinit."
 
 #. type: Plain text
 #: ../man/pidof.1:65
 msgid "At least one program was found with the requested name."
-msgstr ""
+msgstr "Znaleziono przynajmniej jeden program o żądanej nazwie."
 
 #. type: Plain text
 #: ../man/pidof.1:68
 msgid "No program was found with the requested name."
-msgstr ""
+msgstr "Nie znaleziono programu o żądanej nazwie."
 
 #. type: Plain text
 #: ../man/pidof.1:74
@@ -1839,18 +1886,21 @@ msgid ""
 "scripts and will miss scripts that, for example, use env. This limitation is "
 "due to how the scripts look in the proc filesystem."
 msgstr ""
+"Podczas używania opcji B<-x>, B<pidof> ma tylko prostą metodę wykrywania "
+"skryptów i pominie skrypty np. używające env. Ograniczenie to jest "
+"spowodowane tym, jak wyglądają skrypty w systemie plików proc."
 
 #. type: Plain text
 #: ../man/pidof.1:77
-#, fuzzy
-#| msgid "B<ps>(1), B<pgrep>(1)"
 msgid "B<pgrep>(1), B<pkill>(1)"
-msgstr "B<ps>(1), B<pgrep>(1)"
+msgstr "B<pgrep>(1), B<pkill>(1)"
 
 #. type: Plain text
 #: ../man/pidof.1:80
+#, fuzzy
+#| msgid "E<.UR jcapik@redhat.com> Jaromir Capik E<.UE>"
 msgid "E<.MT jcapik@redhat.com> Jaromir Capik E<.ME>"
-msgstr ""
+msgstr "E<.UR jcapik@redhat.com> Jaromir Capik E<.UE>"
 
 #. type: TH
 #: ../man/pmap.1:19
@@ -2062,80 +2112,78 @@ msgstr ""
 #: ../man/pwdx.1:12
 #, no-wrap
 msgid "PWDX"
-msgstr ""
+msgstr "PWDX"
 
 #. type: Plain text
 #: ../man/pwdx.1:15
-#, fuzzy
-#| msgid "pmap - report memory map of a process"
 msgid "pwdx - report current working directory of a process"
-msgstr "pmap - informacje o odwzorowaniu pamięci procesu"
+msgstr "pwdx - informacje o bieżącym katalogu roboczym procesu"
 
 #. type: Plain text
 #: ../man/pwdx.1:19
 #, fuzzy
-#| msgid "B<pmap> [I<options>] I<pid> [...]"
+#| msgid "B<pwdx> [I<options>] I<pid> [...]"
 msgid "B<pwdx> [I<option> .\\|.\\|.\\&] I<pid> .\\|.\\|."
-msgstr "B<pmap> [I<opcje>] I<pid> [...]"
+msgstr "B<pwdx> [I<opcje>] I<pid> [...]"
 
 #. type: Plain text
 #: ../man/pwdx.1:23
-#, fuzzy
-#| msgid "Display version information and exit."
 msgid "Output version information and exit."
 msgstr "Wyświetlenie informacji o wersji i zakończenie."
 
 #. type: Plain text
 #: ../man/pwdx.1:26
-#, fuzzy
-#| msgid "Display help text and exit."
 msgid "Output help screen and exit."
 msgstr "Wyświetlenie tekstu pomocy i zakończenie."
 
 #. type: Plain text
 #: ../man/pwdx.1:33
-#, fuzzy
-#| msgid ""
-#| "No standards apply, but B<pmap> looks an awful lot like a SunOS command."
 msgid ""
 "No standards apply, but B<pwdx> looks an awful lot like a SunOS command."
 msgstr ""
-"Polecenia B<pmap> nie dotyczą żadne standardy, ale wygląda równie brzydko, "
+"Polecenia B<pwdx> nie dotyczą żadne standardy, ale wygląda równie brzydko, "
 "co polecenie SunOS."
 
 #. type: Plain text
 #: ../man/pwdx.1:38
+#, fuzzy
+#| msgid "E<.UR nmiell@gmail.com> Nicholas Miell E<.UE> wrote pwdx in 2004."
 msgid "E<.MT nmiell@gmail.com> Nicholas Miell E<.ME> wrote pwdx in 2004."
 msgstr ""
+"E<.UR nmiell@gmail.com> Nicholas Miell E<.UE> napisał pwdx w 2004 roku."
 
 #. type: TH
 #: ../man/skill.1:12
 #, no-wrap
 msgid "SKILL"
-msgstr ""
+msgstr "SKILL"
 
 #. type: TH
 #: ../man/skill.1:12
 #, fuzzy, no-wrap
-#| msgid "2022-08-31"
+#| msgid "2023-08-19"
 msgid "2024-08-01"
-msgstr "2022-08-31"
+msgstr "2023-08-19"
 
 #. type: Plain text
 #: ../man/skill.1:15
 msgid "skill, snice - send a signal or report process status"
-msgstr ""
+msgstr "skill, snice - wysłanie sygnału lub informacja o stanie procesu"
 
 #. type: Plain text
 #: ../man/skill.1:20
+#, fuzzy
+#| msgid "B<skill> [I<signal>] [I<options>] I<expression>"
 msgid ""
 "B<skill> [I<signal-option>] [I<other-option> .\\|.\\|.\\&] I<expression>"
-msgstr ""
+msgstr "B<skill> [I<sygnał>] [I<opcje>] I<wyrażenie>"
 
 #. type: Plain text
 #: ../man/skill.1:25
+#, fuzzy
+#| msgid "B<snice> [I<new priority>] [I<options>] I<expression>"
 msgid "B<snice> [I<new-priority>] [I<option> .\\|.\\|.\\&] I<expression>"
-msgstr ""
+msgstr "B<snice> [I<nowy priorytet>] [I<opcje>] I<wyrażenie>"
 
 #. type: Plain text
 #: ../man/skill.1:33
@@ -2144,6 +2192,8 @@ msgid ""
 "defined.  Consider using the B<killall>, B<pkill>, and B<pgrep> commands "
 "instead."
 msgstr ""
+"Te narzędzia są przestarzałe i nieprzenośne. Składnia jest słabo określona. "
+"Należy rozważyć używanie poleceń B<killall>, B<pkill> oraz B<pgrep>."
 
 #. type: Plain text
 #: ../man/skill.1:38
@@ -2153,6 +2203,10 @@ msgid ""
 "STOP, CONT, and 0.  Alternate signals may be specified in three ways: B<-9> "
 "B<-SIGKILL> B<-KILL>."
 msgstr ""
+"Domyślnym sygnałem dla programu B<skill> jest TERM. Listę dostępnych "
+"sygnałów można uzyskać opcją B<-l> lub B<-L>. W szczególności przydatne "
+"sygnały obejmują HUP, INT, KILL, STOP, CONT oraz 0. Alternatywny sygnał "
+"można podać na trzy sposoby: B<-9>, B<-SIGKILL>, B<-KILL>."
 
 #. type: Plain text
 #: ../man/skill.1:42
@@ -2161,61 +2215,60 @@ msgid ""
 "(slowest) to -20 (fastest).  Negative priority numbers are restricted to "
 "administrative users."
 msgstr ""
+"Domyślnym priorytetem dla B<snice> jest +4. Numery priorytetów mają zakres "
+"od +20 (najwolniej) do -20 (najszybciej). Liczby ujemne są ograniczone dla "
+"użytkowników administracyjnych."
 
 #. type: TP
 #: ../man/skill.1:43
-#, fuzzy, no-wrap
-#| msgid "B<-f>, B<--forks>"
+#, no-wrap
 msgid "B<-f>,B<\\ --fast>"
-msgstr "B<-f>, B<--forks>"
+msgstr "B<-f>,B<\\ --fast>"
 
 #. type: Plain text
 #: ../man/skill.1:46
 msgid "Fast mode.  This option has not been implemented."
-msgstr ""
+msgstr "Tryb szybki. Ta opcja nie została zaimplementowana."
 
 #. type: TP
 #: ../man/skill.1:46
-#, fuzzy, no-wrap
-#| msgid "B<-a>, B<--active>"
+#, no-wrap
 msgid "B<-i>,B<\\ --interactive>"
-msgstr "B<-a>, B<--active>"
+msgstr "B<-i>,B<\\ --interactive>"
 
 #. type: Plain text
 #: ../man/skill.1:49
 msgid "Interactive use.  You will be asked to approve each action."
 msgstr ""
+"Użycie interaktywne. Użytkownik będzie proszony o potwierdzenie każdej akcji."
 
 #. type: TP
 #: ../man/skill.1:49
-#, fuzzy, no-wrap
-#| msgid "B<-l>, B<--list-name>"
+#, no-wrap
 msgid "B<-l>,B<\\ --list>"
-msgstr "B<-l>, B<--list-name>"
+msgstr "B<-l>,B<\\ --list>"
 
 #. type: Plain text
 #: ../man/skill.1:52
 msgid "List all signal names."
-msgstr ""
+msgstr "Lista nazw wszystkich sygnałów."
 
 #. type: TP
 #: ../man/skill.1:52
-#, fuzzy, no-wrap
-#| msgid "B<-L>, B<--logpidfile>"
+#, no-wrap
 msgid "B<-L>,B<\\ --table>"
-msgstr "B<-L>, B<--logpidfile>"
+msgstr "B<-L>, B<\\ --table>"
 
 #. type: Plain text
 #: ../man/skill.1:55
 msgid "List all signal names in a nice table."
-msgstr ""
+msgstr "Lista nazw wszystkich sygnałów w ładnej tabelce."
 
 #. type: TP
 #: ../man/skill.1:55
-#, fuzzy, no-wrap
-#| msgid "B<-a>, B<--active>"
+#, no-wrap
 msgid "B<-n>,B<\\ --no-action>"
-msgstr "B<-a>, B<--active>"
+msgstr "B<-n>,B<\\ --no-action>"
 
 #. type: Plain text
 #: ../man/skill.1:59
@@ -2223,30 +2276,30 @@ msgid ""
 "No action; perform a simulation of events that would occur but do not "
 "actually change the system."
 msgstr ""
+"Brak akcji; wykonanie symulacji zdarzeń, które by nastąpiły, ale bez zmian w "
+"systemie."
 
 #. type: TP
 #: ../man/skill.1:59
-#, fuzzy, no-wrap
-#| msgid "B<-v>, B<--inverse>"
+#, no-wrap
 msgid "B<-v>,B<\\ --verbose>"
-msgstr "B<-v>, B<--inverse>"
+msgstr "B<-v>,B<\\ --verbose>"
 
 #. type: Plain text
 #: ../man/skill.1:62
 msgid "Verbose; explain what is being done."
-msgstr ""
+msgstr "Tryb szczegółowy: objaśnianie, co się dzieje."
 
 #. type: TP
 #: ../man/skill.1:62
-#, fuzzy, no-wrap
-#| msgid "B<-w>, B<--wide>"
+#, no-wrap
 msgid "B<-w>,B<\\ --warnings>"
-msgstr "B<-w>, B<--wide>"
+msgstr "B<-w>,B<\\ --warnings>"
 
 #. type: Plain text
 #: ../man/skill.1:65
 msgid "Enable warnings.  This option has not been implemented."
-msgstr ""
+msgstr "Włączenie ostrzeżeń. Ta opcja nie została zaimplementowana."
 
 #. type: TP
 #: ../man/skill.1:65
@@ -2266,7 +2319,7 @@ msgstr "B<-V>, B<--version>"
 #: ../man/skill.1:71
 #, no-wrap
 msgid "PROCESS SELECTION OPTIONS"
-msgstr ""
+msgstr "OPCJE WYBORU PROCESU"
 
 #. type: Plain text
 #: ../man/skill.1:74
@@ -2274,54 +2327,56 @@ msgid ""
 "Selection criteria can be: terminal, user, pid, command.  The options below "
 "may be used to ensure correct interpretation."
 msgstr ""
+"Kryterium wyboru może być: terminal, użytkownik, pid, polecenie. Można "
+"używać poniższych opcji, aby zapewnić poprawną interpretację."
 
 #. type: TP
 #: ../man/skill.1:74
 #, fuzzy, no-wrap
-#| msgid "B<-t>, B<--total>"
+#| msgid "B<-t>, B<--tty> I<tty>"
 msgid "B<-t>I<\\ tty>,\\ B<--tty>I<\\ tty>"
-msgstr "B<-t>, B<--total>"
+msgstr "B<-t>, B<--tty> I<tty>"
 
 #. type: Plain text
 #: ../man/skill.1:77
 msgid "The next expression is a terminal (tty or pty)."
-msgstr ""
+msgstr "Następne wyrażenie jest terminalem (tty lub pty)."
 
 #. type: TP
 #: ../man/skill.1:77
 #, fuzzy, no-wrap
-#| msgid "B<-O>, B<--older> I<secs>"
+#| msgid "B<-u>, B<--user> I<user>"
 msgid "B<-u>I<\\ user>,\\ B<--user>I<\\ user>"
-msgstr "B<-O>, B<--older> I<sekundy>"
+msgstr "B<-u>, B<--user> I<użytkownik>"
 
 #. type: Plain text
 #: ../man/skill.1:80
 msgid "The next expression is a username."
-msgstr ""
+msgstr "Następne wyrażenie jest nazwą użytkownika."
 
 #. type: TP
 #: ../man/skill.1:80
 #, fuzzy, no-wrap
-#| msgid "B<-U>, B<--uid> I<uid>,..."
+#| msgid "B<-p>, B<--pid> I<pid>"
 msgid "B<-p>I<\\ pid>,\\ B<--pid>I<\\ pid>"
-msgstr "B<-U>, B<--uid> I<uid>,..."
+msgstr "B<-p>, B<--pid> I<pid>"
 
 #. type: Plain text
 #: ../man/skill.1:83
 msgid "The next expression is a process ID number."
-msgstr ""
+msgstr "Następne wyrażenie jest numerem identyfikatora procesu."
 
 #. type: TP
 #: ../man/skill.1:83
 #, fuzzy, no-wrap
-#| msgid "B<-c>, B<--count> I<count>"
+#| msgid "B<-c>, B<--command> I<command>"
 msgid "B<-c>I<\\ command>,\\ B<--command>I<\\ command>"
-msgstr "B<-c>, B<--count> I<liczba>"
+msgstr "B<-c>, B<--command> I<command>"
 
 #. type: Plain text
 #: ../man/skill.1:86
 msgid "The next expression is a command name."
-msgstr ""
+msgstr "Następne wyrażenie jest nazwą polecenia."
 
 #. type: TP
 #: ../man/skill.1:86
@@ -2334,88 +2389,84 @@ msgstr "B<--ns >I<pid>"
 #: ../man/skill.1:89
 msgid "Match the processes that belong to the same namespace as pid."
 msgstr ""
+"Dopasowanie do procesów należących do tej samej przestrzeni nazw, co pid."
 
 #. type: TP
 #: ../man/skill.1:89
 #, fuzzy, no-wrap
-#| msgid "B<--nslist >I<name>B<,...>"
+#| msgid "B<--nslist >I<ns\\/>,\\,I<...\\/>"
 msgid "B<--nslist>I<\\ ns>,I<.\\|.\\|.>"
-msgstr "B<--nslist >I<nazwa>B<,...>"
+msgstr "B<--nslist >I<ns\\/>,\\,I<...\\/>"
 
 #. type: Plain text
 #: ../man/skill.1:93
-#, fuzzy
-#| msgid ""
-#| "Match only the provided namespaces. Available namespaces: ipc, mnt, net, "
-#| "pid, user,uts."
 msgid ""
 "list which namespaces will be considered for the B<--ns> option.  Available "
 "namespaces: ipc, mnt, net, pid, user, uts."
 msgstr ""
-"Dopasowanie tylko do podanych przestrzeni nazw. Dostępne przestrzenie: ipc, "
-"mnt, net, pid, user, uts."
+"wypisanie, które przestrzenie nazw mają być brane pod uwagę dla opcji B<--"
+"ns>. Dostępne przestrzenie: ipc, mnt, net, pid, user, uts."
 
 #. type: SH
 #: ../man/skill.1:93
 #, no-wrap
 msgid "SIGNALS"
-msgstr ""
+msgstr "SYGNAŁY"
 
 #. type: Plain text
 #: ../man/skill.1:97
 msgid "The behavior of signals is explained in B<signal>(7)  manual page."
 msgstr ""
+"Zachowanie sygnałów jest wyjaśnione na stronie podręcznika B<signal>(7)."
 
 #. type: TP
 #: ../man/skill.1:98
 #, no-wrap
 msgid "B<snice -c seti -c crack +7>"
-msgstr ""
+msgstr "B<snice -c seti -c crack +7>"
 
 #. type: Plain text
 #: ../man/skill.1:101
+#, fuzzy
+#| msgid "+Slow down B<seti> and B<crack> commands."
 msgid "Slow down B<seti> and B<crack> commands."
-msgstr ""
+msgstr "+Spowolnienie poleceń B<seti> oraz B<crack>."
 
 #. type: TP
 #: ../man/skill.1:101
 #, no-wrap
 msgid "B<skill -KILL -t /dev/pts/*>"
-msgstr ""
+msgstr "B<skill -KILL -t /dev/pts/*>"
 
 #. type: Plain text
 #: ../man/skill.1:104
 msgid "Kill users on PTY devices."
-msgstr ""
+msgstr "Zabicie użytkowników na urządzeniach PTY."
 
 #. type: TP
 #: ../man/skill.1:104
 #, no-wrap
 msgid "B<skill -STOP -u viro -u lm -u davem>"
-msgstr ""
+msgstr "B<skill -STOP -u viro -u lm -u davem>"
 
 #. type: Plain text
 #: ../man/skill.1:107
 msgid "Stop three users."
-msgstr ""
+msgstr "Zatrzymanie trzech użytkowników."
 
 #. type: Plain text
 #: ../man/skill.1:115
-#, fuzzy
-#| msgid ""
-#| "B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
-#| "B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)"
 msgid ""
 "B<kill>(1), B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), "
 "B<renice>(1), B<signal>(7)"
 msgstr ""
-"B<ps>(1), B<regex>(7), B<signal>(7), B<sigqueue>(3), B<killall>(1), "
-"B<skill>(1), B<kill>(1), B<kill>(2), B<cgroups>(8)"
+"B<kill>(1), B<kill>(2), B<killall>(1), B<nice>(1), B<pkill>(1), "
+"B<renice>(1), B<signal>(7)"
 
 #. type: Plain text
 #: ../man/skill.1:117
 msgid "No standards apply."
-msgstr ""
+msgstr "Nie ma powiązanych standardów."
 
 #. type: Plain text
 #: ../man/skill.1:123
@@ -2423,31 +2474,35 @@ msgid ""
 "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote skill and snice in "
 "1999 as a replacement for a non-free version."
 msgstr ""
+"E<.MT albert@users.sf.net> Albert Cahalan E<.ME> napisał skill oraz snice w "
+"1999 roku jako zamiennik wersji niewolnodostępnych."
 
 #. type: TH
 #: ../man/slabtop.1:14
 #, no-wrap
 msgid "SLABTOP"
-msgstr ""
+msgstr "SLABTOP"
 
 #. type: TH
 #: ../man/slabtop.1:14
 #, fuzzy, no-wrap
-#| msgid "2022-08-31"
+#| msgid "2023-01-16"
 msgid "2023-12-26"
-msgstr "2022-08-31"
+msgstr "2023-01-16"
 
 #. type: Plain text
 #: ../man/slabtop.1:17
 msgid "slabtop - display kernel slab cache information in real time"
 msgstr ""
+"slabtop - wyświetlanie informacji jądra o pamięci podręcznej płyt w czasie "
+"rzeczywistym"
 
 #. type: Plain text
 #: ../man/slabtop.1:20
 #, fuzzy
-#| msgid "B<uptime> [I<options>]"
+#| msgid "B<slabtop> [I<options>]"
 msgid "B<slabtop> [I<option> .\\|.\\|.]"
-msgstr "B<uptime> [I<opcje>]"
+msgstr "B<slabtop> [I<opcje>]"
 
 #. type: Plain text
 #: ../man/slabtop.1:25
@@ -2457,6 +2512,10 @@ msgid ""
 "criteria.  It also displays a statistics header filled with slab layer "
 "information."
 msgstr ""
+"B<slabtop> wyświetla szczegółowe informacje o pamięci podręcznej płyt jądra "
+"w czasie rzeczywistym. Wyświetla listę największych pamięci podręcznych "
+"posortowaną wg jednego z wymienionych kryteriów. Wyświetla także nagłówek "
+"statystyk wypełniony informacjami o warstwie płyt."
 
 #. type: Plain text
 #: ../man/slabtop.1:30
@@ -2464,13 +2523,14 @@ msgid ""
 "Normal invocation of B<slabtop> does not require any options.  The behavior, "
 "however, can be fine-tuned by specifying one or more of the following flags:"
 msgstr ""
+"Zwykłe wywołanie programu B<slabtop> nie wymaga żadnych opcji. Zachowanie "
+"można jednak dostrrajać przekazując jedną lub więcej z następujących flag:"
 
 #. type: TP
 #: ../man/slabtop.1:30
-#, fuzzy, no-wrap
-#| msgid "B<-d>, B<--device>"
+#, no-wrap
 msgid "B<-d>, B<--delay>=I<N>"
-msgstr "B<-d>, B<--device>"
+msgstr "B<-d>, B<--delay>=I<N>"
 
 #. type: Plain text
 #: ../man/slabtop.1:39
@@ -2479,32 +2539,31 @@ msgid ""
 "the display every three seconds.  To exit the program, hit B<q>.  This "
 "cannot be combined with the B<-o> option."
 msgstr ""
+"Odświeżanie widoku co każde I<n> sekund. Domyślnie B<slabtop> odświeża widok "
+"co trzy sekundy. Aby zakończyć program, należu nacisnąć B<q>. Nie można tego "
+"łączyć z opcją B<-o>."
 
 #. type: TP
 #: ../man/slabtop.1:39
-#, fuzzy, no-wrap
-#| msgid "B<-s>, B<--stats>"
+#, no-wrap
 msgid "B<-s>, B<--sort>=I<S>"
-msgstr "B<-s>, B<--stats>"
+msgstr "B<-s>, B<--sort>=I<S>"
 
 #. type: Plain text
 #: ../man/slabtop.1:42
 msgid "Sort by I<S>, where I<S> is one of the sort criteria."
-msgstr ""
+msgstr "Sort wg I<S>, gdzie I<S> jest jednym z kryteriów sortowania."
 
 #. type: TP
 #: ../man/slabtop.1:42
-#, fuzzy, no-wrap
-#| msgid "B<-s>, B<--since>"
+#, no-wrap
 msgid "B<-o>, B<--once>"
-msgstr "B<-s>, B<--since>"
+msgstr "B<-o>, B<--once>"
 
 #. type: Plain text
 #: ../man/slabtop.1:45
-#, fuzzy
-#| msgid "Display help text and exit."
 msgid "Display the output once and then exit."
-msgstr "Wyświetlenie tekstu pomocy i zakończenie."
+msgstr "Jednokrotne wyświetlenie wyjścia i zakończenie."
 
 #. type: TP
 #: ../man/slabtop.1:45
@@ -2535,16 +2594,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/slabtop.1:67
-#, fuzzy
-#| msgid "Display version information and exit."
 msgid "Display usage information and exit."
-msgstr "Wyświetlenie informacji o wersji i zakończenie."
+msgstr "Wyświetlenie informacji o sposobie użycia i zakończenie."
 
 #. type: SH
 #: ../man/slabtop.1:67
 #, no-wrap
 msgid "SORT CRITERIA"
-msgstr ""
+msgstr "KRYTERIA SORTOWANIA"
 
 #. type: Plain text
 #: ../man/slabtop.1:71
@@ -2553,6 +2610,9 @@ msgid ""
 "caches and thereby determine what are the \"top\" slab caches to display.  "
 "The default sort criteria is to sort by the number of objects (\"o\")."
 msgstr ""
+"Poniżej są wymienione poprawne kryteria sortowania, określające także, które "
+"\"największe\" pamięci podręczne płyt mają być wyświetlane. Domyślnym "
+"kryterium jest sortowanie po liczbie obiektów (\"o\")."
 
 #. type: Plain text
 #: ../man/slabtop.1:75
@@ -2560,206 +2620,206 @@ msgid ""
 "The sort criteria can also be changed while B<slabtop> is running by "
 "pressing the associated character."
 msgstr ""
+"Kryterium sortowania można także zmienić podczas działania programu "
+"B<slabtop> przez naciśnięcie przypisanego znaku."
 
 #. type: tbl table
 #: ../man/slabtop.1:77
 #, no-wrap
 msgid "B<character>"
-msgstr ""
+msgstr "B<znak>"
 
 #. type: tbl table
 #: ../man/slabtop.1:77
 #, no-wrap
 msgid "B<description>"
-msgstr ""
+msgstr "B<opis>"
 
 #. type: tbl table
 #: ../man/slabtop.1:77
 #, no-wrap
 msgid "B<header>"
-msgstr ""
+msgstr "B<nagłówek>"
 
 #. type: tbl table
 #: ../man/slabtop.1:78
 #, no-wrap
 msgid "a"
-msgstr ""
+msgstr "a"
 
 #. type: tbl table
 #: ../man/slabtop.1:78
 #, no-wrap
 msgid "number of active objects"
-msgstr ""
+msgstr "liczba aktywnych obiektów"
 
 #. type: tbl table
 #: ../man/slabtop.1:78
 #, no-wrap
 msgid "ACTIVE"
-msgstr ""
+msgstr "AKTYWNE"
 
 #. type: tbl table
 #: ../man/slabtop.1:79
 #, no-wrap
 msgid "b"
-msgstr ""
+msgstr "b"
 
 #. type: tbl table
 #: ../man/slabtop.1:79
 #, no-wrap
 msgid "objects per slab"
-msgstr ""
+msgstr "obiektów na płytę"
 
 #. type: tbl table
 #: ../man/slabtop.1:79
 #, no-wrap
 msgid "OBJ/SLAB"
-msgstr ""
+msgstr "OB./PŁ."
 
 #. type: tbl table
 #: ../man/slabtop.1:80 ../man/ps.1:880 ../man/ps.1:1054
 #, no-wrap
 msgid "c"
-msgstr ""
+msgstr "c"
 
 #. type: tbl table
 #: ../man/slabtop.1:80
 #, no-wrap
 msgid "cache size"
-msgstr ""
+msgstr "rozmiar pamięci podręcznej"
 
 #. type: tbl table
 #: ../man/slabtop.1:80
 #, no-wrap
 msgid "CACHE SIZE"
-msgstr ""
+msgstr "ROZM.CACHE"
 
 #. type: tbl table
 #: ../man/slabtop.1:81 ../man/ps.1:853
 #, no-wrap
 msgid "l"
-msgstr ""
+msgstr "l"
 
 #. type: tbl table
 #: ../man/slabtop.1:81
 #, no-wrap
 msgid "number of slabs"
-msgstr ""
+msgstr "liczba płyt"
 
 #. type: tbl table
 #: ../man/slabtop.1:81
 #, no-wrap
 msgid "SLABS"
-msgstr ""
+msgstr "PŁYTY"
 
 #. type: tbl table
 #: ../man/slabtop.1:82 ../man/ps.1:903
 #, no-wrap
 msgid "v"
-msgstr ""
+msgstr "v"
 
 #. type: tbl table
 #: ../man/slabtop.1:82
 #, no-wrap
 msgid "number of active slabs"
-msgstr ""
+msgstr "liczba aktywnych płyt"
 
 #. type: tbl table
 #: ../man/slabtop.1:82 ../man/slabtop.1:85
 #, no-wrap
 msgid "N/A"
-msgstr ""
+msgstr "N/D"
 
 #. type: tbl table
 #: ../man/slabtop.1:83 ../man/ps.1:890
 #, no-wrap
 msgid "n"
-msgstr ""
+msgstr "n"
 
 #. type: tbl table
 #: ../man/slabtop.1:83
 #, no-wrap
 msgid "name"
-msgstr ""
+msgstr "nazwa"
 
 #. type: tbl table
 #: ../man/slabtop.1:83
-#, fuzzy, no-wrap
-#| msgid "NAME"
+#, no-wrap
 msgid "NAME\\:"
-msgstr "NAZWA"
+msgstr "NAZWA\\:"
 
 #. type: tbl table
 #: ../man/slabtop.1:84 ../man/ps.1:892
 #, no-wrap
 msgid "o"
-msgstr ""
+msgstr "o"
 
 #. type: tbl table
 #: ../man/slabtop.1:84
 #, no-wrap
 msgid "number of objects"
-msgstr ""
+msgstr "liczba obiektów"
 
 #. type: tbl table
 #: ../man/slabtop.1:84
 #, no-wrap
 msgid "OBJS"
-msgstr ""
+msgstr "OB."
 
 #. type: tbl table
 #: ../man/slabtop.1:85 ../man/ps.1:893
 #, no-wrap
 msgid "p"
-msgstr ""
+msgstr "p"
 
 #. type: tbl table
 #: ../man/slabtop.1:85
 #, no-wrap
 msgid "pages per slab"
-msgstr ""
+msgstr "stron na płytę"
 
 #. type: tbl table
 #: ../man/slabtop.1:86 ../man/ps.1:852 ../man/ps.1:897 ../man/ps.1:1654
 #, no-wrap
 msgid "s"
-msgstr ""
+msgstr "s"
 
 #. type: tbl table
 #: ../man/slabtop.1:86
 #, no-wrap
 msgid "object size"
-msgstr ""
+msgstr "rozmiar obiektu"
 
 #. type: tbl table
 #: ../man/slabtop.1:86
 #, no-wrap
 msgid "OBJ SIZE"
-msgstr ""
+msgstr "ROZM.OB."
 
 #. type: tbl table
 #: ../man/slabtop.1:87 ../man/ps.1:902
 #, no-wrap
 msgid "u"
-msgstr ""
+msgstr "u"
 
 #. type: tbl table
 #: ../man/slabtop.1:87
 #, no-wrap
 msgid "cache utilization"
-msgstr ""
+msgstr "wykorzystanie pamięci podręcznej"
 
 #. type: tbl table
 #: ../man/slabtop.1:87
 #, no-wrap
 msgid "USE"
-msgstr ""
+msgstr "UŻ."
 
 #. type: SH
 #: ../man/slabtop.1:89
-#, fuzzy, no-wrap
-#| msgid "OPERANDS"
+#, no-wrap
 msgid "COMMANDS"
-msgstr "ARGUMENTY"
+msgstr "POLECENIA"
 
 #. type: Plain text
 #: ../man/slabtop.1:93
@@ -2767,6 +2827,8 @@ msgid ""
 "B<slabtop> accepts keyboard commands from the user during use.  The "
 "following are supported.  In the case of letters, both cases are accepted."
 msgstr ""
+"B<slabtop> przyjmuje w trakcie działania polecenia z klawiatury. Obsługiwane "
+"są wymienione poniżej; w przypadku liter, akceptowane są obie wielkości."
 
 #. type: Plain text
 #: ../man/slabtop.1:97
@@ -2774,49 +2836,46 @@ msgid ""
 "Each of the valid sort characters are also accepted, to change the sort "
 "routine. See the section B<SORT CRITERIA>."
 msgstr ""
+"Akceptowane są także wszystkie poprawne znaki sortowania w celu zmiany "
+"kryterium - więcej w sekcji B<KRYTERIA SORTOWANIA>."
 
 #. type: TP
 #: ../man/slabtop.1:97
 #, no-wrap
 msgid "B<E<lt>SPACEBARE<gt>>"
-msgstr ""
+msgstr "B<E<lt>SPACJAE<gt>>"
 
 #. type: Plain text
 #: ../man/slabtop.1:100
 msgid "Refresh the screen."
-msgstr ""
+msgstr "Odświeżenie ekranu."
 
 #. type: TP
 #: ../man/slabtop.1:100
 #, no-wrap
 msgid "B<Q>"
-msgstr ""
+msgstr "B<Q>"
 
 #. type: Plain text
 #: ../man/slabtop.1:103
 msgid "Quit the program."
-msgstr ""
+msgstr "Zakończenie programu."
 
 #. type: TP
 #: ../man/slabtop.1:104
-#, fuzzy, no-wrap
-#| msgid "I</proc/loadavg>"
+#, no-wrap
 msgid "I</proc/slabinfo>"
-msgstr "I</proc/loadavg>"
+msgstr "I</proc/slabinfo>"
 
 #. type: Plain text
 #: ../man/slabtop.1:107
-#, fuzzy
-#| msgid "process information"
 msgid "slab information"
-msgstr "informacje o procesach"
+msgstr "informacje o płytach"
 
 #. type: Plain text
 #: ../man/slabtop.1:112
-#, fuzzy
-#| msgid "B<ps>(1), B<slabtop>(1), B<top>(1), B<vmstat>(8)."
 msgid "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
-msgstr "B<ps>(1), B<slabtop>(1), B<top>(1), B<vmstat>(8)."
+msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)."
 
 #. type: Plain text
 #: ../man/slabtop.1:118
@@ -2825,6 +2884,9 @@ msgid ""
 "version 1.1 or later I</proc/slabinfo>).  Kernel 2.2 should be supported in "
 "the future."
 msgstr ""
+"Obecnie program B<slabtop> wymaga jądra 2.4 lub nowszego (w szczególności "
+"wersji 1.1 lub późniejszej I</proc/slabinfo>). Jądro 2.2 powinno być "
+"obsługiwane w przyszłości."
 
 #. type: Plain text
 #: ../man/slabtop.1:124
@@ -2834,6 +2896,9 @@ msgid ""
 "I</proc/meminfo> file is tracking information about used slab physical "
 "memory."
 msgstr ""
+"Nagłówek statystyk B<slabtop> śledzi liczbę bajtów płyt będących w użyciu, "
+"nie mierzy pamięci fizycznej. Pole 'Slab' w pliku I</proc/meminfo> śledzi "
+"informacje o wykorzystanej pamięci fizycznej płyt."
 
 #. type: Plain text
 #: ../man/slabtop.1:130
@@ -2843,6 +2908,10 @@ msgid ""
 "high memory pressure, there are slab order fallbacks, which means \"pages "
 "per slab\" is not constant and may decrease."
 msgstr ""
+"Kolumna B<ROZM.CACHE> nie jest dokładne, jest to górny limit pamięci "
+"wykorzystywanej przez daną płytę. Kiedy system jest obciążony pamięciowo, "
+"może być zmieniana kolejność płyt, co oznacza, że \"liczba stron na płytę\" "
+"nie jest stała i może się zmniejszać."
 
 #. type: SH
 #: ../man/slabtop.1:130 ../man/tload.1:59 ../man/w.1:110
@@ -2853,18 +2922,19 @@ msgstr "AUTORZY"
 #. type: Plain text
 #: ../man/slabtop.1:132
 msgid "Written by Chris Rivera and Robert Love."
-msgstr ""
+msgstr "Napisali Chris Rivera i Robert Love."
 
 #. type: Plain text
 #: ../man/slabtop.1:136
 msgid "B<slabtop> was inspired by Martin Bligh's perl script, B<vmtop>."
 msgstr ""
+"B<slabtop> był zainspirowany skryptem perlowym B<vmtop> Martina Bligha."
 
 #. type: TH
 #: ../man/sysctl.8:14
 #, no-wrap
 msgid "SYSCTL"
-msgstr ""
+msgstr "SYSCTL"
 
 #. type: TH
 #: ../man/sysctl.8:14 ../man/vmstat.8:13 ../man/watch.1:14
@@ -2875,19 +2945,21 @@ msgstr ""
 #. type: Plain text
 #: ../man/sysctl.8:17
 msgid "sysctl - configure kernel parameters at runtime"
-msgstr ""
+msgstr "sysctl - konfiguracja parametrów jądra w trakcie działania"
 
 #. type: Plain text
 #: ../man/sysctl.8:23
 #, fuzzy
-#| msgid "B<pmap> [I<options>] I<pid> [...]"
+#| msgid "B<sysctl> [I<options>] [I<variable>[B<=>I<value>]] [...]"
 msgid "B<sysctl> [I<option> .\\|.\\|.\\&] I<variable>[B<=>I<value>] .\\|.\\|."
-msgstr "B<pmap> [I<opcje>] I<pid> [...]"
+msgstr "B<sysctl> [I<opcje>] [I<zmienna>[B<=>I<wartość>]] [...]"
 
 #. type: Plain text
 #: ../man/sysctl.8:26
+#, fuzzy
+#| msgid "B<sysctl -p> [I<file> or I<regexp>] [...]"
 msgid "B<sysctl -p> I<file-or-regexp> .\\|.\\|."
-msgstr ""
+msgstr "B<sysctl -p> [I<plik> lub I<wyr.reg.>] [...]"
 
 #. type: Plain text
 #: ../man/sysctl.8:34
@@ -2902,14 +2974,13 @@ msgstr ""
 #: ../man/sysctl.8:34
 #, no-wrap
 msgid "PARAMETERS"
-msgstr ""
+msgstr "PARAMETRY"
 
 #. type: TP
 #: ../man/sysctl.8:35
-#, fuzzy, no-wrap
-#| msgid "B<available>"
+#, no-wrap
 msgid "I<variable>"
-msgstr "B<dostępne>"
+msgstr "I<zmienna>"
 
 #. type: Plain text
 #: ../man/sysctl.8:39
@@ -2917,12 +2988,14 @@ msgid ""
 "The name of a key to read from.  An example is kernel.ostype.  The '/' "
 "separator is also accepted in place of a '.'."
 msgstr ""
+"Nazwa klucza do odczytu, np. kernel.ostype. Zamiast '.' przyjmowany jest też "
+"separator '/'."
 
 #. type: TP
 #: ../man/sysctl.8:39
 #, no-wrap
 msgid "I<variable>=I<value>"
-msgstr ""
+msgstr "I<zmienna>=I<wartość>"
 
 #. type: Plain text
 #: ../man/sysctl.8:50
@@ -2935,35 +3008,32 @@ msgstr ""
 
 #. type: TP
 #: ../man/sysctl.8:50
-#, fuzzy, no-wrap
-#| msgid "B<-n>, B<--newest>"
+#, no-wrap
 msgid "B<-n>, B<--values>"
-msgstr "B<-n>, B<--newest>"
+msgstr "B<-n>, B<--values>"
 
 #. type: Plain text
 #: ../man/sysctl.8:53
 msgid ""
 "Use this option to disable printing of the key name when printing values."
-msgstr ""
+msgstr "Ta opcja wyłącza wypisywanie nazwy klucza przy wypisywaniu wartości."
 
 #. type: TP
 #: ../man/sysctl.8:53
-#, fuzzy, no-wrap
-#| msgid "B<-i>, B<--ignore-case>"
+#, no-wrap
 msgid "B<-e>, B<--ignore>"
-msgstr "B<-e>, B<--ignore-case>"
+msgstr "B<-e>, B<--ignore>"
 
 #. type: Plain text
 #: ../man/sysctl.8:56
 msgid "Use this option to ignore errors about unknown keys."
-msgstr ""
+msgstr "Ta opcja powoduje ignorowanie błędów o nieznanych kluczach."
 
 #. type: TP
 #: ../man/sysctl.8:56
-#, fuzzy, no-wrap
-#| msgid "B<-n>, B<--newest>"
+#, no-wrap
 msgid "B<-N>, B<--names>"
-msgstr "B<-n>, B<--newest>"
+msgstr "B<-N>, B<--names>"
 
 #. type: Plain text
 #: ../man/sysctl.8:60
@@ -2979,10 +3049,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/sysctl.8:63
-#, fuzzy, no-wrap
-#| msgid "B<-w>, B<--wide>"
+#, no-wrap
 msgid "B<-w>, B<--write>"
-msgstr "B<-w>, B<--wide>"
+msgstr "B<-w>, B<--write>"
 
 #. type: Plain text
 #: ../man/sysctl.8:67
@@ -2995,7 +3064,7 @@ msgstr ""
 #: ../man/sysctl.8:67
 #, no-wrap
 msgid "B<-p>[I<FILE>], B<--load>[=I<FILE>]"
-msgstr ""
+msgstr "B<-p>[I<PLIK>], B<--load>[=I<PLIK>]"
 
 #. type: Plain text
 #: ../man/sysctl.8:75
@@ -3009,48 +3078,46 @@ msgstr ""
 
 #. type: TP
 #: ../man/sysctl.8:75
-#, fuzzy, no-wrap
-#| msgid "B<-f>, B<--full>"
+#, no-wrap
 msgid "B<-a>, B<--all>"
-msgstr "B<-f>, B<--full>"
+msgstr "B<-a>, B<--all>"
 
 #. type: Plain text
 #: ../man/sysctl.8:78
+#, fuzzy
+#| msgid "Display all values currently available."
 msgid ""
 "Display all values currently available except deprecated and verboten "
 "parameters."
-msgstr ""
+msgstr "Wyświetlenie wszystkich obecnie dostępnych wartości."
 
 #. type: TP
 #: ../man/sysctl.8:78
-#, fuzzy, no-wrap
-#| msgid "B<--tera>"
+#, no-wrap
 msgid "B<--deprecated>"
-msgstr "B<--tera>"
+msgstr "B<--deprecated>"
 
 #. type: Plain text
 #: ../man/sysctl.8:83
 msgid "Include deprecated parameters to B<--all> values listing."
-msgstr ""
+msgstr "Dołączenie przestarzałych parametrów do listy wartości B<--all>."
 
 #. type: TP
 #: ../man/sysctl.8:83
-#, fuzzy, no-wrap
-#| msgid "B<-b>, B<--bytes>"
+#, no-wrap
 msgid "B<-b>, B<--binary>"
-msgstr "B<-b>, B<--bytes>"
+msgstr "B<-b>, B<--binary>"
 
 #. type: Plain text
 #: ../man/sysctl.8:86
 msgid "Print value without new line."
-msgstr ""
+msgstr "Wypisywanie wartości bez nowej linii."
 
 #. type: TP
 #: ../man/sysctl.8:86
-#, fuzzy, no-wrap
-#| msgid "B<--tebi>"
+#, no-wrap
 msgid "B<--system>"
-msgstr "B<--tebi>"
+msgstr "B<--system>"
 
 #. type: Plain text
 #: ../man/sysctl.8:91
@@ -3061,10 +3128,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/sysctl.8:91
-#, fuzzy, no-wrap
-#| msgid "B<-t>, B<--terminal> I<term>,..."
+#, no-wrap
 msgid "B<-r>, B<--pattern> I<pattern>"
-msgstr "B<-t>, B<--terminal> I<term>,..."
+msgstr "B<-r>, B<--pattern> I<wzorzec>"
 
 #. type: Plain text
 #: ../man/sysctl.8:98
@@ -3077,40 +3143,40 @@ msgstr ""
 #: ../man/sysctl.8:98 ../man/ps.1:140
 #, no-wrap
 msgid "B<-A>"
-msgstr ""
+msgstr "B<-A>"
 
 #. type: Plain text
 #: ../man/sysctl.8:101 ../man/sysctl.8:110
 msgid "Alias of B<-a>"
-msgstr ""
+msgstr "Alias dla B<-a>"
 
 #. type: TP
 #: ../man/sysctl.8:101 ../man/ps.1:149
 #, no-wrap
 msgid "B<-d>"
-msgstr ""
+msgstr "B<-d>"
 
 #. type: Plain text
 #: ../man/sysctl.8:104
 msgid "Alias of B<-h>"
-msgstr ""
+msgstr "Alias dla B<-h>"
 
 #. type: TP
 #: ../man/sysctl.8:104 ../man/ps.1:408
 #, no-wrap
 msgid "B<-f>"
-msgstr ""
+msgstr "B<-f>"
 
 #. type: Plain text
 #: ../man/sysctl.8:107
 msgid "Alias of B<-p>"
-msgstr ""
+msgstr "Alias dla B<-p>"
 
 #. type: TP
 #: ../man/sysctl.8:110
 #, no-wrap
 msgid "B<-o>"
-msgstr ""
+msgstr "B<-o>"
 
 #. type: Plain text
 #: ../man/sysctl.8:113 ../man/sysctl.8:116
@@ -3120,45 +3186,45 @@ msgstr ""
 #. type: tbl table
 #: ../man/sysctl.8:125
 #, fuzzy, no-wrap
-#| msgid "I</proc>"
+#| msgid "I</proc/sys>"
 msgid "/proc/sys"
-msgstr "I</proc>"
+msgstr "I</proc/sys>"
 
 #. type: tbl table
 #: ../man/sysctl.8:126 ../man/sysctl.8:143
 #, no-wrap
 msgid "/etc/sysctl.d/*.conf"
-msgstr ""
+msgstr "/etc/sysctl.d/*.conf"
 
 #. type: tbl table
 #: ../man/sysctl.8:127 ../man/sysctl.8:144
 #, no-wrap
 msgid "/run/sysctl.d/*.conf"
-msgstr ""
+msgstr "/run/sysctl.d/*.conf"
 
 #. type: tbl table
 #: ../man/sysctl.8:128 ../man/sysctl.8:145
 #, no-wrap
 msgid "/usr/local/lib/sysctl.d/*.conf"
-msgstr ""
+msgstr "/usr/local/lib/sysctl.d/*.conf"
 
 #. type: tbl table
 #: ../man/sysctl.8:129 ../man/sysctl.8:146
 #, no-wrap
 msgid "/usr/lib/sysctl.d/*.conf"
-msgstr ""
+msgstr "/usr/lib/sysctl.d/*.conf"
 
 #. type: tbl table
 #: ../man/sysctl.8:130 ../man/sysctl.8:147
 #, no-wrap
 msgid "/lib/sysctl.d/*.conf"
-msgstr ""
+msgstr "/lib/sysctl.d/*.conf"
 
 #. type: tbl table
 #: ../man/sysctl.8:131
 #, no-wrap
 msgid "/etc/sysctl.conf"
-msgstr ""
+msgstr "/etc/sysctl.conf"
 
 #. type: SS
 #: ../man/sysctl.8:134
@@ -3210,7 +3276,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/sysctl.8:171
 msgid "echo 256 E<gt> /proc/sys/net/ipv6/neigh/eth0/base_reachable_time"
-msgstr ""
+msgstr "echo 256 E<gt> /proc/sys/net/ipv6/neigh/eth0/base_reachable_time"
 
 #. type: SS
 #: ../man/sysctl.8:172
@@ -3239,55 +3305,53 @@ msgstr ""
 #. type: Plain text
 #: ../man/sysctl.8:181
 msgid "/sbin/sysctl -a"
-msgstr ""
+msgstr "/sbin/sysctl -a"
 
 #. type: Plain text
 #: ../man/sysctl.8:183
 msgid "/sbin/sysctl -n kernel.hostname"
-msgstr ""
+msgstr "/sbin/sysctl -n kernel.hostname"
 
 #. type: Plain text
 #: ../man/sysctl.8:185
 msgid "/sbin/sysctl -w kernel.domainname=\"example.com\""
-msgstr ""
+msgstr "/sbin/sysctl -w kernel.domainname=\"example.com\""
 
 #. type: Plain text
 #: ../man/sysctl.8:187
 msgid "/sbin/sysctl -p/etc/sysctl.conf"
-msgstr ""
+msgstr "/sbin/sysctl -p/etc/sysctl.conf"
 
 #. type: Plain text
 #: ../man/sysctl.8:189
 msgid "/sbin/sysctl -a --pattern forward"
-msgstr ""
+msgstr "/sbin/sysctl -a --pattern forward"
 
 #. type: Plain text
 #: ../man/sysctl.8:191
 msgid "/sbin/sysctl -a --pattern forward$"
-msgstr ""
+msgstr "/sbin/sysctl -a --pattern forward$"
 
 #. type: Plain text
 #: ../man/sysctl.8:193
 msgid "/sbin/sysctl -a --pattern 'net.ipv4.conf.(eth|wlan)0.arp'"
-msgstr ""
+msgstr "/sbin/sysctl -a --pattern 'net.ipv4.conf.(eth|wlan)0.arp'"
 
 #. type: Plain text
 #: ../man/sysctl.8:195
 msgid "/sbin/sysctl --pattern '\\[char94]net.ipv6' --system"
-msgstr ""
+msgstr "/sbin/sysctl --pattern '\\[char94]net.ipv6' --system"
 
 #. type: Plain text
 #: ../man/sysctl.8:199
-#, fuzzy
-#| msgid "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 msgid "B<proc>(5), B<sysctl.conf>(5), B<regex>(7)"
-msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
+msgstr "B<proc>(5), B<sysctl.conf>(5), B<regex>(7)"
 
 #. type: TH
 #: ../man/sysctl.conf.5:13
 #, no-wrap
 msgid "SYSCTL.CONF"
-msgstr ""
+msgstr "SYSCTL.CONF"
 
 #. type: TH
 #: ../man/sysctl.conf.5:13
@@ -3297,8 +3361,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/sysctl.conf.5:16
+#, fuzzy
+#| msgid "sysctl - configure kernel parameters at runtime"
 msgid "sysctl.conf - Linux kernel configuration parameters"
-msgstr ""
+msgstr "sysctl - konfiguracja parametrów jądra w trakcie działania"
 
 #. type: Plain text
 #: ../man/sysctl.conf.5:22
@@ -3318,9 +3384,9 @@ msgstr ""
 #. type: SS
 #: ../man/sysctl.conf.5:32
 #, fuzzy, no-wrap
-#| msgid "Read the configuration from I<file>"
+#| msgid "configuration file"
 msgid "Configuration Format"
-msgstr "Odczyt konfiguracji z I<pliku>"
+msgstr "plik konfiguracyjny"
 
 #. type: Plain text
 #: ../man/sysctl.conf.5:37
@@ -3333,7 +3399,7 @@ msgstr ""
 #: ../man/sysctl.conf.5:41
 #, no-wrap
 msgid "token = value\n"
-msgstr ""
+msgstr "token = wartość\n"
 
 #. type: Plain text
 #: ../man/sysctl.conf.5:49
@@ -3358,33 +3424,38 @@ msgstr ""
 
 #. type: TP
 #: ../man/sysctl.conf.5:63
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "I</etc/sysctl.d/*.conf>"
 msgid "I</etc/sysctl.d/>*I<.conf>"
-msgstr ""
+msgstr "I</etc/sysctl.d/*.conf>"
 
 #. type: TQ
 #: ../man/sysctl.conf.5:65
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "I</run/sysctl.d/*.conf>"
 msgid "I</run/sysctl.d/>*I<.conf>"
-msgstr ""
+msgstr "I</run/sysctl.d/*.conf>"
 
 #. type: TQ
 #: ../man/sysctl.conf.5:67
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "I</usr/local/lib/sysctl.d/*.conf>"
 msgid "I</usr/local/lib/sysctl.d/>*I<.conf>"
-msgstr ""
+msgstr "I</usr/local/lib/sysctl.d/*.conf>"
 
 #. type: TQ
 #: ../man/sysctl.conf.5:69
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "I</usr/lib/sysctl.d/*.conf>"
 msgid "I</usr/lib/sysctl.d/>*I<.conf>"
-msgstr ""
+msgstr "I</usr/lib/sysctl.d/*.conf>"
 
 #. type: TQ
 #: ../man/sysctl.conf.5:71
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "I</lib/sysctl.d/*.conf>"
 msgid "I</lib/sysctl.d/>*I<.conf>"
-msgstr ""
+msgstr "I</lib/sysctl.d/*.conf>"
 
 #. type: Plain text
 #: ../man/sysctl.conf.5:86
@@ -3416,27 +3487,27 @@ msgstr ""
 #. type: Plain text
 #: ../man/sysctl.conf.5:103
 #, fuzzy
-#| msgid "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
+#| msgid "B<proc>(5), B<sysctl.conf>(5), B<regex>(7)"
 msgid "B<sysctl.d>(5), B<sysctl>(8), B<systemd-sysctl>(8)"
-msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
+msgstr "B<proc>(5), B<sysctl.conf>(5), B<regex>(7)"
 
 #. type: TH
 #: ../man/tload.1:12
 #, no-wrap
 msgid "TLOAD"
-msgstr ""
+msgstr "TLOAD"
 
 #. type: Plain text
 #: ../man/tload.1:15
 msgid "tload - graphic representation of system load average"
-msgstr ""
+msgstr "tload - graficzna reprezentacja średniego obciążenia systemu"
 
 #. type: Plain text
 #: ../man/tload.1:19
 #, fuzzy
-#| msgid "B<pmap> [I<options>] I<pid> [...]"
+#| msgid "B<tload> [I<options>] [I<tty>]"
 msgid "B<tload> [I<option> .\\|.\\|.\\&] [I<tty>]"
-msgstr "B<pmap> [I<opcje>] I<pid> [...]"
+msgstr "B<tload> [I<opcje>] [I<tty>]"
 
 #. type: Plain text
 #: ../man/tload.1:26
@@ -3447,10 +3518,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/tload.1:27
-#, fuzzy, no-wrap
-#| msgid "B<-O>, B<--older> I<secs>"
+#, no-wrap
 msgid "B<-s>, B<--scale> I<number>"
-msgstr "B<-O>, B<--older> I<sekundy>"
+msgstr "B<-s>, B<--scale> I<liczba>"
 
 #. type: Plain text
 #: ../man/tload.1:32
@@ -3462,10 +3532,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/tload.1:32
-#, fuzzy, no-wrap
-#| msgid "B<-O>, B<--older> I<secs>"
+#, no-wrap
 msgid "B<-d>, B<--delay> I<seconds>"
-msgstr "B<-O>, B<--older> I<sekundy>"
+msgstr "B<-d>, B<--delay> I<sekundy>"
 
 #. type: Plain text
 #: ../man/tload.1:36
@@ -3474,22 +3543,18 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/tload.1:39
-#, fuzzy
-#| msgid "display this help text"
 msgid "Display this help text."
-msgstr "wyświetlenie tego opisu"
+msgstr "Wyświetlenie tego opisu."
 
 #. type: Plain text
 #: ../man/tload.1:46
 msgid "I</proc/loadavg> load average information"
-msgstr ""
+msgstr "I</proc/loadavg> informacja o średnim obciążeniu"
 
 #. type: Plain text
 #: ../man/tload.1:51
-#, fuzzy
-#| msgid "B<ps>(1), B<top>(1), B<utmp>(5), B<w>(1)"
 msgid "B<ps>(1), B<top>(1), B<uptime>(1), B<w>(1)"
-msgstr "B<ps>(1), B<top>(1), B<utmp>(5), B<w>(1)"
+msgstr "B<ps>(1), B<top>(1), B<uptime>(1), B<w>(1)"
 
 #. type: Plain text
 #: ../man/tload.1:59
@@ -3503,16 +3568,14 @@ msgstr ""
 #: ../man/tload.1:68
 #, fuzzy
 #| msgid ""
-#| "B<uptime> was written by E<.UR greenfie@gauss.\\:rutgers.\\:edu> Larry "
-#| "Greenfield E<.UE> and E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. "
-#| "Johnson E<.UE>"
+#| "Branko Lankester, E<.UR david@\\:ods.\\:com> David Engel E<.UE , and> E<."
+#| "UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.UE .>"
 msgid ""
 "Branko Lankester, E<.MT david@\\:ods.\\:com> David Engel E<.ME ,> and E<.MT "
 "johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.ME .>"
 msgstr ""
-"Program B<uptime> napisali E<.UR greenfie@gauss.\\:rutgers.\\:edu> Larry "
-"Greenfield E<.UE> oraz E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. "
-"Johnson E<.UE>"
+"Branko Lankester, E<.UR david@\\:ods.\\:com> David Engel E<.UE oraz> E<.UR "
+"johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.UE .>"
 
 #. type: TH
 #: ../man/uptime.1:13
@@ -3610,9 +3673,9 @@ msgstr "wyświetlenie tego opisu"
 #. type: TP
 #: ../man/uptime.1:46
 #, fuzzy, no-wrap
-#| msgid "B<-f>, B<--full>"
+#| msgid "B<-a>, B<--all>"
 msgid "B<-r>, B<--raw>"
-msgstr "B<-f>, B<--full>"
+msgstr "B<-a>, B<--all>"
 
 #. type: Plain text
 #: ../man/uptime.1:49
@@ -3639,10 +3702,9 @@ msgstr "wyświetlenie informacji o wersji i zakończenie"
 
 #. type: SH
 #: ../man/uptime.1:55 ../man/w.1:85 ../man/watch.1:126
-#, fuzzy, no-wrap
-#| msgid "ENVIRONMENT VARIABLE(S)"
+#, no-wrap
 msgid "ENVIRONMENT"
-msgstr "ZMIENNE ŚRODOWISKOWE"
+msgstr "ŚRODOWISKO"
 
 #. type: TP
 #: ../man/uptime.1:56 ../man/w.1:86
@@ -4156,19 +4218,18 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/vmstat.8:197
-#, fuzzy
-#| msgid ""
-#| "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
 msgid ""
 "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1), "
 "B<slabinfo>(5)"
-msgstr "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
+msgstr ""
+"B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1), "
+"B<slabinfo>(5)"
 
 #. type: tbl table
 #: ../man/w.1:14 ../man/ps.1:830
 #, no-wrap
 msgid "W"
-msgstr ""
+msgstr "W"
 
 #. type: TH
 #: ../man/w.1:14
@@ -4179,32 +4240,27 @@ msgstr ""
 #. type: Plain text
 #: ../man/w.1:17
 msgid "w - Show who is logged on and what they are doing."
-msgstr ""
+msgstr "w - wyświetlenie, kto jest zalogowany i co robi."
 
 #. type: Plain text
 #: ../man/w.1:21
 #, fuzzy
-#| msgid "B<pmap> [I<options>] I<pid> [...]"
+#| msgid "B<w> [I<options>] [I<user>]"
 msgid "B<w> [I<option> .\\|.\\|.\\&] [I<user>]"
-msgstr "B<pmap> [I<opcje>] I<pid> [...]"
+msgstr "B<w> [I<opcje>] [I<użytkownik>]"
 
 #. type: Plain text
 #: ../man/w.1:27
-#, fuzzy
-#| msgid ""
-#| "B<uptime> gives a one line display of the following information.  The "
-#| "current time, how long the system has been running, how many users are "
-#| "currently logged on, and the system load averages for the past 1, 5, and "
-#| "15 minutes."
 msgid ""
 "B<w> displays information about the users currently on the machine, and "
 "their processes.  The header shows, in this order, the current time, how "
 "long the system has been running, how many users are currently logged on, "
 "and the system load averages for the past 1, 5, and 15 minutes."
 msgstr ""
-"B<uptime> w pojedynczej linii podaje następujące informacje: bieżący czas; "
-"czas, jak długo działa system; liczbę aktualnie zalogowanych użytkowników; "
-"średnie obciążenie systemu dla ostatnich 1, 5 i 15 minut."
+"B<w> wyświetla informacje o użytkownikach obecnych aktualnie na maszynie "
+"oraz ich procesach. Nagłówek pokazuje, w tej kolejności, bieżący czas, czas "
+"działania systemu, liczbę zalogowanych użytkowników oraz średnie obciążenia "
+"systemu dla ostatniej 1 minuty, 5 minut i 15 minut."
 
 #. type: Plain text
 #: ../man/w.1:31
@@ -4236,22 +4292,20 @@ msgstr ""
 
 #. type: TP
 #: ../man/w.1:42
-#, fuzzy, no-wrap
-#| msgid "B<-n>, B<--one-header>"
+#, no-wrap
 msgid "B<-h>, B<--no-header>"
-msgstr "B<-n>, B<--one-header>"
+msgstr "B<-h>, B<--no-header>"
 
 #. type: Plain text
 #: ../man/w.1:45
 msgid "Don't print the header."
-msgstr ""
+msgstr "Bez wypisywania nagłówka."
 
 #. type: TP
 #: ../man/w.1:45
-#, fuzzy, no-wrap
-#| msgid "B<-c>, B<--count>"
+#, no-wrap
 msgid "B<-u>, B<--no-current>"
-msgstr "B<-c>, B<--count>"
+msgstr "B<-u>, B<--no-current>"
 
 #. type: Plain text
 #: ../man/w.1:54
@@ -4262,10 +4316,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/w.1:54
-#, fuzzy, no-wrap
-#| msgid "B<-s>, B<--stats>"
+#, no-wrap
 msgid "B<-s>, B<--short>"
-msgstr "B<-s>, B<--stats>"
+msgstr "B<-s>, B<--short>"
 
 #. type: Plain text
 #: ../man/w.1:57
@@ -4274,10 +4327,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/w.1:57
-#, fuzzy, no-wrap
-#| msgid "B<-f>, B<--forks>"
+#, no-wrap
 msgid "B<-f>, B<--from>"
-msgstr "B<-f>, B<--forks>"
+msgstr "B<-f>, B<--from>"
 
 #. type: Plain text
 #: ../man/w.1:67
@@ -4290,10 +4342,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/w.1:70
-#, fuzzy, no-wrap
-#| msgid "B<-w>, B<--wide>"
+#, no-wrap
 msgid "B<-i>, B<--ip-addr>"
-msgstr "B<-w>, B<--wide>"
+msgstr "B<-i>, B<--ip-addr>"
 
 #. type: Plain text
 #: ../man/w.1:73
@@ -4302,10 +4353,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/w.1:73
-#, fuzzy, no-wrap
-#| msgid "B<-w>, B<--wide>"
+#, no-wrap
 msgid "B<-p>, B<--pids>"
-msgstr "B<-w>, B<--wide>"
+msgstr "B<-p>, B<--pids>"
 
 #. type: Plain text
 #: ../man/w.1:76
@@ -4315,10 +4365,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/w.1:79
-#, fuzzy, no-wrap
-#| msgid "B<-o>, B<--oldest>"
+#, no-wrap
 msgid "B<-o>, B<--old-style>"
-msgstr "B<-o>, B<--oldest>"
+msgstr "B<-o>, B<--old-style>"
 
 #. type: Plain text
 #: ../man/w.1:82
@@ -4328,17 +4377,14 @@ msgstr ""
 
 #. type: TP
 #: ../man/w.1:82
-#, fuzzy, no-wrap
-#| msgid "B<used>"
+#, no-wrap
 msgid "B<user >"
-msgstr "B<użyte>"
+msgstr "B<użytkownik >"
 
 #. type: Plain text
 #: ../man/w.1:85
-#, fuzzy
-#| msgid "information about who is currently logged on"
 msgid "Show information about the specified user only."
-msgstr "informacja o tym, kto jest obecnie zalogowany"
+msgstr "Wyświetlenie informacji tylko o podanym użytkowniku."
 
 #. type: Plain text
 #: ../man/w.1:89
@@ -4350,9 +4396,9 @@ msgstr ""
 #. type: TP
 #: ../man/w.1:89
 #, fuzzy, no-wrap
-#| msgid "PROCPS_PIDS"
+#| msgid "PROCPS_USERLEN"
 msgid "B<PROCPS_USERLEN>"
-msgstr "PROCPS_PIDS"
+msgstr "PROCPS_USERLEN"
 
 #. type: Plain text
 #: ../man/w.1:92
@@ -4362,9 +4408,9 @@ msgstr ""
 #. type: TP
 #: ../man/w.1:92
 #, fuzzy, no-wrap
-#| msgid "PROCPS_MISC"
+#| msgid "PROCPS_FROMLEN"
 msgid "B<PROCPS_FROMLEN>"
-msgstr "PROCPS_MISC"
+msgstr "PROCPS_FROMLEN"
 
 #. type: Plain text
 #: ../man/w.1:95
@@ -4382,46 +4428,48 @@ msgstr "informacja o tym, kto jest obecnie zalogowany"
 #. type: Plain text
 #: ../man/w.1:110
 #, fuzzy
-#| msgid ""
-#| "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
+#| msgid "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
 msgid ""
 "B<free>(1), B<loginctl>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), "
 "B<who>(1)"
-msgstr "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
+msgstr "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
 
 #. type: Plain text
 #: ../man/w.1:120
 #, fuzzy
 #| msgid ""
-#| "B<uptime> was written by E<.UR greenfie@gauss.\\:rutgers.\\:edu> Larry "
-#| "Greenfield E<.UE> and E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. "
-#| "Johnson E<.UE>"
+#| "B<w> was re-written almost entirely by Charles Blake, based on the "
+#| "version by E<.UR greenfie@\\:gauss.\\:rutgers.\\:edu> Larry Greenfield E<."
+#| "UE> and E<.UR johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.UE>"
 msgid ""
 "B<w> was re-written almost entirely by Charles Blake, based on the version "
 "by E<.MT greenfie@\\:gauss.\\:rutgers.\\:edu> Larry Greenfield E<.ME> and E<."
 "MT johnsonm@\\:redhat.\\:com> Michael K. Johnson E<.ME .>"
 msgstr ""
-"Program B<uptime> napisali E<.UR greenfie@gauss.\\:rutgers.\\:edu> Larry "
-"Greenfield E<.UE> oraz E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. "
-"Johnson E<.UE>"
+"B<w> został prawie całkowicie napisany od nowa przez Charlesa Blake'a w "
+"oparciu o wersję autorstwa E<.UR greenfie@\\:gauss.\\:rutgers.\\:edu> "
+"Larry'ego Greenfielda E<.UE> i E<.UR johnsonm@\\:redhat.\\:com> Michaela K. "
+"Johnsona E<.UE>"
 
 #. type: TH
 #: ../man/watch.1:14
 #, no-wrap
 msgid "WATCH"
-msgstr ""
+msgstr "WATCH"
 
 #. type: Plain text
 #: ../man/watch.1:17
 msgid "watch - execute a program periodically, showing output fullscreen"
 msgstr ""
+"watch - cykliczne uruchamianie programu z wyświetlaniem wyjścia na pełnym "
+"ekranie"
 
 #. type: Plain text
 #: ../man/watch.1:21
 #, fuzzy
-#| msgid "B<pmap> [I<options>] I<pid> [...]"
+#| msgid "B<watch> [I<options>] I<command>"
 msgid "B<watch> [I<option> .\\|.\\|.\\&] I<command>"
-msgstr "B<pmap> [I<opcje>] I<pid> [...]"
+msgstr "B<watch> [I<opcje>] I<polecenie>"
 
 #. type: Plain text
 #: ../man/watch.1:30
@@ -4435,46 +4483,44 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:31
-#, fuzzy, no-wrap
-#| msgid "B<-b>, B<--bytes>"
+#, no-wrap
 msgid "B<-b>, B<--beep>"
-msgstr "B<-b>, B<--bytes>"
+msgstr "B<-b>, B<--beep>"
 
 #. type: Plain text
 #: ../man/watch.1:34
+#, fuzzy
+#| msgid "Beep if command has a non-zero exit."
 msgid "Beep if I<command> has a non-zero exit."
-msgstr ""
+msgstr "Pisk, jeśli polecenie zakończy się z niezerowym statusem."
 
 #. type: TP
 #: ../man/watch.1:34
-#, fuzzy, no-wrap
-#| msgid "B<-c>, B<--count>"
+#, no-wrap
 msgid "B<-c>, B<--color>"
-msgstr "B<-c>, B<--count>"
+msgstr "B<-c>, B<--color>"
 
 #. type: Plain text
 #: ../man/watch.1:37
 msgid "Interpret ANSI color and style sequences."
-msgstr ""
+msgstr "Interpretowanie sekwencji kolorów i styli ANSI."
 
 #. type: TP
 #: ../man/watch.1:37
-#, fuzzy, no-wrap
-#| msgid "B<-y>, B<--no-first>"
+#, no-wrap
 msgid "B<-C>, B<--no-color>"
-msgstr "B<-y>, B<--no-first>"
+msgstr "B<-C>, B<--no-color>"
 
 #. type: Plain text
 #: ../man/watch.1:40
 msgid "Do not interpret ANSI color and style sequences."
-msgstr ""
+msgstr "Bez interpretowania sekwencji kolorów i styli ANSI."
 
 #. type: TP
 #: ../man/watch.1:40
-#, fuzzy, no-wrap
-#| msgid "B<-d>, B<--delimiter> I<delimiter>"
+#, no-wrap
 msgid "B<-d>, B<--differences>[=I<permanent>]"
-msgstr "B<-d>, B<--delimiter> I<separator>"
+msgstr "B<-d>, B<--differences>[=I<permanent>]"
 
 #. type: Plain text
 #: ../man/watch.1:45
@@ -4486,10 +4532,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:45
-#, fuzzy, no-wrap
-#| msgid "B<-x>, B<--exact>"
+#, no-wrap
 msgid "B<-e>, B<--errexit>"
-msgstr "B<-x>, B<--exact>"
+msgstr "B<-e>, B<--errexit>"
 
 #. type: Plain text
 #: ../man/watch.1:50
@@ -4501,10 +4546,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:50
-#, fuzzy, no-wrap
-#| msgid "B<-g>, B<--gibi>"
+#, no-wrap
 msgid "B<-g>, B<--chgexit>"
-msgstr "B<-g>, B<--gibi>"
+msgstr "B<-g>, B<--chgexit>"
 
 #. type: Plain text
 #: ../man/watch.1:55
@@ -4516,10 +4560,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:55
-#, fuzzy, no-wrap
-#| msgid "B<-O>, B<--older> I<secs>"
+#, no-wrap
 msgid "B<-n>, B<--interval> I<seconds>"
-msgstr "B<-O>, B<--older> I<sekundy>"
+msgstr "B<-n>, B<--interval> I<sekundy>"
 
 #. type: Plain text
 #: ../man/watch.1:62
@@ -4533,10 +4576,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:62
-#, fuzzy, no-wrap
-#| msgid "B<-p>, B<--pretty>"
+#, no-wrap
 msgid "B<-p>, B<--precise>"
-msgstr "B<-p>, B<--pretty>"
+msgstr "B<-p>, B<--precise>"
 
 #. type: Plain text
 #: ../man/watch.1:68
@@ -4549,10 +4591,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:68
-#, fuzzy, no-wrap
-#| msgid "B<-q>, B<--quiet>"
+#, no-wrap
 msgid "B<-q>, B<--equexit> E<lt>cyclesE<gt>"
-msgstr "B<-q>, B<--quiet>"
+msgstr "B<-q>, B<--eqexit> E<lt>cykleE<gt>"
 
 #. type: Plain text
 #: ../man/watch.1:72
@@ -4563,10 +4604,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:72
-#, fuzzy, no-wrap
-#| msgid "B<-c>, B<--count>"
+#, no-wrap
 msgid "B<-r>, B<--no-rerun>"
-msgstr "B<-c>, B<--count>"
+msgstr "B<-r>, B<--no=rerun>"
 
 #. type: Plain text
 #: ../man/watch.1:76
@@ -4578,9 +4618,9 @@ msgstr ""
 #. type: TP
 #: ../man/watch.1:76
 #, fuzzy, no-wrap
-#| msgid "B<-s>, B<--stats>"
+#| msgid "B<-s>, B<--short>"
 msgid "B<-s>, B<--shotsdir>"
-msgstr "B<-s>, B<--stats>"
+msgstr "B<-s>, B<--short>"
 
 #. type: Plain text
 #: ../man/watch.1:79
@@ -4589,10 +4629,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:79
-#, fuzzy, no-wrap
-#| msgid "B<-t>, B<--total>"
+#, no-wrap
 msgid "B<-t>, B<--no-title>"
-msgstr "B<-t>, B<--total>"
+msgstr "B<-t>, B<--no-title>"
 
 #. type: Plain text
 #: ../man/watch.1:82
@@ -4601,10 +4640,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:82
-#, fuzzy, no-wrap
-#| msgid "B<-y>, B<--no-first>"
+#, no-wrap
 msgid "B<-w>, B<--no-wrap>"
-msgstr "B<-y>, B<--no-first>"
+msgstr "B<-w>, B<--no-wrap>"
 
 #. type: Plain text
 #: ../man/watch.1:86
@@ -4615,10 +4653,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:86
-#, fuzzy, no-wrap
-#| msgid "B<-x>, B<--exact>"
+#, no-wrap
 msgid "B<-x>, B<--exec>"
-msgstr "B<-x>, B<--exact>"
+msgstr "B<-x>, B<--exec>"
 
 #. type: Plain text
 #: ../man/watch.1:93
@@ -4630,10 +4667,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/watch.1:96
-#, fuzzy, no-wrap
-#| msgid "B<-V>, B<--version>"
+#, no-wrap
 msgid "B<-v>, B<--version>"
-msgstr "B<-V>, B<--version>"
+msgstr "B<-v>, B<--version>"
 
 #. type: SH
 #: ../man/watch.1:99
@@ -4671,7 +4707,7 @@ msgstr ""
 #: ../man/watch.1:108 ../man/ps.1:519
 #, no-wrap
 msgid "B<s>"
-msgstr ""
+msgstr "B<s>"
 
 #. type: Plain text
 #: ../man/watch.1:113
@@ -4700,9 +4736,9 @@ msgstr ""
 #. type: TP
 #: ../man/watch.1:123
 #, fuzzy, no-wrap
-#| msgid "B<-x>, B<--exact>"
+#| msgid "B<-e>, B<--errexit>"
 msgid "B<any non-zero (--errexit)>"
-msgstr "B<-x>, B<--exact>"
+msgstr "B<-e>, B<--errexit>"
 
 #. type: Plain text
 #: ../man/watch.1:126
@@ -4719,7 +4755,7 @@ msgstr ""
 #: ../man/watch.1:128
 #, no-wrap
 msgid "B<WATCH_INTERVAL>"
-msgstr ""
+msgstr "B<WATCH_INTERVAL>"
 
 #. type: Plain text
 #: ../man/watch.1:132
@@ -4732,7 +4768,7 @@ msgstr ""
 #: ../man/watch.1:132 ../man/ps.1:1993
 #, no-wrap
 msgid "B<COLUMNS>"
-msgstr ""
+msgstr "B<COLUMNS>"
 
 #. type: Plain text
 #: ../man/watch.1:135
@@ -4743,7 +4779,7 @@ msgstr ""
 #: ../man/watch.1:135 ../man/ps.1:1996
 #, no-wrap
 msgid "B<LINES>"
-msgstr ""
+msgstr "B<LINES>"
 
 #. type: Plain text
 #: ../man/watch.1:138
@@ -4773,7 +4809,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/watch.1:150
 msgid "watch -d ls -l"
-msgstr ""
+msgstr "watch -d ls -l"
 
 #. type: Plain text
 #: ../man/watch.1:154
@@ -4812,7 +4848,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/watch.1:166
 msgid "watch uname -r"
-msgstr ""
+msgstr "watch uname -r"
 
 #. type: Plain text
 #: ../man/watch.1:171
@@ -4827,27 +4863,26 @@ msgstr ""
 #: ../man/ps.1:13
 #, no-wrap
 msgid "PS"
-msgstr ""
+msgstr "PS"
 
 #. type: TH
 #: ../man/ps.1:13
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "2021-09-15"
 msgid "2024-09-17"
-msgstr ""
+msgstr "2021-09-15"
 
 #. type: Plain text
 #: ../man/ps.1:21
-#, fuzzy
-#| msgid "pmap - report memory map of a process"
 msgid "ps - report a snapshot of the current processes."
-msgstr "pmap - informacje o odwzorowaniu pamięci procesu"
+msgstr "ps - raport migawki bieżących procesów."
 
 #. type: Plain text
 #: ../man/ps.1:24
 #, fuzzy
-#| msgid "B<uptime> [I<options>]"
+#| msgid "B<ps> [\\,I<options\\/>]"
 msgid "B<ps> [I<option> .\\|.\\|.]"
-msgstr "B<uptime> [I<opcje>]"
+msgstr "B<ps> [\\,I<opcje\\/>]"
 
 #. type: Plain text
 #: ../man/ps.1:30
@@ -4937,22 +4972,22 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:81
 msgid "B<ps\\ -e>"
-msgstr ""
+msgstr "B<ps\\ -e>"
 
 #. type: Plain text
 #: ../man/ps.1:83
 msgid "B<ps\\ -ef>"
-msgstr ""
+msgstr "B<ps\\ -ef>"
 
 #. type: Plain text
 #: ../man/ps.1:85
 msgid "B<ps\\ -eF>"
-msgstr ""
+msgstr "B<ps\\ -eF>"
 
 #. type: Plain text
 #: ../man/ps.1:87
 msgid "B<ps\\ -ely>"
-msgstr ""
+msgstr "B<ps\\ -ely>"
 
 #. type: TP
 #: ../man/ps.1:87
@@ -4963,12 +4998,12 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:90
 msgid "B<ps\\ ax>"
-msgstr ""
+msgstr "B<ps\\ ax>"
 
 #. type: Plain text
 #: ../man/ps.1:92
 msgid "B<ps\\ axu>"
-msgstr ""
+msgstr "B<ps\\ axu>"
 
 #. type: TP
 #: ../man/ps.1:92
@@ -4979,12 +5014,12 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:95
 msgid "B<ps\\ -ejH>"
-msgstr ""
+msgstr "B<ps\\ -ejH>"
 
 #. type: Plain text
 #: ../man/ps.1:97
 msgid "B<ps\\ axjf>"
-msgstr ""
+msgstr "B<ps\\ axjf>"
 
 #. type: TP
 #: ../man/ps.1:97
@@ -4995,12 +5030,12 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:100
 msgid "B<ps\\ -eLf>"
-msgstr ""
+msgstr "B<ps\\ -eLf>"
 
 #. type: Plain text
 #: ../man/ps.1:102
 msgid "B<ps\\ axms>"
-msgstr ""
+msgstr "B<ps\\ axms>"
 
 #. type: TP
 #: ../man/ps.1:102
@@ -5011,17 +5046,17 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:105
 msgid "B<ps\\ -eo euser,ruser,suser,fuser,f,comm,label>"
-msgstr ""
+msgstr "B<ps\\ -eo euser,ruser,suser,fuser,f,comm,label>"
 
 #. type: Plain text
 #: ../man/ps.1:107
 msgid "B<ps\\ axZ>"
-msgstr ""
+msgstr "B<ps\\ axZ>"
 
 #. type: Plain text
 #: ../man/ps.1:109
 msgid "B<ps\\ -eM>"
-msgstr ""
+msgstr "B<ps\\ -eM>"
 
 #. type: TP
 #: ../man/ps.1:109
@@ -5032,7 +5067,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:112
 msgid "B<ps\\ -U\\ root\\ -u\\ root\\ u>"
-msgstr ""
+msgstr "B<ps\\ -U\\ root\\ -u\\ root\\ u>"
 
 #. type: TP
 #: ../man/ps.1:112
@@ -5043,17 +5078,17 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:115
 msgid "B<ps\\ -eo\\ pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:14,comm>"
-msgstr ""
+msgstr "B<ps\\ -eo\\ pid,tid,class,rtprio,ni,pri,psr,pcpu,stat,wchan:14,comm>"
 
 #. type: Plain text
 #: ../man/ps.1:117
 msgid "B<ps\\ axo\\ stat,euid,ruid,tty,tpgid,sess,pgrp,ppid,pid,pcpu,comm>"
-msgstr ""
+msgstr "B<ps\\ axo\\ stat,euid,ruid,tty,tpgid,sess,pgrp,ppid,pid,pcpu,comm>"
 
 #. type: Plain text
 #: ../man/ps.1:119
 msgid "B<ps\\ -Ao\\ pid,tt,user,fname,tmout,f,wchan>"
-msgstr ""
+msgstr "B<ps\\ -Ao\\ pid,tt,user,fname,tmout,f,wchan>"
 
 #. type: TP
 #: ../man/ps.1:119
@@ -5064,7 +5099,7 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:122
 msgid "B<ps\\ -C\\ syslogd\\ -o\\ pid=>"
-msgstr ""
+msgstr "B<ps\\ -C\\ syslogd\\ -o\\ pid=>"
 
 #. type: TP
 #: ../man/ps.1:122
@@ -5075,19 +5110,19 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:125
 msgid "B<ps\\ -q\\ 42\\ -o\\ comm=>"
-msgstr ""
+msgstr "B<ps\\ -q\\ 42\\ -o\\ comm=>"
 
 #. type: SH
 #: ../man/ps.1:125
 #, no-wrap
 msgid "SIMPLE PROCESS SELECTION"
-msgstr ""
+msgstr "PROSTY WYBÓR PROCESÓW"
 
 #. type: TP
 #: ../man/ps.1:126
 #, no-wrap
 msgid "B<a>"
-msgstr ""
+msgstr "B<a>"
 
 #. type: Plain text
 #: ../man/ps.1:140
@@ -5103,16 +5138,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/ps.1:144
-#, fuzzy
-#| msgid "Select processes older than secs."
 msgid "Select all processes.  Identical to B<-e>."
-msgstr "Wybór procesów starszych niż podana liczba sekund."
+msgstr "Wybór wszystkich procesów. Identyczne z B<-e>."
 
 #. type: TP
 #: ../man/ps.1:144
 #, no-wrap
 msgid "B<-a>"
-msgstr ""
+msgstr "B<-a>"
 
 #. type: Plain text
 #: ../man/ps.1:149
@@ -5123,17 +5156,14 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/ps.1:152
-#, fuzzy
-#| msgid "Select processes older than secs."
 msgid "Select all processes except session leaders."
-msgstr "Wybór procesów starszych niż podana liczba sekund."
+msgstr "Wybór wszystkich procesów poza liderami sesji."
 
 #. type: TP
 #: ../man/ps.1:152
-#, fuzzy, no-wrap
-#| msgid "B<--peta>"
+#, no-wrap
 msgid "B<--deselect>"
-msgstr "B<--peta>"
+msgstr "B<--deselect>"
 
 #. type: Plain text
 #: ../man/ps.1:157
@@ -5146,7 +5176,7 @@ msgstr ""
 #: ../man/ps.1:157
 #, no-wrap
 msgid "B<-e>"
-msgstr ""
+msgstr "B<-e>"
 
 #.  Current "g" behavior: add in the session leaders, which would
 #.  be excluded in the sunos4 personality. Supposed "g" behavior:
@@ -5155,16 +5185,14 @@ msgstr ""
 #.  though, so maybe the code is correct.
 #. type: Plain text
 #: ../man/ps.1:166
-#, fuzzy
-#| msgid "Select processes older than secs."
 msgid "Select all processes.  Identical to B<-A>."
-msgstr "Wybór procesów starszych niż podana liczba sekund."
+msgstr "Wybór wszystkich procesów. Identyczne z B<-A>."
 
 #. type: TP
 #: ../man/ps.1:166
 #, no-wrap
 msgid "B<g>"
-msgstr ""
+msgstr "B<g>"
 
 #. type: Plain text
 #: ../man/ps.1:172
@@ -5178,7 +5206,7 @@ msgstr ""
 #: ../man/ps.1:172
 #, no-wrap
 msgid "B<-N>"
-msgstr ""
+msgstr "B<-N>"
 
 #. type: Plain text
 #: ../man/ps.1:177
@@ -5191,7 +5219,7 @@ msgstr ""
 #: ../man/ps.1:177
 #, no-wrap
 msgid "B<T>"
-msgstr ""
+msgstr "B<T>"
 
 #. type: Plain text
 #: ../man/ps.1:182
@@ -5204,7 +5232,7 @@ msgstr ""
 #: ../man/ps.1:182
 #, no-wrap
 msgid "B<r>"
-msgstr ""
+msgstr "B<r>"
 
 #. type: Plain text
 #: ../man/ps.1:185
@@ -5215,7 +5243,7 @@ msgstr ""
 #: ../man/ps.1:185
 #, no-wrap
 msgid "B<x>"
-msgstr ""
+msgstr "B<x>"
 
 #. type: Plain text
 #: ../man/ps.1:200
@@ -5233,7 +5261,7 @@ msgstr ""
 #: ../man/ps.1:200
 #, no-wrap
 msgid "PROCESS SELECTION BY LIST"
-msgstr ""
+msgstr "WYBÓR PROCESÓW PRZEZ LISTĘ"
 
 #. type: Plain text
 #: ../man/ps.1:204
@@ -5247,40 +5275,41 @@ msgstr ""
 #: ../man/ps.1:204
 #, no-wrap
 msgid "I<123>"
-msgstr ""
+msgstr "I<123>"
 
 #. type: Plain text
 #: ../man/ps.1:208
 msgid "Identical to B<--pid\\ >I<123>."
-msgstr ""
+msgstr "Identyczne z B<--pid\\ >I<123>."
 
 #. type: TP
 #: ../man/ps.1:208
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "\\+I<123>"
 msgid "+I<123>"
-msgstr ""
+msgstr "\\+I<123>"
 
 #. type: Plain text
 #: ../man/ps.1:212
 msgid "Identical to B<--sid\\ >I<123>."
-msgstr ""
+msgstr "Identyczne z B<--sid\\ >I<123>."
 
 #. type: TP
 #: ../man/ps.1:212
 #, no-wrap
 msgid "-I<123>"
-msgstr ""
+msgstr "-I<123>"
 
 #. type: Plain text
 #: ../man/ps.1:215
 msgid "Select by process group ID (PGID)."
-msgstr ""
+msgstr "Wybór wg identyfikatora grupy procesów (PGID)."
 
 #. type: TP
 #: ../man/ps.1:215
 #, no-wrap
 msgid "B<-C>I<\\ cmdlist>"
-msgstr ""
+msgstr "B<-C>I<\\ lista\\ poleceń>"
 
 #. type: Plain text
 #: ../man/ps.1:224
@@ -5296,7 +5325,7 @@ msgstr ""
 #: ../man/ps.1:224
 #, no-wrap
 msgid "B<-G>I<\\ grplist>"
-msgstr ""
+msgstr "B<-G>I<\\ lista\\ grup>"
 
 #. type: Plain text
 #: ../man/ps.1:232
@@ -5310,7 +5339,7 @@ msgstr ""
 #: ../man/ps.1:232
 #, no-wrap
 msgid "B<-g>I<\\ grplist>"
-msgstr ""
+msgstr "B<-g>I<\\ lista\\ grup>"
 
 #. type: Plain text
 #: ../man/ps.1:245
@@ -5327,7 +5356,7 @@ msgstr ""
 #: ../man/ps.1:245
 #, no-wrap
 msgid "B<--Group>I<\\ grplist>"
-msgstr ""
+msgstr "B<--Group>I<\\ lista\\ grup>"
 
 #. type: Plain text
 #: ../man/ps.1:249
@@ -5336,10 +5365,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:249
-#, fuzzy, no-wrap
-#| msgid "B<-g>, B<--pgroup> I<pgrp>,..."
+#, no-wrap
 msgid "B<--group>I<\\ grplist>"
-msgstr "B<-g>, B<--pgroup> I<pgrp>,..."
+msgstr "B<--group>I<\\ lista\\ grup>"
 
 #. type: Plain text
 #: ../man/ps.1:261
@@ -5354,18 +5382,18 @@ msgstr ""
 #: ../man/ps.1:261
 #, no-wrap
 msgid "B<p>I<\\ pidlist>"
-msgstr ""
+msgstr "B<p>I<\\ lista\\ pidów>"
 
 #. type: Plain text
 #: ../man/ps.1:267
 msgid "Select by process ID.  Identical to B<-p> and B<--pid>."
-msgstr ""
+msgstr "Wybór wg identyfikatora procesu. Identyczne z B<-p> i B<--pid>."
 
 #. type: TP
 #: ../man/ps.1:267
 #, no-wrap
 msgid "B<-p>I<\\ pidlist>"
-msgstr ""
+msgstr "B<-p>I<\\ lista\\ pidów>"
 
 #. type: Plain text
 #: ../man/ps.1:275
@@ -5376,10 +5404,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:275
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<--pid>I<\\ pidlist>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<--pid>I<\\ lista\\ pidów>"
 
 #. type: Plain text
 #: ../man/ps.1:281
@@ -5388,10 +5415,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:281
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<--ppid>I<\\ pidlist>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<--ppid>I<\\ lista\\ pidów>"
 
 #. type: Plain text
 #: ../man/ps.1:288
@@ -5405,7 +5431,7 @@ msgstr ""
 #: ../man/ps.1:288
 #, no-wrap
 msgid "B<q>I<\\ pidlist>"
-msgstr ""
+msgstr "B<q>I<\\ lista\\ pidów>"
 
 #. type: Plain text
 #: ../man/ps.1:294
@@ -5417,7 +5443,7 @@ msgstr ""
 #: ../man/ps.1:294
 #, no-wrap
 msgid "B<-q>I<\\ pidlist>"
-msgstr ""
+msgstr "B<-q>I<\\ lista\\ pidów>"
 
 #. type: Plain text
 #: ../man/ps.1:308
@@ -5434,7 +5460,7 @@ msgstr ""
 #: ../man/ps.1:308
 #, no-wrap
 msgid "B<--quick-pid>I<\\ pidlist>"
-msgstr ""
+msgstr "B<--quick-pid>I<\\ lista\\ pidów>"
 
 #. type: Plain text
 #: ../man/ps.1:314
@@ -5445,7 +5471,7 @@ msgstr ""
 #: ../man/ps.1:314
 #, no-wrap
 msgid "B<-s>I<\\ sesslist>"
-msgstr ""
+msgstr "B<-s>I<\\ lista\\ sesji>"
 
 #. type: Plain text
 #: ../man/ps.1:319
@@ -5458,18 +5484,18 @@ msgstr ""
 #: ../man/ps.1:319
 #, no-wrap
 msgid "B<--sid>I<\\ sesslist>"
-msgstr ""
+msgstr "B<--sid>I<\\ lista\\ sesji>"
 
 #. type: Plain text
 #: ../man/ps.1:323
 msgid "Select by session\\ ID.  Identical to B<-s>."
-msgstr ""
+msgstr "Wybór wg identyfikatorów sesji. Identyczne z B<-s>."
 
 #. type: TP
 #: ../man/ps.1:323
 #, no-wrap
 msgid "B<t>I<\\ ttylist>"
-msgstr ""
+msgstr "B<t>I<\\ lista\\ tty>"
 
 #. type: Plain text
 #: ../man/ps.1:340
@@ -5484,7 +5510,7 @@ msgstr ""
 #: ../man/ps.1:340
 #, no-wrap
 msgid "B<-t>I<\\ ttylist>"
-msgstr ""
+msgstr "B<-t>I<\\ lista\\ tty>"
 
 #. type: Plain text
 #: ../man/ps.1:348
@@ -5499,18 +5525,18 @@ msgstr ""
 #: ../man/ps.1:348
 #, no-wrap
 msgid "B<--tty>I<\\ ttylist>"
-msgstr ""
+msgstr "B<--tty>I<\\ lista\\ tty>"
 
 #. type: Plain text
 #: ../man/ps.1:354
 msgid "Select by terminal.  Identical to B<-t> and B<t>."
-msgstr ""
+msgstr "Wybór wg terminala. Identyczne z B<-t> i B<t>."
 
 #. type: TP
 #: ../man/ps.1:354
 #, no-wrap
 msgid "B<U>I<\\ userlist>"
-msgstr ""
+msgstr "B<U>I<\\ lista\\ użytkowników>"
 
 #. type: Plain text
 #: ../man/ps.1:366
@@ -5525,7 +5551,7 @@ msgstr ""
 #: ../man/ps.1:366
 #, no-wrap
 msgid "B<-U>I<\\ userlist>"
-msgstr ""
+msgstr "B<-U>I<\\ lista\\ użytkowników>"
 
 #. type: Plain text
 #: ../man/ps.1:373
@@ -5539,7 +5565,7 @@ msgstr ""
 #: ../man/ps.1:373
 #, no-wrap
 msgid "B<-u>I<\\ userlist>"
-msgstr ""
+msgstr "B<-u>I<\\ lista\\ użytkowników>"
 
 #. type: Plain text
 #: ../man/ps.1:378
@@ -5559,7 +5585,7 @@ msgstr ""
 #: ../man/ps.1:386
 #, no-wrap
 msgid "B<--User>I<\\ userlist>"
-msgstr ""
+msgstr "B<--User>I<\\ lista\\ użytkowników>"
 
 #. type: Plain text
 #: ../man/ps.1:390
@@ -5570,7 +5596,7 @@ msgstr ""
 #: ../man/ps.1:390
 #, no-wrap
 msgid "B<--user>I<\\ userlist>"
-msgstr ""
+msgstr "B<--user>I<\\ lista\\ użytkowników>"
 
 #. type: Plain text
 #: ../man/ps.1:396
@@ -5582,7 +5608,7 @@ msgstr ""
 #: ../man/ps.1:396
 #, no-wrap
 msgid "OUTPUT FORMAT CONTROL"
-msgstr ""
+msgstr "STEROWANIE FORMATEM WYJŚCIA"
 
 #. type: Plain text
 #: ../man/ps.1:400
@@ -5598,17 +5624,14 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:405
-#, fuzzy, no-wrap
-#| msgid "B<--tebi>"
+#, no-wrap
 msgid "B<--context>"
-msgstr "B<--tebi>"
+msgstr "B<--context>"
 
 #. type: Plain text
 #: ../man/ps.1:408
-#, fuzzy
-#| msgid "Display version information."
 msgid "Display security context format (for SELinux)."
-msgstr "Wyświetlenie informacji o wersji."
+msgstr "Wyświetlanie formatu kontekstu bezpieczeństwa (dla SELinuksa)."
 
 #. type: Plain text
 #: ../man/ps.1:421
@@ -5624,7 +5647,7 @@ msgstr ""
 #: ../man/ps.1:421
 #, no-wrap
 msgid "B<-F>"
-msgstr ""
+msgstr "B<-F>"
 
 #. type: Plain text
 #: ../man/ps.1:428
@@ -5635,18 +5658,18 @@ msgstr ""
 #: ../man/ps.1:428
 #, no-wrap
 msgid "B<--format>I<\\ format>"
-msgstr ""
+msgstr "B<--format>I<\\ format>"
 
 #. type: Plain text
 #: ../man/ps.1:434
 msgid "user-defined format.  Identical to B<-o> and B<o>."
-msgstr ""
+msgstr "format zdefiniowany przez użytkownika. Identyczne z B<-o> i B<o>."
 
 #. type: TP
 #: ../man/ps.1:434
 #, no-wrap
 msgid "B<j>"
-msgstr ""
+msgstr "B<j>"
 
 #. type: Plain text
 #: ../man/ps.1:437
@@ -5657,31 +5680,29 @@ msgstr ""
 #: ../man/ps.1:437
 #, no-wrap
 msgid "B<-j>"
-msgstr ""
+msgstr "B<-j>"
 
 #. type: Plain text
 #: ../man/ps.1:440
 msgid "Jobs format."
-msgstr ""
+msgstr "Format zadań."
 
 #. type: TP
 #: ../man/ps.1:440
 #, no-wrap
 msgid "B<l>"
-msgstr ""
+msgstr "B<l>"
 
 #. type: Plain text
 #: ../man/ps.1:443
-#, fuzzy
-#| msgid "Display version information."
 msgid "Display BSD long format."
-msgstr "Wyświetlenie informacji o wersji."
+msgstr "Wyświetlanie długiego formatu BSD."
 
 #. type: TP
 #: ../man/ps.1:443
 #, no-wrap
 msgid "B<-l>"
-msgstr ""
+msgstr "B<-l>"
 
 #. type: Plain text
 #: ../man/ps.1:448
@@ -5692,7 +5713,7 @@ msgstr ""
 #: ../man/ps.1:448
 #, no-wrap
 msgid "B<-M>"
-msgstr ""
+msgstr "B<-M>"
 
 #. type: Plain text
 #: ../man/ps.1:453
@@ -5703,7 +5724,7 @@ msgstr ""
 #: ../man/ps.1:453
 #, no-wrap
 msgid "B<O>I<\\ format>"
-msgstr ""
+msgstr "B<O>I<\\ format>"
 
 #. type: Plain text
 #: ../man/ps.1:471
@@ -5721,7 +5742,7 @@ msgstr ""
 #: ../man/ps.1:471
 #, no-wrap
 msgid "B<-O>I<\\ format>"
-msgstr ""
+msgstr "B<-O>I<\\ format>"
 
 #. type: Plain text
 #: ../man/ps.1:482
@@ -5735,7 +5756,7 @@ msgstr ""
 #: ../man/ps.1:482
 #, no-wrap
 msgid "B<o>I<\\ format>"
-msgstr ""
+msgstr "B<o>I<\\ format>"
 
 #. type: Plain text
 #: ../man/ps.1:488
@@ -5746,7 +5767,7 @@ msgstr ""
 #: ../man/ps.1:488
 #, no-wrap
 msgid "B<-o>I<\\ format>"
-msgstr ""
+msgstr "B<-o>I<\\ format>"
 
 #. type: Plain text
 #: ../man/ps.1:516
@@ -5772,7 +5793,7 @@ msgstr ""
 #: ../man/ps.1:516
 #, no-wrap
 msgid "B<-P>"
-msgstr ""
+msgstr "B<-P>"
 
 #. type: Plain text
 #: ../man/ps.1:519
@@ -5781,53 +5802,47 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/ps.1:522
-#, fuzzy
-#| msgid "Display version information."
 msgid "Display signal format."
-msgstr "Wyświetlenie informacji o wersji."
+msgstr "Wyświetlanie formatu sygnałów."
 
 #. type: TP
 #: ../man/ps.1:522
 #, no-wrap
 msgid "B<u>"
-msgstr ""
+msgstr "B<u>"
 
 #. type: Plain text
 #: ../man/ps.1:525
-#, fuzzy
-#| msgid "Display version information."
 msgid "Display user-oriented format."
-msgstr "Wyświetlenie informacji o wersji."
+msgstr "Wyświetlanie formatu zorientowanego na użytkowników."
 
 #. type: TP
 #: ../man/ps.1:525
 #, no-wrap
 msgid "B<v>"
-msgstr ""
+msgstr "B<v>"
 
 #. type: Plain text
 #: ../man/ps.1:528
-#, fuzzy
-#| msgid "Display version information."
 msgid "Display virtual memory format."
-msgstr "Wyświetlenie informacji o wersji."
+msgstr "Wyświetlanie formatu pamięci wirtualnej."
 
 #. type: TP
 #: ../man/ps.1:528
 #, no-wrap
 msgid "B<X>"
-msgstr ""
+msgstr "B<X>"
 
 #. type: Plain text
 #: ../man/ps.1:531
 msgid "Register format."
-msgstr ""
+msgstr "Format rejestru."
 
 #. type: TP
 #: ../man/ps.1:531
 #, no-wrap
 msgid "B<-y>"
-msgstr ""
+msgstr "B<-y>"
 
 #. type: Plain text
 #: ../man/ps.1:536
@@ -5840,7 +5855,7 @@ msgstr ""
 #: ../man/ps.1:536
 #, no-wrap
 msgid "B<Z>"
-msgstr ""
+msgstr "B<Z>"
 
 #. type: Plain text
 #: ../man/ps.1:541
@@ -5851,13 +5866,13 @@ msgstr ""
 #: ../man/ps.1:541
 #, no-wrap
 msgid "OUTPUT MODIFIERS"
-msgstr ""
+msgstr "ZMIANA WYJŚCIA"
 
 #. type: TP
 #: ../man/ps.1:542
 #, no-wrap
 msgid "B<c>"
-msgstr ""
+msgstr "B<c>"
 
 #. type: Plain text
 #: ../man/ps.1:560
@@ -5873,29 +5888,26 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:560
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<--cols>I<\\ n>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<--cols>I<\\ n>"
 
 #. type: Plain text
 #: ../man/ps.1:563 ../man/ps.1:566 ../man/ps.1:714
 msgid "Set screen width."
-msgstr ""
+msgstr "Ustawienie szerokości ekranu."
 
 #. type: TP
 #: ../man/ps.1:563
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<--columns>I<\\ n>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<--columns>I<\\ n>"
 
 #. type: TP
 #: ../man/ps.1:566
-#, fuzzy, no-wrap
-#| msgid "B<-a>, B<--active>"
+#, no-wrap
 msgid "B<--cumulative>"
-msgstr "B<-a>, B<--active>"
+msgstr "B<--cumulative>"
 
 #. type: Plain text
 #: ../man/ps.1:569
@@ -5906,7 +5918,7 @@ msgstr ""
 #: ../man/ps.1:569
 #, no-wrap
 msgid "B<-D>I<\\ format>"
-msgstr ""
+msgstr "B<-D>I<\\ format>"
 
 #. type: Plain text
 #: ../man/ps.1:575
@@ -5920,54 +5932,51 @@ msgstr ""
 #: ../man/ps.1:575
 #, no-wrap
 msgid "B<--date-format>I<\\ format>"
-msgstr ""
+msgstr "B<--date-format>I<\\ format>"
 
 #. type: Plain text
 #: ../man/ps.1:578
 msgid "Identical to B<-D>."
-msgstr ""
+msgstr "Identyczne z B<-D>."
 
 #. type: TP
 #: ../man/ps.1:578
 #, no-wrap
 msgid "B<e>"
-msgstr ""
+msgstr "B<e>"
 
 #. type: Plain text
 #: ../man/ps.1:581
-#, fuzzy
-#| msgid "Show the device format."
 msgid "Show the environment after the command."
-msgstr "Wyświetlanie w formacie urządzeń."
+msgstr "Pokazanie środowiska po poleceniu."
 
 #. type: TP
 #: ../man/ps.1:581
 #, no-wrap
 msgid "B<f>"
-msgstr ""
+msgstr "B<f>"
 
 #. type: Plain text
 #: ../man/ps.1:584
 msgid "ASCII art process hierarchy (forest)."
-msgstr ""
+msgstr "Hierarchia procesów (las) w postaci ASCII art."
 
 #. type: TP
 #: ../man/ps.1:584
-#, fuzzy, no-wrap
-#| msgid "B<--peta>"
+#, no-wrap
 msgid "B<--forest>"
-msgstr "B<--peta>"
+msgstr "B<--forest>"
 
 #. type: Plain text
 #: ../man/ps.1:587
 msgid "ASCII art process tree."
-msgstr ""
+msgstr "Drzewo procesów w postaci ASCII art."
 
 #. type: TP
 #: ../man/ps.1:587
 #, no-wrap
 msgid "B<h>"
-msgstr ""
+msgstr "B<h>"
 
 #. type: Plain text
 #: ../man/ps.1:605
@@ -5987,19 +5996,18 @@ msgstr ""
 #: ../man/ps.1:605
 #, no-wrap
 msgid "B<-H>"
-msgstr ""
+msgstr "B<-H>"
 
 #. type: Plain text
 #: ../man/ps.1:608
 msgid "Show process hierarchy (forest)."
-msgstr ""
+msgstr "Pokazanie hierarchii procesów (lasu)."
 
 #. type: TP
 #: ../man/ps.1:608
-#, fuzzy, no-wrap
-#| msgid "B<--help>"
+#, no-wrap
 msgid "B<--headers>"
-msgstr "B<--help>"
+msgstr "B<--headers>"
 
 #. type: Plain text
 #: ../man/ps.1:611
@@ -6010,7 +6018,7 @@ msgstr ""
 #: ../man/ps.1:611
 #, no-wrap
 msgid "B<k>I<\\ spec>"
-msgstr ""
+msgstr "B<k>I<\\ spec>"
 
 #. type: Plain text
 #: ../man/ps.1:623
@@ -6024,40 +6032,39 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:626
 msgid "Examples:"
-msgstr ""
+msgstr "Przykłady:"
 
 #. type: Plain text
 #: ../man/ps.1:628
 msgid "B<ps jaxkuid,-ppid,+pid>"
-msgstr ""
+msgstr "B<ps jaxkuid,-ppid,+pid>"
 
 #. type: Plain text
 #: ../man/ps.1:630
 msgid "B<ps axk comm o comm,args>"
-msgstr ""
+msgstr "B<ps axk comm o comm,args>"
 
 #. type: Plain text
 #: ../man/ps.1:632
 msgid "B<ps kstart_time -ef>"
-msgstr ""
+msgstr "B<ps kstart_time -ef>"
 
 #. type: TP
 #: ../man/ps.1:633
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<--lines>I<\\ n>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<--lines>I<\\ n>"
 
 #. type: Plain text
 #: ../man/ps.1:636 ../man/ps.1:680
 msgid "Set screen height."
-msgstr ""
+msgstr "Ustawienie wysokości ekranu."
 
 #. type: TP
 #: ../man/ps.1:636
 #, no-wrap
 msgid "B<n>"
-msgstr ""
+msgstr "B<n>"
 
 #. type: Plain text
 #: ../man/ps.1:639
@@ -6066,10 +6073,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:639
-#, fuzzy, no-wrap
-#| msgid "B<-n>, B<--one-header>"
+#, no-wrap
 msgid "B<--no-headers>"
-msgstr "B<-n>, B<--one-header>"
+msgstr "B<--no-headers>"
 
 #. type: Plain text
 #: ../man/ps.1:644
@@ -6081,7 +6087,7 @@ msgstr ""
 #: ../man/ps.1:644
 #, no-wrap
 msgid "B<O>I<\\ order>"
-msgstr ""
+msgstr "B<O>I<\\ kolejność>"
 
 #. type: Plain text
 #: ../man/ps.1:658
@@ -6108,16 +6114,15 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:677
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<--rows>I<\\ n>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<--rows>I<\\ n>"
 
 #. type: TP
 #: ../man/ps.1:680
 #, no-wrap
 msgid "B<S>"
-msgstr ""
+msgstr "B<S>"
 
 #. type: Plain text
 #: ../man/ps.1:685
@@ -6129,10 +6134,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:685
-#, fuzzy, no-wrap
-#| msgid "B<--ns >I<pid>"
+#, no-wrap
 msgid "B<--sort>I<\\ spec>"
-msgstr "B<--ns >I<pid>"
+msgstr "B<--sort>I<\\ spec>"
 
 #. type: Plain text
 #: ../man/ps.1:699
@@ -6146,10 +6150,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:699
-#, fuzzy, no-wrap
-#| msgid "B<--giga>"
+#, no-wrap
 msgid "B<--signames>"
-msgstr "B<--giga>"
+msgstr "B<--signames>"
 
 #. type: Plain text
 #: ../man/ps.1:705
@@ -6163,7 +6166,7 @@ msgstr ""
 #: ../man/ps.1:705
 #, no-wrap
 msgid "B<w>"
-msgstr ""
+msgstr "B<w>"
 
 #. type: Plain text
 #: ../man/ps.1:708 ../man/ps.1:711
@@ -6174,19 +6177,19 @@ msgstr ""
 #: ../man/ps.1:711
 #, no-wrap
 msgid "B<--width>I<\\ n>"
-msgstr ""
+msgstr "B<--width>I<\\ n>"
 
 #. type: SH
 #: ../man/ps.1:714
 #, no-wrap
 msgid "THREAD DISPLAY"
-msgstr ""
+msgstr "WYŚWIETLANIE WĄTKÓW"
 
 #. type: TP
 #: ../man/ps.1:715
 #, no-wrap
 msgid "B<H>"
-msgstr ""
+msgstr "B<H>"
 
 #. type: Plain text
 #: ../man/ps.1:718
@@ -6202,7 +6205,7 @@ msgstr ""
 #: ../man/ps.1:721
 #, no-wrap
 msgid "B<m>"
-msgstr ""
+msgstr "B<m>"
 
 #. type: Plain text
 #: ../man/ps.1:724 ../man/ps.1:727
@@ -6213,13 +6216,13 @@ msgstr ""
 #: ../man/ps.1:724
 #, no-wrap
 msgid "B<-m>"
-msgstr ""
+msgstr "B<-m>"
 
 #. type: TP
 #: ../man/ps.1:727
 #, no-wrap
 msgid "B<-T>"
-msgstr ""
+msgstr "B<-T>"
 
 #. type: Plain text
 #: ../man/ps.1:730
@@ -6230,14 +6233,13 @@ msgstr ""
 #: ../man/ps.1:730
 #, no-wrap
 msgid "OTHER INFORMATION"
-msgstr ""
+msgstr "INNE INFORMACJE"
 
 #. type: TP
 #: ../man/ps.1:731
-#, fuzzy, no-wrap
-#| msgid "B<--help>"
+#, no-wrap
 msgid "B<--help>I<\\ section>"
-msgstr "B<--help>"
+msgstr "B<--help>I<\\ sekcja>"
 
 #. type: Plain text
 #: ../man/ps.1:742
@@ -6250,50 +6252,48 @@ msgstr ""
 
 #. type: TP
 #: ../man/ps.1:742
-#, fuzzy, no-wrap
-#| msgid "B<--kilo>"
+#, no-wrap
 msgid "B<--info>"
-msgstr "B<--kilo>"
+msgstr "B<--info>"
 
 #. type: Plain text
 #: ../man/ps.1:745
 msgid "Print debugging info."
-msgstr ""
+msgstr "Wypisanie informacji diagnostycznych."
 
 #. type: TP
 #: ../man/ps.1:745
 #, no-wrap
 msgid "B<L>"
-msgstr ""
+msgstr "B<L>"
 
 #. type: Plain text
 #: ../man/ps.1:748
 msgid "List all format specifiers."
-msgstr ""
+msgstr "Lista wszystkich określeń formatu."
 
 #. type: TP
 #: ../man/ps.1:748
 #, no-wrap
 msgid "B<V>"
-msgstr ""
+msgstr "B<V>"
 
 #. type: Plain text
 #: ../man/ps.1:751 ../man/ps.1:754 ../man/ps.1:757
 msgid "Print the procps-ng version."
-msgstr ""
+msgstr "Wypisanie wersji procps-ng."
 
 #. type: TP
 #: ../man/ps.1:751
 #, no-wrap
 msgid "B<-V>"
-msgstr ""
+msgstr "B<-V>"
 
 #. type: TP
 #: ../man/ps.1:754
-#, fuzzy, no-wrap
-#| msgid "B<-V>, B<--version>"
+#, no-wrap
 msgid "B<--version>"
-msgstr "B<-V>, B<--version>"
+msgstr "B<--version>"
 
 #. type: Plain text
 #: ../man/ps.1:766
@@ -6353,7 +6353,7 @@ msgstr ""
 #: ../man/ps.1:799
 #, no-wrap
 msgid "PROCESS FLAGS"
-msgstr ""
+msgstr "FLAGI PROCESÓW"
 
 #. type: Plain text
 #: ../man/ps.1:804
@@ -6378,7 +6378,7 @@ msgstr ""
 #: ../man/ps.1:809
 #, no-wrap
 msgid "4"
-msgstr ""
+msgstr "4"
 
 #. type: tbl table
 #: ../man/ps.1:809
@@ -6390,7 +6390,7 @@ msgstr ""
 #: ../man/ps.1:812
 #, no-wrap
 msgid "PROCESS STATE CODES"
-msgstr ""
+msgstr "KODY STANÓW PROCESÓW"
 
 #. type: Plain text
 #: ../man/ps.1:817
@@ -6404,7 +6404,7 @@ msgstr ""
 #: ../man/ps.1:821
 #, no-wrap
 msgid "D"
-msgstr ""
+msgstr "D"
 
 #. type: tbl table
 #: ../man/ps.1:821
@@ -6414,10 +6414,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:822
-#, fuzzy, no-wrap
-#| msgid "IO"
+#, no-wrap
 msgid "I"
-msgstr "IO"
+msgstr "I"
 
 #. type: tbl table
 #: ../man/ps.1:822
@@ -6429,7 +6428,7 @@ msgstr ""
 #: ../man/ps.1:823 ../man/ps.1:896
 #, no-wrap
 msgid "R"
-msgstr ""
+msgstr "R"
 
 #. type: tbl table
 #: ../man/ps.1:823
@@ -6441,7 +6440,7 @@ msgstr ""
 #: ../man/ps.1:824 ../man/ps.1:898 ../man/ps.1:1654 ../man/ps.1:1776
 #, no-wrap
 msgid "S"
-msgstr ""
+msgstr "S"
 
 #. type: tbl table
 #: ../man/ps.1:827
@@ -6455,7 +6454,7 @@ msgstr ""
 #: ../man/ps.1:828 ../man/ps.1:900
 #, no-wrap
 msgid "T"
-msgstr ""
+msgstr "T"
 
 #. type: tbl table
 #: ../man/ps.1:828
@@ -6467,7 +6466,7 @@ msgstr ""
 #: ../man/ps.1:829 ../man/ps.1:899
 #, no-wrap
 msgid "t"
-msgstr ""
+msgstr "t"
 
 #. type: tbl table
 #: ../man/ps.1:829
@@ -6485,7 +6484,7 @@ msgstr ""
 #: ../man/ps.1:831
 #, no-wrap
 msgid "X"
-msgstr ""
+msgstr "X"
 
 #. type: tbl table
 #: ../man/ps.1:831
@@ -6497,7 +6496,7 @@ msgstr ""
 #: ../man/ps.1:832
 #, no-wrap
 msgid "Z"
-msgstr ""
+msgstr "Z"
 
 #. type: tbl table
 #: ../man/ps.1:835
@@ -6518,7 +6517,7 @@ msgstr ""
 #: ../man/ps.1:846
 #, no-wrap
 msgid "E<lt>"
-msgstr ""
+msgstr "E<lt>"
 
 #. type: tbl table
 #: ../man/ps.1:846
@@ -6530,7 +6529,7 @@ msgstr ""
 #: ../man/ps.1:847 ../man/ps.1:891
 #, no-wrap
 msgid "N"
-msgstr ""
+msgstr "N"
 
 #. type: tbl table
 #: ../man/ps.1:847
@@ -6542,7 +6541,7 @@ msgstr ""
 #: ../man/ps.1:848
 #, no-wrap
 msgid "L"
-msgstr ""
+msgstr "L"
 
 #. type: tbl table
 #: ../man/ps.1:851
@@ -6571,7 +6570,7 @@ msgstr ""
 #: ../man/ps.1:858
 #, no-wrap
 msgid "+"
-msgstr ""
+msgstr "+"
 
 #. type: tbl table
 #: ../man/ps.1:858
@@ -6583,7 +6582,7 @@ msgstr ""
 #: ../man/ps.1:861
 #, no-wrap
 msgid "OBSOLETE SORT KEYS"
-msgstr ""
+msgstr "PRZESTARZAŁE KLUCZE SORTOWANIA"
 
 #. type: Plain text
 #: ../man/ps.1:877
@@ -6602,26 +6601,25 @@ msgstr ""
 #: ../man/ps.1:879
 #, no-wrap
 msgid "B<KEY>"
-msgstr ""
+msgstr "B<KLUCZ>"
 
 #. type: tbl table
 #: ../man/ps.1:879
 #, no-wrap
 msgid "B<LONG>"
-msgstr ""
+msgstr "B<DŁUGA WERSJA>"
 
 #. type: tbl table
 #: ../man/ps.1:879
-#, fuzzy, no-wrap
-#| msgid "DESCRIPTION"
+#, no-wrap
 msgid "B<DESCRIPTION>"
-msgstr "OPIS"
+msgstr "B<OPIS>"
 
 #. type: tbl table
 #: ../man/ps.1:880 ../man/ps.1:1136
 #, no-wrap
 msgid "cmd"
-msgstr ""
+msgstr "cmd"
 
 #. type: tbl table
 #: ../man/ps.1:880
@@ -6633,13 +6631,13 @@ msgstr ""
 #: ../man/ps.1:881 ../man/ps.1:1054
 #, no-wrap
 msgid "C"
-msgstr ""
+msgstr "C"
 
 #. type: tbl table
 #: ../man/ps.1:881 ../man/ps.1:921 ../man/ps.1:1498
 #, no-wrap
 msgid "pcpu"
-msgstr ""
+msgstr "pcpu"
 
 #. type: tbl table
 #: ../man/ps.1:881
@@ -6651,13 +6649,13 @@ msgstr ""
 #: ../man/ps.1:882 ../man/ps.1:1287
 #, no-wrap
 msgid "f"
-msgstr ""
+msgstr "f"
 
 #. type: tbl table
 #: ../man/ps.1:882 ../man/ps.1:1317
 #, no-wrap
 msgid "flags"
-msgstr ""
+msgstr "flags"
 
 #. type: tbl table
 #: ../man/ps.1:882
@@ -6669,13 +6667,13 @@ msgstr ""
 #: ../man/ps.1:883
 #, no-wrap
 msgid "g"
-msgstr ""
+msgstr "g"
 
 #. type: tbl table
 #: ../man/ps.1:883 ../man/ps.1:1529
 #, no-wrap
 msgid "pgrp"
-msgstr ""
+msgstr "pgrp"
 
 #. type: tbl table
 #: ../man/ps.1:883
@@ -6687,13 +6685,13 @@ msgstr ""
 #: ../man/ps.1:884
 #, no-wrap
 msgid "G"
-msgstr ""
+msgstr "G"
 
 #. type: tbl table
 #: ../man/ps.1:884 ../man/ps.1:1872
 #, no-wrap
 msgid "tpgid"
-msgstr ""
+msgstr "tpgid"
 
 #. type: tbl table
 #: ../man/ps.1:884
@@ -6705,13 +6703,13 @@ msgstr ""
 #: ../man/ps.1:885
 #, no-wrap
 msgid "j"
-msgstr ""
+msgstr "j"
 
 #. type: tbl table
 #: ../man/ps.1:885
 #, no-wrap
 msgid "cutime"
-msgstr ""
+msgstr "cutime"
 
 #. type: tbl table
 #: ../man/ps.1:885
@@ -6723,13 +6721,13 @@ msgstr ""
 #: ../man/ps.1:886
 #, no-wrap
 msgid "J"
-msgstr ""
+msgstr "J"
 
 #. type: tbl table
 #: ../man/ps.1:886
 #, no-wrap
 msgid "cstime"
-msgstr ""
+msgstr "cstime"
 
 #. type: tbl table
 #: ../man/ps.1:886
@@ -6741,13 +6739,13 @@ msgstr ""
 #: ../man/ps.1:887
 #, no-wrap
 msgid "k"
-msgstr ""
+msgstr "k"
 
 #. type: tbl table
 #: ../man/ps.1:887
 #, no-wrap
 msgid "utime"
-msgstr ""
+msgstr "utime"
 
 #. type: tbl table
 #: ../man/ps.1:887
@@ -6759,13 +6757,13 @@ msgstr ""
 #: ../man/ps.1:888
 #, no-wrap
 msgid "m"
-msgstr ""
+msgstr "m"
 
 #. type: tbl table
 #: ../man/ps.1:888 ../man/ps.1:1421
 #, no-wrap
 msgid "min_flt"
-msgstr ""
+msgstr "min_flt"
 
 #. type: tbl table
 #: ../man/ps.1:888
@@ -6777,13 +6775,13 @@ msgstr ""
 #: ../man/ps.1:889
 #, no-wrap
 msgid "M"
-msgstr ""
+msgstr "M"
 
 #. type: tbl table
 #: ../man/ps.1:889 ../man/ps.1:1417
 #, no-wrap
 msgid "maj_flt"
-msgstr ""
+msgstr "maj_flt"
 
 #. type: tbl table
 #: ../man/ps.1:889
@@ -6795,7 +6793,7 @@ msgstr ""
 #: ../man/ps.1:890
 #, no-wrap
 msgid "cmin_flt"
-msgstr ""
+msgstr "cmin_flt"
 
 #. type: tbl table
 #: ../man/ps.1:890
@@ -6807,7 +6805,7 @@ msgstr ""
 #: ../man/ps.1:891
 #, no-wrap
 msgid "cmaj_flt"
-msgstr ""
+msgstr "cmaj_flt"
 
 #. type: tbl table
 #: ../man/ps.1:891
@@ -6819,56 +6817,55 @@ msgstr ""
 #: ../man/ps.1:892
 #, no-wrap
 msgid "session"
-msgstr ""
+msgstr "session"
 
 #. type: tbl table
 #: ../man/ps.1:892
 #, no-wrap
 msgid "session ID"
-msgstr ""
+msgstr "identyfikator sesji"
 
 #. type: tbl table
 #: ../man/ps.1:893 ../man/ps.1:929 ../man/ps.1:1536
 #, no-wrap
 msgid "pid"
-msgstr ""
+msgstr "pid"
 
 #. type: tbl table
 #: ../man/ps.1:893
-#, fuzzy, no-wrap
-#| msgid "procps-ng "
+#, no-wrap
 msgid "process ID"
-msgstr "procps-ng "
+msgstr "identyfikator procesu"
 
 #. type: tbl table
 #: ../man/ps.1:894 ../man/ps.1:1680
 #, no-wrap
 msgid "P"
-msgstr ""
+msgstr "P"
 
 #. type: tbl table
 #: ../man/ps.1:894 ../man/ps.1:923 ../man/ps.1:1580
 #, no-wrap
 msgid "ppid"
-msgstr ""
+msgstr "ppid"
 
 #. type: tbl table
 #: ../man/ps.1:894
 #, no-wrap
 msgid "parent process ID"
-msgstr ""
+msgstr "identyfikator procesu rodzica"
 
 #. type: tbl table
 #: ../man/ps.1:895
 #, no-wrap
 msgid "r"
-msgstr ""
+msgstr "r"
 
 #. type: tbl table
 #: ../man/ps.1:895 ../man/ps.1:1621
 #, no-wrap
 msgid "rss"
-msgstr ""
+msgstr "rss"
 
 #. type: tbl table
 #: ../man/ps.1:895
@@ -6880,7 +6877,7 @@ msgstr ""
 #: ../man/ps.1:896
 #, no-wrap
 msgid "resident"
-msgstr ""
+msgstr "resident"
 
 #. type: tbl table
 #: ../man/ps.1:896
@@ -6892,32 +6889,32 @@ msgstr ""
 #: ../man/ps.1:897 ../man/ps.1:1730
 #, no-wrap
 msgid "size"
-msgstr ""
+msgstr "size"
 
 #. type: tbl table
 #: ../man/ps.1:897
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "memory size in kilobytes"
 msgid "memory size in kibibytes"
-msgstr ""
+msgstr "rozmiar pamięci w kilobajtach"
 
 #. type: tbl table
 #: ../man/ps.1:898
-#, fuzzy, no-wrap
-#| msgid "B<shared>"
+#, no-wrap
 msgid "share"
-msgstr "B<dzielone>"
+msgstr "share"
 
 #. type: tbl table
 #: ../man/ps.1:898
 #, no-wrap
 msgid "amount of shared pages"
-msgstr ""
+msgstr "liczba współdzielonych stron"
 
 #. type: tbl table
 #: ../man/ps.1:899 ../man/ps.1:934 ../man/ps.1:1887
 #, no-wrap
 msgid "tty"
-msgstr ""
+msgstr "tty"
 
 #. type: tbl table
 #: ../man/ps.1:899
@@ -6929,49 +6926,49 @@ msgstr ""
 #: ../man/ps.1:900 ../man/ps.1:1759
 #, no-wrap
 msgid "start_time"
-msgstr ""
+msgstr "start_time"
 
 #. type: tbl table
 #: ../man/ps.1:900
 #, no-wrap
 msgid "time process was started"
-msgstr ""
+msgstr "czas uruchomienia procesu"
 
 #. type: tbl table
 #: ../man/ps.1:901
 #, no-wrap
 msgid "U"
-msgstr ""
+msgstr "U"
 
 #. type: tbl table
 #: ../man/ps.1:901 ../man/ps.1:1906
 #, no-wrap
 msgid "uid"
-msgstr ""
+msgstr "uid"
 
 #. type: tbl table
 #: ../man/ps.1:901
 #, no-wrap
 msgid "user ID number"
-msgstr ""
+msgstr "numer identyfikatora użytkownika"
 
 #. type: tbl table
 #: ../man/ps.1:902 ../man/ps.1:924 ../man/ps.1:1925
 #, no-wrap
 msgid "user"
-msgstr ""
+msgstr "user"
 
 #. type: tbl table
 #: ../man/ps.1:902
 #, no-wrap
 msgid "user name"
-msgstr ""
+msgstr "nazwa użytkownika"
 
 #. type: tbl table
 #: ../man/ps.1:903 ../man/ps.1:1954
 #, no-wrap
 msgid "vsize"
-msgstr ""
+msgstr "vsize"
 
 #. type: tbl table
 #: ../man/ps.1:903
@@ -6983,13 +6980,13 @@ msgstr ""
 #: ../man/ps.1:904
 #, no-wrap
 msgid "y"
-msgstr ""
+msgstr "y"
 
 #. type: tbl table
 #: ../man/ps.1:904
 #, no-wrap
 msgid "priority"
-msgstr ""
+msgstr "priority"
 
 #. type: tbl table
 #: ../man/ps.1:904
@@ -7001,7 +6998,7 @@ msgstr ""
 #: ../man/ps.1:907
 #, no-wrap
 msgid "AIX FORMAT DESCRIPTORS"
-msgstr ""
+msgstr "SPECYFIKACJE FORMATÓW AIX"
 
 #. type: Plain text
 #: ../man/ps.1:918
@@ -7015,37 +7012,37 @@ msgstr ""
 #: ../man/ps.1:920
 #, no-wrap
 msgid "B<CODE>"
-msgstr ""
+msgstr "B<KOD>"
 
 #. type: tbl table
 #: ../man/ps.1:920
 #, no-wrap
 msgid "B<NORMAL>"
-msgstr ""
+msgstr "B<NORMALNY>"
 
 #. type: tbl table
 #: ../man/ps.1:920
 #, no-wrap
 msgid "B<HEADER>"
-msgstr ""
+msgstr "B<NAGŁÓWEK>"
 
 #. type: tbl table
 #: ../man/ps.1:921
 #, no-wrap
 msgid "%C"
-msgstr ""
+msgstr "%C"
 
 #. type: tbl table
 #: ../man/ps.1:921 ../man/ps.1:965 ../man/ps.1:1498
 #, no-wrap
 msgid "%CPU"
-msgstr ""
+msgstr "%CPU"
 
 #. type: tbl table
 #: ../man/ps.1:922
 #, no-wrap
 msgid "%G"
-msgstr ""
+msgstr "%G"
 
 #. type: tbl table
 #: ../man/ps.1:922 ../man/ps.1:1346
@@ -7063,19 +7060,19 @@ msgstr ""
 #: ../man/ps.1:923
 #, no-wrap
 msgid "%P"
-msgstr ""
+msgstr "%P"
 
 #. type: tbl table
 #: ../man/ps.1:923 ../man/ps.1:1580
 #, no-wrap
 msgid "PPID"
-msgstr ""
+msgstr "PPID"
 
 #. type: tbl table
 #: ../man/ps.1:924
 #, no-wrap
 msgid "%U"
-msgstr ""
+msgstr "%U"
 
 #. type: tbl table
 #: ../man/ps.1:924 ../man/ps.1:1913 ../man/ps.1:1925
@@ -7087,7 +7084,7 @@ msgstr ""
 #: ../man/ps.1:925
 #, no-wrap
 msgid "%a"
-msgstr ""
+msgstr "%a"
 
 #. type: tbl table
 #: ../man/ps.1:925 ../man/ps.1:988
@@ -7100,13 +7097,13 @@ msgstr ""
 #: ../man/ps.1:1171 ../man/ps.1:1324 ../man/ps.1:1899
 #, no-wrap
 msgid "COMMAND"
-msgstr ""
+msgstr "POLECENIE"
 
 #. type: tbl table
 #: ../man/ps.1:926
 #, no-wrap
 msgid "%c"
-msgstr ""
+msgstr "%c"
 
 #. type: tbl table
 #: ../man/ps.1:926 ../man/ps.1:1143
@@ -7118,7 +7115,7 @@ msgstr ""
 #: ../man/ps.1:927
 #, no-wrap
 msgid "%g"
-msgstr ""
+msgstr "%g"
 
 #. type: tbl table
 #: ../man/ps.1:927 ../man/ps.1:1611
@@ -7136,7 +7133,7 @@ msgstr ""
 #: ../man/ps.1:928
 #, no-wrap
 msgid "%n"
-msgstr ""
+msgstr "%n"
 
 #. type: tbl table
 #: ../man/ps.1:928 ../man/ps.1:1446
@@ -7154,19 +7151,19 @@ msgstr ""
 #: ../man/ps.1:929
 #, no-wrap
 msgid "%p"
-msgstr ""
+msgstr "%p"
 
 #. type: tbl table
 #: ../man/ps.1:929 ../man/ps.1:1536
 #, no-wrap
 msgid "PID"
-msgstr ""
+msgstr "PID"
 
 #. type: tbl table
 #: ../man/ps.1:930
 #, no-wrap
 msgid "%r"
-msgstr ""
+msgstr "%r"
 
 #. type: tbl table
 #: ../man/ps.1:930 ../man/ps.1:1523
@@ -7184,7 +7181,7 @@ msgstr ""
 #: ../man/ps.1:931
 #, no-wrap
 msgid "%t"
-msgstr ""
+msgstr "%t"
 
 #. type: tbl table
 #: ../man/ps.1:931 ../man/ps.1:1254
@@ -7202,7 +7199,7 @@ msgstr ""
 #: ../man/ps.1:932
 #, no-wrap
 msgid "%u"
-msgstr ""
+msgstr "%u"
 
 #. type: tbl table
 #: ../man/ps.1:932 ../man/ps.1:1649
@@ -7220,7 +7217,7 @@ msgstr ""
 #: ../man/ps.1:933
 #, no-wrap
 msgid "%x"
-msgstr ""
+msgstr "%x"
 
 #. type: tbl table
 #: ../man/ps.1:933 ../man/ps.1:1851
@@ -7231,28 +7228,27 @@ msgstr ""
 #. type: tbl table
 #: ../man/ps.1:933 ../man/ps.1:1048 ../man/ps.1:1183 ../man/ps.1:1188
 #: ../man/ps.1:1851 ../man/ps.1:1862
-#, fuzzy, no-wrap
-#| msgid "UPTIME"
+#, no-wrap
 msgid "TIME"
-msgstr "UPTIME"
+msgstr "CZAS"
 
 #. type: tbl table
 #: ../man/ps.1:934
 #, no-wrap
 msgid "%y"
-msgstr ""
+msgstr "%y"
 
 #. type: tbl table
 #: ../man/ps.1:934 ../man/ps.1:1867
 #, no-wrap
 msgid "TTY"
-msgstr ""
+msgstr "TTY"
 
 #. type: tbl table
 #: ../man/ps.1:935
 #, no-wrap
 msgid "%z"
-msgstr ""
+msgstr "%z"
 
 #. type: tbl table
 #: ../man/ps.1:935 ../man/ps.1:1961
@@ -7270,7 +7266,7 @@ msgstr ""
 #: ../man/ps.1:937
 #, no-wrap
 msgid "STANDARD FORMAT SPECIFIERS"
-msgstr ""
+msgstr "STANDARDOWE OKREŚLENIA FORMATU"
 
 #. type: Plain text
 #: ../man/ps.1:944
@@ -7313,15 +7309,17 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:963
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "B<header>"
 msgid "Header"
-msgstr ""
+msgstr "B<nagłówek>"
 
 #. type: tbl table
 #: ../man/ps.1:963
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "B<description>"
 msgid "Description"
-msgstr ""
+msgstr "B<opis>"
 
 #. type: tbl table
 #: ../man/ps.1:964
@@ -7333,7 +7331,7 @@ msgstr ""
 #: ../man/ps.1:965
 #, no-wrap
 msgid "%cpu"
-msgstr ""
+msgstr "%cpu"
 
 #. type: tbl table
 #: ../man/ps.1:971
@@ -7350,7 +7348,7 @@ msgstr ""
 #: ../man/ps.1:973
 #, no-wrap
 msgid "%mem"
-msgstr ""
+msgstr "%mem"
 
 #. type: tbl table
 #: ../man/ps.1:973 ../man/ps.1:1547
@@ -7371,7 +7369,7 @@ msgstr ""
 #: ../man/ps.1:979
 #, no-wrap
 msgid "ag_id"
-msgstr ""
+msgstr "ag_id"
 
 #. type: tbl table
 #: ../man/ps.1:979
@@ -7391,7 +7389,7 @@ msgstr ""
 #: ../man/ps.1:984
 #, no-wrap
 msgid "ag_nice"
-msgstr ""
+msgstr "ag_nice"
 
 #. type: tbl table
 #: ../man/ps.1:984
@@ -7567,10 +7565,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1070
-#, fuzzy, no-wrap
-#| msgid "NAME"
+#, no-wrap
 msgid "CGNAME"
-msgstr "NAZWA"
+msgstr "NAZWACG"
 
 #. type: tbl table
 #: ../man/ps.1:1072
@@ -7643,7 +7640,7 @@ msgstr ""
 #: ../man/ps.1:1089 ../man/ps.1:1115 ../man/ps.1:1559
 #, no-wrap
 msgid ".in +9n\n"
-msgstr ""
+msgstr ".in +9n\n"
 
 #. type: tbl table
 #: ../man/ps.1:1091 ../man/ps.1:1117 ../man/ps.1:1561
@@ -7776,10 +7773,9 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1171
-#, fuzzy, no-wrap
-#| msgid "User Commands"
+#, no-wrap
 msgid "command"
-msgstr "Polecenia użytkownika"
+msgstr "command"
 
 #. type: tbl table
 #: ../man/ps.1:1176
@@ -7795,14 +7791,13 @@ msgstr ""
 #: ../man/ps.1:1178
 #, no-wrap
 msgid "cp"
-msgstr ""
+msgstr "cp"
 
 #. type: tbl table
 #: ../man/ps.1:1178
-#, fuzzy, no-wrap
-#| msgid "CPU"
+#, no-wrap
 msgid "CP"
-msgstr "CPU"
+msgstr "CP"
 
 #. type: tbl table
 #: ../man/ps.1:1181
@@ -7816,7 +7811,7 @@ msgstr ""
 #: ../man/ps.1:1183
 #, no-wrap
 msgid "cputime"
-msgstr ""
+msgstr "cputime"
 
 #. type: tbl table
 #: ../man/ps.1:1186
@@ -7830,7 +7825,7 @@ msgstr ""
 #: ../man/ps.1:1188
 #, no-wrap
 msgid "cputimes"
-msgstr ""
+msgstr "cputimes"
 
 #. type: tbl table
 #: ../man/ps.1:1191
@@ -7844,13 +7839,13 @@ msgstr ""
 #: ../man/ps.1:1193
 #, no-wrap
 msgid "cuc"
-msgstr ""
+msgstr "cuc"
 
 #. type: tbl table
 #: ../man/ps.1:1193
 #, no-wrap
 msgid "%CUC"
-msgstr ""
+msgstr "%CUC"
 
 #. type: tbl table
 #: ../man/ps.1:1202
@@ -7870,13 +7865,13 @@ msgstr ""
 #: ../man/ps.1:1204
 #, no-wrap
 msgid "cuu"
-msgstr ""
+msgstr "cuu"
 
 #. type: tbl table
 #: ../man/ps.1:1204
 #, no-wrap
 msgid "%CUU"
-msgstr ""
+msgstr "%CUU"
 
 #. type: tbl table
 #: ../man/ps.1:1212
@@ -7915,13 +7910,13 @@ msgstr ""
 #: ../man/ps.1:1219
 #, no-wrap
 msgid "drs"
-msgstr ""
+msgstr "drs"
 
 #. type: tbl table
 #: ../man/ps.1:1219
 #, no-wrap
 msgid "DRS"
-msgstr ""
+msgstr "DRS"
 
 #. type: tbl table
 #: ../man/ps.1:1228
@@ -7941,13 +7936,13 @@ msgstr ""
 #: ../man/ps.1:1230
 #, no-wrap
 msgid "egid"
-msgstr ""
+msgstr "egid"
 
 #. type: tbl table
 #: ../man/ps.1:1230
 #, no-wrap
 msgid "EGID"
-msgstr ""
+msgstr "EGID"
 
 #. type: tbl table
 #: ../man/ps.1:1233
@@ -7961,7 +7956,7 @@ msgstr ""
 #: ../man/ps.1:1235
 #, no-wrap
 msgid "egroup"
-msgstr ""
+msgstr "egroup"
 
 #. type: tbl table
 #: ../man/ps.1:1235
@@ -7983,13 +7978,13 @@ msgstr ""
 #: ../man/ps.1:1242
 #, no-wrap
 msgid "eip"
-msgstr ""
+msgstr "eip"
 
 #. type: tbl table
 #: ../man/ps.1:1242
 #, no-wrap
 msgid "EIP"
-msgstr ""
+msgstr "EIP"
 
 #. type: tbl table
 #: ../man/ps.1:1246
@@ -8004,13 +7999,13 @@ msgstr ""
 #: ../man/ps.1:1248
 #, no-wrap
 msgid "esp"
-msgstr ""
+msgstr "esp"
 
 #. type: tbl table
 #: ../man/ps.1:1248
 #, no-wrap
 msgid "ESP"
-msgstr ""
+msgstr "ESP"
 
 #. type: tbl table
 #: ../man/ps.1:1252
@@ -8031,7 +8026,7 @@ msgstr ""
 #: ../man/ps.1:1258
 #, no-wrap
 msgid "etimes"
-msgstr ""
+msgstr "etimes"
 
 #. type: tbl table
 #: ../man/ps.1:1260
@@ -8048,9 +8043,9 @@ msgstr ""
 #. type: tbl table
 #: ../man/ps.1:1262
 #, fuzzy, no-wrap
-#| msgid "ENVIRONMENT VARIABLE(S)"
+#| msgid "ENVIRONMENT"
 msgid "ENVIRON"
-msgstr "ZMIENNE ŚRODOWISKOWE"
+msgstr "ŚRODOWISKO"
 
 #. type: tbl table
 #: ../man/ps.1:1264
@@ -8062,13 +8057,13 @@ msgstr ""
 #: ../man/ps.1:1265
 #, no-wrap
 msgid "euid"
-msgstr ""
+msgstr "euid"
 
 #. type: tbl table
 #: ../man/ps.1:1265
 #, no-wrap
 msgid "EUID"
-msgstr ""
+msgstr "EUID"
 
 #. type: tbl table
 #: ../man/ps.1:1268
@@ -8082,7 +8077,7 @@ msgstr ""
 #: ../man/ps.1:1270
 #, no-wrap
 msgid "euser"
-msgstr ""
+msgstr "euser"
 
 #. type: tbl table
 #: ../man/ps.1:1270
@@ -8105,13 +8100,13 @@ msgstr ""
 #: ../man/ps.1:1278
 #, no-wrap
 msgid "exe"
-msgstr ""
+msgstr "exe"
 
 #. type: tbl table
 #: ../man/ps.1:1278
 #, no-wrap
 msgid "EXE"
-msgstr ""
+msgstr "EXE"
 
 #. type: tbl table
 #: ../man/ps.1:1285
@@ -8129,7 +8124,7 @@ msgstr ""
 #: ../man/ps.1:1287 ../man/ps.1:1310 ../man/ps.1:1317
 #, no-wrap
 msgid "F"
-msgstr ""
+msgstr "F"
 
 #. type: tbl table
 #: ../man/ps.1:1292
@@ -8143,15 +8138,17 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1294
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "drs"
 msgid "fds"
-msgstr ""
+msgstr "drs"
 
 #. type: tbl table
 #: ../man/ps.1:1294
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "DRS"
 msgid "FDS"
-msgstr ""
+msgstr "DRS"
 
 #. type: tbl table
 #: ../man/ps.1:1296
@@ -8163,13 +8160,13 @@ msgstr ""
 #: ../man/ps.1:1298
 #, no-wrap
 msgid "fgid"
-msgstr ""
+msgstr "fgid"
 
 #. type: tbl table
 #: ../man/ps.1:1298
 #, no-wrap
 msgid "FGID"
-msgstr ""
+msgstr "FGID"
 
 #. type: tbl table
 #: ../man/ps.1:1301
@@ -8183,7 +8180,7 @@ msgstr ""
 #: ../man/ps.1:1303
 #, no-wrap
 msgid "fgroup"
-msgstr ""
+msgstr "fgroup"
 
 #. type: tbl table
 #: ../man/ps.1:1303
@@ -8205,7 +8202,7 @@ msgstr ""
 #: ../man/ps.1:1310
 #, no-wrap
 msgid "flag"
-msgstr ""
+msgstr "flag"
 
 #. type: tbl table
 #: ../man/ps.1:1315
@@ -8231,7 +8228,7 @@ msgstr ""
 #: ../man/ps.1:1324
 #, no-wrap
 msgid "fname"
-msgstr ""
+msgstr "fname"
 
 #. type: tbl table
 #: ../man/ps.1:1327
@@ -8245,13 +8242,13 @@ msgstr ""
 #: ../man/ps.1:1329
 #, no-wrap
 msgid "fuid"
-msgstr ""
+msgstr "fuid"
 
 #. type: tbl table
 #: ../man/ps.1:1329
 #, no-wrap
 msgid "FUID"
-msgstr ""
+msgstr "FUID"
 
 #. type: tbl table
 #: ../man/ps.1:1332
@@ -8265,7 +8262,7 @@ msgstr ""
 #: ../man/ps.1:1334
 #, no-wrap
 msgid "fuser"
-msgstr ""
+msgstr "fuser"
 
 #. type: tbl table
 #: ../man/ps.1:1334
@@ -8285,13 +8282,13 @@ msgstr ""
 #: ../man/ps.1:1339
 #, no-wrap
 msgid "gid"
-msgstr ""
+msgstr "gid"
 
 #. type: tbl table
 #: ../man/ps.1:1339
 #, no-wrap
 msgid "GID"
-msgstr ""
+msgstr "GID"
 
 #. type: tbl table
 #: ../man/ps.1:1344
@@ -8357,7 +8354,7 @@ msgstr ""
 #: ../man/ps.1:1363
 #, no-wrap
 msgid "ignored"
-msgstr ""
+msgstr "ignored"
 
 #. type: tbl table
 #: ../man/ps.1:1363 ../man/ps.1:1716
@@ -8380,7 +8377,7 @@ msgstr ""
 #: ../man/ps.1:1371
 #, no-wrap
 msgid "ipcns"
-msgstr ""
+msgstr "ipcns"
 
 #. type: tbl table
 #: ../man/ps.1:1371
@@ -8392,7 +8389,7 @@ msgstr ""
 #: ../man/ps.1:1377
 #, no-wrap
 msgid "label"
-msgstr ""
+msgstr "label"
 
 #. type: tbl table
 #: ../man/ps.1:1377
@@ -8414,7 +8411,7 @@ msgstr ""
 #: ../man/ps.1:1384
 #, no-wrap
 msgid "lstart"
-msgstr ""
+msgstr "lstart"
 
 #. type: tbl table
 #: ../man/ps.1:1384 ../man/ps.1:1752
@@ -8435,7 +8432,7 @@ msgstr ""
 #: ../man/ps.1:1390
 #, no-wrap
 msgid "lsession"
-msgstr ""
+msgstr "lsession"
 
 #. type: tbl table
 #: ../man/ps.1:1390
@@ -8455,7 +8452,7 @@ msgstr ""
 #: ../man/ps.1:1395
 #, no-wrap
 msgid "luid"
-msgstr ""
+msgstr "luid"
 
 #. type: tbl table
 #: ../man/ps.1:1395
@@ -8473,7 +8470,7 @@ msgstr ""
 #: ../man/ps.1:1399
 #, no-wrap
 msgid "lwp"
-msgstr ""
+msgstr "lwp"
 
 #. type: tbl table
 #: ../man/ps.1:1399
@@ -8496,7 +8493,7 @@ msgstr ""
 #: ../man/ps.1:1407
 #, no-wrap
 msgid "lxc"
-msgstr ""
+msgstr "lxc"
 
 #. type: tbl table
 #: ../man/ps.1:1407
@@ -8516,7 +8513,7 @@ msgstr ""
 #: ../man/ps.1:1412
 #, no-wrap
 msgid "machine"
-msgstr ""
+msgstr "machine"
 
 #. type: tbl table
 #: ../man/ps.1:1412
@@ -8560,7 +8557,7 @@ msgstr ""
 #: ../man/ps.1:1425
 #, no-wrap
 msgid "mntns"
-msgstr ""
+msgstr "mntns"
 
 #. type: tbl table
 #: ../man/ps.1:1425
@@ -8572,7 +8569,7 @@ msgstr ""
 #: ../man/ps.1:1431
 #, no-wrap
 msgid "netns"
-msgstr ""
+msgstr "netns"
 
 #. type: tbl table
 #: ../man/ps.1:1431
@@ -8584,7 +8581,7 @@ msgstr ""
 #: ../man/ps.1:1437
 #, no-wrap
 msgid "ni"
-msgstr ""
+msgstr "ni"
 
 #. type: tbl table
 #: ../man/ps.1:1444
@@ -8611,7 +8608,7 @@ msgstr ""
 #: ../man/ps.1:1452
 #, no-wrap
 msgid "nlwp"
-msgstr ""
+msgstr "nlwp"
 
 #. type: tbl table
 #: ../man/ps.1:1452
@@ -8631,7 +8628,7 @@ msgstr ""
 #: ../man/ps.1:1457
 #, no-wrap
 msgid "numa"
-msgstr ""
+msgstr "numa"
 
 #. type: tbl table
 #: ../man/ps.1:1457
@@ -8651,7 +8648,7 @@ msgstr ""
 #: ../man/ps.1:1462
 #, no-wrap
 msgid "nwchan"
-msgstr ""
+msgstr "nwchan"
 
 #. type: tbl table
 #: ../man/ps.1:1462 ../man/ps.1:1975
@@ -8672,7 +8669,7 @@ msgstr ""
 #: ../man/ps.1:1468
 #, no-wrap
 msgid "oom"
-msgstr ""
+msgstr "oom"
 
 #. type: tbl table
 #: ../man/ps.1:1468
@@ -8693,7 +8690,7 @@ msgstr ""
 #: ../man/ps.1:1474
 #, no-wrap
 msgid "oomadj"
-msgstr ""
+msgstr "oomadj"
 
 #. type: tbl table
 #: ../man/ps.1:1474
@@ -8715,7 +8712,7 @@ msgstr ""
 #: ../man/ps.1:1481
 #, no-wrap
 msgid "ouid"
-msgstr ""
+msgstr "ouid"
 
 #. type: tbl table
 #: ../man/ps.1:1481
@@ -8787,7 +8784,7 @@ msgstr ""
 #: ../man/ps.1:1505
 #, no-wrap
 msgid "pending"
-msgstr ""
+msgstr "pending"
 
 #. type: tbl table
 #: ../man/ps.1:1505 ../man/ps.1:1702
@@ -8853,7 +8850,7 @@ msgstr ""
 #: ../man/ps.1:1541
 #, no-wrap
 msgid "pidns"
-msgstr ""
+msgstr "pidns"
 
 #. type: tbl table
 #: ../man/ps.1:1541
@@ -8865,7 +8862,7 @@ msgstr ""
 #: ../man/ps.1:1547
 #, no-wrap
 msgid "pmem"
-msgstr ""
+msgstr "pmem"
 
 #. type: tbl table
 #: ../man/ps.1:1552
@@ -8881,7 +8878,7 @@ msgstr ""
 #: ../man/ps.1:1554
 #, no-wrap
 msgid "policy"
-msgstr ""
+msgstr "policy"
 
 #. type: tbl table
 #: ../man/ps.1:1554
@@ -8908,7 +8905,7 @@ msgstr ""
 #: ../man/ps.1:1584
 #, no-wrap
 msgid "pri"
-msgstr ""
+msgstr "pri"
 
 #. type: tbl table
 #: ../man/ps.1:1584
@@ -8926,7 +8923,7 @@ msgstr ""
 #: ../man/ps.1:1588
 #, no-wrap
 msgid "psr"
-msgstr ""
+msgstr "psr"
 
 #. type: tbl table
 #: ../man/ps.1:1588
@@ -8944,7 +8941,7 @@ msgstr ""
 #: ../man/ps.1:1592
 #, no-wrap
 msgid "pss"
-msgstr ""
+msgstr "pss"
 
 #. type: tbl table
 #: ../man/ps.1:1592
@@ -8965,7 +8962,7 @@ msgstr ""
 #: ../man/ps.1:1598
 #, no-wrap
 msgid "rbytes"
-msgstr ""
+msgstr "rbytes"
 
 #. type: tbl table
 #: ../man/ps.1:1598
@@ -8985,7 +8982,7 @@ msgstr ""
 #: ../man/ps.1:1603
 #, no-wrap
 msgid "rchars"
-msgstr ""
+msgstr "rchars"
 
 #. type: tbl table
 #: ../man/ps.1:1603
@@ -9003,13 +9000,13 @@ msgstr ""
 #: ../man/ps.1:1607
 #, no-wrap
 msgid "rgid"
-msgstr ""
+msgstr "rgid"
 
 #. type: tbl table
 #: ../man/ps.1:1607
 #, no-wrap
 msgid "RGID"
-msgstr ""
+msgstr "RGID"
 
 #. type: tbl table
 #: ../man/ps.1:1609
@@ -9029,7 +9026,7 @@ msgstr ""
 #: ../man/ps.1:1616
 #, no-wrap
 msgid "rops"
-msgstr ""
+msgstr "rops"
 
 #. type: tbl table
 #: ../man/ps.1:1616
@@ -9064,7 +9061,7 @@ msgstr ""
 #: ../man/ps.1:1627
 #, no-wrap
 msgid "rssize"
-msgstr ""
+msgstr "rssize"
 
 #. type: tbl table
 #: ../man/ps.1:1632
@@ -9080,7 +9077,7 @@ msgstr ""
 #: ../man/ps.1:1634
 #, no-wrap
 msgid "rsz"
-msgstr ""
+msgstr "rsz"
 
 #. type: tbl table
 #: ../man/ps.1:1634
@@ -9102,7 +9099,7 @@ msgstr ""
 #: ../man/ps.1:1641
 #, no-wrap
 msgid "rtprio"
-msgstr ""
+msgstr "rtprio"
 
 #. type: tbl table
 #: ../man/ps.1:1641
@@ -9120,13 +9117,13 @@ msgstr ""
 #: ../man/ps.1:1645
 #, no-wrap
 msgid "ruid"
-msgstr ""
+msgstr "ruid"
 
 #. type: tbl table
 #: ../man/ps.1:1645
 #, no-wrap
 msgid "RUID"
-msgstr ""
+msgstr "RUID"
 
 #. type: tbl table
 #: ../man/ps.1:1647
@@ -9158,7 +9155,7 @@ msgstr ""
 #: ../man/ps.1:1663
 #, no-wrap
 msgid "sched"
-msgstr ""
+msgstr "sched"
 
 #. type: tbl table
 #: ../man/ps.1:1663
@@ -9179,7 +9176,7 @@ msgstr ""
 #: ../man/ps.1:1669
 #, no-wrap
 msgid "seat"
-msgstr ""
+msgstr "seat"
 
 #. type: tbl table
 #: ../man/ps.1:1669
@@ -9200,7 +9197,7 @@ msgstr ""
 #: ../man/ps.1:1675
 #, no-wrap
 msgid "sess"
-msgstr ""
+msgstr "sess"
 
 #. type: tbl table
 #: ../man/ps.1:1675
@@ -9220,7 +9217,7 @@ msgstr ""
 #: ../man/ps.1:1680
 #, no-wrap
 msgid "sgi_p"
-msgstr ""
+msgstr "sgi_p"
 
 #. type: tbl table
 #: ../man/ps.1:1683
@@ -9234,13 +9231,13 @@ msgstr ""
 #: ../man/ps.1:1685
 #, no-wrap
 msgid "sgid"
-msgstr ""
+msgstr "sgid"
 
 #. type: tbl table
 #: ../man/ps.1:1685
 #, no-wrap
 msgid "SGID"
-msgstr ""
+msgstr "SGID"
 
 #. type: tbl table
 #: ../man/ps.1:1688
@@ -9254,7 +9251,7 @@ msgstr ""
 #: ../man/ps.1:1690
 #, no-wrap
 msgid "sgroup"
-msgstr ""
+msgstr "sgroup"
 
 #. type: tbl table
 #: ../man/ps.1:1690
@@ -9274,13 +9271,13 @@ msgstr ""
 #: ../man/ps.1:1695
 #, no-wrap
 msgid "sid"
-msgstr ""
+msgstr "sid"
 
 #. type: tbl table
 #: ../man/ps.1:1695
 #, no-wrap
 msgid "SID"
-msgstr ""
+msgstr "SID"
 
 #. type: tbl table
 #: ../man/ps.1:1700
@@ -9296,7 +9293,7 @@ msgstr ""
 #: ../man/ps.1:1702
 #, no-wrap
 msgid "sig"
-msgstr ""
+msgstr "sig"
 
 #. type: tbl table
 #: ../man/ps.1:1707
@@ -9312,7 +9309,7 @@ msgstr ""
 #: ../man/ps.1:1709
 #, no-wrap
 msgid "sigcatch"
-msgstr ""
+msgstr "sigcatch"
 
 #. type: tbl table
 #: ../man/ps.1:1714
@@ -9328,7 +9325,7 @@ msgstr ""
 #: ../man/ps.1:1716
 #, no-wrap
 msgid "sigignore"
-msgstr ""
+msgstr "sigignore"
 
 #. type: tbl table
 #: ../man/ps.1:1721
@@ -9344,7 +9341,7 @@ msgstr ""
 #: ../man/ps.1:1723
 #, no-wrap
 msgid "sigmask"
-msgstr ""
+msgstr "sigmask"
 
 #. type: tbl table
 #: ../man/ps.1:1728
@@ -9375,7 +9372,7 @@ msgstr ""
 #: ../man/ps.1:1736
 #, no-wrap
 msgid "slice"
-msgstr ""
+msgstr "slice"
 
 #. type: tbl table
 #: ../man/ps.1:1736
@@ -9395,13 +9392,13 @@ msgstr ""
 #: ../man/ps.1:1741
 #, no-wrap
 msgid "spid"
-msgstr ""
+msgstr "spid"
 
 #. type: tbl table
 #: ../man/ps.1:1741
 #, no-wrap
 msgid "SPID"
-msgstr ""
+msgstr "SPID"
 
 #. type: tbl table
 #: ../man/ps.1:1746
@@ -9417,7 +9414,7 @@ msgstr ""
 #: ../man/ps.1:1748
 #, no-wrap
 msgid "stackp"
-msgstr ""
+msgstr "stackp"
 
 #. type: tbl table
 #: ../man/ps.1:1748
@@ -9435,7 +9432,7 @@ msgstr ""
 #: ../man/ps.1:1752
 #, no-wrap
 msgid "start"
-msgstr ""
+msgstr "start"
 
 #. type: tbl table
 #: ../man/ps.1:1757
@@ -9463,14 +9460,13 @@ msgstr ""
 #: ../man/ps.1:1768
 #, no-wrap
 msgid "stat"
-msgstr ""
+msgstr "stat"
 
 #. type: tbl table
 #: ../man/ps.1:1768
-#, fuzzy, no-wrap
-#| msgid "VMSTAT"
+#, no-wrap
 msgid "STAT"
-msgstr "VMSTAT"
+msgstr "STAT"
 
 #. type: tbl table
 #: ../man/ps.1:1774
@@ -9487,7 +9483,7 @@ msgstr ""
 #: ../man/ps.1:1776
 #, no-wrap
 msgid "state"
-msgstr ""
+msgstr "state"
 
 #. type: tbl table
 #: ../man/ps.1:1779
@@ -9501,14 +9497,13 @@ msgstr ""
 #: ../man/ps.1:1781
 #, no-wrap
 msgid "stime"
-msgstr ""
+msgstr "stime"
 
 #. type: tbl table
 #: ../man/ps.1:1781
-#, fuzzy, no-wrap
-#| msgid "UPTIME"
+#, no-wrap
 msgid "STIME"
-msgstr "UPTIME"
+msgstr "STIME"
 
 #. type: tbl table
 #: ../man/ps.1:1784
@@ -9522,13 +9517,13 @@ msgstr ""
 #: ../man/ps.1:1786
 #, no-wrap
 msgid "suid"
-msgstr ""
+msgstr "suid"
 
 #. type: tbl table
 #: ../man/ps.1:1786
 #, no-wrap
 msgid "SUID"
-msgstr ""
+msgstr "SUID"
 
 #. type: tbl table
 #: ../man/ps.1:1789
@@ -9542,13 +9537,13 @@ msgstr ""
 #: ../man/ps.1:1791
 #, no-wrap
 msgid "supgid"
-msgstr ""
+msgstr "supgid"
 
 #. type: tbl table
 #: ../man/ps.1:1791
 #, no-wrap
 msgid "SUPGID"
-msgstr ""
+msgstr "SUPGID"
 
 #. type: tbl table
 #: ../man/ps.1:1794
@@ -9562,7 +9557,7 @@ msgstr ""
 #: ../man/ps.1:1796
 #, no-wrap
 msgid "supgrp"
-msgstr ""
+msgstr "supgrp"
 
 #. type: tbl table
 #: ../man/ps.1:1796
@@ -9582,13 +9577,13 @@ msgstr ""
 #: ../man/ps.1:1801
 #, no-wrap
 msgid "suser"
-msgstr ""
+msgstr "suser"
 
 #. type: tbl table
 #: ../man/ps.1:1801
 #, no-wrap
 msgid "SUSER"
-msgstr ""
+msgstr "UŻYTK.Z."
 
 #. type: tbl table
 #: ../man/ps.1:1805
@@ -9603,13 +9598,13 @@ msgstr ""
 #: ../man/ps.1:1807
 #, no-wrap
 msgid "svgid"
-msgstr ""
+msgstr "svgid"
 
 #. type: tbl table
 #: ../man/ps.1:1807
 #, no-wrap
 msgid "SVGID"
-msgstr ""
+msgstr "SVGID"
 
 #. type: tbl table
 #: ../man/ps.1:1812
@@ -9625,13 +9620,13 @@ msgstr ""
 #: ../man/ps.1:1814
 #, no-wrap
 msgid "svuid"
-msgstr ""
+msgstr "svuid"
 
 #. type: tbl table
 #: ../man/ps.1:1814
 #, no-wrap
 msgid "SVUID"
-msgstr ""
+msgstr "SVUID"
 
 #. type: tbl table
 #: ../man/ps.1:1819
@@ -9647,13 +9642,13 @@ msgstr ""
 #: ../man/ps.1:1821
 #, no-wrap
 msgid "sz"
-msgstr ""
+msgstr "sz"
 
 #. type: tbl table
 #: ../man/ps.1:1821
 #, no-wrap
 msgid "SZ"
-msgstr ""
+msgstr "SZ"
 
 #. type: tbl table
 #: ../man/ps.1:1826
@@ -9669,13 +9664,13 @@ msgstr ""
 #: ../man/ps.1:1828
 #, no-wrap
 msgid "tgid"
-msgstr ""
+msgstr "tgid"
 
 #. type: tbl table
 #: ../man/ps.1:1828
 #, no-wrap
 msgid "TGID"
-msgstr ""
+msgstr "TGID"
 
 #. type: tbl table
 #: ../man/ps.1:1832
@@ -9688,16 +9683,15 @@ msgstr ""
 
 #. type: tbl table
 #: ../man/ps.1:1834
-#, fuzzy, no-wrap
-#| msgid "I<count>"
+#, no-wrap
 msgid "thcount"
-msgstr "I<liczba>"
+msgstr "thcount"
 
 #. type: tbl table
 #: ../man/ps.1:1834
 #, no-wrap
 msgid "THCNT"
-msgstr ""
+msgstr "THCNT"
 
 #. type: tbl table
 #: ../man/ps.1:1840
@@ -9714,13 +9708,13 @@ msgstr ""
 #: ../man/ps.1:1842
 #, no-wrap
 msgid "tid"
-msgstr ""
+msgstr "tid"
 
 #. type: tbl table
 #: ../man/ps.1:1842
 #, no-wrap
 msgid "TID"
-msgstr ""
+msgstr "TID"
 
 #. type: tbl table
 #: ../man/ps.1:1849
@@ -9746,20 +9740,19 @@ msgstr ""
 #: ../man/ps.1:1856
 #, no-wrap
 msgid "timens"
-msgstr ""
+msgstr "timens"
 
 #. type: tbl table
 #: ../man/ps.1:1856
-#, fuzzy, no-wrap
-#| msgid "UPTIME"
+#, no-wrap
 msgid "TIMENS"
-msgstr "UPTIME"
+msgstr "TIMENS"
 
 #. type: tbl table
 #: ../man/ps.1:1862
 #, no-wrap
 msgid "times"
-msgstr ""
+msgstr "times"
 
 #. type: tbl table
 #: ../man/ps.1:1865
@@ -9773,7 +9766,7 @@ msgstr ""
 #: ../man/ps.1:1867
 #, no-wrap
 msgid "tname"
-msgstr ""
+msgstr "tname"
 
 #. type: tbl table
 #: ../man/ps.1:1870
@@ -9787,7 +9780,7 @@ msgstr ""
 #: ../man/ps.1:1872
 #, no-wrap
 msgid "TPGID"
-msgstr ""
+msgstr "TPGID"
 
 #. type: tbl table
 #: ../man/ps.1:1875
@@ -9801,14 +9794,13 @@ msgstr ""
 #: ../man/ps.1:1877
 #, no-wrap
 msgid "trs"
-msgstr ""
+msgstr "trs"
 
 #. type: tbl table
 #: ../man/ps.1:1877
-#, fuzzy, no-wrap
-#| msgid "AUTHORS"
+#, no-wrap
 msgid "TRS"
-msgstr "AUTORZY"
+msgstr "TRS"
 
 #. type: tbl table
 #: ../man/ps.1:1880
@@ -9822,13 +9814,13 @@ msgstr ""
 #: ../man/ps.1:1882
 #, no-wrap
 msgid "tt"
-msgstr ""
+msgstr "tt"
 
 #. type: tbl table
 #: ../man/ps.1:1882 ../man/ps.1:1887
 #, no-wrap
 msgid "TT"
-msgstr ""
+msgstr "TT"
 
 #. type: tbl table
 #: ../man/ps.1:1885
@@ -9850,7 +9842,7 @@ msgstr ""
 #: ../man/ps.1:1892
 #, no-wrap
 msgid "ucmd"
-msgstr ""
+msgstr "ucmd"
 
 #. type: tbl table
 #: ../man/ps.1:1897
@@ -9866,7 +9858,7 @@ msgstr ""
 #: ../man/ps.1:1899
 #, no-wrap
 msgid "ucomm"
-msgstr ""
+msgstr "ucomm"
 
 #. type: tbl table
 #: ../man/ps.1:1904
@@ -9882,7 +9874,7 @@ msgstr ""
 #: ../man/ps.1:1906
 #, no-wrap
 msgid "UID"
-msgstr ""
+msgstr "UID"
 
 #. type: tbl table
 #: ../man/ps.1:1911
@@ -9898,7 +9890,7 @@ msgstr ""
 #: ../man/ps.1:1913
 #, no-wrap
 msgid "uname"
-msgstr ""
+msgstr "uname"
 
 #. type: tbl table
 #: ../man/ps.1:1918
@@ -9914,13 +9906,13 @@ msgstr ""
 #: ../man/ps.1:1920
 #, no-wrap
 msgid "unit"
-msgstr ""
+msgstr "unit"
 
 #. type: tbl table
 #: ../man/ps.1:1920
 #, no-wrap
 msgid "UNIT"
-msgstr ""
+msgstr "UNIT"
 
 #. type: tbl table
 #: ../man/ps.1:1923
@@ -9944,25 +9936,25 @@ msgstr ""
 #: ../man/ps.1:1932
 #, no-wrap
 msgid "userns"
-msgstr ""
+msgstr "userns"
 
 #. type: tbl table
 #: ../man/ps.1:1932
 #, no-wrap
 msgid "USERNS"
-msgstr ""
+msgstr "USERNS"
 
 #. type: tbl table
 #: ../man/ps.1:1938
 #, no-wrap
 msgid "uss"
-msgstr ""
+msgstr "uss"
 
 #. type: tbl table
 #: ../man/ps.1:1938
 #, no-wrap
 msgid "USS"
-msgstr ""
+msgstr "USS"
 
 #. type: tbl table
 #: ../man/ps.1:1941
@@ -9976,25 +9968,25 @@ msgstr ""
 #: ../man/ps.1:1943
 #, no-wrap
 msgid "utsns"
-msgstr ""
+msgstr "utsns"
 
 #. type: tbl table
 #: ../man/ps.1:1943
 #, no-wrap
 msgid "UTSNS"
-msgstr ""
+msgstr "UTSNS"
 
 #. type: tbl table
 #: ../man/ps.1:1949
 #, no-wrap
 msgid "uunit"
-msgstr ""
+msgstr "uunit"
 
 #. type: tbl table
 #: ../man/ps.1:1949
 #, no-wrap
 msgid "UUNIT"
-msgstr ""
+msgstr "UUNIT"
 
 #. type: tbl table
 #: ../man/ps.1:1952
@@ -10027,13 +10019,13 @@ msgstr ""
 #: ../man/ps.1:1967
 #, no-wrap
 msgid "wbytes"
-msgstr ""
+msgstr "wbytes"
 
 #. type: tbl table
 #: ../man/ps.1:1967
 #, no-wrap
 msgid "WBYTES"
-msgstr ""
+msgstr "WBYTES"
 
 #. type: tbl table
 #: ../man/ps.1:1969
@@ -10045,13 +10037,13 @@ msgstr ""
 #: ../man/ps.1:1971
 #, no-wrap
 msgid "wcbytes"
-msgstr ""
+msgstr "wcbytes"
 
 #. type: tbl table
 #: ../man/ps.1:1971
 #, no-wrap
 msgid "WCBYTES"
-msgstr ""
+msgstr "WCBYTES"
 
 #. type: tbl table
 #: ../man/ps.1:1973
@@ -10063,7 +10055,7 @@ msgstr ""
 #: ../man/ps.1:1975
 #, no-wrap
 msgid "wchan"
-msgstr ""
+msgstr "wchan"
 
 #. type: tbl table
 #: ../man/ps.1:1977
@@ -10075,13 +10067,13 @@ msgstr ""
 #: ../man/ps.1:1979
 #, no-wrap
 msgid "wchars"
-msgstr ""
+msgstr "wchars"
 
 #. type: tbl table
 #: ../man/ps.1:1979
 #, no-wrap
 msgid "WCHARS"
-msgstr ""
+msgstr "WCHARS"
 
 #. type: tbl table
 #: ../man/ps.1:1982
@@ -10095,13 +10087,13 @@ msgstr ""
 #: ../man/ps.1:1984
 #, no-wrap
 msgid "wops"
-msgstr ""
+msgstr "wops"
 
 #. type: tbl table
 #: ../man/ps.1:1984
 #, no-wrap
 msgid "WOPS"
-msgstr ""
+msgstr "WOPS"
 
 #. type: tbl table
 #: ../man/ps.1:1987
@@ -10113,8 +10105,7 @@ msgstr ""
 
 #. type: SH
 #: ../man/ps.1:1990
-#, fuzzy, no-wrap
-#| msgid "ENVIRONMENT VARIABLE(S)"
+#, no-wrap
 msgid "ENVIRONMENT VARIABLES"
 msgstr "ZMIENNE ŚRODOWISKOWE"
 
@@ -10137,7 +10128,7 @@ msgstr ""
 #: ../man/ps.1:1999
 #, no-wrap
 msgid "B<PS_PERSONALITY>"
-msgstr ""
+msgstr "B<PS_PERSONALITY>"
 
 #. type: Plain text
 #: ../man/ps.1:2004 ../man/ps.1:2009
@@ -10150,13 +10141,13 @@ msgstr ""
 #: ../man/ps.1:2004
 #, no-wrap
 msgid "B<CMD_ENV>"
-msgstr ""
+msgstr "B<CMD_ENV>"
 
 #. type: TP
 #: ../man/ps.1:2009
 #, no-wrap
 msgid "B<I_WANT_A_BROKEN_PS>"
-msgstr ""
+msgstr "B<I_WANT_A_BROKEN_PS>"
 
 #. type: Plain text
 #: ../man/ps.1:2012
@@ -10167,19 +10158,18 @@ msgstr ""
 #: ../man/ps.1:2012
 #, no-wrap
 msgid "B<LC_TIME>"
-msgstr ""
+msgstr "B<LC_TIME>"
 
 #. type: Plain text
 #: ../man/ps.1:2015
 msgid "Date format."
-msgstr ""
+msgstr "Format daty."
 
 #. type: TP
 #: ../man/ps.1:2015
-#, fuzzy, no-wrap
-#| msgid "LIBPROC_HIDE_KERNEL"
+#, no-wrap
 msgid "B<LIBPROC_HIDE_KERNEL>"
-msgstr "LIBPROC_HIDE_KERNEL"
+msgstr "B<LIBPROC_HIDE_KERNEL>"
 
 #. type: Plain text
 #: ../man/ps.1:2022
@@ -10193,18 +10183,18 @@ msgstr ""
 #: ../man/ps.1:2022
 #, no-wrap
 msgid "B<PS_COLORS>"
-msgstr ""
+msgstr "B<PS_COLORS>"
 
 #. type: Plain text
 #: ../man/ps.1:2025
 msgid "Not currently supported."
-msgstr ""
+msgstr "Obecnie nie obsługiwane."
 
 #. type: TP
 #: ../man/ps.1:2025
 #, no-wrap
 msgid "B<PS_FORMAT>"
-msgstr ""
+msgstr "B<PS_FORMAT>"
 
 #. type: Plain text
 #: ../man/ps.1:2036
@@ -10218,7 +10208,7 @@ msgstr ""
 #: ../man/ps.1:2036
 #, no-wrap
 msgid "B<POSIXLY_CORRECT>"
-msgstr ""
+msgstr "B<POSIXLY_CORRECT>"
 
 #. type: Plain text
 #: ../man/ps.1:2039 ../man/ps.1:2046
@@ -10229,29 +10219,29 @@ msgstr ""
 #: ../man/ps.1:2039
 #, no-wrap
 msgid "B<POSIX2>"
-msgstr ""
+msgstr "B<POSIX2>"
 
 #. type: Plain text
 #: ../man/ps.1:2043
 msgid "When set to \"on\", acts as B<POSIXLY_CORRECT>."
-msgstr ""
+msgstr "Ustawione na \"on\" działa tak samo, jak B<POSIXLY_CORRECT>."
 
 #. type: TP
 #: ../man/ps.1:2043
 #, no-wrap
 msgid "B<UNIX95>"
-msgstr ""
+msgstr "B<UNIX95>"
 
 #. type: TP
 #: ../man/ps.1:2046
 #, no-wrap
 msgid "B<_XPG>"
-msgstr ""
+msgstr "B<_XPG>"
 
 #. type: Plain text
 #: ../man/ps.1:2052
 msgid "Cancel B<CMD_ENV>=I<irix> non-standard behavior."
-msgstr ""
+msgstr "Anuluje niestandardowe zachowanie B<CMD_ENV>=I<irix>."
 
 #. type: Plain text
 #: ../man/ps.1:2060
@@ -10266,254 +10256,254 @@ msgstr ""
 #: ../man/ps.1:2060
 #, no-wrap
 msgid "PERSONALITY"
-msgstr ""
+msgstr "OSOBOWOŚĆ"
 
 #. type: tbl table
 #: ../man/ps.1:2063
 #, no-wrap
 msgid "390"
-msgstr ""
+msgstr "390"
 
 #. type: tbl table
 #: ../man/ps.1:2063
 #, no-wrap
 msgid "like the OS/390 OpenEdition B<ps>"
-msgstr ""
+msgstr "jak B<ps> z OS/390 OpenEdition"
 
 #. type: tbl table
 #: ../man/ps.1:2064
 #, no-wrap
 msgid "aix"
-msgstr ""
+msgstr "aix"
 
 #. type: tbl table
 #: ../man/ps.1:2064
 #, no-wrap
 msgid "like AIX B<ps>"
-msgstr ""
+msgstr "jak B<ps> z AIX B"
 
 #. type: tbl table
 #: ../man/ps.1:2065
 #, no-wrap
 msgid "bsd"
-msgstr ""
+msgstr "bsd"
 
 #. type: tbl table
 #: ../man/ps.1:2065
 #, no-wrap
 msgid "like FreeBSD B<ps> (totally non-standard)"
-msgstr ""
+msgstr "jak B<ps> z FreeBSD (zupełnie niestandardowe)"
 
 #. type: tbl table
 #: ../man/ps.1:2066
 #, no-wrap
 msgid "compaq"
-msgstr ""
+msgstr "compaq"
 
 #. type: tbl table
 #: ../man/ps.1:2066
 #, no-wrap
 msgid "like Digital Unix B<ps>"
-msgstr ""
+msgstr "jak B<ps> z Digital Unix"
 
 #. type: tbl table
 #: ../man/ps.1:2067
 #, no-wrap
 msgid "debian"
-msgstr ""
+msgstr "debian"
 
 #. type: tbl table
 #: ../man/ps.1:2067 ../man/ps.1:2069
 #, no-wrap
 msgid "like the old Debian B<ps>"
-msgstr ""
+msgstr "jak B<ps> ze starego Debiana"
 
 #. type: tbl table
 #: ../man/ps.1:2068
 #, no-wrap
 msgid "digital"
-msgstr ""
+msgstr "digital"
 
 #. type: tbl table
 #: ../man/ps.1:2068
 #, no-wrap
 msgid "like Tru64 (was Digital\\ Unix, was OSF/1) B<ps>"
-msgstr ""
+msgstr "jak B<ps> z Tru64 (dawniej Digital\\ Unix, dawniej OSF/1)"
 
 #. type: tbl table
 #: ../man/ps.1:2069
 #, no-wrap
 msgid "gnu"
-msgstr ""
+msgstr "gnu"
 
 #. type: tbl table
 #: ../man/ps.1:2070
 #, no-wrap
 msgid "hp"
-msgstr ""
+msgstr "hp"
 
 #. type: tbl table
 #: ../man/ps.1:2070 ../man/ps.1:2071
 #, no-wrap
 msgid "like HP-UX B<ps>"
-msgstr ""
+msgstr "jak B<ps> z HP-UX"
 
 #. type: tbl table
 #: ../man/ps.1:2071
 #, no-wrap
 msgid "hpux"
-msgstr ""
+msgstr "hpux"
 
 #. type: tbl table
 #: ../man/ps.1:2072
 #, no-wrap
 msgid "irix"
-msgstr ""
+msgstr "irix"
 
 #. type: tbl table
 #: ../man/ps.1:2072 ../man/ps.1:2079
 #, no-wrap
 msgid "like Irix B<ps>"
-msgstr ""
+msgstr "jak B<ps> z Irix"
 
 #. type: tbl table
 #: ../man/ps.1:2073
 #, no-wrap
 msgid "linux"
-msgstr ""
+msgstr "linux"
 
 #. type: tbl table
 #: ../man/ps.1:2073
 #, no-wrap
 msgid "***** B<recommended> *****"
-msgstr ""
+msgstr "***** B<zalecane> *****"
 
 #. type: tbl table
 #: ../man/ps.1:2074
 #, no-wrap
 msgid "old"
-msgstr ""
+msgstr "old"
 
 #. type: tbl table
 #: ../man/ps.1:2074
 #, no-wrap
 msgid "like the original Linux B<ps> (totally non-standard)"
-msgstr ""
+msgstr "jak oryginalne B<ps> z Linuksa (zupełnie niestandardowe)"
 
 #. type: tbl table
 #: ../man/ps.1:2075
 #, no-wrap
 msgid "os390"
-msgstr ""
+msgstr "os390"
 
 #. type: tbl table
 #: ../man/ps.1:2075 ../man/ps.1:2077
 #, no-wrap
 msgid "like OS/390 Open Edition B<ps>"
-msgstr ""
+msgstr "jak B<ps> z OS/390 Open Edition"
 
 #. type: tbl table
 #: ../man/ps.1:2076
 #, no-wrap
 msgid "posix"
-msgstr ""
+msgstr "posix"
 
 #. type: tbl table
 #: ../man/ps.1:2076 ../man/ps.1:2082 ../man/ps.1:2083 ../man/ps.1:2085
 #: ../man/ps.1:2086 ../man/ps.1:2087
 #, no-wrap
 msgid "standard"
-msgstr ""
+msgstr "standard"
 
 #. type: tbl table
 #: ../man/ps.1:2077
 #, no-wrap
 msgid "s390"
-msgstr ""
+msgstr "s390"
 
 #. type: tbl table
 #: ../man/ps.1:2078
 #, no-wrap
 msgid "sco"
-msgstr ""
+msgstr "sco"
 
 #. type: tbl table
 #: ../man/ps.1:2078
 #, no-wrap
 msgid "like SCO B<ps>"
-msgstr ""
+msgstr "jak B<ps> z SCO"
 
 #. type: tbl table
 #: ../man/ps.1:2079
 #, no-wrap
 msgid "sgi"
-msgstr ""
+msgstr "sgi"
 
 #. type: tbl table
 #: ../man/ps.1:2080
 #, no-wrap
 msgid "solaris2"
-msgstr ""
+msgstr "solaris2"
 
 #. type: tbl table
 #: ../man/ps.1:2080
 #, no-wrap
 msgid "like Solaris 2+ (SunOS 5) B<ps>"
-msgstr ""
+msgstr "jak B<ps> z Solarisa 2+ (SunOS 5)"
 
 #. type: tbl table
 #: ../man/ps.1:2081
 #, no-wrap
 msgid "sunos4"
-msgstr ""
+msgstr "sunos4"
 
 #. type: tbl table
 #: ../man/ps.1:2081
 #, no-wrap
 msgid "like SunOS 4 (Solaris 1) B<ps> (totally non-standard)"
-msgstr ""
+msgstr "jak B<ps> z SunOS 4 (Solaris 1) (zupełnie niestandardowe)"
 
 #. type: tbl table
 #: ../man/ps.1:2082
 #, no-wrap
 msgid "svr4"
-msgstr ""
+msgstr "svr4"
 
 #. type: tbl table
 #: ../man/ps.1:2083
 #, no-wrap
 msgid "sysv"
-msgstr ""
+msgstr "sysv"
 
 #. type: tbl table
 #: ../man/ps.1:2084
 #, no-wrap
 msgid "tru64"
-msgstr ""
+msgstr "tru64"
 
 #. type: tbl table
 #: ../man/ps.1:2084
 #, no-wrap
 msgid "like Tru64 (was Digital Unix, was OSF/1) B<ps>"
-msgstr ""
+msgstr "jak B<ps> z Tru64 (dawniej Digital Unix, dawniej OSF/1)"
 
 #. type: tbl table
 #: ../man/ps.1:2085
 #, no-wrap
 msgid "unix"
-msgstr ""
+msgstr "unix"
 
 #. type: tbl table
 #: ../man/ps.1:2086
 #, no-wrap
 msgid "unix95"
-msgstr ""
+msgstr "unix95"
 
 #. type: tbl table
 #: ../man/ps.1:2087
 #, no-wrap
 msgid "unix98"
-msgstr ""
+msgstr "unix98"
 
 #. type: Plain text
 #: ../man/ps.1:2095
@@ -10527,41 +10517,43 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:2102
 #, fuzzy
-#| msgid "B<ps>(1), B<slabtop>(1), B<top>(1), B<vmstat>(8)."
+#| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<strftime>(3), B<proc>(5)."
 msgid ""
 "B<pgrep>(1), B<pstree>(1), B<top>(1), B<strftime>(3), B<proc>(5), "
 "B<capabilities>(7)."
-msgstr "B<ps>(1), B<slabtop>(1), B<top>(1), B<vmstat>(8)."
+msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<strftime>(3), B<proc>(5)."
 
 #. type: Plain text
 #: ../man/ps.1:2107
+#, fuzzy
+#| msgid "This B<ps> conforms to:"
 msgid "This B<ps> conforms to the following standards."
-msgstr ""
+msgstr "Ten program B<ps> jest zgodny z:"
 
 #. type: Plain text
 #: ../man/ps.1:2110
 msgid "Version 2 of the Single Unix Specification"
-msgstr ""
+msgstr "Single Unix Specification w wersji 2"
 
 #. type: Plain text
 #: ../man/ps.1:2113
 msgid "The Open Group Technical Standard Base Specifications, Issue\\ 6"
-msgstr ""
+msgstr "The Open Group Technical Standard Base Specifications, wydanie 6"
 
 #. type: Plain text
 #: ../man/ps.1:2116
 msgid "IEEE Std 1003.1, 2004\\ Edition"
-msgstr ""
+msgstr "IEEE Std 1003.1, edycja 2004"
 
 #. type: Plain text
 #: ../man/ps.1:2119
 msgid "X/Open System Interfaces Extension [UP\\ XSI]"
-msgstr ""
+msgstr "X/Open System Interfaces Extension [UP\\ XSI]"
 
 #. type: Plain text
 #: ../man/ps.1:2122
 msgid "ISO/IEC 9945:2003"
-msgstr ""
+msgstr "ISO/IEC 9945:2003"
 
 #. type: Plain text
 #: ../man/ps.1:2149
@@ -10581,14 +10573,12 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/ps.1:2153
-#, fuzzy
-#| msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>   "
 msgid ""
 "Please send bug reports to E<.MT procps@\\:freelists.\\:org> E<.ME .> No "
 "subscription is required or suggested."
 msgstr ""
-"Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
-"UE>   "
+"Zgłoszenia błędów prosimy wysyłać na adres E<.MT procps@\\:freelists.\\:org> "
+"E<.ME .> Nie wymaga to zapisania."
 
 #.   Setup ////////////////////////////////////////////////////////////////
 #.                       Commonly used strings (for consistency) ----------
@@ -10597,27 +10587,26 @@ msgstr ""
 #: ../man/top.1:11
 #, no-wrap
 msgid "\\ --\\ "
-msgstr ""
+msgstr "\\ --\\ "
 
 #. type: ds EM
 #: ../man/top.1:12
 #, no-wrap
 msgid "B<\\ --\\ >"
-msgstr ""
+msgstr "B<\\ --\\ >"
 
 #.                            - our program name (makes great grammar)
 #. type: ds We
 #: ../man/top.1:14
 #, no-wrap
 msgid "top"
-msgstr ""
+msgstr "top"
 
 #. type: ds WE
 #: ../man/top.1:15
-#, fuzzy, no-wrap
-#| msgid "B<total>"
+#, no-wrap
 msgid "B<top>"
-msgstr "B<razem>"
+msgstr "B<top>"
 
 #.                            - other misc strs for consistent usage
 #. type: ds F
@@ -10652,10 +10641,9 @@ msgstr ""
 
 #. type: ds CF
 #: ../man/top.1:23
-#, fuzzy, no-wrap
-#| msgid "Read the configuration from I<file>"
+#, no-wrap
 msgid "configuration file"
-msgstr "Odczyt konfiguracji z I<pliku>"
+msgstr "plik konfiguracyjny"
 
 #. type: ds CG
 #: ../man/top.1:24
@@ -10834,7 +10822,7 @@ msgstr ""
 #: ../man/top.1:62
 #, no-wrap
 msgid "TOP"
-msgstr ""
+msgstr "TOP"
 
 #. type: TH
 #: ../man/top.1:62
@@ -10846,13 +10834,15 @@ msgstr ""
 #. type: Plain text
 #: ../man/top.1:70
 msgid "top - display Linux processes"
-msgstr ""
+msgstr "top - wyświetlanie procesów Linuksa"
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
 #: ../man/top.1:76
+#, fuzzy
+#| msgid "\\*(WE [options]"
 msgid "\\*(WE [I<option> .\\|.\\|.]"
-msgstr ""
+msgstr "\\*(WE [opcje]"
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
@@ -11198,10 +11188,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:306
-#, fuzzy, no-wrap
-#| msgid "B<-b>, B<--bytes>"
+#, no-wrap
 msgid "-B<b>, B<--batch>"
-msgstr "B<-b>, B<--bytes>"
+msgstr "-B<b>, B<--batch>"
 
 #. type: Plain text
 #: ../man/top.1:312
@@ -11214,10 +11203,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:313
-#, fuzzy, no-wrap
-#| msgid "B<-c>, B<--count>"
+#, no-wrap
 msgid "-B<c>, B<--cmdline-toggle>"
-msgstr "B<-c>, B<--count>"
+msgstr "-B<c>, B<--cmdline-toggle>"
 
 #. type: Plain text
 #: ../man/top.1:319
@@ -11265,14 +11253,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:341
-#, fuzzy, no-wrap
-#| msgid ""
-#| "  B = bytes\n"
-#| "  Ki = kibibyte\n"
-#| "  Mi = mebibyte\n"
-#| "  Gi = gibibyte\n"
-#| "  Ti = tebibyte\n"
-#| "  Pi = pebibyte\n"
+#, no-wrap
 msgid ""
 "   k - kibibytes\n"
 "   m - mebibytes\n"
@@ -11281,12 +11262,12 @@ msgid ""
 "   p - pebibytes\n"
 "   e - exbibytes\n"
 msgstr ""
-"  B = bajty\n"
-"  Ki = kibibajty\n"
-"  Mi = mebibajty\n"
-"  Gi = gibibajty\n"
-"  Ti = tebibajty\n"
-"  Pi = pebibajty\n"
+"   k - kibibajty\n"
+"   m - mebibajty\n"
+"   g - gibibajty\n"
+"   t - tebibajty\n"
+"   p - pebibajty\n"
+"   e - eksbibajty\n"
 
 #. type: Plain text
 #: ../man/top.1:344
@@ -11306,14 +11287,7 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:354
-#, fuzzy, no-wrap
-#| msgid ""
-#| "  B = bytes\n"
-#| "  Ki = kibibyte\n"
-#| "  Mi = mebibyte\n"
-#| "  Gi = gibibyte\n"
-#| "  Ti = tebibyte\n"
-#| "  Pi = pebibyte\n"
+#, no-wrap
 msgid ""
 "   k - kibibytes\n"
 "   m - mebibytes\n"
@@ -11321,12 +11295,11 @@ msgid ""
 "   t - tebibytes\n"
 "   p - pebibytes\n"
 msgstr ""
-"  B = bajty\n"
-"  Ki = kibibajty\n"
-"  Mi = mebibajty\n"
-"  Gi = gibibajty\n"
-"  Ti = tebibajty\n"
-"  Pi = pebibajty\n"
+"   k - kibibajty\n"
+"   m - mebibajty\n"
+"   g - gibibajty\n"
+"   t - tebibajty\n"
+"   p - pebibajty\n"
 
 #. type: Plain text
 #: ../man/top.1:357
@@ -11335,10 +11308,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:358
-#, fuzzy, no-wrap
-#| msgid "B<-c>, B<--read-rc>"
+#, no-wrap
 msgid "-B<H>, B<--threads-show>"
-msgstr "B<-c>, B<--read-rc>"
+msgstr "-B<H>, B<--threads-show>"
 
 #. type: Plain text
 #: ../man/top.1:363
@@ -11350,24 +11322,20 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:364
-#, fuzzy, no-wrap
-#| msgid "B<-h>, B<--help>"
+#, no-wrap
 msgid "-B<h>, B<--help>"
-msgstr "B<-h>, B<--help>"
+msgstr "-B<h>, B<--help>"
 
 #. type: Plain text
 #: ../man/top.1:367
-#, fuzzy
-#| msgid "Display help text and exit."
 msgid "Display usage help text, then quit."
 msgstr "Wyświetlenie tekstu pomocy i zakończenie."
 
 #. type: TP
 #: ../man/top.1:368
-#, fuzzy, no-wrap
-#| msgid "B<-w>, B<--wide>"
+#, no-wrap
 msgid "-B<i>, B<--idle-toggle>"
-msgstr "B<-w>, B<--wide>"
+msgstr "-B<i>, B<--idle-toggle>"
 
 #. type: Plain text
 #: ../man/top.1:375
@@ -11380,10 +11348,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:376
-#, fuzzy, no-wrap
-#| msgid "B<-V>, B<--version>  "
+#, no-wrap
 msgid "-B<n>, B<--iterations> = I<NUMBER>"
-msgstr "B<-V>, B<--version>  "
+msgstr "-B<n>, B<--iterations> = I<LICZBA>"
 
 #. type: Plain text
 #: ../man/top.1:380
@@ -11394,10 +11361,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:381
-#, fuzzy, no-wrap
-#| msgid "B<-a>, B<--list-full>"
+#, no-wrap
 msgid "-B<O>, B<--list-fields>"
-msgstr "B<-a>, B<--list-full>"
+msgstr "-B<O>, B<--list-fields>"
 
 #. type: Plain text
 #: ../man/top.1:387
@@ -11412,7 +11378,7 @@ msgstr ""
 #: ../man/top.1:388
 #, no-wrap
 msgid "-B<o>, B<--sort-override> = I<FIELDNAME>"
-msgstr ""
+msgstr "-B<o>, B<--sort-override> = I<NAZWA POLA>"
 
 #. type: Plain text
 #: ../man/top.1:396
@@ -11433,9 +11399,10 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:400
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "-B<p>, B<--pid> = I<PIDLIST> (as: I<1>,I<2>,I<3>, ... or -pI<1> -pI<2> -pI<3> ...)"
 msgid "-B<p>, B<--pid> = I<PIDLIST> (as: I<1>,I<2>,I<3>, .\\|.\\|. or"
-msgstr ""
+msgstr "-B<p>, B<--pid> = I<LISTA PIDÓW> (jako: I<1>,I<2>,I<3>, ... lub -pI<1> -pI<2> -pI<3> ...)"
 
 #. type: Plain text
 #: ../man/top.1:408
@@ -11477,10 +11444,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:423
-#, fuzzy, no-wrap
-#| msgid "B<-a>, B<--active>"
+#, no-wrap
 msgid "-B<S>, B<--accum-time-toggle>"
-msgstr "B<-a>, B<--active>"
+msgstr "-B<S>, B<--accum-time-toggle>"
 
 #. type: Plain text
 #: ../man/top.1:429
@@ -11493,10 +11459,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:430
-#, fuzzy, no-wrap
-#| msgid "B<-s>, B<--since>"
+#, no-wrap
 msgid "-B<s>, B<--secure-mode>"
-msgstr "B<-s>, B<--since>"
+msgstr "-B<s>, B<--secure-mode>"
 
 #. type: Plain text
 #: ../man/top.1:435
@@ -11509,7 +11474,7 @@ msgstr ""
 #: ../man/top.1:436
 #, no-wrap
 msgid "-B<U>, B<--filter-any-user> = I<USER> (as: I<number> or I<name>)"
-msgstr ""
+msgstr "-B<U>, B<--filter-any-user> = I<UŻYTKOWNIK> (jako: I<liczba> lub I<nazwa>)"
 
 #. type: Plain text
 #: ../man/top.1:441
@@ -11538,7 +11503,7 @@ msgstr ""
 #: ../man/top.1:449
 #, no-wrap
 msgid "-B<u>, B<--filter-only-euser> = I<USER> (as: I<number> or I<name>)"
-msgstr ""
+msgstr "-B<u>, B<--filter-only-euser> = I<UŻYTKOWNIK> (jako: I<liczba> lub I<nazwa>)"
 
 #. type: Plain text
 #: ../man/top.1:453
@@ -11549,24 +11514,20 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:461
-#, fuzzy, no-wrap
-#| msgid "B<-V>, B<--version>"
+#, no-wrap
 msgid "-B<V>, B<--version>"
-msgstr "B<-V>, B<--version>"
+msgstr "-B<V>, B<--version>"
 
 #. type: Plain text
 #: ../man/top.1:464
-#, fuzzy
-#| msgid "Display version information and exit."
 msgid "Display version information, then quit."
 msgstr "Wyświetlenie informacji o wersji i zakończenie."
 
 #. type: TP
 #: ../man/top.1:465
-#, fuzzy, no-wrap
-#| msgid "B<-w>, B<--wide> "
+#, no-wrap
 msgid "-B<w>, B<--width> [=I<COLUMNS>]"
-msgstr "B<-w>, B<--wide> "
+msgstr "-B<w>, B<--width> [=I<KOLUMNY>]"
 
 #. type: Plain text
 #: ../man/top.1:472
@@ -11597,10 +11558,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:482
-#, fuzzy, no-wrap
-#| msgid "B<-s>, B<--since>"
+#, no-wrap
 msgid "-B<1>, B<--single-cpu-toggle>"
-msgstr "B<-s>, B<--since>"
+msgstr "-B<1>, B<--single-cpu-toggle>"
 
 #. type: Plain text
 #: ../man/top.1:488
@@ -11811,14 +11771,6 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:600
-#, fuzzy
-#| msgid ""
-#| "Estimation of how much memory is available for starting new applications, "
-#| "without swapping. Unlike the data provided by the B<cache> or B<free> "
-#| "fields, this field takes into account page cache and also that not all "
-#| "reclaimable memory slabs will be reclaimed due to items being in use "
-#| "(MemAvailable in /proc/meminfo, available on kernels 3.14, emulated on "
-#| "kernels 2.6.27+, otherwise the same as B<free>)"
 msgid ""
 "The B<avail> number on line 2 is an estimation of \\*(MP available for "
 "starting new applications, without swapping.  Unlike the B<free> field, it "
@@ -11826,12 +11778,11 @@ msgid ""
 "is available on kernels 3.14, emulated on kernels 2.6.27+, otherwise the "
 "same as B<free>."
 msgstr ""
-"Przybliżenie, jak dużo pamięci jest dostępne do uruchamiania nowych "
-"aplikacji bez swapowania. W przeciwieństwie do danych udostępnianych w "
-"polach B<w cache> czy B<wolne>, to pole bierze pod uwagę cache stron oraz "
-"to, że nie wszystkie płyty pamięci podlegające reklamacji zostaną zwrócone "
-"(MemAvailable w /proc/meminfo, dostępne w jądrach 3.14, emulowane w jądrach "
-"2.6.27+, w innych przypadkach - to samo, co B<wolne>)"
+"Liczba B<dost.> w linii 2 to oszacowanie pamięci fizycznej dostępnej do "
+"uruchamiania nowych aplikacji bez użycia pamięci wymiany. W przeciwieństwie "
+"do pola B<wolne>, próbuje uwzględnić możliwe do uzyskania strony podręczne i "
+"płyty pamięci. Oszacowanie jest dostępne na jądrach 3.14, emulowane na "
+"2.6.27+, w przeciwnym wypadku równe polu B<wolne>."
 
 #. type: Plain text
 #: ../man/top.1:603
@@ -11883,22 +11834,27 @@ msgid ""
 "    PiB = pebibyte = 1024 TiB = 1,125,899,906,842,624 bytes\n"
 "    EiB = exbibyte = 1024 PiB = 1,152,921,504,606,846,976 bytes\n"
 msgstr ""
+"    KiB = kibibajt = 1024 bajtów\n"
+"    MiB = mebibajt = 1024 KiB = 1 048 576 bajtów\n"
+"    GiB = gibibajt = 1024 MiB = 1 073 741 824 bajtów\n"
+"    TiB = tebibajt = 1024 GiB = 1 099 511 627 776 bajtów\n"
+"    PiB = pebibajt = 1024 TiB = 1 125 899 906 842 624 bajtów\n"
+"    EiB = eksbibajt = 1024 PiB = 1 152 921 504 606 846 976 bajtów\n"
 
 #.  ----------------------------------------------------------------------
 #. type: SH
 #: ../man/top.1:631
 #, no-wrap
 msgid "3. FIELDS / Columns"
-msgstr ""
+msgstr "3. POLA / kolumny"
 
 #.  ----------------------------------------------------------------------
 #.  ......................................................................
 #. type: SS
 #: ../man/top.1:634
-#, fuzzy, no-wrap
-#| msgid "DESCRIPTION  "
+#, no-wrap
 msgid "3a. DESCRIPTIONS of Fields"
-msgstr "OPIS  "
+msgstr "3a. OPIS pól"
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
@@ -15718,10 +15674,9 @@ msgstr ""
 #.  ----------------------------------------------------------------------
 #. type: SH
 #: ../man/top.1:2586
-#, fuzzy, no-wrap
-#| msgid "FILES"
+#, no-wrap
 msgid "6. FILES"
-msgstr "PLIKI"
+msgstr "6. PLIKI"
 
 #.  ----------------------------------------------------------------------
 #. type: SS
@@ -16078,10 +16033,9 @@ msgstr ""
 #.  ----------------------------------------------------------------------
 #. type: SH
 #: ../man/top.1:2801
-#, fuzzy, no-wrap
-#| msgid "ENVIRONMENT VARIABLE(S)"
+#, no-wrap
 msgid "7. ENVIRONMENT VARIABLE(S)"
-msgstr "ZMIENNE ŚRODOWISKOWE"
+msgstr "7. ZMIENNE ŚRODOWISKOWE"
 
 #. type: Plain text
 #: ../man/top.1:2804 ../man/procps_pids.3:193
@@ -16340,10 +16294,9 @@ msgstr ""
 #.  ----------------------------------------------------------------------
 #. type: SH
 #: ../man/top.1:2940
-#, fuzzy, no-wrap
-#| msgid "BUGS"
+#, no-wrap
 msgid "9. BUGS"
-msgstr "BŁĘDY"
+msgstr "9. BŁĘDY"
 
 #.  ----------------------------------------------------------------------
 #. type: SH
@@ -16355,13 +16308,12 @@ msgstr ""
 #.  ----------------------------------------------------------------------
 #. type: Plain text
 #: ../man/top.1:2955
-#, fuzzy
-#| msgid ""
-#| "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
 msgid ""
 "B<free>(1), B<ps>(1), B<uptime>(1), B<atop>(1), B<slabtop>(1), B<vmstat>(8), "
 "B<w>(1)"
-msgstr "B<free>(1), B<iostat>(1), B<mpstat>(1), B<ps>(1), B<sar>(1), B<top>(1)"
+msgstr ""
+"B<free>(1), B<ps>(1), B<uptime>(1), B<atop>(1), B<slabtop>(1), B<vmstat>(8), "
+"B<w>(1)"
 
 #. type: TH
 #: ../man/procps.3:11
@@ -16371,9 +16323,10 @@ msgstr "PROCPS"
 
 #. type: TH
 #: ../man/procps.3:11
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "2023-01-16"
 msgid "2024-01-22"
-msgstr ""
+msgstr "2023-01-16"
 
 #. type: Plain text
 #: ../man/procps.3:17
@@ -17310,9 +17263,10 @@ msgstr "PROCPS_PIDS"
 
 #. type: TH
 #: ../man/procps_pids.3:11
-#, no-wrap
+#, fuzzy, no-wrap
+#| msgid "2021-09-15"
 msgid "2004-09-03"
-msgstr ""
+msgstr "2021-09-15"
 
 #. type: Plain text
 #: ../man/procps_pids.3:17
@@ -17727,25 +17681,68 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ msgid "E<.UR procps@freelists.org> E<.UE>"
 #~ msgstr "E<.UR procps@freelists.org> E<.UE>"
 
-#, fuzzy
-#~| msgid "B<pmap> [I<options>] I<pid> [...]"
 #~ msgid "B<kill> [options] E<lt>pidE<gt> [...]"
-#~ msgstr "B<pmap> [I<opcje>] I<pid> [...]"
+#~ msgstr "B<kill> [opcje] E<lt>pidE<gt> [...]"
 
-#, fuzzy, no-wrap
-#~| msgid "B<->I<signal>"
+#, no-wrap
+#~ msgid "B<E<lt>pidE<gt> [...]>"
+#~ msgstr "B<E<lt>pidE<gt> [...]>"
+
+#~ msgid "Send signal to every E<lt>pidE<gt> listed."
+#~ msgstr "Wysłanie sygnału do każdego podanego E<lt>pidE<gt>u."
+
+#, no-wrap
 #~ msgid "B<-E<lt>signalE<gt>>"
-#~ msgstr "B<->I<sygnał>"
+#~ msgstr "B<-E<lt>sygnałE<gt>>"
 
-#, fuzzy, no-wrap
-#~| msgid "B<->I<signal>"
+#, no-wrap
 #~ msgid "B<-s E<lt>signalE<gt>>"
-#~ msgstr "B<->I<sygnał>"
+#~ msgstr "B<-s E<lt>sygnałE<gt>>"
 
-#, fuzzy, no-wrap
-#~| msgid "B<--signal> I<signal>"
+#, no-wrap
 #~ msgid "B<--signal E<lt>signalE<gt>>"
-#~ msgstr "B<--signal> I<sygnał>"
+#~ msgstr "B<--signal E<lt>sygnałE<gt>>"
+
+#~ msgid ""
+#~ "Specify the B<signal> to be sent.  The signal can be specified by using "
+#~ "name or number.  The behavior of signals is explained in B<signal>(7)  "
+#~ "manual page."
+#~ msgstr ""
+#~ "Określenie B<sygnału> do wysłania. Sygnał może być podany za pomocą nazwy "
+#~ "lub numeru. Zachowanie sygnałów jest wyjaśnione na stronie manuala "
+#~ "B<signal>(7)."
+
+#~ msgid ""
+#~ "List signal names.  This option has optional argument, which will convert "
+#~ "signal number to signal name, or other way round."
+#~ msgstr ""
+#~ "Lista nazw sygnałów. Ta opcja ma opcjonalny argument, pozwalający "
+#~ "przekonwertować numer sygnału na nazwę lub odwrotnie."
+
+#~ msgid "Kill all processes you can kill."
+#~ msgstr "Zabicie wszystkich procesów, które uruchamiający jest w stanie."
+
+#~ msgid "Translate number 11 into a signal name."
+#~ msgstr "Przetłumaczenie numeru 11 na nazwę sygnału."
+
+#~ msgid "List the available signal choices in a nice table."
+#~ msgstr "Lista dostępnych sygnałów w ładnej tabelce."
+
+#~ msgid ""
+#~ "This command meets appropriate standards. The B<-L> flag is Linux-"
+#~ "specific."
+#~ msgstr ""
+#~ "To polecenie jest zgodne z odpowiednimi standardami. Flaga B<-L> jest "
+#~ "specyficzna dla Linuksa."
+
+#~ msgid ""
+#~ "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> wrote kill in 1999 to "
+#~ "replace a bsdutils one that was not standards compliant.  The util-linux "
+#~ "one might also work correctly."
+#~ msgstr ""
+#~ "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> napisał program kill w "
+#~ "1999 roku, aby zastąpić wersję z bsdutils, która nie była zgodna ze "
+#~ "standardami. Polecenie z pakietu util-linux także może działać poprawnie."
 
 #~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
 #~ msgstr ""
@@ -17765,13 +17762,45 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ msgstr "3"
 
 #, no-wrap
+#~ msgid "2021-03-11"
+#~ msgstr "2021-03-11"
+
+#, no-wrap
 #~ msgid "System Administration"
 #~ msgstr "Administracja systemem"
 
-#, fuzzy, no-wrap
-#~| msgid "EXAMPLES"
+#, no-wrap
+#~ msgid "SYSTEM FILE PRECEDENCE"
+#~ msgstr "PIERWSZEŃSTWO PLIKÓW SYSTEMOWYCH"
+
+#, no-wrap
+#~ msgid "DEPRECATED PARAMETERS"
+#~ msgstr "PARAMETRY PRZESTARZAŁE"
+
+#~ msgid "I</etc/sysctl.conf>"
+#~ msgstr "I</etc/sysctl.conf>"
+
+#~ msgid "E<.UR staikos@0wned.org> George Staikos E<.UE>"
+#~ msgstr "E<.UR staikos@0wned.org> George Staikos E<.UE>"
+
+#, no-wrap
+#~ msgid "File Formats"
+#~ msgstr "Formaty plików"
+
+#, no-wrap
+#~ msgid ""
+#~ "# comment\n"
+#~ "; comment\n"
+#~ msgstr ""
+#~ "# komentarz\n"
+#~ "; komentarz\n"
+
+#, no-wrap
 #~ msgid "EXAMPLE"
-#~ msgstr "PRZYKŁADY"
+#~ msgstr "PRZYKŁAD"
+
+#~ msgid "B<sysctl>(8)"
+#~ msgstr "B<sysctl>(8)"
 
 #, no-wrap
 #~ msgid "December 2012"
@@ -17786,10 +17815,74 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Greenfield E<.UE> oraz E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. "
 #~ "Johnson E<.UE>"
 
-#, fuzzy, no-wrap
-#~| msgid "August 2022"
+#, no-wrap
+#~ msgid "2023-01-15"
+#~ msgstr "2023-01-15"
+
+#, no-wrap
+#~ msgid "COMMAND-LINE OPTIONS"
+#~ msgstr "OPCJE LINII POLECEŃ"
+
+#~ msgid "Various failures."
+#~ msgstr "Różne niepowodzenia."
+
+#, no-wrap
+#~ msgid "B<4>"
+#~ msgstr "B<4>"
+
+#, no-wrap
+#~ msgid "B<5>"
+#~ msgstr "B<5>"
+
+#, no-wrap
+#~ msgid "B<7>"
+#~ msgstr "B<7>"
+
+#, no-wrap
+#~ msgid "B<8>"
+#~ msgstr "B<8>"
+
+#, no-wrap
+#~ msgid "B<other>"
+#~ msgstr "B<inny>"
+
+#~ msgid "watch -n 60 from"
+#~ msgstr "watch -n 60 from"
+
+#~ msgid "watch -d 'ls -l | fgrep joe'"
+#~ msgstr "watch -d 'ls -l | fgrep joe'"
+
+#~ msgid "watch echo $$"
+#~ msgstr "watch echo $$"
+
+#~ msgid "watch echo '$$'"
+#~ msgstr "watch echo '$$'"
+
+#~ msgid "watch echo \"'\"'$$'\"'\""
+#~ msgstr "watch echo \"'\"'$$'\"'\""
+
+#~ msgid "watch -n 10 sleep 1"
+#~ msgstr "watch -n 10 sleep 1"
+
+#, no-wrap
+#~ msgid "CODE"
+#~ msgstr "KOD"
+
+#, no-wrap
+#~ msgid "HEADER"
+#~ msgstr "NAGŁÓWEK"
+
+#, no-wrap
+#~ msgid ".sp 1\n"
+#~ msgstr ".sp 1\n"
+
+#, no-wrap
+#~ msgid "5"
+#~ msgstr "5"
+
+#, no-wrap
 #~ msgid "August 2023"
-#~ msgstr "Sierpień 2022"
+#~ msgstr "sierpień 2023"
 
 #, no-wrap
 #~ msgid "August 2022"
@@ -17802,7 +17895,6 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ msgid "B<procps>(3), B<procps_pids>(3), B<proc>(5)."
 #~ msgstr "B<procps>(3), B<procps_pids>(3), B<proc>(5)."
 
-#, no-wrap
 #~ msgid "2022-06-25"
 #~ msgstr "2022-06-25"
 
@@ -17810,23 +17902,18 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ msgstr ""
 #~ "Całkowita zainstalowana pamięć (MemTotal oraz SwapTotal w /proc/meminfo)"
 
-#, no-wrap
 #~ msgid "User Commands "
 #~ msgstr "Polecenia użytkownika "
 
-#, no-wrap
 #~ msgid "NAME "
 #~ msgstr "NAZWA "
 
-#, no-wrap
 #~ msgid "SYNOPSIS "
 #~ msgstr "SKŁADNIA "
 
-#, no-wrap
 #~ msgid "DESCRIPTION "
 #~ msgstr "OPIS "
 
-#, no-wrap
 #~ msgid "OPTIONS "
 #~ msgstr "OPCJE "
 
@@ -17837,54 +17924,42 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Określenie sygnału, jaki ma być wysłany do wszystkich pasujących "
 #~ "procesów. Może być numerem lub nazwą sygnału. (tylko B<pkill>)"
 
-#, no-wrap
 #~ msgid "B<-V>, B<--version> "
 #~ msgstr "B<-V>, B<--version> "
 
-#, no-wrap
 #~ msgid "BUGS "
 #~ msgstr "BŁĘDY "
 
-#, no-wrap
 #~ msgid "SEE ALSO "
 #~ msgstr "ZOBACZ TAKŻE "
 
-#, no-wrap
 #~ msgid "procps-ng  "
 #~ msgstr "procps-ng  "
 
-#, no-wrap
 #~ msgid "User Commands  "
 #~ msgstr "Polecenia użytkownika  "
 
-#, no-wrap
 #~ msgid "NAME  "
 #~ msgstr "NAZWA  "
 
-#, no-wrap
 #~ msgid "SYNOPSIS  "
 #~ msgstr "SKŁADNIA  "
 
-#, no-wrap
 #~ msgid "OPTIONS  "
 #~ msgstr "OPCJE  "
 
-#, no-wrap
 #~ msgid "B<-h>, B<--help> "
 #~ msgstr "B<-h>, B<--help> "
 
 #~ msgid "Display version information and exit. "
 #~ msgstr "Wyświetlenie informacji o wersji i zakończenie. "
 
-#, no-wrap
 #~ msgid "EXIT STATUS "
 #~ msgstr "KOD WYJŚCIA "
 
-#, no-wrap
 #~ msgid "SEE ALSO  "
 #~ msgstr "ZOBACZ TAKŻE  "
 
-#, no-wrap
 #~ msgid "REPORTING BUGS "
 #~ msgstr "ZGŁASZANIE BŁĘDÓW "
 
@@ -17893,47 +17968,36 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
 #~ "UE> "
 
-#, no-wrap
 #~ msgid "procps-ng   "
 #~ msgstr "procps-ng   "
 
-#, no-wrap
 #~ msgid "User Commands   "
 #~ msgstr "Polecenia użytkownika   "
 
-#, no-wrap
 #~ msgid "NAME   "
 #~ msgstr "NAZWA   "
 
-#, no-wrap
 #~ msgid "SYNOPSIS   "
 #~ msgstr "SKŁADNIA   "
 
-#, no-wrap
 #~ msgid "DESCRIPTION   "
 #~ msgstr "OPIS   "
 
-#, no-wrap
 #~ msgid "OPTIONS   "
 #~ msgstr "OPCJE   "
 
-#, no-wrap
 #~ msgid "B<-h>, B<--help>  "
 #~ msgstr "B<-h>, B<--help>  "
 
-#, no-wrap
 #~ msgid "B<-V>, B<--version>   "
 #~ msgstr "B<-V>, B<--version>   "
 
-#, no-wrap
 #~ msgid "FILES "
 #~ msgstr "PLIKI "
 
-#, no-wrap
 #~ msgid "SEE ALSO   "
 #~ msgstr "ZOBACZ TAKŻE   "
 
-#, no-wrap
 #~ msgid "REPORTING BUGS  "
 #~ msgstr "ZGŁASZANIE BŁĘDÓW  "
 
@@ -17942,38 +18006,30 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Zgłoszenia błędów prosimy wysyłać na adres E<.UR procps@freelists.org> E<."
 #~ "UE>  "
 
-#, no-wrap
 #~ msgid "2020-06-04 "
 #~ msgstr "2020-06-04 "
 
-#, no-wrap
 #~ msgid "procps-ng    "
 #~ msgstr "procps-ng    "
 
-#, no-wrap
 #~ msgid "NAME    "
 #~ msgstr "NAZWA    "
 
-#, no-wrap
 #~ msgid "SYNOPSIS    "
 #~ msgstr "SKŁADNIA    "
 
-#, no-wrap
 #~ msgid "DESCRIPTION    "
 #~ msgstr "OPIS    "
 
-#, no-wrap
 #~ msgid "OPTIONS    "
 #~ msgstr "OPCJE    "
 
-#, no-wrap
 #~ msgid "B<-V>, B<--version>    "
 #~ msgstr "B<-V>, B<--version>    "
 
 #~ msgid "Display version information and exit.  "
 #~ msgstr "Wyświetlenie informacji o wersji i zakończenie.  "
 
-#, no-wrap
 #~ msgid "B<-h>, B<--help>   "
 #~ msgstr "B<-h>, B<--help>   "
 
@@ -17983,11 +18039,9 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ msgid "These are affected by the B<--unit> option. "
 #~ msgstr "Te podlegają opcji B<--unit>. "
 
-#, no-wrap
 #~ msgid "IO "
 #~ msgstr "IO "
 
-#, no-wrap
 #~ msgid "NOTES "
 #~ msgstr "UWAGI "
 
@@ -18018,11 +18072,9 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ msgid "vmstat uses slabinfo 1.1"
 #~ msgstr "vmstat wykorzystuje slabinfo 1.1"
 
-#, no-wrap
 #~ msgid "FILES  "
 #~ msgstr "PLIKI  "
 
-#, no-wrap
 #~ msgid ""
 #~ "/proc/meminfo\n"
 #~ "/proc/stat\n"
@@ -18032,11 +18084,9 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "/proc/stat\n"
 #~ "/proc/*/stat\n"
 
-#, no-wrap
 #~ msgid "SEE ALSO    "
 #~ msgstr "ZOBACZ TAKŻE    "
 
-#, no-wrap
 #~ msgid "BUGS  "
 #~ msgstr "BŁĘDY  "
 
@@ -18047,7 +18097,6 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Nie raportuje blokowego we/wy per urządzenie ani nie liczy wywołań "
 #~ "systemowych."
 
-#, no-wrap
 #~ msgid "AUTHORS "
 #~ msgstr "AUTORZY "
 
@@ -18061,50 +18110,39 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
 #~ "UE> (dyski, płyty, partycje...)"
 
-#, no-wrap
 #~ msgid "REPORTING BUGS   "
 #~ msgstr "ZGŁASZANIE BŁĘDÓW   "
 
-#, no-wrap
 #~ msgid "NAME     "
 #~ msgstr "NAZWA     "
 
-#, no-wrap
 #~ msgid "SYNOPSIS     "
 #~ msgstr "SKŁADNIA     "
 
-#, no-wrap
 #~ msgid "DESCRIPTION     "
 #~ msgstr "OPIS     "
 
-#, no-wrap
 #~ msgid "SEE ALSO     "
 #~ msgstr "ZOBACZ TAKŻE     "
 
-#, no-wrap
 #~ msgid "August 2022 "
 #~ msgstr "Sierpień 2022 "
 
-#, no-wrap
 #~ msgid "libproc2 "
 #~ msgstr "libproc2 "
 
-#, no-wrap
 #~ msgid "NAME      "
 #~ msgstr "NAZWA      "
 
-#, no-wrap
 #~ msgid "SYNOPSIS      "
 #~ msgstr "SKŁADNIA      "
 
 #~ msgid "Link with I<-lproc2>. "
 #~ msgstr "Konsolidować z I<-lproc2>. "
 
-#, no-wrap
 #~ msgid "DESCRIPTION      "
 #~ msgstr "OPIS      "
 
-#, no-wrap
 #~ msgid "Overview "
 #~ msgstr "Przegląd "
 
@@ -18120,7 +18158,6 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "długości, którego zawartość i porządek są określane wyłącznie przez "
 #~ "użytkownika. "
 
-#, no-wrap
 #~ msgid "Usage "
 #~ msgstr "Użycie "
 
@@ -18137,7 +18174,6 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "zakodowane od 0 do numitems-1. Zwykle jednak tę potrzebę zaspokaja się "
 #~ "tworząc własne enumeratory odpowiadające kolejności tablicy `items'. "
 
-#, no-wrap
 #~ msgid "Caveats "
 #~ msgstr "Zastrzeżenia "
 
@@ -18152,11 +18188,9 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "przypadku B<unref> zostanie ustawiony na NULL, jeśli licznik odwołań "
 #~ "osiągnie zero."
 
-#, no-wrap
 #~ msgid "RETURN VALUE "
 #~ msgstr "WARTOŚĆ ZWRACANA "
 
-#, no-wrap
 #~ msgid "Functions Returning an `int' "
 #~ msgstr "Funkcje zwracające `int' "
 
@@ -18174,7 +18208,6 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Sukces jest oznaczany wartością zerową. Jednak funkcje B<ref> i B<unref> "
 #~ "zwracają bieżący licznik odwołań struktury I<info>."
 
-#, no-wrap
 #~ msgid "Functions Returning an `address' "
 #~ msgstr "Funkcje zwracające adres "
 
@@ -18185,7 +18218,6 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Błąd jest oznaczany zwracanym wskaźnikiem NULL, a powód można znaleźć w "
 #~ "wartości errno. "
 
-#, no-wrap
 #~ msgid "DEBUGGING "
 #~ msgstr "DIAGNOSTYKA "
 
@@ -18196,11 +18228,9 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Tę opcję można włączyć w jeden z poniższych sposobów, a wszystkie "
 #~ "niezgodności będą wypisane na B<stderr>. "
 
-#, no-wrap
 #~ msgid "1) "
 #~ msgstr "1) "
 
-#, no-wrap
 #~ msgid "2) "
 #~ msgstr "2) "
 
@@ -18211,31 +18241,24 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Ta opcja weryfikacji dodaje istotny narzut. W związku z tym ważne jest, "
 #~ "żeby I<nie> była włączona w binariach produkcyjnych."
 
-#, no-wrap
 #~ msgid "SEE ALSO      "
 #~ msgstr "ZOBACZ TAKŻE      "
 
-#, no-wrap
 #~ msgid "August 2022  "
 #~ msgstr "Sierpień 2022  "
 
-#, no-wrap
 #~ msgid "libproc2  "
 #~ msgstr "libproc2  "
 
-#, no-wrap
 #~ msgid "NAME       "
 #~ msgstr "NAZWA       "
 
-#, no-wrap
 #~ msgid "SYNOPSIS       "
 #~ msgstr "SKŁADNIA       "
 
-#, no-wrap
 #~ msgid "DESCRIPTION       "
 #~ msgstr "OPIS       "
 
-#, no-wrap
 #~ msgid "RETURN VALUE  "
 #~ msgstr "WARTOŚĆ ZWRACANA  "
 
@@ -18246,7 +18269,6 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Błąd jest oznaczany poprzez liczbę ujemną, będącą liczbą przeciwną do "
 #~ "znanej wartości errno.h.  "
 
-#, no-wrap
 #~ msgid "Functions Returning an `address'  "
 #~ msgstr "Funkcje zwracające adres  "
 
@@ -18257,10 +18279,8 @@ msgstr "B<procps>(3), B<procps_misc>(3), B<proc>(5)."
 #~ "Błąd jest oznaczany zwracanym wskaźnikiem NULL, a powód można znaleźć w "
 #~ "wartości errno.  "
 
-#, no-wrap
 #~ msgid "FILES   "
 #~ msgstr "PLIKI   "
 
-#, no-wrap
 #~ msgid "SEE ALSO       "
 #~ msgstr "ZOBACZ TAKŻE       "

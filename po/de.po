@@ -2,13 +2,13 @@
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Mario Blättermann <mario.blaettermann@gmail.com>, 2014, 2017, 2019, 2021, 2023.
+# Mario Blättermann <mario.blaettermann@gmail.com>, 2014, 2017, 2019, 2021, 2023-2024. 
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.4-rc1\n"
+"Project-Id-Version: procps-ng-4.0.5rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2024-12-03 17:42+1100\n"
-"PO-Revision-Date: 2023-08-20 16:58+0200\n"
+"PO-Revision-Date: 2024-12-12 17:36+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Lokalize 23.04.3\n"
+"X-Generator: Lokalize 24.08.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: local/fileutils.c:36
@@ -145,22 +145,20 @@ msgstr "Meminfo-Struktur konnte nicht angelegt werden"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:316
-#, fuzzy
 msgid "SwapUse"
-msgstr "Swap"
+msgstr "SwapNutz"
 
 #: src/free.c:317
-#, fuzzy
 msgid "CachUse"
-msgstr "Cache"
+msgstr "CachNutz"
 
 #: src/free.c:319
 msgid " MemUse"
-msgstr ""
+msgstr "SpeichNutz"
 
 #: src/free.c:320
 msgid "MemFree"
-msgstr ""
+msgstr "SpeichFrei"
 
 #: src/free.c:330
 #, c-format
@@ -221,7 +219,6 @@ msgid " -o, --once          only display once, then exit\n"
 msgstr " -o, --once          nur einmal anzeigen, dann beenden\n"
 
 #: src/hugetop.c:410
-#, fuzzy
 msgid " -H, --human         display human-readable output\n"
 msgstr " -h, --human         menschenlesbare Ausgabe\n"
 
@@ -468,13 +465,12 @@ msgid "Unable to create pid info structure"
 msgstr "PID-Informationsstruktur konnte nicht angelegt werden"
 
 #: src/pgrep.c:364
-#, fuzzy
 msgid "Unable to open pidfile"
-msgstr "Systemlaufzeit konnte nicht ermittelt werden"
+msgstr "PID-Datei konnte nicht geöffnet werden"
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
-msgstr ""
+msgstr "Überprüfung auf Sperre für PID-Datei ist fehlgeschlagen"
 
 #: src/pgrep.c:401
 #, c-format
@@ -1514,7 +1510,7 @@ msgstr ""
 
 #: src/ps/parser.c:499
 msgid "list of zones (contexts, labels, whatever?) must follow -z"
-msgstr ""
+msgstr "Zonenliste (Kontexte, Labels, usw.) muss -z folgen"
 
 #: src/ps/parser.c:506
 msgid "embedded '-' among SysV options makes no sense"
@@ -1716,7 +1712,7 @@ msgstr "unbekannter AIX-Felddeskriptor"
 
 #: src/ps/sortformat.c:177
 msgid "AIX field descriptor processing bug"
-msgstr ""
+msgstr "Fehler in der Verarbeitung des AIX-Felddeskriptors"
 
 #: src/ps/sortformat.c:287
 #, c-format
@@ -1849,7 +1845,7 @@ msgstr "ungültige Prozess‐ID: %s"
 
 #: src/skill.c:285
 msgid "Unable to create pid Pids_info structure"
-msgstr ""
+msgstr "Pids_info-Struktur für PID konnte nicht erzeugt werden"
 
 #: src/skill.c:288 src/w.c:410
 msgid "Unable to load process information"
@@ -1937,7 +1933,6 @@ msgstr ""
 "                           <PID> gehören\n"
 
 #: src/skill.c:345
-#, fuzzy
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are:\n"
@@ -1945,7 +1940,7 @@ msgid ""
 msgstr ""
 " --nslist <ns, …>         listet die Namensräume auf, die für die Option\n"
 "                           --ns verwendet werden; verfügbare Namensräume "
-"sind\n"
+"sind:\n"
 "                           ipc, mnt, net, pid, user, uts\n"
 
 #: src/skill.c:355
@@ -2016,9 +2011,8 @@ msgid "skill: \"%s\" is not supported\n"
 msgstr "skill: »%s« wird nicht unterstützt\n"
 
 #: src/slabtop.c:112
-#, fuzzy
 msgid " --human             show human-readable output\n"
-msgstr " -h, --human         menschenlesbare Ausgabe\n"
+msgstr " --human             menschenlesbare Ausgabe anzeigen\n"
 
 #: src/slabtop.c:113
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
@@ -2115,16 +2109,15 @@ msgstr ""
 
 #: src/slabtop.c:326 src/vmstat.c:797
 msgid "Unable to create slabinfo structure"
-msgstr ""
+msgstr "Slabinfo-Struktur kann nicht erzeugt werden"
 
 #: src/slabtop.c:347 src/vmstat.c:804
 msgid "Unable to get slabinfo node data"
-msgstr ""
+msgstr "Slabinfo-Knotendaten können nicht ermittelt werden"
 
 #: src/slabtop.c:353 src/vmstat.c:806
-#, fuzzy
 msgid "Unable to sort slab nodes"
-msgstr "Prozess kann nicht geforkt werden"
+msgstr "Slab-Knoten können nicht sortiert werden"
 
 #: src/sysctl.c:125
 #, c-format
@@ -2249,7 +2242,7 @@ msgstr "Verzeichnis »%s« kann nicht geöffnet werden"
 
 #: src/sysctl.c:579
 msgid "strdup key"
-msgstr ""
+msgstr "strdup-Schlüssel"
 
 #: src/sysctl.c:586 src/sysctl.c:593 src/sysctl.c:626
 #, c-format
@@ -2650,7 +2643,7 @@ msgstr "nMaj"
 
 #: src/top/top_nls.c:219
 msgid "Major Page Faults"
-msgstr ""
+msgstr "Größere Seitenfehler"
 
 #. Translation Hint: maximum 'nMin' = 4
 #: src/top/top_nls.c:221
@@ -2659,7 +2652,7 @@ msgstr "nMin"
 
 #: src/top/top_nls.c:222
 msgid "Minor Page Faults"
-msgstr ""
+msgstr "Kleinere Seitenfehler"
 
 #. Translation Hint: maximum 'nDRT' = 4
 #: src/top/top_nls.c:224
@@ -2918,17 +2911,16 @@ msgstr "Zuletzt benutzter NUMA-Node"
 #. Translation Hint: maximum 'LOGID' = 5 +
 #: src/top/top_nls.c:310
 msgid "LOGID"
-msgstr ""
+msgstr "LOGID"
 
 #: src/top/top_nls.c:311
-#, fuzzy
 msgid "Login User Id"
-msgstr "Reale Benutzer‐ID"
+msgstr "Anmelde-Benutzer‐ID"
 
 #. Translation Hint: maximum 'EXE' = variable
 #: src/top/top_nls.c:313
 msgid "EXE"
-msgstr ""
+msgstr "EXE"
 
 #: src/top/top_nls.c:314
 msgid "Executable Path"
@@ -2950,7 +2942,7 @@ msgstr ""
 #. Translation Hint: maximum 'PSan' = 6
 #: src/top/top_nls.c:325
 msgid "PSan"
-msgstr ""
+msgstr "PSan"
 
 #: src/top/top_nls.c:326
 msgid "Proportion Anon, KiB"
@@ -2959,7 +2951,7 @@ msgstr ""
 #. Translation Hint: maximum 'PSfd' = 6
 #: src/top/top_nls.c:328
 msgid "PSfd"
-msgstr ""
+msgstr "PSfd"
 
 #: src/top/top_nls.c:329
 msgid "Proportion File, KiB"
@@ -2968,7 +2960,7 @@ msgstr ""
 #. Translation Hint: maximum 'PSsh' = 6
 #: src/top/top_nls.c:331
 msgid "PSsh"
-msgstr ""
+msgstr "PSsh"
 
 #: src/top/top_nls.c:332
 msgid "Proportion Shrd, KiB"
@@ -3026,7 +3018,7 @@ msgstr "AGID"
 
 #: src/top/top_nls.c:350
 msgid "Autogroup Identifier"
-msgstr ""
+msgstr "Autogroup-Bezeichner"
 
 #. Translation Hint: maximum 'AGNI' = 4
 #: src/top/top_nls.c:352
@@ -3034,14 +3026,13 @@ msgid "AGNI"
 msgstr "AGNI"
 
 #: src/top/top_nls.c:353
-#, fuzzy
 msgid "Autogroup Nice Value"
-msgstr "Nice-Wert"
+msgstr "Autogroup-Nice-Wert"
 
 #. Translation Hint: maximum 'STARTED' = 7
 #: src/top/top_nls.c:355
 msgid "STARTED"
-msgstr ""
+msgstr "GESTARTET"
 
 #: src/top/top_nls.c:356
 msgid "Start Time from boot"
@@ -3054,7 +3045,7 @@ msgstr ""
 
 #: src/top/top_nls.c:359
 msgid "Elapsed Running Time"
-msgstr ""
+msgstr "Verstrichene Laufzeit"
 
 #. Translation Hint: maximum '%CUU' = 6
 #: src/top/top_nls.c:361
@@ -3064,7 +3055,7 @@ msgstr "%CUU"
 
 #: src/top/top_nls.c:362
 msgid "CPU Utilization"
-msgstr ""
+msgstr "CPU-Nutzung"
 
 #. Translation Hint: maximum '%CUC' = 7
 #: src/top/top_nls.c:364
@@ -3083,15 +3074,13 @@ msgid "nsCGROUP"
 msgstr "CGROUPS"
 
 #: src/top/top_nls.c:368
-#, fuzzy
 msgid "CGRP namespace Inode"
-msgstr "Inode für IPC-Namensraum"
+msgstr "Inode für CGRP-Namensraum"
 
 #. Translation Hint: maximum 'nsTIME' = 10 +
 #: src/top/top_nls.c:370
-#, fuzzy
 msgid "nsTIME"
-msgstr "ZEIT"
+msgstr "nsZEIT"
 
 #: src/top/top_nls.c:371
 msgid "TIME namespace Inode"
@@ -3100,30 +3089,29 @@ msgstr "TIME-Inode für IPC-Namensraum"
 #. Translation Hint: maximum 'CLS' = 3
 #: src/top/top_nls.c:373
 msgid "CLS"
-msgstr ""
+msgstr "CLS"
 
 #: src/top/top_nls.c:374
 msgid "Schedule Class"
-msgstr ""
+msgstr "Schedule-Klasse"
 
 #. Translation Hint: maximum 'Docker' = 8 +
 #: src/top/top_nls.c:376
 msgid "Docker"
-msgstr ""
+msgstr "Docker"
 
 #: src/top/top_nls.c:377
 msgid "Docker container id"
-msgstr ""
+msgstr "Docker-Containerkennung"
 
 #. Translation Hint: maximum 'nFD' = 3
 #: src/top/top_nls.c:379
 msgid "nFD"
-msgstr ""
+msgstr "nFD"
 
 #: src/top/top_nls.c:380
-#, fuzzy
 msgid "Number of Open Files"
-msgstr "Offene Dateien"
+msgstr "Anzahl der offenen Dateien"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3306,7 +3294,7 @@ msgstr ""
 #: src/top/top_nls.c:461
 #, c-format
 msgid "Failed signal pid '%d' with '%d': %s"
-msgstr ""
+msgstr "Signal an PID »%d« mit »%d« konnte nicht gesendet werden: %s"
 
 #: src/top/top_nls.c:462
 msgid "Invalid signal"
@@ -3772,7 +3760,7 @@ msgstr "Falsches Argument »%s« für Speicherskalierung"
 #: src/top/top_nls.c:596
 #, c-format
 msgid "PID to collapse/expand [default pid = %d]"
-msgstr ""
+msgstr "Einzuklappende/zu erweiternde PID (Standard-PID = %d)"
 
 #: src/top/top_nls.c:597
 msgid "wrong mode, command inactive"
@@ -3783,27 +3771,28 @@ msgid "saving prevents older top from reading, save anyway?"
 msgstr "Speichern hindert ältere Top-Versionen am Lesen, trotzdem fortsetzen?"
 
 #: src/top/top_nls.c:599
-#, fuzzy, c-format
+#, c-format
 msgid "failed sem_init() at %d: %s"
-msgstr "Setzen des TTY fehlgeschlagen: %s"
+msgstr "sem_init() bei %d ist fehlgeschlagen: %s"
 
 #: src/top/top_nls.c:600
-#, fuzzy, c-format
+#, c-format
 msgid "failed pthread_create() at %d: %s"
-msgstr "/proc/stat konnte nicht gelesen werden: %s"
+msgstr "pthread_create() bei %d ist fehlgeschlagen: %s"
 
 #: src/top/top_nls.c:601
 msgid "sorry, restricted namespace with reduced functionality"
 msgstr ""
+"Entschuldigung, eingeschränkter Namensraum mit verringerter Funktionalität"
 
 #: src/top/top_nls.c:602
 #, c-format
 msgid "set pid %d AGNI value to"
-msgstr ""
+msgstr "AGNI-Wert für PID %d setzen auf"
 
 #: src/top/top_nls.c:603
 msgid "valid AGNI range is -20 to +19"
-msgstr ""
+msgstr "Zulässiger AGNI-Bereich ist -20 bis +19"
 
 #: src/top/top_nls.c:604
 #, fuzzy, c-format
@@ -3816,9 +3805,9 @@ msgid "autogroup write failed, %s"
 msgstr ""
 
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "Namensräume für PID %d, %s"
+msgstr "Erlaubte Capabilities für PID %d, %s"
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -4109,26 +4098,24 @@ msgid ""
 msgstr ""
 
 #: src/uptime.c:49 src/w.c:532
-#, fuzzy
 msgid "Cannot get container uptime"
-msgstr "LXC-Containername"
+msgstr "Container-Betriebszeit konnte nicht ermittelt werden"
 
 #: src/uptime.c:52 src/uptime.c:176 src/w.c:535
 msgid "Cannot get system uptime"
-msgstr ""
+msgstr "System-Betriebszeit konnte nicht ermittelt werden"
 
 #: src/uptime.c:108
 msgid " -c, --container show container uptime\n"
-msgstr ""
+msgstr " -c, --container Container-Betriebszeit anzeigen\n"
 
 #: src/uptime.c:109
 msgid " -p, --pretty   show uptime in pretty format\n"
 msgstr " -p, --pretty   Betriebszeit in ansehnlichem Format anzeigen\n"
 
 #: src/uptime.c:110
-#, fuzzy
 msgid " -r, --raw      show uptime values in raw format\n"
-msgstr " -p, --pretty   Betriebszeit in ansehnlichem Format anzeigen\n"
+msgstr " -r, --raw      Betriebszeitwerte im Rohformat anzeigen\n"
 
 #: src/uptime.c:111
 msgid " -s, --since    system up since\n"
@@ -4188,22 +4175,20 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         erste Zeile der Ausgabe unterdrücken\n"
 
 #: src/vmstat.c:294
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
-"Disk- ----------------Lesevorgänge--------------- ---------------"
-"Schreibvorgänge------------- ------E/A------"
+"Prozesse --------Speicher-------- ---Swap-- ----E/A---- -System-- -------"
+"CPU-------"
 
 #: src/vmstat.c:296
-#, fuzzy
 msgid ""
 "--procs-- -----------------------memory---------------------- ---swap-- -----"
 "io---- -system-- ----------cpu----------"
 msgstr ""
-"Disk- ----------------Lesevorgänge--------------- ---------------"
-"Schreibvorgänge------------- ------E/A------"
+"--Proz.-- ----------------------Speicher--------------------- ---Swap-- ----"
+"E/A---- -System-- ----------CPU----------"
 
 #: src/vmstat.c:297 src/vmstat.c:647
 msgid " -----timestamp-----"
@@ -4219,7 +4204,7 @@ msgstr ""
 
 #: src/vmstat.c:428
 msgid "Unable to get uptime"
-msgstr "Systemlaufzeit konnte nicht ermittelt werden"
+msgstr "Betriebszeit konnte nicht ermittelt werden"
 
 #: src/vmstat.c:439 src/vmstat.c:516 src/vmstat.c:904
 msgid "Unable to select memory information"
@@ -4313,7 +4298,7 @@ msgstr "s"
 
 #: src/vmstat.c:723 src/vmstat.c:845
 msgid "Unable to retrieve disk statistics"
-msgstr ""
+msgstr "Laufwerksstatistiken können nicht ermittelt werden"
 
 #. Translation Hint: Translating folloging slab fields that
 #. * follow (marked with max x chars) might not work, unless
@@ -4521,12 +4506,12 @@ msgstr "%13lu %s benutzter Speicher\n"
 #: src/vmstat.c:928
 #, c-format
 msgid "%13lu pages swapped in\n"
-msgstr ""
+msgstr "%13lu Seiten aus Auslagerung zurückgeführt\n"
 
 #: src/vmstat.c:929
 #, c-format
 msgid "%13lu pages swapped out\n"
-msgstr ""
+msgstr "%13lu Seiten ausgelagert\n"
 
 #: src/vmstat.c:930
 #, fuzzy, c-format
@@ -4554,9 +4539,9 @@ msgid "%13lu pages alloc in normal\n"
 msgstr "%13lu %s benutzter Auslagerungsspeicher\n"
 
 #: src/vmstat.c:935
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages free\n"
-msgstr "%13lu %s freier Auslagerungsspeicher\n"
+msgstr "%13lu Seiten frei\n"
 
 #: src/vmstat.c:936
 #, c-format
@@ -4564,9 +4549,9 @@ msgid "%13lu interrupts\n"
 msgstr "%13lu Interrupts\n"
 
 #: src/vmstat.c:937
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu CPU context switches\n"
-msgstr "%13lu Schreibvorgäng\n"
+msgstr "%13lu CPU-Kontextwechsel\n"
 
 #: src/vmstat.c:938
 #, c-format
@@ -4641,11 +4626,8 @@ msgstr ""
 "                         in Sekunden\n"
 
 #: src/watch.c:130
-#, fuzzy
 msgid "  -p, --precise          -n includes command running time\n"
-msgstr ""
-"  -p, --precise          versuchen, den Befehl in präzisen\n"
-"                         Intervallen auszuführen\n"
+msgstr "  -p, --precise          -n schließt Befehlslaufzeit ein\n"
 
 #: src/watch.c:131
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
@@ -4654,9 +4636,10 @@ msgstr ""
 "                           nicht neu ausführen\n"
 
 #: src/watch.c:132
-#, fuzzy
 msgid "  -s, --shotsdir         directory to store screenshots\n"
-msgstr " -s, --short         Kurzformat\n"
+msgstr ""
+"  -s, --shotsdir         Verzeichnis zum Speichern von\n"
+"                         Bildschirmaufnahmen\n"
 
 #: src/watch.c:133
 msgid "  -t, --no-title         turn off header\n"
@@ -4723,7 +4706,7 @@ msgstr " %2llu.%02u s"
 
 #: src/w.c:538
 msgid "Cannot format uptime"
-msgstr ""
+msgstr "Betriebszeit kann nicht formatiert werden"
 
 #: src/w.c:675
 #, c-format
@@ -4731,9 +4714,8 @@ msgid " %s [options] [user]\n"
 msgstr " %s [Optionen] [Benutzer]\n"
 
 #: src/w.c:677
-#, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -L, --line          Ausgabe in einer Zeile anzeigen\n"
+msgstr " -c, --container     Container-Betriebszeit anzeigen\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -4763,9 +4745,8 @@ msgstr ""
 "                     (falls möglich)\n"
 
 #: src/w.c:684
-#, fuzzy
 msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
-msgstr " -l, --list-name           PID und Prozessname auflisten\n"
+msgstr " -p, --pids          PID(s) der Prozesse in WAS anzeigen\n"
 
 #: src/w.c:790
 #, c-format
@@ -4797,7 +4778,7 @@ msgstr "VON"
 #: src/w.c:833
 #, c-format
 msgid " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
-msgstr ""
+msgstr " LOGIN@   UNTÄT. JCPU   PCPU  WAS\n"
 
 #: src/w.c:835
 #, c-format

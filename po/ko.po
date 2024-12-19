@@ -1,14 +1,14 @@
 # Korean translation of procps-ng package.
 # Copyright (C) 2022 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Seong-ho Cho <darkcircle.0426@gmail.com>, 2022-2023.
+# Seong-ho Cho <darkcircle.0426@gmail.com>, 2022-2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.4-rc1\n"
+"Project-Id-Version: procps-ng 4.0.5rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2024-12-03 17:42+1100\n"
-"PO-Revision-Date: 2023-08-22 12:13+0900\n"
+"PO-Revision-Date: 2024-12-13 18:47+0900\n"
 "Last-Translator: Seong-ho Cho <darkcircle.0426@gmail.com>\n"
 "Language-Team: Korean <translation-team-ko@googlegroups.com>\n"
 "Language: ko\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.5\n"
 
 #: local/fileutils.c:36
 msgid "write error"
@@ -201,7 +201,7 @@ msgstr "커  밋:"
 
 #: src/hugetop.c:364
 msgid "     PID     SHARED    PRIVATE COMMAND"
-msgstr ""
+msgstr "     PID     공  유    자체 명령"
 
 #: src/hugetop.c:407 src/slabtop.c:110
 msgid " -d, --delay <secs>  delay updates\n"
@@ -209,16 +209,15 @@ msgstr " -d, --delay <초>    지연 시간 갱신\n"
 
 #: src/hugetop.c:408
 msgid " -n, --numa          display per NUMA nodes Huge pages information\n"
-msgstr ""
+msgstr " -n, --numa          NUMA 노드별 거대 페이지 정보를 출력합니다\n"
 
 #: src/hugetop.c:409 src/slabtop.c:111
 msgid " -o, --once          only display once, then exit\n"
 msgstr " -o, --once          한 번만 나타내고 나갑니다\n"
 
 #: src/hugetop.c:410
-#, fuzzy
 msgid " -H, --human         display human-readable output\n"
-msgstr " -h, --human         가독 형식으로 출력 표시\n"
+msgstr " -H, --human         가독 형식으로 출력 표시\n"
 
 #: src/hugetop.c:446 src/slabtop.c:201
 msgid "illegal delay"
@@ -441,20 +440,19 @@ msgstr ""
 
 #: src/pgrep.c:202
 msgid "  --env <name=val,...>     match on environment variable\n"
-msgstr ""
+msgstr "  --env <name=val,...>     환경 변수에 값을 대응합니다\n"
 
 #: src/pgrep.c:225 src/pgrep.c:736 src/w.c:407
 msgid "Unable to create pid info structure"
 msgstr "PID 정보를 구성할 수 없습니다"
 
 #: src/pgrep.c:364
-#, fuzzy
 msgid "Unable to open pidfile"
-msgstr "총 가동 시간을 가져올 수 없습니다"
+msgstr "PID 파일을 열 수 없습니다"
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
-msgstr ""
+msgstr "PID 파일 잠금 검사 실패"
 
 #: src/pgrep.c:401
 #, c-format
@@ -1888,14 +1886,14 @@ msgstr ""
 "\t\n"
 
 #: src/skill.c:345
-#, fuzzy
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are:\n"
 "                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
-" --nslist <ns,...>        --ns 옵션에 지정한 이름 영역만 표시합니다.\n"
-"                          가용 이름 영역 값:ipc, mnt, net, pid, user, uts\n"
+" --nslist <ns,...>        어떤 이름 영역을 고려할 지 --ns 옵션 값 목록을\n"
+"                          지정합니다. 가용 이름영역은 다음과 같습니다:\n"
+"                          ipc, mnt, net, pid, user, uts\n"
 
 #: src/skill.c:355
 #, c-format
@@ -1964,9 +1962,8 @@ msgid "skill: \"%s\" is not supported\n"
 msgstr "skill: \"%s\"을(를) 지원하지 않습니다\n"
 
 #: src/slabtop.c:112
-#, fuzzy
 msgid " --human             show human-readable output\n"
-msgstr " -h, --human         가독 형식으로 출력 표시\n"
+msgstr " --human             가독 형식으로 출력 표시\n"
 
 #: src/slabtop.c:113
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
@@ -3036,30 +3033,29 @@ msgstr "TIME 이름 영역 I-노드"
 #. Translation Hint: maximum 'CLS' = 3
 #: src/top/top_nls.c:373
 msgid "CLS"
-msgstr ""
+msgstr "클래스"
 
 #: src/top/top_nls.c:374
 msgid "Schedule Class"
-msgstr ""
+msgstr "스케쥴 클래스"
 
 #. Translation Hint: maximum 'Docker' = 8 +
 #: src/top/top_nls.c:376
 msgid "Docker"
-msgstr ""
+msgstr "도커"
 
 #: src/top/top_nls.c:377
 msgid "Docker container id"
-msgstr ""
+msgstr "도커 컨테이너 ID"
 
 #. Translation Hint: maximum 'nFD' = 3
 #: src/top/top_nls.c:379
 msgid "nFD"
-msgstr ""
+msgstr "nFD"
 
 #: src/top/top_nls.c:380
-#, fuzzy
 msgid "Number of Open Files"
-msgstr "파일 열기"
+msgstr "열어둔 파일 갯수"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3741,9 +3737,9 @@ msgid "autogroup write failed, %s"
 msgstr "자동 그룹 쓰기 실패, %s"
 
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "PID %d번 이름 영역, %s"
+msgstr "PID %d번, %s의 동작을 허가합니다"
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -3982,7 +3978,7 @@ msgstr ""
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
 #: src/top/top_nls.c:719
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4013,7 +4009,7 @@ msgid ""
 "   'q' or <Esc> to abort changes to window '~1%s~2'\n"
 "   'a' or 'w' to commit & change another, <Enter> to commit and end "
 msgstr ""
-"색상 대응 도움말~2 - \"현재 \" = ~1 %s ~6\n"
+"색상 대입 도움말~2 - \"현재 \" = ~1 %s ~6\n"
 "\n"
 "   색상 - 04:25:44 가동시간 8일, 50분,  7 사용자,  평균 부하:\n"
 "   작업:~3  64 ~2총계,~3   2 ~3실행,~3  62 ~2대기,~3   0 ~2멈춤,~3\n"
@@ -4073,12 +4069,13 @@ msgstr ""
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:764
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s:~3 %u ~2total,~3 %u ~2running,~3 %u ~2sleep,~3 %u ~2d-sleep,~3 %u "
 "~2stopped,~3 %u ~2zombie~3\n"
 msgstr ""
-"%s:~3 %3u ~2총계,~3 %3u ~2실행,~3 %3u ~2대기,~3 %3u ~2멈춤,~3 %3u ~2좀비~3\n"
+"%s:~3 %u ~2총계,~3 %u ~2실행,~3 %u ~2대기,~3 %u~2장기대기,~3 %u ~2멈춤,~3 %u "
+"~2좀비~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -4150,9 +4147,8 @@ msgstr ""
 "또는~2:   <Enter>로 ~1다른 항목 선택~5; 'q' 또는 <Esc>로 ~1끝냅니다~5 !\n"
 
 #: src/uptime.c:49 src/w.c:532
-#, fuzzy
 msgid "Cannot get container uptime"
-msgstr "시스템 가동 시간 정보를 가져올 수 없습니다"
+msgstr "컨테이너 총 가동시간 정보를 가져올 수 없습니다"
 
 #: src/uptime.c:52 src/uptime.c:176 src/w.c:535
 msgid "Cannot get system uptime"
@@ -4160,16 +4156,15 @@ msgstr "시스템 가동 시간 정보를 가져올 수 없습니다"
 
 #: src/uptime.c:108
 msgid " -c, --container show container uptime\n"
-msgstr ""
+msgstr " -c, --container 컨테이너 총 실행시간 표시\n"
 
 #: src/uptime.c:109
 msgid " -p, --pretty   show uptime in pretty format\n"
 msgstr " -p, --pretty   가지런한 형식으로 가동 시간 표시\n"
 
 #: src/uptime.c:110
-#, fuzzy
 msgid " -r, --raw      show uptime values in raw format\n"
-msgstr " -p, --pretty   가지런한 형식으로 가동 시간 표시\n"
+msgstr " -r, --raw      원시 형식으로 총 가동시간 표시\n"
 
 #: src/uptime.c:111
 msgid " -s, --since    system up since\n"
@@ -4564,34 +4559,34 @@ msgid "%13lu pages swapped out\n"
 msgstr "%13lu 페이지 스왑 출력\n"
 
 #: src/vmstat.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma\n"
-msgstr "%13lu 페이지 스왑 입력\n"
+msgstr "%13lu 페이지 DMA 영역 할당\n"
 
 #: src/vmstat.c:931
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma32\n"
-msgstr "%13lu 페이지 스왑 입력\n"
+msgstr "%13lu 페이지 DMA32 영역 할당\n"
 
 #: src/vmstat.c:932
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in high\n"
-msgstr "%13lu 페이지 스왑 입력\n"
+msgstr "%13lu 페이지 상위 영역 할당\n"
 
 #: src/vmstat.c:933
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in movable\n"
-msgstr "%13lu 페이지 스왑 입력\n"
+msgstr "%13lu 페이지 이동 가능 할당\n"
 
 #: src/vmstat.c:934
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in normal\n"
-msgstr "%13lu 페이지 스왑 입력\n"
+msgstr "%13lu 페이지 일반 할당\n"
 
 #: src/vmstat.c:935
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages free\n"
-msgstr "%13lu %s 가용 스왑\n"
+msgstr "%13lu 페이지 남음\n"
 
 #: src/vmstat.c:936
 #, c-format
@@ -4668,9 +4663,8 @@ msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr "  -n, --interval <초>    업데이트간 기다릴 초 단위 시간\n"
 
 #: src/watch.c:130
-#, fuzzy
 msgid "  -p, --precise          -n includes command running time\n"
-msgstr "  -p, --precise          정확한 시간 간격으로 명령 실행 시도\n"
+msgstr "  -p, --precise          -n 에 명령 실행 시간이 들어감\n"
 
 #: src/watch.c:131
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
@@ -4678,9 +4672,8 @@ msgstr ""
 "  -r, --no-rerun         창 크기를 다시 조절할 때 프로그램을 다시 실행 안함\n"
 
 #: src/watch.c:132
-#, fuzzy
 msgid "  -s, --shotsdir         directory to store screenshots\n"
-msgstr " -s, --short         간단한 형식\n"
+msgstr "  -s, --shotsdir         스크린샷을 저장할 디렉터리\n"
 
 #: src/watch.c:133
 msgid "  -t, --no-title         turn off header\n"
@@ -4743,9 +4736,8 @@ msgid " %2llu.%02us"
 msgstr " %2llu.%02u초"
 
 #: src/w.c:538
-#, fuzzy
 msgid "Cannot format uptime"
-msgstr "시스템 가동 시간 정보를 가져올 수 없습니다"
+msgstr "총 실행시간을 형식에 맞춰 출력할 수 없습니다"
 
 #: src/w.c:675
 #, c-format
@@ -4753,9 +4745,8 @@ msgid " %s [options] [user]\n"
 msgstr " %s [<옵션>] [<사용자>]\n"
 
 #: src/w.c:677
-#, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -L, --line          단일 행에 출력을 나타냅니다\n"
+msgstr " -c, --container     컨테이너 총 실행시간 표시\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -4812,9 +4803,9 @@ msgid "FROM"
 msgstr "FROM"
 
 #: src/w.c:833
-#, fuzzy, c-format
+#, c-format
 msgid " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
-msgstr "  로그인   대기   JCPU   PCPU 세션\n"
+msgstr "  로그인   대기   JCPU   PCPU  실행\n"
 
 #: src/w.c:835
 #, c-format
@@ -4827,7 +4818,7 @@ msgstr "세션 가져오기 오류"
 
 #: src/w.c:855
 msgid "session get class failed"
-msgstr ""
+msgstr "세션 get 클래스 실패"
 
 #: src/w.c:861
 msgid "get user name failed"
@@ -4874,94 +4865,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%2$s에서 %1$s\n"
-
-#~ msgid "r"
-#~ msgstr "r"
-
-#~ msgid "b"
-#~ msgstr "b"
-
-#~ msgid "swpd"
-#~ msgstr "스왑"
-
-#~ msgid "free"
-#~ msgstr "가용"
-
-#~ msgid "inact"
-#~ msgstr "비활"
-
-#~ msgid "buff"
-#~ msgstr "버퍼"
-
-#~ msgid "active"
-#~ msgstr "활성"
-
-#~ msgid "cache"
-#~ msgstr "캐시"
-
-#~ msgid "si"
-#~ msgstr "입"
-
-#~ msgid "so"
-#~ msgstr "출"
-
-#~ msgid "bi"
-#~ msgstr "입"
-
-#~ msgid "bo"
-#~ msgstr "출"
-
-#~ msgid "in"
-#~ msgstr "in"
-
-#~ msgid "cs"
-#~ msgstr "cs"
-
-#~ msgid "us"
-#~ msgstr "us"
-
-#~ msgid "sy"
-#~ msgstr "sy"
-
-#~ msgid "id"
-#~ msgstr "id"
-
-#~ msgid "wa"
-#~ msgstr "wa"
-
-#~ msgid "st"
-#~ msgstr "st"
-
-#~ msgid "gu"
-#~ msgstr "gu"
-
-#, c-format
-#~ msgid "%s: %s"
-#~ msgstr "%s: %s"
-
-#~ msgid "dup2 failed"
-#~ msgstr "dup2 실패"
-
-#, c-format
-#~ msgid "unable to execute '%s'"
-#~ msgstr "'%s'을(를) 실행할 수 없음"
-
-#~ msgid "waitpid"
-#~ msgstr "waitpid"
-
-#, c-format
-#~ msgid "unicode handling error\n"
-#~ msgstr "유니코드 처리 오류\n"
-
-#, c-format
-#~ msgid "unicode handling error (malloc)\n"
-#~ msgstr "유니코드 처리 오류 (malloc)\n"
-
-#~ msgid ""
-#~ "inappropriate '%s'\n"
-#~ "Usage:\n"
-#~ "  %s%s"
-#~ msgstr ""
-#~ "부적절한 '%s'\n"
-#~ "사용법:\n"
-#~ "  %s%s"

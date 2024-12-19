@@ -2,15 +2,15 @@
 # Copyright © 2017, 2018, 2021, 2022, 2023 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018, 2019, 2021, 2022, 2023.
+# Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018, 2019, 2021, 2022, 2023, 2024.
 #
-# $Id: procps-ng.po,v 1.29 2023-08-21 10:53:48+02 göran Exp $
+# $Id: procps-ng.po,v 1.31 2024-12-15 13:22:04+01 göran Exp $
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.4-rc1\n"
+"Project-Id-Version: procps-ng 4.0.5rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2024-12-03 17:42+1100\n"
-"PO-Revision-Date: 2023-08-21 10:53+0200\n"
+"PO-Revision-Date: 2024-12-15 13:21+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -205,7 +205,7 @@ msgstr "Til.:"
 
 #: src/hugetop.c:364
 msgid "     PID     SHARED    PRIVATE COMMAND"
-msgstr ""
+msgstr "     PID      DELAT     PRIVAT KOMMANDo"
 
 #: src/hugetop.c:407 src/slabtop.c:110
 msgid " -d, --delay <secs>  delay updates\n"
@@ -214,15 +214,16 @@ msgstr " -d, --delay <sek>   fördröjning mellan uppdateringar\n"
 #: src/hugetop.c:408
 msgid " -n, --numa          display per NUMA nodes Huge pages information\n"
 msgstr ""
+" -n, --numa          visa information om stora sidor (hugepages) per NUMA "
+"node\n"
 
 #: src/hugetop.c:409 src/slabtop.c:111
 msgid " -o, --once          only display once, then exit\n"
 msgstr " -o, --once          visa endast en gång, avsluta sedan\n"
 
 #: src/hugetop.c:410
-#, fuzzy
 msgid " -H, --human         display human-readable output\n"
-msgstr " -h, --human         visa mänskligt läsbar utdata\n"
+msgstr " -H, --human         visa mänskligt läsbar utdata\n"
 
 #: src/hugetop.c:446 src/slabtop.c:201
 msgid "illegal delay"
@@ -451,20 +452,19 @@ msgstr ""
 
 #: src/pgrep.c:202
 msgid "  --env <name=val,...>     match on environment variable\n"
-msgstr ""
+msgstr "  --env <namn=värde,…>     matcha mot miljövariabler\n"
 
 #: src/pgrep.c:225 src/pgrep.c:736 src/w.c:407
 msgid "Unable to create pid info structure"
 msgstr "Kan inte skapa pid-informationspost"
 
 #: src/pgrep.c:364
-#, fuzzy
 msgid "Unable to open pidfile"
-msgstr "Kan inte få tiden uppe"
+msgstr "Kan inte öppna pid-filen"
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
-msgstr ""
+msgstr "Låskontrollen för pid-filen misslyckades"
 
 #: src/pgrep.c:401
 #, c-format
@@ -1893,15 +1893,14 @@ msgstr ""
 "                          som <pid>\n"
 
 #: src/skill.c:345
-#, fuzzy
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are:\n"
 "                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
 " --nslist <ns,…>          lista vilka namnrymder som kommer övervägas för\n"
-"                          flaggan --ns; tillgängliga namnrymder är\n"
-":                          ipc, mnt, net, pid, user, uts\n"
+"                          flaggan --ns; tillgängliga namnrymder är:\n"
+"                          ipc, mnt, net, pid, user, uts\n"
 
 #: src/skill.c:355
 #, c-format
@@ -1970,9 +1969,8 @@ msgid "skill: \"%s\" is not supported\n"
 msgstr "skill: ”%s” stödjs inte\n"
 
 #: src/slabtop.c:112
-#, fuzzy
 msgid " --human             show human-readable output\n"
-msgstr " -h, --human         visa mänskligt läsbar utdata\n"
+msgstr " --human             visa mänskligt läsbar utdata\n"
 
 #: src/slabtop.c:113
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
@@ -3043,30 +3041,29 @@ msgstr "TIDS-namnrymdsinod"
 #. Translation Hint: maximum 'CLS' = 3
 #: src/top/top_nls.c:373
 msgid "CLS"
-msgstr ""
+msgstr "KLS"
 
 #: src/top/top_nls.c:374
 msgid "Schedule Class"
-msgstr ""
+msgstr "Schemaläggningsklass"
 
 #. Translation Hint: maximum 'Docker' = 8 +
 #: src/top/top_nls.c:376
 msgid "Docker"
-msgstr ""
+msgstr "Docker"
 
 #: src/top/top_nls.c:377
 msgid "Docker container id"
-msgstr ""
+msgstr "Dockers behållar-id"
 
 #. Translation Hint: maximum 'nFD' = 3
 #: src/top/top_nls.c:379
 msgid "nFD"
-msgstr ""
+msgstr "nFB"
 
 #: src/top/top_nls.c:380
-#, fuzzy
 msgid "Number of Open Files"
-msgstr "Öppna filer"
+msgstr "Antal öppna filer"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3755,9 +3752,9 @@ msgid "autogroup write failed, %s"
 msgstr "autogruppskrivning misslyckades, %s"
 
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "namnrymder för pid %d, %s"
+msgstr "tillåtna förmågor för pid %d, %s"
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -4005,7 +4002,7 @@ msgstr ""
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
 #: src/top/top_nls.c:719
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4052,15 +4049,19 @@ msgstr ""
 "       ~1z~2 =färg/mono (~1%s~2), ~1b~2 =uppg. ”fet”/invers (~1%s~2)\n"
 "\n"
 "1) Välj ett ~1mål~2 som en versal bokstav, ~1aktuellt mål~2 är ~1 %c ~4:\n"
-"   S~2 = Sammanf.-data,~1  M~2 = Meddelande/prompter,\n"
-"   H~2 = Kolumnhuvuden,~1  T~2 = Uppgiftsinformation\n"
-"2) Välj en ~1färg~2 som ett tal eller använd upp-/nerpiltangenterna\n"
-"   för att höja/sänka %d-färgens värde, , ~1aktuell färg~2 är ~1 %d ~4:\n"
-"   0~2 = svart,~1  1~2 = röd,    ~1  2~2 = grön,~1   3~2 = gul,\n"
-"   4~2 = blå, ~1   5~2 = magenta,~1  6~2 = cyan, ~1  7~2 = vit\n"
+"   S~2 = Sammanf.-data,~1  M~2 = Meddelande/prompter,~1  H~2 = "
+"Kolumnhuvuden\n"
+"   T~2 = Uppgiftsinformation,~1  X~2 = Uppgift x/y (kol/rad) Markeringar\n"
+"2) Välj en ~1färg~2 som ett tal (~1ingen~2 som @) eller använd "
+"piltangenterna\n"
+"   upp-/ner för att höja/sänka %d-färgens värde, ~1aktuell färg~2 är ~1 %d "
+"~4:\n"
+"   0~2 = svart,~1  1~2 = röd,    ~1  2~2 = grön,~1  3~2 = gul,\n"
+"   4~2 = blå, ~1   5~2 = magenta,~1  6~2 = cyan,~1  7~2 = vit,~1  @~2 ingen "
+"(-1)\n"
 "\n"
-"3) Använd sedan dessa tangenter efteråt:\n"
-"   ”q” eller <Esc> för att avbryta ändringar till fönstret ”~1%s~2”\n"
+"3) Använd sedan dessa tangenter när det är klart:\n"
+"   ”q” eller <Esc> för att avbryta ändringar av fönstret ”~1%s~2”\n"
 "   ”a” el ”w” för att spara & ändra en annan, <Retur> för att spara och "
 "avsluta "
 
@@ -4098,13 +4099,13 @@ msgstr ""
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:764
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s:~3 %u ~2total,~3 %u ~2running,~3 %u ~2sleep,~3 %u ~2d-sleep,~3 %u "
 "~2stopped,~3 %u ~2zombie~3\n"
 msgstr ""
-"%s:~3 %3u ~2totalt,~3 %3u ~2körande,~3 %3u ~2sovande,~3 %3u ~2stoppade,~3 "
-"%3u ~2zombie~3\n"
+"%s:~3 %u ~2totalt,~3 %u ~2kör,~3 %u ~2sover,~3 %u ~2d-sover,~3 %u ~2stoppade,"
+"~3 %u ~2zombie~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -4178,9 +4179,8 @@ msgstr ""
 "~1avsluta~5 !\n"
 
 #: src/uptime.c:49 src/w.c:532
-#, fuzzy
 msgid "Cannot get container uptime"
-msgstr "Kan inte få fram systemets tid uppe"
+msgstr "Kan inte få fram behållarens tid uppe"
 
 #: src/uptime.c:52 src/uptime.c:176 src/w.c:535
 msgid "Cannot get system uptime"
@@ -4188,16 +4188,15 @@ msgstr "Kan inte få fram systemets tid uppe"
 
 #: src/uptime.c:108
 msgid " -c, --container show container uptime\n"
-msgstr ""
+msgstr " -c, --container visa behållarens uppetid\n"
 
 #: src/uptime.c:109
 msgid " -p, --pretty   show uptime in pretty format\n"
 msgstr " -p, --pretty   visa uppetiden i snyggt format\n"
 
 #: src/uptime.c:110
-#, fuzzy
 msgid " -r, --raw      show uptime values in raw format\n"
-msgstr " -p, --pretty   visa uppetiden i snyggt format\n"
+msgstr " -r, --raw      visa värden på uppetiden i rått format\n"
 
 #: src/uptime.c:111
 msgid " -s, --since    system up since\n"
@@ -4594,34 +4593,34 @@ msgid "%13lu pages swapped out\n"
 msgstr "%13lu sidor växlade ut\n"
 
 #: src/vmstat.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma\n"
-msgstr "%13lu sidor växlade in\n"
+msgstr "%13lu sidor allokerade i dma\n"
 
 #: src/vmstat.c:931
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma32\n"
-msgstr "%13lu sidor växlade in\n"
+msgstr "%13lu sidor allokerade i dma32\n"
 
 #: src/vmstat.c:932
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in high\n"
-msgstr "%13lu sidor växlade in\n"
+msgstr "%13lu sidor allokerade i högt\n"
 
 #: src/vmstat.c:933
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in movable\n"
-msgstr "%13lu sidor växlade in\n"
+msgstr "%13lu sidor allokerade i flyttbart\n"
 
 #: src/vmstat.c:934
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in normal\n"
-msgstr "%13lu sidor växlade in\n"
+msgstr "%13lu sidor allokerade i normalt\n"
 
 #: src/vmstat.c:935
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages free\n"
-msgstr "%13lu %s fri växling\n"
+msgstr "%13lu sidor fria\n"
 
 #: src/vmstat.c:936
 #, c-format
@@ -4696,10 +4695,8 @@ msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr "  -n, --interval <sek>   sekunder att vänta mellan uppdateringar\n"
 
 #: src/watch.c:130
-#, fuzzy
 msgid "  -p, --precise          -n includes command running time\n"
-msgstr ""
-"  -p, --precise          försök att köra kommandot med precisa intervall\n"
+msgstr "  -p, --precise          -n inkluderar kommandots körtid\n"
 
 #: src/watch.c:131
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
@@ -4708,9 +4705,8 @@ msgstr ""
 "fönsterstorlek\n"
 
 #: src/watch.c:132
-#, fuzzy
 msgid "  -s, --shotsdir         directory to store screenshots\n"
-msgstr " -s, --short         kort format\n"
+msgstr " -s, --shotsdir          katalog att lagra skärmbilder i\n"
 
 #: src/watch.c:133
 msgid "  -t, --no-title         turn off header\n"
@@ -4774,9 +4770,8 @@ msgid " %2llu.%02us"
 msgstr " %2llu,%02us"
 
 #: src/w.c:538
-#, fuzzy
 msgid "Cannot format uptime"
-msgstr "Kan inte få fram systemets tid uppe"
+msgstr "Kan inte formatera systemets tid uppe"
 
 #: src/w.c:675
 #, c-format
@@ -4784,9 +4779,8 @@ msgid " %s [options] [user]\n"
 msgstr " %s [flaggor] [användare]\n"
 
 #: src/w.c:677
-#, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -L, --line          visa utdata på en enda rad\n"
+msgstr " -c, --container     visa behållarens tid uppe\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -4846,9 +4840,9 @@ msgid "FROM"
 msgstr "FRÅN"
 
 #: src/w.c:833
-#, fuzzy, c-format
+#, c-format
 msgid " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
-msgstr "  LOGIN@  INAKT   JCPU   PCPU VAD\n"
+msgstr " LOGIN@  INAKT   JCPU   PCPU  VAD\n"
 
 #: src/w.c:835
 #, c-format
@@ -4861,7 +4855,7 @@ msgstr "fel när sessioner inhämtades"
 
 #: src/w.c:855
 msgid "session get class failed"
-msgstr ""
+msgstr "att få sessionens klass misslyckades"
 
 #: src/w.c:861
 msgid "get user name failed"
@@ -4908,85 +4902,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s från %s\n"
-
-#~ msgid "r"
-#~ msgstr "k"
-
-#~ msgid "b"
-#~ msgstr "b"
-
-#~ msgid "swpd"
-#~ msgstr "växl"
-
-#~ msgid "free"
-#~ msgstr "fritt"
-
-#~ msgid "inact"
-#~ msgstr "inakt"
-
-#~ msgid "buff"
-#~ msgstr "buff"
-
-#~ msgid "active"
-#~ msgstr "aktivt"
-
-#~ msgid "cache"
-#~ msgstr "cache"
-
-#~ msgid "si"
-#~ msgstr "vi"
-
-#~ msgid "so"
-#~ msgstr "vu"
-
-#~ msgid "bi"
-#~ msgstr "bi"
-
-#~ msgid "bo"
-#~ msgstr "bu"
-
-#~ msgid "in"
-#~ msgstr "avb"
-
-#~ msgid "cs"
-#~ msgstr "ktxb"
-
-#~ msgid "us"
-#~ msgstr "an"
-
-#~ msgid "sy"
-#~ msgstr "sy"
-
-#~ msgid "id"
-#~ msgstr "ia"
-
-#~ msgid "wa"
-#~ msgstr "vä"
-
-#~ msgid "st"
-#~ msgstr "st"
-
-#~ msgid "gu"
-#~ msgstr "gä"
-
-#, c-format
-#~ msgid "%s: %s"
-#~ msgstr "%s: %s"
-
-#~ msgid "dup2 failed"
-#~ msgstr "dup2 misslyckades"
-
-#, c-format
-#~ msgid "unable to execute '%s'"
-#~ msgstr "kan inte köra ”%s”"
-
-#~ msgid "waitpid"
-#~ msgstr "waitpid"
-
-#, c-format
-#~ msgid "unicode handling error\n"
-#~ msgstr "fel i hantering av unicode\n"
-
-#, c-format
-#~ msgid "unicode handling error (malloc)\n"
-#~ msgstr "fel i hantering av unicode (malloc)\n"

@@ -1,14 +1,14 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) 2021 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Rodrigo Lledó <rodhos92@gmail.com>, 2021, 2022, 2023.
+# Rodrigo Lledó Milanca <rodhos92@gmail.com>, 2021, 2022, 2023, 2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.3-rc1\n"
+"Project-Id-Version: procps-ng 4.0.4-rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2024-12-03 17:42+1100\n"
-"PO-Revision-Date: 2023-04-25 00:20+0200\n"
+"PO-Revision-Date: 2024-05-17 11:49+0200\n"
 "Last-Translator: Rodrigo Lledó Milanca <rodhos92@gmail.com>\n"
 "Language-Team: Spanish <es@tp.org.es>\n"
 "Language: es\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.4.3\n"
 
 #: local/fileutils.c:36
 msgid "write error"
@@ -85,9 +85,8 @@ msgstr ""
 " -l, --lohi          muestra estadísticas detalladas de memoria baja y alta\n"
 
 #: src/free.c:89
-#, fuzzy
 msgid " -L, --line          show output on a single line\n"
-msgstr " -k, --kibi          muestra la salida en kibibytes\n"
+msgstr " -L, --line          muestra la salida en una sola línea\n"
 
 #: src/free.c:90
 msgid " -t, --total         show total for RAM + swap\n"
@@ -149,22 +148,20 @@ msgstr "No se puede crear la estructura meminfo"
 #. * align if the translation is shorter.
 #.
 #: src/free.c:316
-#, fuzzy
 msgid "SwapUse"
-msgstr "Intercambio"
+msgstr "UsoInte"
 
 #: src/free.c:317
-#, fuzzy
 msgid "CachUse"
-msgstr "Caché"
+msgstr "UsoCach"
 
 #: src/free.c:319
 msgid " MemUse"
-msgstr ""
+msgstr "UsoMem"
 
 #: src/free.c:320
 msgid "MemFree"
-msgstr ""
+msgstr "MemLibr"
 
 # ¿Has mirado en el código del programa que el distinto alineamiento de columnas en la traducción no estropee la salida? Mira, por ejemplo, la traducción al francés.
 #: src/free.c:330
@@ -267,12 +264,14 @@ msgstr " -q, --queue <valor>    valor entero que se enviará con la señal\n"
 msgid ""
 " -l, --list=[<signal>]  list all signal names, or convert one to a name\n"
 msgstr ""
-" -l, --list=[<señal>]  listar todos los nombres de señales, o convertir uno "
-"a un nombre\n"
+" -l, --list=[<señal>]  enumerar todos los nombres de señales, o convertir "
+"una a un nombre\n"
 
 #: src/kill.c:47
 msgid " -L, --table            list all signal names in a nice table\n"
-msgstr " -L, --table lista todos los nombres de señal en una bonita tabla\n"
+msgstr ""
+" -L, --table            enumerar todos los nombres de señal en una bonita "
+"tabla\n"
 
 #: src/kill.c:110
 #, c-format
@@ -315,14 +314,14 @@ msgstr " -d, --delimiter <cadena>  especifica el delimitador de salida\n"
 # 'Listar' no existe con ese significado. Sugerencias: saca lista, enumera.
 #: src/pgrep.c:160
 msgid " -l, --list-name           list PID and process name\n"
-msgstr " -l, --list-name           muestra el PID y el nombre del proceso\n"
+msgstr " -l, --list-name           enumerar el PID y el nombre del proceso\n"
 
 # 'Command' es más adecuado traducirlo como 'orden' (command line -> línea de órdenes),
 # aunque veo que la RAE ya admite la acepción informática.
 #: src/pgrep.c:161
 msgid " -a, --list-full           list PID and full command line\n"
 msgstr ""
-" -a, --list-full           muestra el PID y la línea de órdenes completa\n"
+" -a, --list-full           enumerar el PID y la línea de órdenes completa\n"
 
 # No describe bien el significado. Sugerencia basada en la traducción de grep: selecciona no coincidencias.
 #: src/pgrep.c:162
@@ -331,14 +330,12 @@ msgstr " -v, --inverse             muestra los no coincidentes\n"
 
 #: src/pgrep.c:163
 msgid " -w, --lightweight         list all TID\n"
-msgstr " -w, --lightweight         muestra todos los TID\n"
+msgstr " -w, --lightweight         enumerar todos los TID\n"
 
 #: src/pgrep.c:166
-#, fuzzy
 msgid " -<sig>                    signal to send (either number or name)\n"
 msgstr ""
-" -<señal>, --signal <señal>    señal que enviar (ya sea un nombre o un "
-"número)\n"
+" -<señ>                    señal que enviar (ya sea un nombre o número)\n"
 
 #: src/pgrep.c:167
 msgid " -H, --require-handler     match only if signal handler is present\n"
@@ -412,11 +409,9 @@ msgid " -s, --session <SID,...>   match session IDs\n"
 msgstr " -s, --session <SID,...>   compara las IDs de sesión\n"
 
 #: src/pgrep.c:187
-#, fuzzy
 msgid "     --signal <sig>        signal to send (either number or name)\n"
 msgstr ""
-" -<señal>, --signal <señal>    señal que enviar (ya sea un nombre o un "
-"número)\n"
+"     --signal <señ>        señal que enviar (ya sea un nombre o un número)\n"
 
 #: src/pgrep.c:188
 msgid " -t, --terminal <tty,...>  match by controlling terminal\n"
@@ -475,7 +470,7 @@ msgid ""
 "                           Available namespaces: ipc, mnt, net, pid, user, "
 "uts\n"
 msgstr ""
-" --nslist <ns,...>         muestra qué espacios de nombre se van a "
+" --nslist <ns,...>         enumera qué espacios de nombre se van a "
 "considerar para\n"
 "                           la opción --ns.\n"
 "                           Espacios de nombre disponibles: ipc, mnt, net, "
@@ -553,9 +548,9 @@ msgstr ""
 "Pruebe la opción «%s -f» para buscar en la línea de comandos completa."
 
 #: src/pgrep.c:966
-#, fuzzy, c-format
+#, c-format
 msgid "Unknown signal \"%s\"."
-msgstr "nombre de señal desconocido %s"
+msgstr "Señal desconocida «%s»."
 
 #: src/pgrep.c:1138
 #, c-format
@@ -656,9 +651,8 @@ msgid " -o, --omit-pid <PID,...>  omit processes with PID\n"
 msgstr " -o, --omit-pid <PID,...>  omite procesos con PID\n"
 
 #: src/pidof.c:83
-#, fuzzy
 msgid " -t, --lightweight         list threads too\n"
-msgstr " -w, --lightweight         muestra todos los TID\n"
+msgstr " -t, --lightweight         enumerar los hilos también\n"
 
 #: src/pidof.c:84
 msgid " -S, --separator SEP       use SEP as separator put between PIDs"
@@ -1275,9 +1269,10 @@ msgstr ""
 "                      establecer la altura de la pantalla\n"
 
 #: src/ps/help.c:160
-#, fuzzy
 msgid "     --signames       display signal masks using signal names\n"
-msgstr " -l, --list         listar todos los nombre de señal\n"
+msgstr ""
+"     --signames       muestra las máscaras de señal que usan nombres de "
+"señal\n"
 
 #: src/ps/help.c:163
 msgid ""
@@ -1827,7 +1822,7 @@ msgstr "error interno: no existe PID o PPID para la opción -j"
 
 #: src/ps/sortformat.c:904
 msgid "lost my PGID"
-msgstr "perdí mi PGID"
+msgstr "he perdido mi PGID"
 
 #: src/ps/sortformat.c:917
 msgid "internal error: no PRI for -c option"
@@ -1835,7 +1830,7 @@ msgstr "error interno: no existe PRI para la opción -c"
 
 #: src/ps/sortformat.c:920
 msgid "lost my CLS"
-msgstr "perdí CLS"
+msgstr "he perdido mi CLS"
 
 #: src/ps/sortformat.c:925
 msgid "-T with H/-m/m but no PID for SPID to follow"
@@ -1883,11 +1878,12 @@ msgstr " -i, --interactive  interactivo\n"
 
 #: src/skill.c:329
 msgid " -l, --list         list all signal names\n"
-msgstr " -l, --list         listar todos los nombre de señal\n"
+msgstr " -l, --list         enumerar todos los nombre de señal\n"
 
 #: src/skill.c:330
 msgid " -L, --table        list all signal names in a nice table\n"
-msgstr " -L, --table listar todos los nombre de señal en una bonita tabla\n"
+msgstr ""
+" -L, --table        enumerar todos los nombre de señal en una bonita tabla\n"
 
 #: src/skill.c:331
 msgid ""
@@ -1950,7 +1946,7 @@ msgid ""
 "                          the --ns option; available namespaces are:\n"
 "                          ipc, mnt, net, pid, user, uts\n"
 msgstr ""
-" --nslist <ns,...>        listar cual espacio de nombres se considerará "
+" --nslist <ns,...>        enumerar cual espacio de nombres se considerará "
 "para\n"
 "                          la opción --ns; los espacios de nombres "
 "disponibles son\n"
@@ -1965,7 +1961,7 @@ msgid ""
 "Alternate signals may be specified in three ways: -SIGKILL -KILL -9\n"
 msgstr ""
 "\n"
-"La señal por defecto es TERM. Use -l o -L para listar las señales "
+"La señal predeterminada es TERM. Use -l o -L para enumerar las señales "
 "disponibles.\n"
 "Las señales más útiles son HUP, INT, KILL, STOP, CONT y 0.\n"
 "Las señales alternativas se pueden especificar de tres modos: -SIGKILL -KILL "
@@ -2803,7 +2799,7 @@ msgstr "USED"
 
 #: src/top/top_nls.c:269
 msgid "Res+Swap Size (KiB)"
-msgstr "Tamaño de Res+Swap (KiB)"
+msgstr "Tamaño de Res+Inter (KiB)"
 
 #. Translation Hint: maximum 'nsIPC' = 10 +
 #: src/top/top_nls.c:271
@@ -2969,7 +2965,7 @@ msgstr "PSfd"
 
 #: src/top/top_nls.c:329
 msgid "Proportion File, KiB"
-msgstr "Proporción archivo, KiB"
+msgstr "Proporción Archv, KiB"
 
 #. Translation Hint: maximum 'PSsh' = 6
 #: src/top/top_nls.c:331
@@ -2978,7 +2974,7 @@ msgstr "PSsh"
 
 #: src/top/top_nls.c:332
 msgid "Proportion Shrd, KiB"
-msgstr "Proporción Shrd, KiB"
+msgstr "Proporción Comp, KiB"
 
 #. Translation Hint: maximum 'USS' = 6
 #: src/top/top_nls.c:334
@@ -4330,13 +4326,12 @@ msgid " -y, --no-first         skips first line of output\n"
 msgstr " -y, --no-first         salta la primera línea de salida\n"
 
 #: src/vmstat.c:294
-#, fuzzy
 msgid ""
 "procs -----------memory---------- ---swap-- -----io---- -system-- -------"
 "cpu-------"
 msgstr ""
-"procs -----------memoria---------- ---swap-- -----io---- -sistema-- ------"
-"cpu-----"
+"procs ----------memoria---------- ---inter-- -----io---- -sistema- -------"
+"cpu-------"
 
 #: src/vmstat.c:296
 msgid ""
@@ -4738,12 +4733,11 @@ msgstr ""
 "estilo\n"
 
 #: src/watch.c:122
-#, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
 msgstr ""
-"  -c, --color            interpretar el color ANSI y las secuencias de "
-"estilo\n"
+"  -C, --no-color         no interpretar las secuencias de color y estilo "
+"ANSI\n"
 
 #: src/watch.c:123
 msgid ""
@@ -4866,7 +4860,7 @@ msgstr " %s [opciones] [usuario]\n"
 #: src/w.c:677
 #, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -k, --kibi          muestra la salida en kibibytes\n"
+msgstr " -L, --line          muestra la salida en una sola línea\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -4936,9 +4930,8 @@ msgid "   IDLE WHAT\n"
 msgstr "   IDLE WHAT\n"
 
 #: src/w.c:845
-#, fuzzy
 msgid "error getting sessions"
-msgstr "Error al obtener los resultados del resumen de bloque"
+msgstr "error al obtener las sesiones"
 
 #: src/w.c:855
 msgid "session get class failed"
@@ -4946,7 +4939,7 @@ msgstr ""
 
 #: src/w.c:861
 msgid "get user name failed"
-msgstr ""
+msgstr "error al obtener el nombre de usuario"
 
 #: local/c.h:153
 msgid ""

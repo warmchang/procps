@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2024-12-03 17:50+1100\n"
+"POT-Creation-Date: 2024-12-17 09:15+1100\n"
 "PO-Revision-Date: 2021-02-03 07:20-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-translation@lists.sourceforge."
@@ -1949,10 +1949,8 @@ msgstr "B<pgrep>(1), B<pkill>(1)"
 
 #. type: Plain text
 #: ../man/pidof.1:80
-#, fuzzy
-#| msgid "E<.UR staikos@0wned.org> George Staikos E<.UE>"
 msgid "E<.MT jcapik@redhat.com> Jaromir Capik E<.ME>"
-msgstr "E<.UR staikos@0wned.org> George Staikos E<.UE>"
+msgstr ""
 
 #. type: TH
 #: ../man/pmap.1:19
@@ -3634,10 +3632,8 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/sysctl.conf.5:103
-#, fuzzy
-#| msgid "B<sysctl.conf>(5)  B<regex>(7)"
 msgid "B<sysctl.d>(5), B<sysctl>(8), B<systemd-sysctl>(8)"
-msgstr "B<sysctl.conf>(5)  B<regex>(7)"
+msgstr ""
 
 #. type: TH
 #: ../man/tload.1:12
@@ -11091,10 +11087,11 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:2102
 #, fuzzy
+#| msgid "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
 msgid ""
 "B<pgrep>(1), B<pstree>(1), B<top>(1), B<strftime>(3), B<proc>(5), "
 "B<capabilities>(7)."
-msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
+msgstr "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
 
 #. type: Plain text
 #: ../man/ps.1:2107
@@ -17625,9 +17622,9 @@ msgstr "PROCPS_USERLEN"
 #. type: TH
 #: ../man/procps_pids.3:11
 #, fuzzy, no-wrap
-#| msgid "2019-09-21"
+#| msgid "2019-03-05"
 msgid "2004-09-03"
-msgstr "2019-09-21"
+msgstr "2019-03-05"
 
 #. type: Plain text
 #: ../man/procps_pids.3:17
@@ -17889,12 +17886,19 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "User Commands"
 #~ msgstr "Comandos de usuário"
 
+#~ msgid "Total installed memory (MemTotal and SwapTotal in /proc/meminfo)"
+#~ msgstr "Memória total instalada (MemTotal e SwapTotal em /proc/meminfo)"
+
 #, no-wrap
 #~ msgid "Please send bug reports to"
 #~ msgstr "Por favor, envie relatórios de erro para"
 
 #~ msgid "E<.UR procps@freelists.org> E<.UE>"
 #~ msgstr "E<.UR procps@freelists.org> E<.UE>"
+
+#, no-wrap
+#~ msgid "2020-04-24"
+#~ msgstr "2020-04-24"
 
 #~ msgid "B<kill> [options] E<lt>pidE<gt> [...]"
 #~ msgstr "B<kill> [opções] E<lt>pidE<gt> [...]"
@@ -17943,24 +17947,15 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgid "List the available signal choices in a nice table."
 #~ msgstr "Lista as escolhas de sinais disponíveis em uma tabela legal."
 
-#, fuzzy
-#~| msgid ""
-#~| "This command meets appropriate standards.  The B<-L> flag is Linux-"
-#~| "specific."
 #~ msgid ""
-#~ "This command meets appropriate standards. The B<-L> flag is Linux-"
+#~ "This command meets appropriate standards.  The B<-L> flag is Linux-"
 #~ "specific."
 #~ msgstr ""
 #~ "Este comando atende as padrões apropriados. A opção B<-L> é específica do "
 #~ "Linux."
 
-#, fuzzy
-#~| msgid ""
-#~| "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote kill in 1999 to "
-#~| "replace a bsdutils one that was not standards compliant.  The util-linux "
-#~| "one might also work correctly."
 #~ msgid ""
-#~ "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> wrote kill in 1999 to "
+#~ "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote kill in 1999 to "
 #~ "replace a bsdutils one that was not standards compliant.  The util-linux "
 #~ "one might also work correctly."
 #~ msgstr ""
@@ -17968,31 +17963,61 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "para substituir um do bsdutils que não estava em conformidade com os "
 #~ "padrões. O do The util-linux também pode funcionar corretamente."
 
-#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
+#~ msgid ""
+#~ "Defines the signal to send to each matched process.  Either the numeric "
+#~ "or the symbolic signal name can be used.  (B<pkill> only.)"
 #~ msgstr ""
-#~ "Por favor, envie relatórios de erros para E<.UR procps@freelists.org> E<."
-#~ "UE>"
+#~ "Define o sinal para enviar para cada processo correspondente. Tanto nome "
+#~ "numérico quanto o simbólico do sinal podem ser usado. (B<pkill> apenas)"
 
 #, no-wrap
 #~ msgid "0"
 #~ msgstr "0"
 
 #, no-wrap
-#~ msgid "2"
-#~ msgstr "2"
-
-#, no-wrap
 #~ msgid "3"
 #~ msgstr "3"
 
-#, fuzzy, no-wrap
-#~| msgid "2019-03-05"
-#~ msgid "2021-03-11"
-#~ msgstr "2019-03-05"
+#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
+#~ msgstr ""
+#~ "Por favor, envie relatórios de erros para E<.UR procps@freelists.org> E<."
+#~ "UE>"
+
+#, no-wrap
+#~ msgid "-s"
+#~ msgstr "-s"
+
+#, no-wrap
+#~ msgid "-c"
+#~ msgstr "-c"
+
+#, no-wrap
+#~ msgid "-q"
+#~ msgstr "-q"
+
+#, no-wrap
+#~ msgid "-w"
+#~ msgstr "-w"
+
+#, no-wrap
+#~ msgid "-x"
+#~ msgstr "-x"
+
+#~ msgid "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
+#~ msgstr "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
+
+#, no-wrap
+#~ msgid "June 2011"
+#~ msgstr "Junho de 2011"
 
 #, no-wrap
 #~ msgid "System Administration"
 #~ msgstr "Administração do sistema"
+
+#~ msgid "Use this option when all arguments prescribe a key to be set."
+#~ msgstr ""
+#~ "Use essa opção quando todos os argumentos prescrevem um chave a ser "
+#~ "definida."
 
 #, no-wrap
 #~ msgid "DEPRECATED PARAMETERS"
@@ -18074,17 +18099,63 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "Greenfield E<.UE> e E<.UR johnsonm@sunsite.\\:unc.\\:edu> Michael K. "
 #~ "Johnson E<.UE>"
 
+#~ msgid "B<vmstat> does not require special permissions."
+#~ msgstr "B<vmstat> não exige permissões especiais."
+
+#~ msgid ""
+#~ "These reports are intended to help identify system bottlenecks.  Linux "
+#~ "B<vmstat> does not count itself as a running process."
+#~ msgstr ""
+#~ "Esses relatórios destinam-se a ajudar a identificar os gargalos do "
+#~ "sistema. O B<vmstat> do Linux não conta como um processo em execução."
+
+#~ msgid ""
+#~ "All linux blocks are currently 1024 bytes.  Old kernels may report blocks "
+#~ "as 512 bytes, 2048 bytes, or 4096 bytes."
+#~ msgstr ""
+#~ "Todos os blocos do Linux são atualmente 1024 bytes. Os kernels antigos "
+#~ "podem relatar blocos como 512 bytes, 2048 bytes ou 4096 bytes."
+
+#~ msgid ""
+#~ "Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default "
+#~ "is K (1024 bytes) in the default mode."
+#~ msgstr ""
+#~ "Desde procps 3.1.9, vmstat permite que você escolha unidades (k, K, m, "
+#~ "M). O padrão é K (1024 bytes) no modo padrão."
+
+#~ msgid "vmstat uses slabinfo 1.1"
+#~ msgstr "vmstat usa slabinfo 1.1"
+
+#, no-wrap
+#~ msgid ""
+#~ "/proc/meminfo\n"
+#~ "/proc/stat\n"
+#~ "/proc/*/stat\n"
+#~ msgstr ""
+#~ "/proc/meminfo\n"
+#~ "/proc/stat\n"
+#~ "/proc/*/stat\n"
+
+#~ msgid ""
+#~ "Does not tabulate the block io per device or count the number of system "
+#~ "calls."
+#~ msgstr ""
+#~ "Não tabula a e/s de bloco por dispositivo ou conta o número de chamadas "
+#~ "de sistema."
+
+#~ msgid "Written by E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
+#~ msgstr "Escrito por E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
+
+#~ msgid ""
+#~ "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
+#~ "UE> (diskstat, slab, partitions...)"
+#~ msgstr ""
+#~ "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
+#~ "UE> (diskstat, slab, partições...)"
+
 #, no-wrap
 #~ msgid "COMMAND-LINE OPTIONS"
 #~ msgstr "OPÇÕES DE LINHA DE COMANDO"
-
-#~ msgid "Freeze updates on command error, and exit after a key press."
-#~ msgstr ""
-#~ "Congela atualizações quando houver um erro no comando, e sai após um "
-#~ "tecla ser pressionada."
-
-#~ msgid "Exit when the output of I<command> changes."
-#~ msgstr "Sai quando a saída de I<comando> alterar."
 
 #~ msgid ""
 #~ "Make B<watch> attempt to run I<command> every B<--interval> I<seconds>.  "
@@ -18103,6 +18174,11 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ msgstr ""
 #~ "Desligue o cabeçalho mostrando o intervalo, comando e tempo atual na "
 #~ "parte superior da tela, bem como a seguinte linha em branco."
+
+#~ msgid "Freeze updates on command error, and exit after a key press."
+#~ msgstr ""
+#~ "Congela atualizações quando houver um erro no comando, e sai após um "
+#~ "tecla ser pressionada."
 
 #~ msgid ""
 #~ "Pass I<command> to B<exec>(2)  instead of B<sh -c> which reduces the need "
@@ -18163,16 +18239,10 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "O watch vai propagar o status de saída do comando como status de saída de "
 #~ "filho."
 
-#, fuzzy
-#~| msgid ""
-#~| "Upon terminal resize, the screen will not be correctly repainted until "
-#~| "the next scheduled update.  All B<--differences> highlighting is lost on "
-#~| "that update as well."
 #~ msgid ""
 #~ "Upon terminal resize, the screen will not be correctly repainted until "
 #~ "the next scheduled update.  All B<--differences> highlighting is lost on "
-#~ "that update as well. When using the B<--no-rerun> option, no output of "
-#~ "will be visible."
+#~ "that update as well."
 #~ msgstr ""
 #~ "Após o redimensionamento do terminal, a tela não será redesenhada "
 #~ "corretamente até a próxima atualização agendada. Todos os realces de B<--"
@@ -18201,21 +18271,13 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "As linhas em branco diretamente após uma linha que termina na última "
 #~ "coluna não são exibidas."
 
-#, fuzzy
-#~| msgid ""
-#~| "B<--precise> mode doesn't yet have advanced temporal distortion "
-#~| "technology to compensate for a I<command> that takes more than B<--"
-#~| "interval> I<seconds> to execute.  B<watch> also can get into a state "
-#~| "where it rapid-fires as many executions of I<command> as it can to catch "
-#~| "up from a previous executions running longer than B<--interval> (for "
-#~| "example, B<netstat> taking ages on a DNS lookup)."
 #~ msgid ""
 #~ "B<--precise> mode doesn't yet have advanced temporal distortion "
 #~ "technology to compensate for a I<command> that takes more than B<--"
 #~ "interval> I<seconds> to execute.  B<watch> also can get into a state "
 #~ "where it rapid-fires as many executions of I<command> as it can to catch "
 #~ "up from a previous executions running longer than B<--interval> (for "
-#~ "example, B<netstat>(8)  taking ages on a DNS lookup)."
+#~ "example, B<netstat> taking ages on a DNS lookup)."
 #~ msgstr ""
 #~ "O modo I<--precise> ainda não possui tecnologia de distorção temporal "
 #~ "avançada para compensar um I<comando> que leva mais de B<--interval> "
@@ -18268,116 +18330,6 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #~ "especialmente em face de B<ntpdate> (se disponível) ou outros mecanismos "
 #~ "de mudança de tempo quando da inicialização)"
 
-#, fuzzy
-#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
-#~ msgstr ""
-#~ "Por favor, envie relatórios de erros para E<.UR procps@freelists.org> E<."
-#~ "UE>"
-
-#, fuzzy
-#~ msgid "B<procps>(3), B<procps_pids>(3), B<proc>(5)."
-#~ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
-
-#~ msgid "Total installed memory (MemTotal and SwapTotal in /proc/meminfo)"
-#~ msgstr "Memória total instalada (MemTotal e SwapTotal em /proc/meminfo)"
-
-#, no-wrap
-#~ msgid "2020-04-24"
-#~ msgstr "2020-04-24"
-
-#~ msgid ""
-#~ "Defines the signal to send to each matched process.  Either the numeric "
-#~ "or the symbolic signal name can be used.  (B<pkill> only.)"
-#~ msgstr ""
-#~ "Define o sinal para enviar para cada processo correspondente. Tanto nome "
-#~ "numérico quanto o simbólico do sinal podem ser usado. (B<pkill> apenas)"
-
-#, no-wrap
-#~ msgid "-s"
-#~ msgstr "-s"
-
-#, no-wrap
-#~ msgid "-c"
-#~ msgstr "-c"
-
-#, no-wrap
-#~ msgid "-q"
-#~ msgstr "-q"
-
-#, no-wrap
-#~ msgid "-w"
-#~ msgstr "-w"
-
-#, no-wrap
-#~ msgid "-x"
-#~ msgstr "-x"
-
-#~ msgid "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
-#~ msgstr "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
-
-#, no-wrap
-#~ msgid "June 2011"
-#~ msgstr "Junho de 2011"
-
-#~ msgid "Use this option when all arguments prescribe a key to be set."
-#~ msgstr ""
-#~ "Use essa opção quando todos os argumentos prescrevem um chave a ser "
-#~ "definida."
-
-#~ msgid "B<vmstat> does not require special permissions."
-#~ msgstr "B<vmstat> não exige permissões especiais."
-
-#~ msgid ""
-#~ "These reports are intended to help identify system bottlenecks.  Linux "
-#~ "B<vmstat> does not count itself as a running process."
-#~ msgstr ""
-#~ "Esses relatórios destinam-se a ajudar a identificar os gargalos do "
-#~ "sistema. O B<vmstat> do Linux não conta como um processo em execução."
-
-#~ msgid ""
-#~ "All linux blocks are currently 1024 bytes.  Old kernels may report blocks "
-#~ "as 512 bytes, 2048 bytes, or 4096 bytes."
-#~ msgstr ""
-#~ "Todos os blocos do Linux são atualmente 1024 bytes. Os kernels antigos "
-#~ "podem relatar blocos como 512 bytes, 2048 bytes ou 4096 bytes."
-
-#~ msgid ""
-#~ "Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default "
-#~ "is K (1024 bytes) in the default mode."
-#~ msgstr ""
-#~ "Desde procps 3.1.9, vmstat permite que você escolha unidades (k, K, m, "
-#~ "M). O padrão é K (1024 bytes) no modo padrão."
-
-#~ msgid "vmstat uses slabinfo 1.1"
-#~ msgstr "vmstat usa slabinfo 1.1"
-
-#, no-wrap
-#~ msgid ""
-#~ "/proc/meminfo\n"
-#~ "/proc/stat\n"
-#~ "/proc/*/stat\n"
-#~ msgstr ""
-#~ "/proc/meminfo\n"
-#~ "/proc/stat\n"
-#~ "/proc/*/stat\n"
-
-#~ msgid ""
-#~ "Does not tabulate the block io per device or count the number of system "
-#~ "calls."
-#~ msgstr ""
-#~ "Não tabula a e/s de bloco por dispositivo ou conta o número de chamadas "
-#~ "de sistema."
-
-#~ msgid "Written by E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
-#~ msgstr "Escrito por E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
-
-#~ msgid ""
-#~ "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
-#~ "UE> (diskstat, slab, partitions...)"
-#~ msgstr ""
-#~ "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
-#~ "UE> (diskstat, slab, partições...)"
-
 #~ msgid ""
 #~ "Note that B<ps -aux> is distinct from B<ps\\ aux>.  The POSIX and UNIX "
 #~ "standards require that B<ps\\ -aux> print all processes owned by a user "
@@ -18403,6 +18355,12 @@ msgstr "B<free>(1), B<ps>(1), B<top>(1), B<vmstat>(8)"
 #, fuzzy, no-wrap
 #~ msgid "September 2020"
 #~ msgstr "Setembro de 2012"
+
+#, fuzzy
+#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
+#~ msgstr ""
+#~ "Por favor, envie relatórios de erros para E<.UR procps@freelists.org> E<."
+#~ "UE>"
 
 #~ msgid "September 2011"
 #~ msgstr "Setembro de 2011"

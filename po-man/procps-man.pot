@@ -6,9 +6,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.5rc1\n"
+"Project-Id-Version: procps-ng 4.0.5rc1.2-5803\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2024-12-03 17:50+1100\n"
+"POT-Creation-Date: 2024-12-19 11:34+1100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"

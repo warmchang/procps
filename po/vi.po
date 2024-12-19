@@ -477,7 +477,7 @@ msgstr "không thể tạo đường ống IPC"
 #: src/pgrep.c:364
 #, fuzzy
 msgid "Unable to open pidfile"
-msgstr "không thể tạo đường ống IPC"
+msgstr "không thể mở thư mục \"%s\""
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
@@ -3800,9 +3800,9 @@ msgid "autogroup write failed, %s"
 msgstr ""
 
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "Các biến môi trường"
+msgstr ""
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -4644,32 +4644,32 @@ msgstr "%13lu trang tráo đổi ra\n"
 #: src/vmstat.c:930
 #, fuzzy, c-format
 msgid "%13lu pages alloc in dma\n"
-msgstr "%13lu trang tráo đổi vào\n"
+msgstr "%13lu trang được đánh trang vào\n"
 
 #: src/vmstat.c:931
 #, fuzzy, c-format
 msgid "%13lu pages alloc in dma32\n"
-msgstr "%13lu trang tráo đổi vào\n"
+msgstr "%13lu trang được đánh trang vào\n"
 
 #: src/vmstat.c:932
 #, fuzzy, c-format
 msgid "%13lu pages alloc in high\n"
-msgstr "%13lu trang tráo đổi vào\n"
+msgstr "%13lu trang được đánh trang vào\n"
 
 #: src/vmstat.c:933
 #, fuzzy, c-format
 msgid "%13lu pages alloc in movable\n"
-msgstr "%13lu trang tráo đổi vào\n"
+msgstr "%13lu trang được đánh trang vào\n"
 
 #: src/vmstat.c:934
 #, fuzzy, c-format
 msgid "%13lu pages alloc in normal\n"
-msgstr "%13lu trang tráo đổi vào\n"
+msgstr "%13lu trang được đánh trang vào\n"
 
 #: src/vmstat.c:935
 #, fuzzy, c-format
 msgid "%13lu pages free\n"
-msgstr "%13lu %s tráo đổi còn trống\n"
+msgstr "%13lu trang được đánh trang vào\n"
 
 #: src/vmstat.c:936
 #, fuzzy, c-format
@@ -4828,7 +4828,7 @@ msgstr " %s [các-tùy-chọn] [tty]\n"
 #: src/w.c:677
 #, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -k, --kilo          hiển thị kết xuất theo đơn vị kilobytes\n"
+msgstr " -b, --bytes         hiển thị kết xuất theo đơn vị byte\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -4952,81 +4952,6 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s nằm trong gói phần mềm “%s”.\n"
 
-#~ msgid "r"
-#~ msgstr "r"
-
-#~ msgid "b"
-#~ msgstr "b"
-
-#~ msgid "swpd"
-#~ msgstr "swpd"
-
-#~ msgid "free"
-#~ msgstr "trống"
-
-#~ msgid "inact"
-#~ msgstr "inact"
-
-#~ msgid "buff"
-#~ msgstr "buff"
-
-#~ msgid "active"
-#~ msgstr "hđộng"
-
-#~ msgid "cache"
-#~ msgstr "nhớtạm"
-
-#~ msgid "si"
-#~ msgstr "si"
-
-#~ msgid "so"
-#~ msgstr "so"
-
-#~ msgid "bi"
-#~ msgstr "bi"
-
-#~ msgid "bo"
-#~ msgstr "bo"
-
-#~ msgid "in"
-#~ msgstr "in"
-
-#~ msgid "cs"
-#~ msgstr "cs"
-
-#~ msgid "us"
-#~ msgstr "us"
-
-#~ msgid "sy"
-#~ msgstr "sy"
-
-#~ msgid "id"
-#~ msgstr "id"
-
-#~ msgid "wa"
-#~ msgstr "wa"
-
-#~ msgid "st"
-#~ msgstr "st"
-
-#~ msgid "dup2 failed"
-#~ msgstr "dup2 bị lỗi"
-
-#, c-format
-#~ msgid "unable to execute '%s'"
-#~ msgstr "không thể thực hiện “%s”"
-
-#~ msgid "waitpid"
-#~ msgstr "waitpid"
-
-#, c-format
-#~ msgid "unicode handling error\n"
-#~ msgstr "xử lý unicode gặp lỗi\n"
-
-#, c-format
-#~ msgid "unicode handling error (malloc)\n"
-#~ msgstr "xử lý unicode gặp lỗi (malloc)\n"
-
 #, c-format
 #~ msgid "error: not enough memory\n"
 #~ msgstr "lỗi: không đủ bộ nhớ\n"
@@ -5136,6 +5061,63 @@ msgstr "%s nằm trong gói phần mềm “%s”.\n"
 #~ "%%%s~3 %#5.1f  ~2ngdùng,~3 %#5.1f  ~2hthống,~3 %#5.1f  ~2nice,~3 %#5.1f  "
 #~ "~2nghỉ,~3 %#5.1f  ~2đợi-VR~3\n"
 
+#~ msgid "r"
+#~ msgstr "r"
+
+#~ msgid "b"
+#~ msgstr "b"
+
+#~ msgid "swpd"
+#~ msgstr "swpd"
+
+#~ msgid "free"
+#~ msgstr "trống"
+
+#~ msgid "inact"
+#~ msgstr "inact"
+
+#~ msgid "buff"
+#~ msgstr "buff"
+
+#~ msgid "active"
+#~ msgstr "hđộng"
+
+#~ msgid "cache"
+#~ msgstr "nhớtạm"
+
+#~ msgid "si"
+#~ msgstr "si"
+
+#~ msgid "so"
+#~ msgstr "so"
+
+#~ msgid "bi"
+#~ msgstr "bi"
+
+#~ msgid "bo"
+#~ msgstr "bo"
+
+#~ msgid "in"
+#~ msgstr "in"
+
+#~ msgid "cs"
+#~ msgstr "cs"
+
+#~ msgid "us"
+#~ msgstr "us"
+
+#~ msgid "sy"
+#~ msgstr "sy"
+
+#~ msgid "id"
+#~ msgstr "id"
+
+#~ msgid "wa"
+#~ msgstr "wa"
+
+#~ msgid "st"
+#~ msgstr "st"
+
 #~ msgid "reads  "
 #~ msgstr "đọc  "
 
@@ -5148,6 +5130,24 @@ msgstr "%s nằm trong gói phần mềm “%s”.\n"
 #~ msgid ""
 #~ "your kernel does not support slabinfo or your permissions are insufficient"
 #~ msgstr "hạt nhân của bạn không hỗ trợ slabinfo hoặc bạn không đủ thẩm quyền"
+
+#~ msgid "dup2 failed"
+#~ msgstr "dup2 bị lỗi"
+
+#, c-format
+#~ msgid "unable to execute '%s'"
+#~ msgstr "không thể thực hiện “%s”"
+
+#~ msgid "waitpid"
+#~ msgstr "waitpid"
+
+#, c-format
+#~ msgid "unicode handling error\n"
+#~ msgstr "xử lý unicode gặp lỗi\n"
+
+#, c-format
+#~ msgid "unicode handling error (malloc)\n"
+#~ msgstr "xử lý unicode gặp lỗi (malloc)\n"
 
 #, c-format
 #~ msgid "%d column window is too narrow"

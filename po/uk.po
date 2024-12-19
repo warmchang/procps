@@ -2,13 +2,13 @@
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019, 2021, 2022, 2023.
+# Yuri Chornoivan <yurchor@ukr.net>, 2014, 2017, 2018, 2019, 2021, 2022, 2023, 2024.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.4-rc1\n"
+"Project-Id-Version: procps-ng-4.0.5rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2024-12-03 17:42+1100\n"
-"PO-Revision-Date: 2023-08-20 12:58+0300\n"
+"PO-Revision-Date: 2024-12-12 21:15+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
@@ -18,7 +18,7 @@ msgstr ""
 "X-Bugs: Report translation errors to the Language-Team address.\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
 "n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Lokalize 20.12.0\n"
+"X-Generator: Lokalize 23.04.3\n"
 
 #: local/fileutils.c:36
 msgid "write error"
@@ -206,7 +206,7 @@ msgstr "Comm:"
 
 #: src/hugetop.c:364
 msgid "     PID     SHARED    PRIVATE COMMAND"
-msgstr ""
+msgstr "     PID     СПІЛЬН    ПРИВАТ  КОМАНДА"
 
 #: src/hugetop.c:407 src/slabtop.c:110
 msgid " -d, --delay <secs>  delay updates\n"
@@ -215,15 +215,15 @@ msgstr " -d, --delay <сек.>  відкласти оновлення\n"
 #: src/hugetop.c:408
 msgid " -n, --numa          display per NUMA nodes Huge pages information\n"
 msgstr ""
+" -n, --numa          вивести дані сторінок Huge для окремих вузлів NUMA\n"
 
 #: src/hugetop.c:409 src/slabtop.c:111
 msgid " -o, --once          only display once, then exit\n"
 msgstr " -o, --once          показати лише раз, потім завершити роботу\n"
 
 #: src/hugetop.c:410
-#, fuzzy
 msgid " -H, --human         display human-readable output\n"
-msgstr " -h, --human         вивести дані у зручному для читання вигляді\n"
+msgstr " -H, --human         вивести дані у зручному для читання вигляді\n"
 
 #: src/hugetop.c:446 src/slabtop.c:201
 msgid "illegal delay"
@@ -475,20 +475,19 @@ msgstr ""
 
 #: src/pgrep.c:202
 msgid "  --env <name=val,...>     match on environment variable\n"
-msgstr ""
+msgstr "  --env <назва=значення,...> відповідність до змінних середовища\n"
 
 #: src/pgrep.c:225 src/pgrep.c:736 src/w.c:407
 msgid "Unable to create pid info structure"
 msgstr "Не вдалося створити структуру відомостей щодо pid"
 
 #: src/pgrep.c:364
-#, fuzzy
 msgid "Unable to open pidfile"
-msgstr "Не вдалося отримати час роботи"
+msgstr "Не вдалося відкрити pidfile"
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
-msgstr ""
+msgstr "Не вдалося виконати перевірку щодо блокування для pidfile"
 
 #: src/pgrep.c:401
 #, c-format
@@ -1938,7 +1937,6 @@ msgstr ""
 "                           простору назв, що і <pid>\n"
 
 #: src/skill.c:345
-#, fuzzy
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are:\n"
@@ -2017,9 +2015,8 @@ msgid "skill: \"%s\" is not supported\n"
 msgstr "skill: підтримки «%s» не передбачено\n"
 
 #: src/slabtop.c:112
-#, fuzzy
 msgid " --human             show human-readable output\n"
-msgstr " -h, --human         вивести дані у зручному для читання вигляді\n"
+msgstr " --human            вивести дані у зручному для читання вигляді\n"
 
 #: src/slabtop.c:113
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
@@ -3095,30 +3092,29 @@ msgstr "Inode простору назв TIME"
 #. Translation Hint: maximum 'CLS' = 3
 #: src/top/top_nls.c:373
 msgid "CLS"
-msgstr ""
+msgstr "КЛА"
 
 #: src/top/top_nls.c:374
 msgid "Schedule Class"
-msgstr ""
+msgstr "Клас планування"
 
 #. Translation Hint: maximum 'Docker' = 8 +
 #: src/top/top_nls.c:376
 msgid "Docker"
-msgstr ""
+msgstr "Docker"
 
 #: src/top/top_nls.c:377
 msgid "Docker container id"
-msgstr ""
+msgstr "Ідентифікатор контейнера Docker"
 
 #. Translation Hint: maximum 'nFD' = 3
 #: src/top/top_nls.c:379
 msgid "nFD"
-msgstr ""
+msgstr "nFD"
 
 #: src/top/top_nls.c:380
-#, fuzzy
 msgid "Number of Open Files"
-msgstr "Відкрити файли"
+msgstr "Кількість відкритих файлів"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3814,9 +3810,9 @@ msgid "autogroup write failed, %s"
 msgstr "помилка запису автогрупи, %s"
 
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "простір назв для pid %d, %s"
+msgstr "дозволені можливості для pid %d, %s"
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -4063,7 +4059,7 @@ msgstr ""
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
 #: src/top/top_nls.c:719
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4115,11 +4111,14 @@ msgstr ""
 "%c ~4:\n"
 "   S~2 = Резюме даних,~1  M~2 = Повідомлення або запити,\n"
 "   H~2 = Заголовки стовпчиків,~1  T~2 = Дані щодо завдань\n"
-"2) Виберіть ~1колір~2 за числом або скористайтеся клавішами зі стрілками\n"
+"   X~2 = Підсвічування завдання x/y (стовпчик/рядок)\n"
+"2) Виберіть ~1колір~2 за числом (~1немає~2 - @) або скористайтеся клавішами "
+"зі стрілками\n"
 "   для збільшення чи зменшення значення кольорів %d, ~1поточним кольором~2 є "
 "~1 %d ~4:\n"
 "   0~2 = чорний,~1 1~2 = червоний,    ~1  2~2 = зелений,~1  3~2 = жовтий,\n"
-"   4~2 = синій, ~1  5~2 = малиновий,~1  6~2 = блакитний, ~1  7~2 = білий\n"
+"   4~2 = синій, ~1  5~2 = малиновий,~1  6~2 = блакитний, ~1  7~2 = білий,~1  "
+"@~2 = немає (-1)\n"
 "\n"
 "3) Скористайтеся однією з цих клавіш:\n"
 "   q або Esc — перервати внесення змін до вікна '~1%s~2'\n"
@@ -4160,13 +4159,13 @@ msgstr ""
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:764
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s:~3 %u ~2total,~3 %u ~2running,~3 %u ~2sleep,~3 %u ~2d-sleep,~3 %u "
 "~2stopped,~3 %u ~2zombie~3\n"
 msgstr ""
-"%s:~3 %3u ~2загалом,~3 %3u ~2працює,~3 %3u ~2приспано,~3 %3u ~2зупинено,~3 "
-"%3u ~2зомбі~3\n"
+"%s:~3 %u ~2загалом,~3 %u ~2працює,~3 %u ~2приспано,~3 %u ~2d-приспано,~3 %u "
+"~2зупинено,~3 %u ~2зомбі~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -4240,9 +4239,8 @@ msgstr ""
 "роботи~5 !\n"
 
 #: src/uptime.c:49 src/w.c:532
-#, fuzzy
 msgid "Cannot get container uptime"
-msgstr "Не вдалося отримати час роботи системи"
+msgstr "Не вдалося отримати час роботи контейнера"
 
 #: src/uptime.c:52 src/uptime.c:176 src/w.c:535
 msgid "Cannot get system uptime"
@@ -4250,16 +4248,15 @@ msgstr "Не вдалося отримати час роботи системи"
 
 #: src/uptime.c:108
 msgid " -c, --container show container uptime\n"
-msgstr ""
+msgstr " -c, --container показати час роботи контейнера\n"
 
 #: src/uptime.c:109
 msgid " -p, --pretty   show uptime in pretty format\n"
 msgstr " -p, --pretty   показати час роботи у зручному для читання форматі\n"
 
 #: src/uptime.c:110
-#, fuzzy
 msgid " -r, --raw      show uptime values in raw format\n"
-msgstr " -p, --pretty   показати час роботи у зручному для читання форматі\n"
+msgstr " -r, --raw      вивести значення часу роботи у простому форматі\n"
 
 #: src/uptime.c:111
 msgid " -s, --since    system up since\n"
@@ -4655,34 +4652,34 @@ msgid "%13lu pages swapped out\n"
 msgstr "%13lu сторінок вивантажено\n"
 
 #: src/vmstat.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma\n"
-msgstr "%13lu сторінок завантажено\n"
+msgstr "%13lu сторінок розміщено у dma\n"
 
 #: src/vmstat.c:931
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma32\n"
-msgstr "%13lu сторінок завантажено\n"
+msgstr "%13lu сторінок розміщено у dma32\n"
 
 #: src/vmstat.c:932
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in high\n"
-msgstr "%13lu сторінок завантажено\n"
+msgstr "%13lu сторінок розміщено у верхній\n"
 
 #: src/vmstat.c:933
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in movable\n"
-msgstr "%13lu сторінок завантажено\n"
+msgstr "%13lu сторінок розміщено у пересувній\n"
 
 #: src/vmstat.c:934
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in normal\n"
-msgstr "%13lu сторінок завантажено\n"
+msgstr "%13lu сторінок розміщено у звичайній\n"
 
 #: src/vmstat.c:935
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages free\n"
-msgstr "%13lu %s резервної пам’яті вільно\n"
+msgstr "%13lu сторінок вільно\n"
 
 #: src/vmstat.c:936
 #, c-format
@@ -4766,10 +4763,8 @@ msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr "  -n, --interval <число> кількість секунд очікування між оновленнями\n"
 
 #: src/watch.c:130
-#, fuzzy
 msgid "  -p, --precise          -n includes command running time\n"
-msgstr ""
-"  -p, --precise          намагатися виконувати команду з точними проміжками\n"
+msgstr "  -p, --precise          -n включає час роботи команди\n"
 
 #: src/watch.c:131
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
@@ -4777,9 +4772,8 @@ msgstr ""
 "  -r, --no-rerun         не перезапускати програми при зміні розмірів вікна\n"
 
 #: src/watch.c:132
-#, fuzzy
 msgid "  -s, --shotsdir         directory to store screenshots\n"
-msgstr " -s, --short         скорочений формат\n"
+msgstr "  -s, --shotsdir         каталог для зберігання знімків\n"
 
 #: src/watch.c:133
 msgid "  -t, --no-title         turn off header\n"
@@ -4843,9 +4837,8 @@ msgid " %2llu.%02us"
 msgstr " %2llu.%02uс"
 
 #: src/w.c:538
-#, fuzzy
 msgid "Cannot format uptime"
-msgstr "Не вдалося отримати час роботи системи"
+msgstr "Не вдалося форматувати час роботи"
 
 #: src/w.c:675
 #, c-format
@@ -4853,9 +4846,8 @@ msgid " %s [options] [user]\n"
 msgstr " %s [параметри] [користувач]\n"
 
 #: src/w.c:677
-#, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -L, --line          вивести дані в один рядок\n"
+msgstr " -c, --container     показати час роботи контейнера\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -4915,9 +4907,9 @@ msgid "FROM"
 msgstr "З"
 
 #: src/w.c:833
-#, fuzzy, c-format
+#, c-format
 msgid " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
-msgstr "  LOGIN@   IDLE   JCPU   PCPU WHAT\n"
+msgstr " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
 
 #: src/w.c:835
 #, c-format
@@ -4929,9 +4921,8 @@ msgid "error getting sessions"
 msgstr "помилка під час спроби отримання списку сеансів"
 
 #: src/w.c:855
-#, fuzzy
 msgid "session get class failed"
-msgstr "помилка аргументу секунд, «%s»"
+msgstr "помилка отримання класу сеансу"
 
 #: src/w.c:861
 msgid "get user name failed"

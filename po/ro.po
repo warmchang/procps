@@ -1,8 +1,9 @@
+# Romanian translation of procps-ng.
 # Mesajele în limba română pentru pachetul procps-ng.
-# Copyright © 2022, 2023 Free Software Foundation, Inc.
+# Copyright © 2022, 2023, 2024 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2022 - 2023.
+# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2022, 2023, 2024.
 #
 # Cronologia traducerii fișierului „procps-ng”:
 # Traducerea inițială, făcută de R-GC, pentru versiunea procps-ng 3.3.17rc1 (99% - tradus), noi-2022.
@@ -10,14 +11,16 @@
 # Actualizare a traducerii pentru versiunea 4.0.2-rc1, făcută de R-GC, noi-2022.
 # Actualizare a traducerii pentru versiunea 4.0.3-rc1, făcută de R-GC, ian-2023.
 # Actualizare a traducerii pentru versiunea 4.0.4-rc1, făcută de R-GC, aug-2023.
+# Corectare „hezacimal” → „hexazecimal” pentru versiunea 4.0.4-rc1, făcută de R-GC, sep-2023.
+# Actualizare a traducerii pentru versiunea 4.0.5rc1, făcută de R-GC, dec-2024.
 # Actualizare a traducerii pentru versiunea Y, făcută de X, Z(anul).
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.4-rc1\n"
+"Project-Id-Version: procps-ng 4.0.5rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2024-12-03 17:42+1100\n"
-"PO-Revision-Date: 2023-08-20 17:03+0200\n"
+"PO-Revision-Date: 2024-12-15 17:21+0100\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -27,7 +30,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #: local/fileutils.c:36
 msgid "write error"
@@ -250,7 +253,7 @@ msgstr "Com.:"
 
 #: src/hugetop.c:364
 msgid "     PID     SHARED    PRIVATE COMMAND"
-msgstr ""
+msgstr "     PID     PARTAJATĂ PRIVATĂ COMANDĂ"
 
 # R-GC, scrie:
 # acest mesaj și următoarele, pot să fie
@@ -282,16 +285,17 @@ msgstr ""
 #: src/hugetop.c:408
 msgid " -n, --numa          display per NUMA nodes Huge pages information\n"
 msgstr ""
+" -n, --numa          afișează informații despre paginile imense pe nodurile "
+"NUM\n"
 
 #: src/hugetop.c:409 src/slabtop.c:111
 msgid " -o, --once          only display once, then exit\n"
 msgstr " -o, --once          se afișează o singură dată, apoi se iese\n"
 
 #: src/hugetop.c:410
-#, fuzzy
 msgid " -H, --human         display human-readable output\n"
 msgstr ""
-" -h, --human         afișează ieșirea într-o formă care poate fi citită "
+" -H, --human         afișează ieșirea într-o formă care poate fi citită "
 "ușor\n"
 "                     de către om\n"
 
@@ -556,20 +560,19 @@ msgstr ""
 
 #: src/pgrep.c:202
 msgid "  --env <name=val,...>     match on environment variable\n"
-msgstr ""
+msgstr "  --env <nume=val,...>     potrivire cu variabila de mediu\n"
 
 #: src/pgrep.c:225 src/pgrep.c:736 src/w.c:407
 msgid "Unable to create pid info structure"
 msgstr "Nu se poate crea structura de informații pid"
 
 #: src/pgrep.c:364
-#, fuzzy
 msgid "Unable to open pidfile"
-msgstr "Nu s-a putut obține timpul de funcționare"
+msgstr "Nu s-a putut deschide fișierul pid"
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
-msgstr ""
+msgstr "Verificarea blocajului pentru fișierul pid a eșuat"
 
 #: src/pgrep.c:401
 #, c-format
@@ -599,7 +602,7 @@ msgstr "nu este un număr: %s"
 #: src/pgrep.c:503
 #, c-format
 msgid "not a hex string: %s"
-msgstr "nu este un șir hezacimal: %s"
+msgstr "nu este un șir hexazecimal: %s"
 
 #: src/pgrep.c:538 src/skill.c:162
 msgid "Unable to read process namespace information"
@@ -838,7 +841,7 @@ msgstr ""
 msgid " -N, --create-rc-to=<file>   create new rc to file\n"
 msgstr ""
 " -N, --create-rc-to=<fișier> creează un nou fișier de configurare în\n"
-"                             „calea-la/<fișier>”\n"
+"                             „ruta-către/<fișier>”\n"
 
 #: src/pmap.c:130
 msgid "            NOTE: pid arguments are not allowed with -n, -N\n"
@@ -855,7 +858,7 @@ msgstr " -q, --quiet                 nu afișează antetul și notele de subsol\
 
 #: src/pmap.c:133
 msgid " -p, --show-path             show path in the mapping\n"
-msgstr " -p, --show-path             afișează calea în coloana de asociere\n"
+msgstr " -p, --show-path             afișează ruta în coloana de asociere\n"
 
 #: src/pmap.c:134
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
@@ -2131,7 +2134,6 @@ msgstr ""
 "                          spațiu de nume ca <pid>\n"
 
 #: src/skill.c:345
-#, fuzzy
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are:\n"
@@ -2210,10 +2212,9 @@ msgid "skill: \"%s\" is not supported\n"
 msgstr "skill: „%s” nu este acceptată\n"
 
 #: src/slabtop.c:112
-#, fuzzy
 msgid " --human             show human-readable output\n"
 msgstr ""
-" -h, --human         afișează ieșirea într-o formă care poate fi citită "
+" --human             afișează ieșirea într-o formă care poate fi citită "
 "ușor\n"
 "                     de către om\n"
 
@@ -2327,7 +2328,7 @@ msgstr "Nu s-au putut sorta nodurile „slab”"
 #: src/sysctl.c:125
 #, c-format
 msgid "Path is not under %s: %s"
-msgstr "Calea nu este sub %s: %s"
+msgstr "Ruta nu este sub %s: %s"
 
 #: src/sysctl.c:143
 #, c-format
@@ -3143,7 +3144,7 @@ msgstr "EXE"
 
 #: src/top/top_nls.c:314
 msgid "Executable Path"
-msgstr "Calea la executabil"
+msgstr "Ruta către executabil"
 
 #: src/top/top_nls.c:320
 msgid "Res Mem (smaps), KiB"
@@ -3307,30 +3308,29 @@ msgstr "Nodul-i al spațiului de nume TIMP"
 #. Translation Hint: maximum 'CLS' = 3
 #: src/top/top_nls.c:373
 msgid "CLS"
-msgstr ""
+msgstr "CLS"
 
 #: src/top/top_nls.c:374
 msgid "Schedule Class"
-msgstr ""
+msgstr "Clasa planificare"
 
 #. Translation Hint: maximum 'Docker' = 8 +
 #: src/top/top_nls.c:376
 msgid "Docker"
-msgstr ""
+msgstr "Docker"
 
 #: src/top/top_nls.c:377
 msgid "Docker container id"
-msgstr ""
+msgstr "Id container Docker"
 
 #. Translation Hint: maximum 'nFD' = 3
 #: src/top/top_nls.c:379
 msgid "nFD"
-msgstr ""
+msgstr "nFD"
 
 #: src/top/top_nls.c:380
-#, fuzzy
 msgid "Number of Open Files"
-msgstr "Deschide fișiere"
+msgstr "Numărul de fișiere deschise"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -4064,9 +4064,9 @@ msgid "autogroup write failed, %s"
 msgstr "scrierea în autogrup a eșuat, %s"
 
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "spații de nume pentru pid %d, %s"
+msgstr "capacități permise pentru pid %d, %s"
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -4329,7 +4329,7 @@ msgstr ""
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
 #: src/top/top_nls.c:719
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4375,13 +4375,16 @@ msgstr ""
 "   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n"
 "   comutatoare disponibile: ~1B~2 =dezact. global caracterele aldine "
 "(~1%s~2),\n"
-"       ~1z~2 =color/mono (~1%s~2), ~1b~2 =sarcini „aldin”/invers (~1%s~2)\n"
+"       ~1z~2 =color/mono (~1%s~2), ~1b~2 =sarcini aldin/invers (~1%s~2)\n"
 "\n"
 "1) Selectați o ~1țintă~2 cu literele în majusculă, ~1ținta curentă~2 este ~1 "
 "%c ~4:\n"
-"   S~2 = Rezumat de date,~1  M~2 = Mesaje/Solicitări,\n"
-"   H~2 = Titluri coloane,~1  T~2 = Informații despre sarcini\n"
-"2) Selectați o ~1culoare~2 ca un număr sau utilizați tastele săgeți sus/jos\n"
+"   S~2 = Rezumat de date,~1  M~2 = Mesaje/Solicitări,~1  H~2 = Titluri "
+"coloane\n"
+"   T~2 = Informații despre sarcini,~1  X~2 = Evidențiere sarcini x/y (col/"
+"rând)\n"
+"2) Selectați o ~1culoare~2 ca un număr (~1none~2 as @) sau utilizați "
+"săgețile sus/jos\n"
 "   pt. a crește/micșora valoarea culorii %d, ~1culoarea curentă~2 este ~1 %d "
 "~4:\n"
 "   0~2 = negru,~1  1~2 = roșu,    ~1  2~2 = verde,~1  3~2 = galben,\n"
@@ -4439,13 +4442,13 @@ msgstr ""
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:764
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s:~3 %u ~2total,~3 %u ~2running,~3 %u ~2sleep,~3 %u ~2d-sleep,~3 %u "
 "~2stopped,~3 %u ~2zombie~3\n"
 msgstr ""
-"%s:~3 %3u ~2total,~3 %3u ~2rulând,~3 %3u ~2dormind,~3 %3u ~2oprit(e),~3 %3u "
-"~2zombi~3\n"
+"%s:~3 %u ~2total,~3 %u ~2rulând,~3 %u ~2dormind,~3 %u ~2d-dormind,~3 %u "
+"~2oprit(e),~3 %u ~2zombi~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -4521,36 +4524,30 @@ msgstr ""
 "ieși~5 !\n"
 
 #: src/uptime.c:49 src/w.c:532
-#, fuzzy
 msgid "Cannot get container uptime"
-msgstr "Nu se poate obține timpul de funcționare a sistemului"
+msgstr "Nu se poate obține timpul de funcționare al containerului"
 
 #: src/uptime.c:52 src/uptime.c:176 src/w.c:535
 msgid "Cannot get system uptime"
 msgstr "Nu se poate obține timpul de funcționare a sistemului"
 
-#: src/uptime.c:108
-msgid " -c, --container show container uptime\n"
-msgstr ""
-
 # R-GC, scrie:
 # acest mesaj și următoarele, pot să fie
 # vizualizate, rulînd comanda:
 # «uptime --help»
+#: src/uptime.c:108
+msgid " -c, --container show container uptime\n"
+msgstr " -c, --container afișează timpul de funcționare al containerului\n"
+
 #: src/uptime.c:109
 msgid " -p, --pretty   show uptime in pretty format\n"
 msgstr ""
 " -p, --pretty   afișează timpul de funcționare într-un format amiabil\n"
 
-# R-GC, scrie:
-# acest mesaj și următoarele, pot să fie
-# vizualizate, rulînd comanda:
-# «uptime --help»
 #: src/uptime.c:110
-#, fuzzy
 msgid " -r, --raw      show uptime values in raw format\n"
 msgstr ""
-" -p, --pretty   afișează timpul de funcționare într-un format amiabil\n"
+" -r, --raw       afișează valorile timpului de funcționare în format brut\n"
 
 #: src/uptime.c:111
 msgid " -s, --since    system up since\n"
@@ -4968,34 +4965,34 @@ msgid "%13lu pages swapped out\n"
 msgstr "%13lu pagini scoase din stocarea swap\n"
 
 #: src/vmstat.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma\n"
-msgstr "%13lu pagini introduse în stocarea swap\n"
+msgstr "%13lu pagini alocate în dma\n"
 
 #: src/vmstat.c:931
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma32\n"
-msgstr "%13lu pagini introduse în stocarea swap\n"
+msgstr "%13lu pagini alocate în dma32\n"
 
 #: src/vmstat.c:932
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in high\n"
-msgstr "%13lu pagini introduse în stocarea swap\n"
+msgstr "%13lu pagini alocate în ridicată\n"
 
 #: src/vmstat.c:933
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in movable\n"
-msgstr "%13lu pagini introduse în stocarea swap\n"
+msgstr "%13lu pagini alocate în mobile\n"
 
 #: src/vmstat.c:934
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in normal\n"
-msgstr "%13lu pagini introduse în stocarea swap\n"
+msgstr "%13lu pagini alocate în normal\n"
 
 #: src/vmstat.c:935
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages free\n"
-msgstr "%13lu %s swap liberă\n"
+msgstr "%13lu pagini libere\n"
 
 #: src/vmstat.c:936
 #, c-format
@@ -5082,10 +5079,9 @@ msgstr ""
 "                         numărul de secunde de așteptare între actualizări\n"
 
 #: src/watch.c:130
-#, fuzzy
 msgid "  -p, --precise          -n includes command running time\n"
 msgstr ""
-"  -p, --precise          încearcă să execute comanda la intervale precise\n"
+"  -p, --precise          ca „-n”, dar include timpul de execuție a comenzii\n"
 
 #: src/watch.c:131
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
@@ -5094,9 +5090,9 @@ msgstr ""
 "ferestrei\n"
 
 #: src/watch.c:132
-#, fuzzy
 msgid "  -s, --shotsdir         directory to store screenshots\n"
-msgstr " -s, --short         formatul scurt\n"
+msgstr ""
+"  -s, --shotsdir         director pentru stocarea capturilor de ecran\n"
 
 #: src/watch.c:133
 msgid "  -t, --no-title         turn off header\n"
@@ -5160,28 +5156,26 @@ msgid " %2llu.%02us"
 msgstr " %2llu.%02us"
 
 #: src/w.c:538
-#, fuzzy
 msgid "Cannot format uptime"
-msgstr "Nu se poate obține timpul de funcționare a sistemului"
+msgstr "Nu se poate formata timpul de funcționare"
 
 # R-GC, scrie:
 # acest mesaj și următoarele, pot să fie
 # vizualizate, rulînd comanda:
-# «tload --help»
+# «w--help»
 #: src/w.c:675
 #, c-format
 msgid " %s [options] [user]\n"
 msgstr " %s [opțiuni] [utilizator]\n"
 
-#: src/w.c:677
-#, fuzzy
-msgid " -c, --container     show container uptime\n"
-msgstr " -L, --line          afișează ieșirea pe o singură linie\n"
-
 # R-GC, scrie:
 # acest mesaj și următoarele, pot să fie
 # vizualizate, rulînd comanda:
-# «w --help»
+# «tload --help»
+#: src/w.c:677
+msgid " -c, --container     show container uptime\n"
+msgstr " -c, --container     afișează timpul de funcționare al containerului\n"
+
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
 msgstr " -h, --no-header     nu afișează antetul(titlurile)\n"
@@ -5242,9 +5236,9 @@ msgid "FROM"
 msgstr "DIN "
 
 #: src/w.c:833
-#, fuzzy, c-format
+#, c-format
 msgid " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
-msgstr " ORA AUT. INACTIV  JCPU   PCPU CARE\n"
+msgstr " ORA AUT. INACT. JCPU   PCPU  CARE\n"
 
 #: src/w.c:835
 #, c-format
@@ -5257,7 +5251,7 @@ msgstr "eroare la obținerea sesiunilor"
 
 #: src/w.c:855
 msgid "session get class failed"
-msgstr ""
+msgstr "sesiunea de obținere a clasei a eșuat"
 
 #: src/w.c:861
 msgid "get user name failed"

@@ -21,7 +21,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng-man 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: Procps list <procps@freelists.org>\n"
-"POT-Creation-Date: 2024-12-03 17:50+1100\n"
+"POT-Creation-Date: 2024-12-17 09:15+1100\n"
 "PO-Revision-Date: 2021-08-20 00:10+0200\n"
 "Last-Translator: Stéphane Aulery <lkppo@free.fr>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -611,9 +611,9 @@ msgstr "KILL"
 #. type: TH
 #: ../man/kill.1:12
 #, fuzzy, no-wrap
-#| msgid "2018-01-13"
+#| msgid "2020-02-27"
 msgid "2023-12-27"
-msgstr "13 janvier 2018"
+msgstr "2020-02-27"
 
 #. type: Plain text
 #: ../man/kill.1:15
@@ -1940,10 +1940,8 @@ msgstr "B<pgrep>(1), B<pkill>(1)"
 
 #. type: Plain text
 #: ../man/pidof.1:80
-#, fuzzy
-#| msgid "E<.UR staikos@0wned.org> George Staikos E<.UE>"
 msgid "E<.MT jcapik@redhat.com> Jaromir Capik E<.ME>"
-msgstr "George Staikos E<lt>I<staikos@wnedorg>E<gt>"
+msgstr ""
 
 #. type: TH
 #: ../man/pmap.1:19
@@ -2554,10 +2552,9 @@ msgstr "SLABTOP"
 
 #. type: TH
 #: ../man/slabtop.1:14
-#, fuzzy, no-wrap
-#| msgid "2018-01-13"
+#, no-wrap
 msgid "2023-12-26"
-msgstr "13 janvier 2018"
+msgstr ""
 
 #. type: Plain text
 #: ../man/slabtop.1:17
@@ -3637,10 +3634,8 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/sysctl.conf.5:103
-#, fuzzy
-#| msgid "B<sysctl.conf>(5)  B<regex>(7)"
 msgid "B<sysctl.d>(5), B<sysctl>(8), B<systemd-sysctl>(8)"
-msgstr "B<sysctl.conf>(5), B<regex>(7)"
+msgstr ""
 
 #. type: TH
 #: ../man/tload.1:12
@@ -5152,9 +5147,9 @@ msgstr "ps - Présenter un cliché instantané des processus en cours"
 #. type: Plain text
 #: ../man/ps.1:24
 #, fuzzy
-#| msgid "B<ps> [\\,I<options\\/>]"
+#| msgid "B<ps> [I<options>]"
 msgid "B<ps> [I<option> .\\|.\\|.]"
-msgstr "B<ps> [\\,I<options\\/>]"
+msgstr "B<ps> [I<options>]"
 
 #. type: Plain text
 #: ../man/ps.1:30
@@ -9756,7 +9751,8 @@ msgstr "PENDING"
 #: ../man/ps.1:1521
 #, fuzzy, no-wrap
 #| msgid ""
-#| "mask of the pending signals. See\n"
+#| "mask of the pending signals.\n"
+#| "See\n"
 #| "I<signal>(7).\n"
 #| "Signals pending on the process are distinct from signals pending on\n"
 #| "individual threads.  Use the\n"
@@ -9785,7 +9781,8 @@ msgid ""
 msgstr ""
 "Masque des signaux en attente, consultez\n"
 "B<signal>(7).\n"
-"Les signaux en attente du processus sont différents des signaux en attente de processus légers individuels.\n"
+"Les signaux en attente du processus sont différents des signaux en \n"
+"attente de processus légers individuels.\n"
 "Utilisez l'option\n"
 "B<m>\n"
 "ou l'option\n"
@@ -9954,20 +9951,12 @@ msgstr "PS"
 
 #. type: tbl table
 #: ../man/ps.1:1596
-#, fuzzy, no-wrap
-#| msgid ""
-#| "resident set size, the non-swapped physical memory that a task has used (in\n"
-#| "kilobytes).  (alias\n"
-#| "B<rssize>, B<rsz>)."
+#, no-wrap
 msgid ""
 "Proportional share size,\n"
 "the non-swapped physical memory,\n"
 "with shared memory proportionally accounted to all tasks mapping it."
 msgstr ""
-"Taille de mémoire résidente («\\ resident set size\\ » ou RSS),\n"
-"la mémoire physique non transférée vers l'espace d'échange (swap)\n"
-"qu'une tâche a utilisée (en kilooctets) (alias\n"
-"B<rssize>, B<rsz>)."
 
 #. type: tbl table
 #: ../man/ps.1:1598
@@ -11776,11 +11765,11 @@ msgstr ""
 #. type: Plain text
 #: ../man/ps.1:2102
 #, fuzzy
-#| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
+#| msgid "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
 msgid ""
 "B<pgrep>(1), B<pstree>(1), B<top>(1), B<strftime>(3), B<proc>(5), "
 "B<capabilities>(7)."
-msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
+msgstr "B<free>(1), B<ps>(1), B<top>(1), B<uptime>(1), B<utmp>(5), B<who>(1)"
 
 #. type: Plain text
 #: ../man/ps.1:2107
@@ -11816,20 +11805,6 @@ msgstr "l'ISO/IEC 9945:2003."
 
 #. type: Plain text
 #: ../man/ps.1:2149
-#, fuzzy
-#| msgid ""
-#| "B<ps> was originally written by E<.MT lankeste@\\:fwi.\\:uva.\\:nl> "
-#| "Branko Lankester E<.ME .> E<.MT johnsonm@\\:redhat.\\:com> Michael K.\\& "
-#| "Johnson E<.ME> re-wrote it significantly to use the proc filesystem, "
-#| "changing a few things in the process.  E<.MT mjshield@\\:nyx.\\:cs.\\:du."
-#| "\\:edu> Michael Shields E<.ME> added the pid-list feature.  E<.MT "
-#| "cblake@\\:bbn.\\:com> Charles Blake E<.ME> added multi-level sorting, the "
-#| "dirent-style library, the device name-to-number mmaped database, the "
-#| "approximate binary search directly on System.map, and many code and "
-#| "documentation cleanups.  David Mossberger-Tang wrote the generic BFD "
-#| "support for psupdate.  E<.MT albert@\\:users.\\:sf.\\:net> Albert Cahalan "
-#| "E<.ME> rewrote ps for full Unix98 and BSD support, along with some ugly "
-#| "hacks for obsolete and foreign syntax."
 msgid ""
 "B<ps> was originally written by E<.MT lankeste@\\:fwi.\\:uva.\\:nl> Branko "
 "Lankester E<.ME .> E<.MT johnsonm@\\:redhat.\\:com> Michael K.\\& Johnson E<."
@@ -12131,10 +12106,8 @@ msgstr "top - Afficher les processus Linux"
 #.  ----------------------------------------------------------------------
 #. type: Plain text
 #: ../man/top.1:76
-#, fuzzy
-#| msgid "B<ps> [I<options>]"
 msgid "\\*(WE [I<option> .\\|.\\|.]"
-msgstr "B<ps> [I<options>]"
+msgstr ""
 
 #.  ----------------------------------------------------------------------
 #. type: Plain text
@@ -14020,10 +13993,9 @@ msgstr ""
 
 #. type: TP
 #: ../man/top.1:748
-#, fuzzy, no-wrap
-#| msgid "31.B< SID \\*(Em Session Id >"
+#, no-wrap
 msgid "B<CLS \\*(Em Scheduling Class >"
-msgstr "31. B<SID \\*(Em identifiant de session>"
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:760
@@ -17696,49 +17668,37 @@ msgstr "\\ B<^O>\\ \\ : I<montrer les filtres actifs> (touche Ctrl + « o »)"
 
 #. type: Plain text
 #: ../man/top.1:2076
-#, fuzzy
-#| msgid "\\ B<^O>\\ \\ :I<Show-Active-Filters> (Ctrl key + `o')"
 msgid ""
 "\\ \\ \\ B<^G>\\ \\ :I<Display-Control-Groups > (Ctrl key + \\[oq]g\\[cq])"
-msgstr "\\ B<^O>\\ \\ : I<montrer les filtres actifs> (touche Ctrl + « o »)"
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2078
-#, fuzzy
-#| msgid "\\ B<^O>\\ \\ :I<Show-Active-Filters> (Ctrl key + `o')"
 msgid "\\ \\ \\ B<^K>\\ \\ :I<Display-Cmdline > (Ctrl key + \\[oq]k\\[cq])"
-msgstr "\\ B<^O>\\ \\ : I<montrer les filtres actifs> (touche Ctrl + « o »)"
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2080
-#, fuzzy
-#| msgid "\\ B<^O>\\ \\ :I<Show-Active-Filters> (Ctrl key + `o')"
 msgid ""
 "\\ \\ \\ B<^L>\\ \\ :I<Display-Logged-Messages > (Ctrl key + \\[oq]l\\[cq])"
-msgstr "\\ B<^O>\\ \\ : I<montrer les filtres actifs> (touche Ctrl + « o »)"
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2082
-#, fuzzy
-#| msgid "\\ B<^O>\\ \\ :I<Show-Active-Filters> (Ctrl key + `o')"
 msgid "\\ \\ \\ B<^N>\\ \\ :I<Display-Environment > (Ctrl key + \\[oq]n\\[cq])"
-msgstr "\\ B<^O>\\ \\ : I<montrer les filtres actifs> (touche Ctrl + « o »)"
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2084
-#, fuzzy
-#| msgid "\\ B<^O>\\ \\ :I<Show-Active-Filters> (Ctrl key + `o')"
 msgid "\\ \\ \\ B<^P>\\ \\ :I<Display-Namesspaces > (Ctrl key + \\[oq]p\\[cq])"
-msgstr "\\ B<^O>\\ \\ : I<montrer les filtres actifs> (touche Ctrl + « o »)"
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2086
-#, fuzzy
-#| msgid "\\ B<^O>\\ \\ :I<Show-Active-Filters> (Ctrl key + `o')"
 msgid ""
 "\\ \\ \\ B<^U>\\ \\ :I<Display-Supplementary-Groups > (Ctrl key + "
 "\\[oq]u\\[cq])"
-msgstr "\\ B<^O>\\ \\ : I<montrer les filtres actifs> (touche Ctrl + « o »)"
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2091
@@ -17772,12 +17732,10 @@ msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2106
-#, fuzzy
-#| msgid "\\*(XC `1' and '2' \\*(CIs for additional information."
 msgid ""
 "\\*(XC \\[oq]Y\\[cq] \\*(CI under 4a. GLOBAL Commands and topic 6b. ADDING "
 "INSPECT Entries for additional information."
-msgstr "\\*(XC les \\*(CIs « 1 » et « 2 » pour plus de renseignements."
+msgstr ""
 
 #. type: Plain text
 #: ../man/top.1:2111
@@ -20904,9 +20862,9 @@ msgstr "PROCPS_USERLEN"
 #. type: TH
 #: ../man/procps_pids.3:11
 #, fuzzy, no-wrap
-#| msgid "2019-09-21"
+#| msgid "2019-03-05"
 msgid "2004-09-03"
-msgstr "21-09-2019"
+msgstr "05-03-2019"
 
 #. type: Plain text
 #: ../man/procps_pids.3:17
@@ -21170,6 +21128,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ msgid "User Commands"
 #~ msgstr "Commandes de l'utilisateur"
 
+#~ msgid "Total installed memory (MemTotal and SwapTotal in /proc/meminfo)"
+#~ msgstr ""
+#~ "Total de la mémoire installée (MemTotal et SwapTotal dans I</proc/"
+#~ "meminfo>)"
+
 #, no-wrap
 #~ msgid "Please send bug reports to"
 #~ msgstr "Veuillez signaler les bogues à"
@@ -21226,24 +21189,15 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ msgstr ""
 #~ "Afficher les choix de signaux disponibles en un tableau bien présenté."
 
-#, fuzzy
-#~| msgid ""
-#~| "This command meets appropriate standards.  The B<-L> flag is Linux-"
-#~| "specific."
 #~ msgid ""
-#~ "This command meets appropriate standards. The B<-L> flag is Linux-"
+#~ "This command meets appropriate standards.  The B<-L> flag is Linux-"
 #~ "specific."
 #~ msgstr ""
 #~ "Cette commande est conforme aux normes. L'option B<-L> est spécifique à "
 #~ "Linux."
 
-#, fuzzy
-#~| msgid ""
-#~| "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote kill in 1999 to "
-#~| "replace a bsdutils one that was not standards compliant.  The util-linux "
-#~| "one might also work correctly."
 #~ msgid ""
-#~ "E<.UR albert@users.sf.net> Albert Cahalan E<.UE> wrote kill in 1999 to "
+#~ "E<.MT albert@users.sf.net> Albert Cahalan E<.ME> wrote kill in 1999 to "
 #~ "replace a bsdutils one that was not standards compliant.  The util-linux "
 #~ "one might also work correctly."
 #~ msgstr ""
@@ -21251,29 +21205,60 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "la version « bsdutils » qui ne suivait pas les normes. La version d’util-"
 #~ "linux devrait aussi fonctionner correctement."
 
-#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
-#~ msgstr "Signalez les bogues à E<lt>I<procps@freelists.org>E<gt>"
+#~ msgid ""
+#~ "Defines the signal to send to each matched process.  Either the numeric "
+#~ "or the symbolic signal name can be used.  (B<pkill> only.)"
+#~ msgstr ""
+#~ "Indiquer le signal à envoyer à chaque processus sélectionné. Le signal "
+#~ "peut être indiqué par son numéro ou par son nom symbolique (seulement "
+#~ "pour B<pkill>)."
 
 #, no-wrap
 #~ msgid "0"
 #~ msgstr "0"
 
 #, no-wrap
-#~ msgid "2"
-#~ msgstr "2"
-
-#, no-wrap
 #~ msgid "3"
 #~ msgstr "3"
 
-#, fuzzy, no-wrap
-#~| msgid "2019-03-05"
-#~ msgid "2021-03-11"
-#~ msgstr "05-03-2019"
+#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE>"
+#~ msgstr "Signalez les bogues à E<lt>I<procps@freelists.org>E<gt>"
+
+#, no-wrap
+#~ msgid "-s"
+#~ msgstr "B<-s>"
+
+#, no-wrap
+#~ msgid "-c"
+#~ msgstr "B<-c>"
+
+#, no-wrap
+#~ msgid "-q"
+#~ msgstr "-q"
+
+#, no-wrap
+#~ msgid "-w"
+#~ msgstr "-w"
+
+#, no-wrap
+#~ msgid "-x"
+#~ msgstr "B<-x>"
+
+#~ msgid "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
+#~ msgstr "Jaromir Capik E<lt>I<jcapik@redhat.com>E<gt>"
+
+#, no-wrap
+#~ msgid "June 2011"
+#~ msgstr "juin 2011"
 
 #, no-wrap
 #~ msgid "System Administration"
 #~ msgstr "Administration système"
+
+#~ msgid "Use this option when all arguments prescribe a key to be set."
+#~ msgstr ""
+#~ "Utiliser cette option seulement si tous les arguments prescrivent la "
+#~ "définition d'une clef."
 
 #, no-wrap
 #~ msgid "DEPRECATED PARAMETERS"
@@ -21354,27 +21339,65 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "B<uptime> a été écrit par Larry Greenfield E<lt>I<greenfie@gauss.rutgers."
 #~ "edu>E<gt> et Michael K. Johnson E<lt>I<johnsonm@sunsite.unc.edu>E<gt>."
 
-#, fuzzy, no-wrap
-#~| msgid "2018-01-13"
-#~ msgid "2023-01-18"
-#~ msgstr "13 janvier 2018"
+#~ msgid "B<vmstat> does not require special permissions."
+#~ msgstr "B<vmstat> ne nécessite aucune permission particulière."
 
-#, fuzzy, no-wrap
-#~| msgid "2018-01-13"
-#~ msgid "2023-01-15"
-#~ msgstr "13 janvier 2018"
+#~ msgid ""
+#~ "These reports are intended to help identify system bottlenecks.  Linux "
+#~ "B<vmstat> does not count itself as a running process."
+#~ msgstr ""
+#~ "Ces comptes-rendus tentent de fournir une aide à l'identification des "
+#~ "goulots d'étranglement du système. Sous Linux, l'utilitaire B<vmstat> "
+#~ "n'est pas comptabilisé lui-même comme un processus actif."
+
+#~ msgid ""
+#~ "All linux blocks are currently 1024 bytes.  Old kernels may report blocks "
+#~ "as 512 bytes, 2048 bytes, or 4096 bytes."
+#~ msgstr ""
+#~ "Sous Linux, tous les blocs comptent actuellement 1024 octets. Les anciens "
+#~ "noyaux peuvent utiliser des blocs de 512, 2048 ou 4096 octets."
+
+#~ msgid ""
+#~ "Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default "
+#~ "is K (1024 bytes) in the default mode."
+#~ msgstr ""
+#~ "Depuis la version 3.1.9 de procps, vmstat vous permet de choisir les "
+#~ "unités (k, K, m, M). La valeur par défaut est K (1024 octets) dans le "
+#~ "mode par défaut."
+
+#~ msgid "vmstat uses slabinfo 1.1"
+#~ msgstr "vmstat utilise le slabinfo\\ 1.1"
+
+#, no-wrap
+#~ msgid ""
+#~ "/proc/meminfo\n"
+#~ "/proc/stat\n"
+#~ "/proc/*/stat\n"
+#~ msgstr ""
+#~ "I</proc/meminfo>\n"
+#~ "I</proc/stat>\n"
+#~ "I</proc/*/stat>\n"
+
+#~ msgid ""
+#~ "Does not tabulate the block io per device or count the number of system "
+#~ "calls."
+#~ msgstr ""
+#~ "Le programme ne présente pas sous forme de tableau les E/S de bloc par "
+#~ "périphérique ni le décompte du nombre d'appels système."
+
+#~ msgid "Written by E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
+#~ msgstr "Écrit par Henry Ware E<lt>I<al172@yfn.ysu.edu>E<gt>."
+
+#~ msgid ""
+#~ "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
+#~ "UE> (diskstat, slab, partitions...)"
+#~ msgstr ""
+#~ "Fabian Frédérick E<lt>I<ffrederick@users.sourceforge.net>E<gt> (diskstat, "
+#~ "slab, partitions…)"
 
 #, no-wrap
 #~ msgid "COMMAND-LINE OPTIONS"
 #~ msgstr "OPTIONS DE LA LIGNE DE COMMANDE"
-
-#~ msgid "Freeze updates on command error, and exit after a key press."
-#~ msgstr ""
-#~ "Geler les mises à jour en cas d'erreur de la commande et quitter après "
-#~ "avoir appuyé sur une touche."
-
-#~ msgid "Exit when the output of I<command> changes."
-#~ msgstr "Terminer quand la sortie de I<commande> est modifiée."
 
 #, fuzzy
 #~| msgid ""
@@ -21398,6 +21421,11 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ msgstr ""
 #~ "Cacher l'en-tête contenant l'intervalle, la commande et la date actuelle "
 #~ "en haut de l'affichage, ainsi que la ligne blanche qui suit. "
+
+#~ msgid "Freeze updates on command error, and exit after a key press."
+#~ msgstr ""
+#~ "Geler les mises à jour en cas d'erreur de la commande et quitter après "
+#~ "avoir appuyé sur une touche."
 
 #~ msgid ""
 #~ "Pass I<command> to B<exec>(2)  instead of B<sh -c> which reduces the need "
@@ -21458,16 +21486,10 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "L'observation propagera l'état du code de retour en tant que code de "
 #~ "retour du fils."
 
-#, fuzzy
-#~| msgid ""
-#~| "Upon terminal resize, the screen will not be correctly repainted until "
-#~| "the next scheduled update.  All B<--differences> highlighting is lost on "
-#~| "that update as well."
 #~ msgid ""
 #~ "Upon terminal resize, the screen will not be correctly repainted until "
 #~ "the next scheduled update.  All B<--differences> highlighting is lost on "
-#~ "that update as well. When using the B<--no-rerun> option, no output of "
-#~ "will be visible."
+#~ "that update as well."
 #~ msgstr ""
 #~ "Lors du redimensionnement d'un terminal, l'écran ne sera pas rafraîchi "
 #~ "correctement avant la prochaine exécution. Les mises en évidence dues à "
@@ -21509,7 +21531,7 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "interval> I<seconds> to execute.  B<watch> also can get into a state "
 #~ "where it rapid-fires as many executions of I<command> as it can to catch "
 #~ "up from a previous executions running longer than B<--interval> (for "
-#~ "example, B<netstat>(8)  taking ages on a DNS lookup)."
+#~ "example, B<netstat> taking ages on a DNS lookup)."
 #~ msgstr ""
 #~ "Le mode B<--precise> ne dispose pas encore de fonctions de temporisation "
 #~ "pour compenser une I<commande> dont le temps d'exécution est supérieure à "
@@ -21563,202 +21585,8 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "Notez que B<-p> peut ne pas fonctionner entre deux redémarrages, à cause "
 #~ "de B<ntpdate> ou d'autres programmes modifiant la date au démarrage."
 
-#, no-wrap
-#~ msgid "CODE"
-#~ msgstr "B<CODE>"
-
-#, no-wrap
-#~ msgid "HEADER"
-#~ msgstr "B<EN-TÊTE>"
-
-#, fuzzy, no-wrap
-#~| msgid ""
-#~| "command with all its arguments as a string. Modifications to the arguments\n"
-#~| "may be shown.  The output in this column may contain spaces.  A process\n"
-#~| "marked E<lt>defunctE<gt> is partly dead, waiting to be fully destroyed by its parent.\n"
-#~| "Sometimes the process args will be unavailable; when this happens,\n"
-#~| "B<ps>\n"
-#~| "will instead print the executable name in brackets.  (alias\n"
-#~| "B<cmd>,B<\\ command>).\n"
-#~| "See also the\n"
-#~| "B<comm>\n"
-#~| "format keyword, the\n"
-#~| "B<-f>\n"
-#~| "option, and the\n"
-#~| "B<c>\n"
-#~| "option.\n"
-#~ msgid ""
-#~ "command with all its arguments as a string. Modifications to the arguments\n"
-#~ "may be shown.  The output in this column may contain spaces.  A process\n"
-#~ "marked E<lt>defunctE<gt> is partly dead, waiting to be fully destroyed by its parent.\n"
-#~ "Sometimes the process args will be unavailable; when this happens,\n"
-#~ "B<ps>\n"
-#~ "will instead print the executable name in brackets.  (alias\n"
-#~ "B<cmd>, B<command>).\n"
-#~ "See also the\n"
-#~ "B<comm>\n"
-#~ "format keyword, the\n"
-#~ "B<-f>\n"
-#~ "option, and the\n"
-#~ "B<c>\n"
-#~ "option.\n"
-#~ msgstr ""
-#~ "Commande avec tous ses arguments sous forme de chaîne.\n"
-#~ "Les modifications aux arguments peuvent être montrées.\n"
-#~ "Les éléments de cette colonne peuvent contenir des espaces.\n"
-#~ "Un processus marqué E<lt>defunctE<gt> est partiellement tué.\n"
-#~ "La valeur B<args> est parfois indisponible pour le processus, dans ce cas,\n"
-#~ "B<ps>\n"
-#~ "affichera à la place le nom de l'exécutable entre crochets (alias\n"
-#~ "B<cmd>,B<\\ command>).\n"
-#~ "Consultez aussi\n"
-#~ "le mot-clé de format B<comm>\n"
-#~ "et les options B<-f>\n"
-#~ "et\n"
-#~ "B<c>.\n"
-
-#, no-wrap
-#~ msgid ".sp 1\n"
-#~ msgstr ".sp 1\n"
-
-#, no-wrap
-#~ msgid ""
-#~ "nice value. This ranges from 19 (nicest) to -20 (not nice to others),\n"
-#~ "see\n"
-#~ "I<nice>(1).\n"
-#~ "(alias\n"
-#~ "B<nice>)."
-#~ msgstr ""
-#~ "Valeur de politesse, comprise entre 19 (la plus polie) à -20 (la moins polie pour les autres),\n"
-#~ "Consultez\n"
-#~ "B<nice>(1)\n"
-#~ "(alias\n"
-#~ "B<nice>)."
-
-#, no-wrap
-#~ msgid "text resident set size, the amount of physical memory devoted to executable code."
-#~ msgstr "Taille du texte en mémoire résidente, la quantité de mémoire physique consacrée au code exécutable."
-
-#, no-wrap
-#~ msgid "5"
-#~ msgstr "5"
-
-#, no-wrap
-#~ msgid "    running; sleeping; stopped; zombie\n"
-#~ msgstr ""
-#~ " - en cours d'exécution (« running ») ;\n"
-#~ " - en sommeil (« sleeping ») ;\n"
-#~ " - arrêté (« stopped ») ;\n"
-#~ " - zombie.\n"
-
-#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
-#~ msgstr "Signalez les bogues à E<.UR procps@freelists.org> E<.UE .>"
-
-#, fuzzy
-#~| msgid "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)."
-#~ msgid "B<procps>(3), B<procps_pids>(3), B<proc>(5)."
-#~ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
-
-#~ msgid "Total installed memory (MemTotal and SwapTotal in /proc/meminfo)"
-#~ msgstr ""
-#~ "Total de la mémoire installée (MemTotal et SwapTotal dans I</proc/"
-#~ "meminfo>)"
-
-#~ msgid ""
-#~ "Defines the signal to send to each matched process.  Either the numeric "
-#~ "or the symbolic signal name can be used.  (B<pkill> only.)"
-#~ msgstr ""
-#~ "Indiquer le signal à envoyer à chaque processus sélectionné. Le signal "
-#~ "peut être indiqué par son numéro ou par son nom symbolique (seulement "
-#~ "pour B<pkill>)."
-
-#, no-wrap
-#~ msgid "-s"
-#~ msgstr "B<-s>"
-
-#, no-wrap
-#~ msgid "-c"
-#~ msgstr "B<-c>"
-
-#, no-wrap
-#~ msgid "-q"
-#~ msgstr "-q"
-
-#, no-wrap
-#~ msgid "-w"
-#~ msgstr "-w"
-
-#, no-wrap
-#~ msgid "-x"
-#~ msgstr "B<-x>"
-
-#~ msgid "Jaromir Capik E<lt>jcapik@redhat.comE<gt>"
-#~ msgstr "Jaromir Capik E<lt>I<jcapik@redhat.com>E<gt>"
-
-#, no-wrap
-#~ msgid "June 2011"
-#~ msgstr "juin 2011"
-
-#~ msgid "Use this option when all arguments prescribe a key to be set."
-#~ msgstr ""
-#~ "Utiliser cette option seulement si tous les arguments prescrivent la "
-#~ "définition d'une clef."
-
-#~ msgid "B<vmstat> does not require special permissions."
-#~ msgstr "B<vmstat> ne nécessite aucune permission particulière."
-
-#~ msgid ""
-#~ "These reports are intended to help identify system bottlenecks.  Linux "
-#~ "B<vmstat> does not count itself as a running process."
-#~ msgstr ""
-#~ "Ces comptes-rendus tentent de fournir une aide à l'identification des "
-#~ "goulots d'étranglement du système. Sous Linux, l'utilitaire B<vmstat> "
-#~ "n'est pas comptabilisé lui-même comme un processus actif."
-
-#~ msgid ""
-#~ "All linux blocks are currently 1024 bytes.  Old kernels may report blocks "
-#~ "as 512 bytes, 2048 bytes, or 4096 bytes."
-#~ msgstr ""
-#~ "Sous Linux, tous les blocs comptent actuellement 1024 octets. Les anciens "
-#~ "noyaux peuvent utiliser des blocs de 512, 2048 ou 4096 octets."
-
-#~ msgid ""
-#~ "Since procps 3.1.9, vmstat lets you choose units (k, K, m, M).  Default "
-#~ "is K (1024 bytes) in the default mode."
-#~ msgstr ""
-#~ "Depuis la version 3.1.9 de procps, vmstat vous permet de choisir les "
-#~ "unités (k, K, m, M). La valeur par défaut est K (1024 octets) dans le "
-#~ "mode par défaut."
-
-#~ msgid "vmstat uses slabinfo 1.1"
-#~ msgstr "vmstat utilise le slabinfo\\ 1.1"
-
-#, no-wrap
-#~ msgid ""
-#~ "/proc/meminfo\n"
-#~ "/proc/stat\n"
-#~ "/proc/*/stat\n"
-#~ msgstr ""
-#~ "I</proc/meminfo>\n"
-#~ "I</proc/stat>\n"
-#~ "I</proc/*/stat>\n"
-
-#~ msgid ""
-#~ "Does not tabulate the block io per device or count the number of system "
-#~ "calls."
-#~ msgstr ""
-#~ "Le programme ne présente pas sous forme de tableau les E/S de bloc par "
-#~ "périphérique ni le décompte du nombre d'appels système."
-
-#~ msgid "Written by E<.UR al172@yfn.\\:ysu.\\:edu> Henry Ware E<.UE .>"
-#~ msgstr "Écrit par Henry Ware E<lt>I<al172@yfn.ysu.edu>E<gt>."
-
-#~ msgid ""
-#~ "E<.UR ffrederick@users.\\:sourceforge.\\:net> Fabian Fr\\('ed\\('erick E<."
-#~ "UE> (diskstat, slab, partitions...)"
-#~ msgstr ""
-#~ "Fabian Frédérick E<lt>I<ffrederick@users.sourceforge.net>E<gt> (diskstat, "
-#~ "slab, partitions…)"
+#~ msgid "B<ps> [\\,I<options\\/>]"
+#~ msgstr "B<ps> [\\,I<options\\/>]"
 
 #~ msgid ""
 #~ "Select by PID (quick mode).  This selects the processes whose process ID "
@@ -21775,6 +21603,14 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "supplémentaire. Les PID ne sont pas triés et ils sont préservés. Dans ce "
 #~ "mode, aucune option de sélection supplémentaire, aucun tri ou listage en "
 #~ "arborescence n'est possible. Identique à B<q> et B<--quick-pid>."
+
+#, no-wrap
+#~ msgid "CODE"
+#~ msgstr "B<CODE>"
+
+#, no-wrap
+#~ msgid "HEADER"
+#~ msgstr "B<EN-TÊTE>"
 
 #, no-wrap
 #~ msgid ""
@@ -21800,6 +21636,10 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "Utilisation du processeur. C'est pour l'instant la partie entière\n"
 #~ "du pourcentage d'utilisation par rapport au temps de vie du processus (consultez\n"
 #~ "B<%cpu>)."
+
+#, no-wrap
+#~ msgid ".sp 1\n"
+#~ msgstr ".sp 1\n"
 
 #, no-wrap
 #~ msgid ""
@@ -21843,33 +21683,6 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 
 #, no-wrap
 #~ msgid ""
-#~ "mask of the pending signals.\n"
-#~ "See\n"
-#~ "I<signal>(7).\n"
-#~ "Signals pending on the process are distinct from signals pending on\n"
-#~ "individual threads.  Use the\n"
-#~ "B<m>\n"
-#~ "option or the\n"
-#~ "B<-m>\n"
-#~ "option to see both.  According to the width of the field, a 32 or 64 bits\n"
-#~ "mask in hexadecimal format is displayed.  (alias\n"
-#~ "B<sig>)."
-#~ msgstr ""
-#~ "Masque des signaux en attente, consultez\n"
-#~ "B<signal>(7).\n"
-#~ "Les signaux en attente du processus sont différents des signaux en \n"
-#~ "attente de processus légers individuels.\n"
-#~ "Utilisez l'option\n"
-#~ "B<m>\n"
-#~ "ou l'option\n"
-#~ "B<-m>\n"
-#~ "pour voir les deux.\n"
-#~ "Suivant la largeur du champ,\n"
-#~ "un masque de 32 ou 64\\ bits au format hexadécimal est affiché (alias\n"
-#~ "B<sig>)."
-
-#, no-wrap
-#~ msgid ""
 #~ "name of the kernel function in which the process is sleeping, a \"-\" if the\n"
 #~ "process is running, or a \"*\" if the process is multi-threaded and\n"
 #~ "B<ps>\n"
@@ -21889,6 +21702,10 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "Redéfinir le format de sortie par défaut, à configurer avec une chaîne de "
 #~ "format du même type que celle utilisée pour l'option B<-o>. Les valeurs "
 #~ "B<DefSysV> et B<DefBSD> sont particulièrement utiles."
+
+#, no-wrap
+#~ msgid "5"
+#~ msgstr "5"
 
 #, no-wrap
 #~ msgid "20"
@@ -21982,6 +21799,14 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ msgid "-B<1>\\ \\ :I<Single/Separate-Cpu-States> toggle "
 #~ msgstr "-B<1>\\ \\ : basculer entre I<états CPU simple et séparé>"
 
+#, no-wrap
+#~ msgid "    running; sleeping; stopped; zombie\n"
+#~ msgstr ""
+#~ " - en cours d'exécution (« running ») ;\n"
+#~ " - en sommeil (« sleeping ») ;\n"
+#~ " - arrêté (« stopped ») ;\n"
+#~ " - zombie.\n"
+
 #~ msgid "As a default, Line 1 reflects \\*(MP, classified as:"
 #~ msgstr "Par défaut, la première ligne montre la \\*(MP, classée en :"
 
@@ -22039,6 +21864,9 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "surbrillance sera réactivé lorsqu'une fenêtre n'est plus soumise au "
 #~ "filtre. \\*(XC la \\*(CI « x » pour de plus amples renseignements sur la "
 #~ "surbrillance de colonne de tri."
+
+#~ msgid "Please send bug reports to E<.UR procps@freelists.org> E<.UE .>"
+#~ msgstr "Signalez les bogues à E<.UR procps@freelists.org> E<.UE .>"
 
 #~ msgid ""
 #~ "B<ps> displays information about a selection of the active processes.  If "
@@ -22245,6 +22073,39 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "B<ucmd>, B<ucomm>, B<lstart>, B<bsdstart>, B<start>."
 
 #~ msgid ""
+#~ "command with all its arguments as a string. Modifications to the "
+#~ "arguments\n"
+#~ "may be shown.  The output in this column may contain spaces.  A process\n"
+#~ "marked E<lt>defunctE<gt> is partly dead, waiting to be fully destroyed by "
+#~ "its parent.\n"
+#~ "Sometimes the process args will be unavailable; when this happens,\n"
+#~ "B<ps>\n"
+#~ "will instead print the executable name in brackets.  (alias\n"
+#~ "B<cmd>,B<\\ command>).\n"
+#~ "See also the\n"
+#~ "B<comm>\n"
+#~ "format keyword, the\n"
+#~ "B<-f>\n"
+#~ "option, and the\n"
+#~ "B<c>\n"
+#~ "option.\n"
+#~ msgstr ""
+#~ "Commande avec tous ses arguments sous forme de chaîne.\n"
+#~ "Les modifications aux arguments peuvent être montrées.\n"
+#~ "Les éléments de cette colonne peuvent contenir des espaces.\n"
+#~ "Un processus marqué E<lt>defunctE<gt> est partiellement tué.\n"
+#~ "La valeur B<args> est parfois indisponible pour le processus, dans ce "
+#~ "cas,\n"
+#~ "B<ps>\n"
+#~ "affichera à la place le nom de l'exécutable entre crochets (alias\n"
+#~ "B<cmd>,B<\\ command>).\n"
+#~ "Consultez aussi\n"
+#~ "le mot-clé de format B<comm>\n"
+#~ "et les options B<-f>\n"
+#~ "et\n"
+#~ "B<c>.\n"
+
+#~ msgid ""
 #~ "mask of the blocked signals, see\n"
 #~ "I<signal>(7).\n"
 #~ "According to the width of the field, a 32 or 64-bit mask in hexadecimal\n"
@@ -22418,6 +22279,46 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "Heure de démarrage du processus.\n"
 #~ "Consultez aussi\n"
 #~ "B<bsdstart>,B<\\ start>,B<\\ start_time> etB<\\ stime>."
+
+#~ msgid ""
+#~ "nice value. This ranges from 19 (nicest) to -20 (not nice to others),\n"
+#~ "see\n"
+#~ "I<nice>(1).\n"
+#~ "(alias\n"
+#~ "B<nice>)."
+#~ msgstr ""
+#~ "Valeur de politesse, comprise entre 19 (la plus polie) à -20 (la moins "
+#~ "polie pour les autres),\n"
+#~ "Consultez\n"
+#~ "B<nice>(1)\n"
+#~ "(alias\n"
+#~ "B<nice>)."
+
+#~ msgid ""
+#~ "mask of the pending signals. See\n"
+#~ "I<signal>(7).\n"
+#~ "Signals pending on the process are distinct from signals pending on\n"
+#~ "individual threads.  Use the\n"
+#~ "B<m>\n"
+#~ "option or the\n"
+#~ "B<-m>\n"
+#~ "option to see both.  According to the width of the field, a 32 or 64 "
+#~ "bits\n"
+#~ "mask in hexadecimal format is displayed.  (alias\n"
+#~ "B<sig>)."
+#~ msgstr ""
+#~ "Masque des signaux en attente, consultez\n"
+#~ "B<signal>(7).\n"
+#~ "Les signaux en attente du processus sont différents des signaux en "
+#~ "attente de processus légers individuels.\n"
+#~ "Utilisez l'option\n"
+#~ "B<m>\n"
+#~ "ou l'option\n"
+#~ "B<-m>\n"
+#~ "pour voir les deux.\n"
+#~ "Suivant la largeur du champ,\n"
+#~ "un masque de 32 ou 64\\ bits au format hexadécimal est affiché (alias\n"
+#~ "B<sig>)."
 
 #~ msgid ""
 #~ "scheduling class of the process.  (alias\n"
@@ -22610,6 +22511,13 @@ msgstr "B<pgrep>(1), B<pstree>(1), B<top>(1), B<proc>(5)"
 #~ "tty (terminal) de contrôle\n"
 #~ "(alias\n"
 #~ "B<tt>,B<\\ tty>)."
+
+#~ msgid ""
+#~ "text resident set size, the amount of physical memory devoted to "
+#~ "executable code."
+#~ msgstr ""
+#~ "Taille du texte en mémoire résidente, la quantité de mémoire physique "
+#~ "consacrée au code exécutable."
 
 #~ msgid ""
 #~ "controlling tty (terminal).  (alias\n"

@@ -470,7 +470,7 @@ msgstr "não foi possível criar pipes IPC"
 #: src/pgrep.c:364
 #, fuzzy
 msgid "Unable to open pidfile"
-msgstr "não foi possível criar pipes IPC"
+msgstr "não foi possível abrir o diretório \"%s\""
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
@@ -3885,11 +3885,10 @@ msgstr "não foi possível abrir o arquivo %s"
 msgid "autogroup write failed, %s"
 msgstr ""
 
-# descrição de coluna do top; manter em 20 caracteres
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "Variáveis ambiente"
+msgstr ""
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -4749,32 +4748,32 @@ msgstr "%13lu páginas em swap OUT\n"
 #: src/vmstat.c:930
 #, fuzzy, c-format
 msgid "%13lu pages alloc in dma\n"
-msgstr "%13lu páginas em swap IN\n"
+msgstr "%13lu páginas paginadas IN\n"
 
 #: src/vmstat.c:931
 #, fuzzy, c-format
 msgid "%13lu pages alloc in dma32\n"
-msgstr "%13lu páginas em swap IN\n"
+msgstr "%13lu páginas paginadas IN\n"
 
 #: src/vmstat.c:932
 #, fuzzy, c-format
 msgid "%13lu pages alloc in high\n"
-msgstr "%13lu páginas em swap IN\n"
+msgstr "%13lu páginas paginadas IN\n"
 
 #: src/vmstat.c:933
 #, fuzzy, c-format
 msgid "%13lu pages alloc in movable\n"
-msgstr "%13lu páginas em swap IN\n"
+msgstr "%13lu páginas paginadas IN\n"
 
 #: src/vmstat.c:934
 #, fuzzy, c-format
 msgid "%13lu pages alloc in normal\n"
-msgstr "%13lu páginas em swap IN\n"
+msgstr "%13lu páginas paginadas IN\n"
 
 #: src/vmstat.c:935
 #, fuzzy, c-format
 msgid "%13lu pages free\n"
-msgstr "%13lu %s de swap livre\n"
+msgstr "%13lu páginas paginadas IN\n"
 
 #: src/vmstat.c:936
 #, fuzzy, c-format
@@ -4934,7 +4933,7 @@ msgstr " %s [opções] [tty]\n"
 #: src/w.c:677
 #, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -k, --kibi          mostra a saída em kibibytes\n"
+msgstr " -b, --bytes         mostra a saída em bytes\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -5060,85 +5059,6 @@ msgstr ""
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
 
-#~ msgid "r"
-#~ msgstr "r"
-
-#~ msgid "b"
-#~ msgstr "b"
-
-#~ msgid "swpd"
-#~ msgstr "swpd"
-
-#~ msgid "free"
-#~ msgstr "livre"
-
-#~ msgid "inact"
-#~ msgstr "inativ"
-
-#~ msgid "buff"
-#~ msgstr "buff"
-
-#~ msgid "active"
-#~ msgstr "ativo"
-
-#~ msgid "cache"
-#~ msgstr "cache"
-
-#~ msgid "si"
-#~ msgstr "si"
-
-#~ msgid "so"
-#~ msgstr "so"
-
-#~ msgid "bi"
-#~ msgstr "bi"
-
-#~ msgid "bo"
-#~ msgstr "bo"
-
-#~ msgid "in"
-#~ msgstr "in"
-
-#~ msgid "cs"
-#~ msgstr "cs"
-
-#~ msgid "us"
-#~ msgstr "us"
-
-#~ msgid "sy"
-#~ msgstr "sy"
-
-#~ msgid "id"
-#~ msgstr "id"
-
-#~ msgid "wa"
-#~ msgstr "wa"
-
-#~ msgid "st"
-#~ msgstr "st"
-
-#, c-format
-#~ msgid "%s: %s"
-#~ msgstr "%s: %s"
-
-#~ msgid "dup2 failed"
-#~ msgstr "dup2 falhou"
-
-#, c-format
-#~ msgid "unable to execute '%s'"
-#~ msgstr "não foi possível executar \"%s\""
-
-#~ msgid "waitpid"
-#~ msgstr "waitpid"
-
-#, c-format
-#~ msgid "unicode handling error\n"
-#~ msgstr "erro de tratamento de unicode\n"
-
-#, c-format
-#~ msgid "unicode handling error (malloc)\n"
-#~ msgstr "erro de tratamento de unicode (malloc)\n"
-
 #, c-format
 #~ msgid "error: not enough memory\n"
 #~ msgstr "erro: memória insuficiente\n"
@@ -5227,6 +5147,63 @@ msgstr "%s de %s\n"
 #~ "%s~3 %#5.1f  ~2usuário,~3 %#5.1f  ~2sistema,~3 %#5.1f  ~2nice,~3 %#5.1f  "
 #~ "~2ocioso~3 %#5.1f  ~2aguad-ES~3"
 
+#~ msgid "r"
+#~ msgstr "r"
+
+#~ msgid "b"
+#~ msgstr "b"
+
+#~ msgid "swpd"
+#~ msgstr "swpd"
+
+#~ msgid "free"
+#~ msgstr "livre"
+
+#~ msgid "inact"
+#~ msgstr "inativ"
+
+#~ msgid "buff"
+#~ msgstr "buff"
+
+#~ msgid "active"
+#~ msgstr "ativo"
+
+#~ msgid "cache"
+#~ msgstr "cache"
+
+#~ msgid "si"
+#~ msgstr "si"
+
+#~ msgid "so"
+#~ msgstr "so"
+
+#~ msgid "bi"
+#~ msgstr "bi"
+
+#~ msgid "bo"
+#~ msgstr "bo"
+
+#~ msgid "in"
+#~ msgstr "in"
+
+#~ msgid "cs"
+#~ msgstr "cs"
+
+#~ msgid "us"
+#~ msgstr "us"
+
+#~ msgid "sy"
+#~ msgstr "sy"
+
+#~ msgid "id"
+#~ msgstr "id"
+
+#~ msgid "wa"
+#~ msgstr "wa"
+
+#~ msgid "st"
+#~ msgstr "st"
+
 #~ msgid "your kernel does not support diskstat. (2.5.70 or above required)"
 #~ msgstr ""
 #~ "seu kernel não oferece suporte a diskstat. (2.5.70 ou acima exigido)"
@@ -5239,6 +5216,28 @@ msgstr "%s de %s\n"
 #~ msgstr ""
 #~ "seu kernel não oferece suporte a slabinfo ou suas permissões são "
 #~ "insuficientes"
+
+#, c-format
+#~ msgid "%s: %s"
+#~ msgstr "%s: %s"
+
+#~ msgid "dup2 failed"
+#~ msgstr "dup2 falhou"
+
+#, c-format
+#~ msgid "unable to execute '%s'"
+#~ msgstr "não foi possível executar \"%s\""
+
+#~ msgid "waitpid"
+#~ msgstr "waitpid"
+
+#, c-format
+#~ msgid "unicode handling error\n"
+#~ msgstr "erro de tratamento de unicode\n"
+
+#, c-format
+#~ msgid "unicode handling error (malloc)\n"
+#~ msgstr "erro de tratamento de unicode (malloc)\n"
 
 #~ msgid ""
 #~ " --ns <PID>                match the processes that belong to the same\n"

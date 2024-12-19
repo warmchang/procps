@@ -1,14 +1,14 @@
 # Polish translation for procps-ng.
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2023.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2024.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.4-rc1\n"
+"Project-Id-Version: procps-ng-4.0.5rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2024-12-03 17:42+1100\n"
-"PO-Revision-Date: 2023-08-20 11:45+0200\n"
+"PO-Revision-Date: 2024-12-14 21:58+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -201,7 +201,7 @@ msgstr "Zajęta:"
 
 #: src/hugetop.c:364
 msgid "     PID     SHARED    PRIVATE COMMAND"
-msgstr ""
+msgstr "     PID     WSPÓŁDZ.  PRYWAT. POLECENIE"
 
 #: src/hugetop.c:407 src/slabtop.c:110
 msgid " -d, --delay <secs>  delay updates\n"
@@ -210,15 +210,15 @@ msgstr " -d, --delay <sek>   opóźnienie aktualizacji\n"
 #: src/hugetop.c:408
 msgid " -n, --numa          display per NUMA nodes Huge pages information\n"
 msgstr ""
+" -n, --numa          wyświetlanie informacji dla dużych stron węzłów NUMA\n"
 
 #: src/hugetop.c:409 src/slabtop.c:111
 msgid " -o, --once          only display once, then exit\n"
 msgstr " -o, --once          wyświetlenie jednorazowe i zakończenie\n"
 
 #: src/hugetop.c:410
-#, fuzzy
 msgid " -H, --human         display human-readable output\n"
-msgstr " -h, --human         wyjście czytelne dla człowieka\n"
+msgstr " -H, --human         wyjście czytelne dla człowieka\n"
 
 #: src/hugetop.c:446 src/slabtop.c:201
 msgid "illegal delay"
@@ -452,20 +452,19 @@ msgstr ""
 
 #: src/pgrep.c:202
 msgid "  --env <name=val,...>     match on environment variable\n"
-msgstr ""
+msgstr "  --env <nazwa=wart,...>   dopasowanie po zmiennych środowiskowych\n"
 
 #: src/pgrep.c:225 src/pgrep.c:736 src/w.c:407
 msgid "Unable to create pid info structure"
 msgstr "Nie można utworzyć struktury informacji pid"
 
 #: src/pgrep.c:364
-#, fuzzy
 msgid "Unable to open pidfile"
-msgstr "Nie można pobrać czasu działania"
+msgstr "Nie można otworzyć pliku pid"
 
 #: src/pgrep.c:371
 msgid "Locking check for pidfile failed"
-msgstr ""
+msgstr "Sprawdzanie blokadu dla pliku pid nie powiodło się"
 
 #: src/pgrep.c:401
 #, c-format
@@ -1906,7 +1905,6 @@ msgstr ""
 "                          przestrzeni nazw, co <pid>\n"
 
 #: src/skill.c:345
-#, fuzzy
 msgid ""
 " --nslist <ns,...>        list which namespaces will be considered for\n"
 "                          the --ns option; available namespaces are:\n"
@@ -1983,9 +1981,8 @@ msgid "skill: \"%s\" is not supported\n"
 msgstr "skill: \"%s\" nie jest obsługiwany\n"
 
 #: src/slabtop.c:112
-#, fuzzy
 msgid " --human             show human-readable output\n"
-msgstr " -h, --human         wyjście czytelne dla człowieka\n"
+msgstr " --human             wyjście czytelne dla człowieka\n"
 
 #: src/slabtop.c:113
 msgid " -s, --sort <char>   specify sort criteria by character (see below)\n"
@@ -3059,30 +3056,29 @@ msgstr "I-węzeł przestrzeni nazw TIME"
 #. Translation Hint: maximum 'CLS' = 3
 #: src/top/top_nls.c:373
 msgid "CLS"
-msgstr ""
+msgstr "CLS"
 
 #: src/top/top_nls.c:374
 msgid "Schedule Class"
-msgstr ""
+msgstr "Klasa planowania"
 
 #. Translation Hint: maximum 'Docker' = 8 +
 #: src/top/top_nls.c:376
 msgid "Docker"
-msgstr ""
+msgstr "Docker"
 
 #: src/top/top_nls.c:377
 msgid "Docker container id"
-msgstr ""
+msgstr "ID kontenera Dockera"
 
 #. Translation Hint: maximum 'nFD' = 3
 #: src/top/top_nls.c:379
 msgid "nFD"
-msgstr ""
+msgstr "nFD"
 
 #: src/top/top_nls.c:380
-#, fuzzy
 msgid "Number of Open Files"
-msgstr "Otwarte pliki"
+msgstr "Liczba otwartych plików"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3763,9 +3759,9 @@ msgid "autogroup write failed, %s"
 msgstr "zapis autogroup nie powiódł się: %s"
 
 #: src/top/top_nls.c:606
-#, fuzzy, c-format
+#, c-format
 msgid "permitted capabilities for pid %d, %s"
-msgstr "przestrzenie nazw dla pidu %d: %s"
+msgstr "dozwolone zdolności dla pidu %d, %s"
 
 #: src/top/top_nls.c:607
 #, c-format
@@ -4016,7 +4012,7 @@ msgstr ""
 #. .  to not disturb the spaces and the tilde + number delimiters.
 #. .
 #: src/top/top_nls.c:719
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for color mapping~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4060,20 +4056,23 @@ msgstr ""
 "   ~1 8601 pts/1    7 -10  0.4   0:00.03   916    0 R color -b -z~7\n"
 "   11005 ~8?      ~7  9   0  0.0   0:02.50  2852 1008 S amor -sessi~8\n"
 "   dost. przełączniki: ~1B~2 =globalne wyłączenie pogrubienia (~1%s~2),\n"
-"       ~1z~2 =kolor/mono (~1%s~2), ~1b~2 =zadania \"grube\"/negatyw "
+"       ~1z~2 =kolor/mono (~1%s~2), ~1b~2 =zadania pobgrubione/negatyw "
 "(~1%s~2)\n"
 "\n"
 "1) Wybierz ~1cel~2 wielką literą, ~1bieżący cel~2 to ~1 %c ~4:\n"
-"   S~2 = Podsumowanie,   ~1  M~2 = Komunikaty/wprowadzanie,\n"
-"   H~2 = Nagłówki kolumn,~1  T~2 = Informacje o zadaniach\n"
-"2) Wybierz ~1kolor~2 liczbą lub użyj klawiszy strzałek\n"
+"   S~2 = Podsumowanie,~1  M~2 = Komunikaty/wprowadzanie,~1  H~2 = Nagłówki "
+"kolumn\n"
+"   T~2 = Informacje o zadaniach,~1  X~2 = Podświetlanie zadań x/y (kol/"
+"wiersz)\n"
+"2) Wybierz ~1kolor~2 liczbą (~1żaden~2 jako @) lub użyj klawiszy strzałek\n"
 "   do zwiększenia/zmniejszenia wartości %d kolorów, ~1bieżący kolor~2 to ~1 "
 "%d ~4:\n"
 "   0~2 = czarny,~1     1~2 = czerwony,~1  2~2 = zielony,~1    3~2 = żółty,\n"
-"   4~2 = niebieski,~1  5~2 = różowy,~1    6~2 = turkusowy,~1  7~2 = biały\n"
+"   4~2 = niebieski,~1  5~2 = różowy,~1    6~2 = turkusowy,~1  7~2 = biały,"
+"~1  @~2 = brak (-1)\n"
 "\n"
 "3) Po skończeniu:\n"
-"   'q' porzuca zmiany w oknie '~1%s~2'\n"
+"   'q' lub <Esc> porzuca zmiany w oknie '~1%s~2'\n"
 "   'a' lub 'w' zapisuje i zmienia inne, <Enter> zapisuje i kończy "
 
 #. Translation Hint: As is true for the text above, the "keys" shown to the left and
@@ -4111,13 +4110,13 @@ msgstr ""
 #. .  The next 5 items must each be translated as a single line.
 #. .
 #: src/top/top_nls.c:764
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s:~3 %u ~2total,~3 %u ~2running,~3 %u ~2sleep,~3 %u ~2d-sleep,~3 %u "
 "~2stopped,~3 %u ~2zombie~3\n"
 msgstr ""
-"%s:~2razem:~3 %3u~2, działających:~3 %3u~2, śpiących:~3 %3u~2, zatrzymanych:"
-"~3 %3u~2, zombie:~3 %3u\n"
+"%s:~2razem:~3 %u~2, działających:~3 %u~2, sen:~3 %u~2, sen d:~3 %u~2, "
+"zatrzymanych:~3 %u~2, zombie:~3 %u\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -4190,9 +4189,8 @@ msgstr ""
 "Lub~2:     <Enter> aby ~1wybrać inny~5; 'q' lub <Esc> aby ~1zakończyć~5.\n"
 
 #: src/uptime.c:49 src/w.c:532
-#, fuzzy
 msgid "Cannot get container uptime"
-msgstr "Nie można pobrać czasu działania systemu"
+msgstr "Nie można pobrać czasu działania kontenera"
 
 #: src/uptime.c:52 src/uptime.c:176 src/w.c:535
 msgid "Cannot get system uptime"
@@ -4200,16 +4198,16 @@ msgstr "Nie można pobrać czasu działania systemu"
 
 #: src/uptime.c:108
 msgid " -c, --container show container uptime\n"
-msgstr ""
+msgstr " -c, --container wypisanie czasu działania kontenera\n"
 
 #: src/uptime.c:109
 msgid " -p, --pretty   show uptime in pretty format\n"
 msgstr " -p, --pretty   wypisanie czasu działania w ładnym formacie\n"
 
 #: src/uptime.c:110
-#, fuzzy
 msgid " -r, --raw      show uptime values in raw format\n"
-msgstr " -p, --pretty   wypisanie czasu działania w ładnym formacie\n"
+msgstr ""
+" -r, --raw      wypisanie wartości czasu działania w formacie surowym\n"
 
 #: src/uptime.c:111
 msgid " -s, --since    system up since\n"
@@ -4605,34 +4603,34 @@ msgid "%13lu pages swapped out\n"
 msgstr "Stron do pamięci wymiany:  %13lu\n"
 
 #: src/vmstat.c:930
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma\n"
-msgstr "Stron z pamięci wymiany:   %13lu\n"
+msgstr "Stron pamięci dla dma:     %13lu\n"
 
 #: src/vmstat.c:931
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in dma32\n"
-msgstr "Stron z pamięci wymiany:   %13lu\n"
+msgstr "Stron pamięci dla dma32:   %13lu\n"
 
 #: src/vmstat.c:932
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in high\n"
-msgstr "Stron z pamięci wymiany:   %13lu\n"
+msgstr "Stron pamięci wysokich:    %13lu\n"
 
 #: src/vmstat.c:933
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in movable\n"
-msgstr "Stron z pamięci wymiany:   %13lu\n"
+msgstr "Stron pamięci przenośnych: %13lu\n"
 
 #: src/vmstat.c:934
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages alloc in normal\n"
-msgstr "Stron z pamięci wymiany:   %13lu\n"
+msgstr "Stron pamięcy zwykłych:    %13lu\n"
 
 #: src/vmstat.c:935
-#, fuzzy, c-format
+#, c-format
 msgid "%13lu pages free\n"
-msgstr "Obszar wymiany wolny:      %13lu %s\n"
+msgstr "Stron wolnych:             %13lu\n"
 
 #: src/vmstat.c:936
 #, c-format
@@ -4710,11 +4708,8 @@ msgstr ""
 "  -n, --interval <sek>   liczba sekund do odczekania między uaktualnieniami\n"
 
 #: src/watch.c:130
-#, fuzzy
 msgid "  -p, --precise          -n includes command running time\n"
-msgstr ""
-"  -p, --precise          próba uruchamiania polecenia w dokładnych "
-"odstępach\n"
+msgstr "  -p, --precise          włączenie czasu działania polecenia w -n\n"
 
 #: src/watch.c:131
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
@@ -4723,9 +4718,8 @@ msgstr ""
 "okna\n"
 
 #: src/watch.c:132
-#, fuzzy
 msgid "  -s, --shotsdir         directory to store screenshots\n"
-msgstr " -s, --short         format krótki\n"
+msgstr "  -s, --shotsdir         katalog do zapisu zrzutów ekranu\n"
 
 #: src/watch.c:133
 msgid "  -t, --no-title         turn off header\n"
@@ -4791,9 +4785,8 @@ msgid " %2llu.%02us"
 msgstr " %2llu.%02us"
 
 #: src/w.c:538
-#, fuzzy
 msgid "Cannot format uptime"
-msgstr "Nie można pobrać czasu działania systemu"
+msgstr "Nie można sformatiwać czasu działania systemu"
 
 #: src/w.c:675
 #, c-format
@@ -4801,9 +4794,8 @@ msgid " %s [options] [user]\n"
 msgstr " %s [opcje] [użytkownik]\n"
 
 #: src/w.c:677
-#, fuzzy
 msgid " -c, --container     show container uptime\n"
-msgstr " -L, --line          wyjście w pojedynczej linii\n"
+msgstr " -c, --container     wypisanie czasu działania kontenera\n"
 
 #: src/w.c:678
 msgid " -h, --no-header     do not print header\n"
@@ -4864,9 +4856,9 @@ msgid "FROM"
 msgstr "Z   "
 
 #: src/w.c:833
-#, fuzzy, c-format
+#, c-format
 msgid " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
-msgstr "  ZAL.OD   BEZCZ. JCPU   PCPU CO\n"
+msgstr " ZAL.OD   BEZCZ. JCPU   PCPU  CO\n"
 
 #: src/w.c:835
 #, c-format
@@ -4879,7 +4871,7 @@ msgstr "błąd odczytu sesji"
 
 #: src/w.c:855
 msgid "session get class failed"
-msgstr ""
+msgstr "pobranie klasy sesji nie powiodło się"
 
 #: src/w.c:861
 msgid "get user name failed"
@@ -4926,85 +4918,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s z pakietu %s\n"
-
-#~ msgid "r"
-#~ msgstr "dz"
-
-#~ msgid "b"
-#~ msgstr "bl"
-
-#~ msgid "swpd"
-#~ msgstr "swap"
-
-#~ msgid "free"
-#~ msgstr "wolna"
-
-#~ msgid "inact"
-#~ msgstr "nieakt"
-
-#~ msgid "buff"
-#~ msgstr "bufor"
-
-#~ msgid "active"
-#~ msgstr "akt"
-
-#~ msgid "cache"
-#~ msgstr "cache"
-
-#~ msgid "si"
-#~ msgstr "si"
-
-#~ msgid "so"
-#~ msgstr "so"
-
-#~ msgid "bi"
-#~ msgstr "bi"
-
-#~ msgid "bo"
-#~ msgstr "bo"
-
-#~ msgid "in"
-#~ msgstr "in"
-
-#~ msgid "cs"
-#~ msgstr "cs"
-
-#~ msgid "us"
-#~ msgstr "uż"
-
-#~ msgid "sy"
-#~ msgstr "sy"
-
-#~ msgid "id"
-#~ msgstr "be"
-
-#~ msgid "wa"
-#~ msgstr "io"
-
-#~ msgid "st"
-#~ msgstr "sk"
-
-#~ msgid "gu"
-#~ msgstr "go"
-
-#, c-format
-#~ msgid "%s: %s"
-#~ msgstr "%s: %s"
-
-#~ msgid "dup2 failed"
-#~ msgstr "dup2 nie powiodło się"
-
-#, c-format
-#~ msgid "unable to execute '%s'"
-#~ msgstr "nie można uruchomić '%s'"
-
-#~ msgid "waitpid"
-#~ msgstr "waitpid"
-
-#, c-format
-#~ msgid "unicode handling error\n"
-#~ msgstr "błąd obsługi unikodu\n"
-
-#, c-format
-#~ msgid "unicode handling error (malloc)\n"
-#~ msgstr "błąd obsługi unikodu (malloc)\n"
