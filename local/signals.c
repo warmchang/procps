@@ -125,7 +125,9 @@ static const mapstruct sigtable[] = {
   {"VTALRM", SIGVTALRM},
   {"PROF",   SIGPROF},
   {"WINCH",  SIGWINCH},
+#ifdef SIGPOLL
   {"POLL",   SIGPOLL},    // in SUSv3, prioritize over IO
+#endif
 #ifdef SIGIO
   {"IO",     SIGIO},      // possibly = POLL
 #endif
