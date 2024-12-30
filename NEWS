@@ -1,3 +1,6 @@
+procps-ng-NEXT
+---------------
+  * local: guard SIGPOLL for MacOS                         merge !246
 procps-ng-4.0.5
 ---------------
   * library
