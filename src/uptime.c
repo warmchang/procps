@@ -97,8 +97,8 @@ static void print_uptime_raw()
     if (procps_loadavg(&av1, &av5, &av15) < 0)
         xerrx(EXIT_FAILURE, "procps_loadavg");
 
-    printf("%d %f %d %.2f %.2f %.2f\n",
-            (int)realseconds, uptime_secs, users, av1, av5, av15);
+    printf("%lld %f %d %.2f %.2f %.2f\n",
+            (long long)realseconds, uptime_secs, users, av1, av5, av15);
 }
 static void __attribute__ ((__noreturn__)) usage(FILE * out)
 {
