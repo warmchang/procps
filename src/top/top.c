@@ -82,6 +82,7 @@ static sigset_t Sigwinch_set;
         /* The 'local' config file support */
 static char  Rc_name [OURPATHSZ];
 static RCF_t Rc = DEF_RCFILE;
+static RCF_t Rc_virgin = DEF_RCFILE;
 static int   Rc_questions;
 static int   Rc_compatibilty;
 
@@ -4272,9 +4273,8 @@ system_default:
 
 default_or_error:
 #ifdef RCFILE_NOERR
-{  RCF_t rcdef = DEF_RCFILE;
-   int i;
-   Rc = rcdef;
+{  int i;
+   Rc = Rc_virgin;
    for (i = 0 ; i < GROUPSMAX; i++)
       Winstk[i].rc  = Rc.win[i];
 }
@@ -4291,8 +4291,9 @@ default_or_error:
          *       overridden -- we'll force some on and negate others in our
          *       best effort to honor the loser's (oops, user's) wishes... */
 static void parse_args (int argc, char **argv) {
-    static const char sopts[] = "bcd:E:e:Hhin:Oo:p:SsU:u:Vw::1";
+    static const char sopts[] = "Abcd:E:e:Hhin:Oo:p:SsU:u:Vw::1";
     static const struct option lopts[] = {
+       { "apply-defaults",    no_argument,       NULL, 'A' },
        { "batch-mode",        no_argument,       NULL, 'b' },
        { "cmdline-toggle",    no_argument,       NULL, 'c' },
        { "delay",             required_argument, NULL, 'd' },
@@ -4342,6 +4343,16 @@ static void parse_args (int argc, char **argv) {
             OFFw(Curwin, View_CPUNOD);
             SETw(Curwin, View_STATES);
             break;
+         case 'A':
+            if (argc > 2)
+               error_exit(fmtmk(N_fmt(XTRA_args_no_fmt), argv[optind - 1]));
+            tmp_delay = Rc.delay_time;  // just in case /etc/toprc is prseent ...
+            Rc = Rc_virgin;
+            for (i = 0 ; i < GROUPSMAX; i++)
+               Winstk[i].rc = Rc.win[i];
+            Curwin = &Winstk[Rc.win_index];
+            if (Secure_mode) Rc.delay_time = tmp_delay;
+            return;
          case 'b':
             Batch = 1;
             break;

@@ -410,6 +410,7 @@ static void build_norm_nlstab (void) {
       " %s [options]\n"
       "\n"
       "Options:\n"
+      " -A, --apply-defaults            if present, ignore config file(s)\n"
       " -b, --batch-mode                run in non-interactive batch mode\n"
       " -c, --cmdline-toggle            reverse last remembered 'c' state\n"
       " -d, --delay =SECS [.TENTHS]     iterative delay as SECS [.TENTHS]\n"
@@ -611,6 +612,7 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[X_BOT_nodata_txt] = _("n/a");
    Norm_nlstab[X_BOT_supgrp_fmt] = _("supplementary groups for pid %d, %s");
    Norm_nlstab[X_BOT_msglog_txt] = _("message log, last 10 messages:");
+   Norm_nlstab[XTRA_args_no_fmt] = _("option '%s' must be used alone");
 }
 
 
