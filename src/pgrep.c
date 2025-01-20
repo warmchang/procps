@@ -498,7 +498,7 @@ static unsigned long long unhex (const char *restrict in)
     unsigned long long ret;
     char *rem;
     errno = 0;
-    ret = strtoull(in, &rem, ITEMS_COUNT);
+    ret = strtoull(in, &rem, 16);
     if (errno || *rem != '\0') {
         xwarnx(_("not a hex string: %s"), in);
         return 0;
