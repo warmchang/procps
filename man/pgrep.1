@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2004-2024 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2004-2025 Craig Small <csmall@dropbear.xyz>
 .\" Copyright (c) 2013-2024 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 2002-2004 Albert Cahalan
@@ -10,7 +10,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP 1 2024-02-05 procps-ng
+.TH PGREP 1 2025-02-17 procps-ng
 .SH NAME
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
@@ -315,6 +315,14 @@ and
 .B \-v
 can not be combined.  Let
 me know if you need to do this.
+.PP
+If processes start in the same clock tick (usually but not always a 100th
+of a second, the options
+.B \-n
+and
+.B \-o
+will not be able to distinguish which process started in the same clock
+tick and may give erroneous results.
 .PP
 Defunct processes are reported.
 .PP
