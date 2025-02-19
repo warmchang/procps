@@ -3,6 +3,7 @@ procps-ng-NEXT
   * local: guard SIGPOLL for MacOS                         merge !246
   * top: provides for ignoring configuration file(s)       issue #365
   * pgrep.1: Note that we can only go to 100th of second   issue #376
+  * w: Add terminal mode to show all terminal sessions     issue #375
 
 procps-ng-4.0.5
 ---------------

@@ -55,6 +55,17 @@ and a
 \fB\-s\fR, \fB\-\-short\fR
 Use the short format.  Don't print the login time, JCPU or PCPU times.
 .TP
+\fB\-t\fR, \fB\-\-terminal\fR
+Usually
+.B w
+will use either the systemd sessions table or the utmp file to locate users.
+In \fIterminal mode\fR
+.B w
+will scan the terminal devices and locate user sessions this way. This is not
+a true count of users, for example a user with two xterms will show up twice,
+so the user count in the header will be different. Currently terminal devices
+scanned are \fI/dev/tty*\fR and \fI/dev/pts/*\fR.
+.TP
 \fB\-f\fR, \fB\-\-from\fR
 Toggle printing the
 .B from
@@ -73,6 +84,7 @@ Display IP address instead of hostname for \fBfrom\fR field.
 .TP
 \fB\-p\fR, \fB\-\-pids\fR
 Display pid of the login process/the "what" process in the "what" field.
+The login process is also called the session leader.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information.
@@ -99,15 +111,26 @@ information about who is currently logged on, only for non-systemd hosts.
 .TP
 .I /proc
 process information
-.SH "REPORTING BUGS"
+.TP
+.IR /dev/tty* " , " /dev/pts/*
+Terminal device files scanned with \fB\-\-terminal\fR mode.
+.SH BUGS
+When using \fB\-\-terminal\fP option,
+.B w
+assumes processes with a parent PID of 0 or 1 are
+.BR agetty (8)
+processes and will not display them. This is prone to both false postive
+and negative errors.
+.SH REPORTING BUGS
 Please send bug reports to
 .MT procps@freelists.org
 .ME .
-.SH "SEE ALSO"
+.SH SEE ALSO
 .BR free (1),
 .BR loginctl (1),
 .BR ps (1),
 .BR top (1),
 .BR uptime (1),
+.BR who (1),
 .BR utmp (5),
-.BR who (1)
+.BR agetty (8)
