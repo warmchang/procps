@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2009-2024 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2009-2025 Craig Small <csmall@dropbear.xyz>
 .\" Copyright (c) 2015-2024 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2012-2013 Jaromir Capik <jcapik@redhat.com>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH W 1 2024-12-03 procps-ng
+.TH W 1 2025-02-19 procps-ng
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
@@ -99,6 +99,10 @@ information about who is currently logged on, only for non-systemd hosts.
 .TP
 .I /proc
 process information
+.SH "REPORTING BUGS"
+Please send bug reports to
+.MT procps@freelists.org
+.ME .
 .SH "SEE ALSO"
 .BR free (1),
 .BR loginctl (1),
@@ -107,17 +111,3 @@ process information
 .BR uptime (1),
 .BR utmp (5),
 .BR who (1)
-.SH AUTHORS
-.B w
-was re-written almost entirely by Charles Blake, based on the version by
-.MT greenfie@\:gauss.\:rutgers.\:edu
-Larry Greenfield
-.ME
-and
-.MT johnsonm@\:redhat.\:com
-Michael K. Johnson
-.ME .
-.SH "REPORTING BUGS"
-Please send bug reports to
-.MT procps@freelists.org
-.ME .
