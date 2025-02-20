@@ -97,6 +97,11 @@ typedef struct utmp utmp_t;
 #define MAX_CMD_WIDTH	512
 #define MIN_CMD_WIDTH   7
 
+/* Must match items in cache_pids */
+enum rel_items {
+    EU_PID, EU_PPID, EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
+    EU_TTY_NAME, EU_TICS_ALL, EU_CMDLINE};
+
 /*
  * This routine is careful since some programs leave utmp strings
  * unprintable. Always outputs at least 16 chars padded with
@@ -402,10 +407,12 @@ static struct pids_fetch *cache_pids(struct pids_info **info)
         PIDS_ID_TPGID,
         PIDS_ID_PGRP,
         PIDS_TTY,
+        PIDS_TTY_NAME,
         PIDS_TICS_ALL,
         PIDS_CMDLINE};
+#define ITEMS_COUNT (sizeof items / sizeof *items)
 
-    if (procps_pids_new(info, items, 11) < 0)
+    if (procps_pids_new(info, items, ITEMS_COUNT) < 0)
         xerrx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
     if ((reap = procps_pids_reap(*info, PIDS_FETCH_TASKS_ONLY)) == NULL)
@@ -444,10 +451,6 @@ static int find_best_proc(
     unsigned long long best_time = 0;
     unsigned long long secondbest_time = 0;
 
-    /* Must match items in cache_pids */
-    enum rel_items {
-        EU_PID, EU_PPID, EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
-        EU_TICS_ALL, EU_CMDLINE};
 
     *jcpu = 0;
     *pcpu = 0;
@@ -694,84 +697,11 @@ static void __attribute__ ((__noreturn__))
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-/*
- * Find the best (oldest) process based on the given terminal
- *
- * This function is a modification of get_best_proc(), maybe one
- * day they can be refactored so the common stuff is in a single 
- * function.
- *
- * Returns true if this is a user session and we found the best
- * process
- *
- * We filter out gettys. unsure how to make this more robust
- */
-#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
-#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i])
-#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i])
-#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
-bool find_terminal_proc(
-    const dev_t rdev,
-    const uid_t uid,
-    unsigned long long *first_start,
-    unsigned long long *jcpu,
-    unsigned long long *pcpu,
-    char *cmdline,
-    pid_t *first_pid,
-    pid_t *last_pid,
-    struct pids_fetch *reap)
+bool
+get_utmp_by_tty(
+    const char *tty)
 {
-    /* Must match items in cache_pids */
-    enum rel_items {
-        EU_PID, EU_PPID, EU_TGID, EU_START, EU_EUID, EU_RUID, EU_TPGID, EU_PGRP, EU_TTY,
-        EU_TICS_ALL, EU_CMDLINE};
-
-    int total_procs = reap->counts->total;
-    int i;
-    unsigned long long last_start =0;
-    *first_start = 0;
-    *jcpu = 0;
-    *pcpu = 0;
-
-    *first_pid = -1;
-    *last_pid = -1;
-
-    for (i=0; i < total_procs; i++) {
-        /* Not the wanted terminal */
-        if (PIDS_GETINT(TTY) != rdev)
-            continue;
-
-        /* Try to work out if this is getty, for starters the parent is 1 or 0
-         * This will be fragile and will need more checks
-         */
-        if (PIDS_GETINT(PPID) == 1 || PIDS_GETINT(PPID) == 0)
-            continue;
-
-        /* If we don't have the first process or this one is newer
-         * make this the first process
-         */
-        if (*first_start == 0 || *first_start > PIDS_GETULL(START)) {
-            *first_pid = PIDS_GETINT(TGID);
-            *first_start = PIDS_GETULL(START);
-            *pcpu = PIDS_GETULL(TICS_ALL);
-        }
-
-        (*jcpu) += PIDS_VAL(EU_TICS_ALL, ull_int, reap->stacks[i]);
-
-        if (last_start == 0 || last_start < PIDS_GETULL(START)) {
-            *last_pid = PIDS_GETINT(TGID);
-            last_start = PIDS_GETULL(START);
-            strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
-            *pcpu = PIDS_GETULL(TICS_ALL);
-        }
-    }
-    return (*first_pid != -1 && *last_pid != -1);
 }
-#undef PIDS_GETINT
-#undef PIDS_GETUNT
-#undef PIDS_GETULL
-#undef PIDS_GETSTR
-
 /*
  * print_logintime expects a time of seconds since epoch
  * libproc returns a process start time in tics since
@@ -799,8 +729,7 @@ time_t get_starttime(
     return proc_start / hertz + boot_time;
 }
 
-void print_terminal_proc(
-    const char *match_user,
+void print_terminal_user(
     const int longform,
     int maxcmd,
     const int from,
@@ -808,64 +737,123 @@ void print_terminal_proc(
     const int fromlen,
     const int ip_addresses,
     const int show_pids,
-    struct pids_fetch *pids_cache,
-    const char *pathname,
-    const int pathcut)
-{ 
-    char cmdline[MAX_CMD_WIDTH + 1];
-    pid_t first_pid = -1;
-    pid_t last_pid = -1;
-    unsigned long long first_start;
-    struct passwd *pw;
-    struct stat st;
-    unsigned long long jcpu;
-    unsigned long long pcpu;
+    const unsigned long long first_start,
+    const pid_t first_pid,
+    const pid_t last_pid,
+    const char *ttyname,
+    const unsigned long long jcpu,
+    const unsigned long long pcpu,
+    const char *cmdline)
+{
     long hertz;
-    int pids_length = 0;
     char *session = NULL;
+    char *username = NULL;
+    char ttypath[5 + UT_LINESIZE + 1] = "/dev/";
+    char uname[UT_NAMESIZE + 1] = "?";
+    int pids_length = 0;
+    utmp_t *u;
 
-    if ( stat(pathname, &st) < 0)
-        return;
-    pw = getpwuid(st.st_uid);
-    /* filter by username */
-    if (match_user && pw && strcmp(pw->pw_name, match_user) != 0)
-        return;
-    if (!find_terminal_proc(st.st_rdev, st.st_uid, &first_start, &jcpu, &pcpu, cmdline, &first_pid, &last_pid,pids_cache))
-        return;
-    printf("%-*.*s%-9.8s", userlen + 1, userlen, (pw?pw->pw_name:"?"), pathname+pathcut);
-#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
-    sd_pid_get_session(last_pid, &session);
-#endif
-    if (from)
-        print_from(session, NULL, ip_addresses, fromlen);
     hertz = procps_hertz_get();
-    print_logintime(get_starttime(first_start, hertz), stdout);
-    print_time_ival7(time(NULL) - st.st_atime, 0, stdout);
+    strncpy(ttypath + 5, ttyname, UT_LINESIZE);
+
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+    if (sd_pid_get_session(last_pid, &session) >= 0) {
+        if ( sd_session_get_username(session, &username) >= 0) {
+            strncpy(uname, username, UT_NAMESIZE);
+            uname[UT_NAMESIZE] = '\0';
+            free(username);
+        }
+    } else {
+        // We get the utmp entry for this tty device
+        utmp_t search;
+        strncpy(search.ut_line, ttyname, UT_NAMESIZE-1);
+#ifdef HAVE_UTMPX_H
+	setutxent();
+        u = getutxline(&search);
+	endutxent();
+#else
+	utmpname(UTMP_FILE);
+	setutent();
+        u = getutline(&search);
+	endutent();
+#endif
+    }
+#endif // SYSTEMD
+    // Find username of device
+    if (uname[0] == '?') {
+        struct stat st;
+        struct passwd *pw;
+
+        if (stat(ttypath, &st) == 0) {
+            if ((pw = getpwuid(st.st_uid)) != NULL)
+                strncpy(uname, pw->pw_name, UT_NAMESIZE);
+            else
+                snprintf(uname, UT_NAMESIZE, "%d", st.st_uid);
+        }
+    }
+
+
+    printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, ttyname);
+    if (from)
+        print_from(session, u, ip_addresses, fromlen);
+    /* login time */
     if (longform) {
-        print_time_ival7(jcpu / hertz, (jcpu % hertz) * (100. / hertz), stdout);
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        if (session) {
+            uint64_t ltime;
+
+            sd_session_get_start_time(session, &ltime);
+            print_logintime(ltime/((uint64_t) 1000000ULL), stdout);
+        } else {
+#endif
+            // Different to main w as we use process start time rather than unreliable utmp
+            print_logintime(get_starttime(first_start, hertz), stdout);
+
+#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        } 
+#endif
+    }
+    print_time_ival7(idletime(ttypath), 0, stdout);
+    /* jpcpu/pcpu */
+    if (longform) {
+        print_time_ival7(jcpu / hertz, (jcpu % hertz) * (100. / hertz),
+                 stdout);
         if (pcpu > 0)
-            print_time_ival7(pcpu / hertz, (pcpu % hertz) * (100. / hertz), stdout);
+            print_time_ival7(pcpu / hertz,
+                             (pcpu % hertz) * (100. / hertz),
+                             stdout);
         else
             printf("   ?   ");
     }
     if (show_pids) {
+        pid_t ut_pid = -1;
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
-        sd_session_get_leader(session, &first_pid);
+        sd_session_get_leader(session, &ut_pid);
 #endif
-        pids_length = printf( " %d/%d", first_pid, last_pid);
-        if (pids_length > maxcmd)
+        if (ut_pid == -1)
+            ut_pid = u->ut_pid;
+        pids_length = printf(" %6d/%6d", ut_pid, last_pid);
+        if (pids_length > maxcmd) {
             maxcmd = 0;
-        else if (pids_length > 0)
+        } else if (pids_length > 0) {
             maxcmd -= pids_length;
+        }
     }
+    /* what */
     printf(" %.*s\n", maxcmd, cmdline);
+    free(session);
 }
 
 /*
- * Scan through the likely places that user terminals are found
+ * Instead of going through the systemd sessions or utmp entries
+ * scan all processes and find those that have TTY defined, skipping
+ * over the gettys which have PID 0/1 as parent
  */
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+#define PIDS_GETUNT(e) PIDS_VAL(EU_ ## e, u_int, reap->stacks[i])
+#define PIDS_GETULL(e) PIDS_VAL(EU_ ## e, ull_int, reap->stacks[i])
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
 void print_user_terminals(
-    const char *match_user,
     const int longform,
     int maxcmd,
     const int from,
@@ -873,36 +861,75 @@ void print_user_terminals(
     const int fromlen,
     const int ip_addresses,
     const int show_pids,
-    struct pids_fetch *pids_cache)
+    struct pids_info *pids_info,
+    struct pids_fetch *reap)
 {
-    DIR *dirp;
-    struct dirent *dent;
-    char pathname[300];
+    int i;
+    int total_procs = reap->counts->total;
+    int current_tty = -1;
 
-    if ( (dirp = opendir("/dev")) != NULL)
-    {
-        while ((dent = readdir(dirp))) {
-            if (dent->d_type != DT_CHR)
-                continue; // Not a character device
-            if (strncmp(dent->d_name, "tty", 3) != 0 || dent->d_name[3] == '\0')
-                continue; // Not the name tty*
-            snprintf(pathname, 300, "/dev/%s", dent->d_name);
-            print_terminal_proc(match_user, longform, maxcmd, from, userlen, fromlen, ip_addresses, show_pids, pids_cache, pathname, 5);
+    pid_t first_pid;
+    unsigned long long last_start = 0;
+    unsigned long long first_start = 0;
+    pid_t last_pid;
+    char cmdline[MAX_CMD_WIDTH+1];
+    char ttyname[UT_NAMESIZE+1];
+    unsigned long long jcpu;
+    unsigned long long pcpu;
+
+
+    if (!procps_pids_sort(pids_info,
+                reap->stacks, total_procs,
+                PIDS_TICS_BEGAN, PIDS_SORT_ASCEND))
+        xerrx(EXIT_FAILURE, _("Unable to sort pids"));
+    if (!procps_pids_sort(pids_info,
+                reap->stacks, total_procs,
+                PIDS_TTY, PIDS_SORT_ASCEND))
+        xerrx(EXIT_FAILURE, _("Unable to sort pids"));
+
+    for (i=0; i < total_procs; i++) {
+        /* Skip if:
+         * The process has no TTY
+         * PPID is 0 or 1 which is a getty
+         */
+        if (PIDS_GETINT(TTY) == 0 ||
+                PIDS_GETINT(PPID) == 1 || PIDS_GETINT(PPID) == 0)
+            continue;
+
+        if (current_tty == PIDS_GETINT(TTY)) {
+            if (last_start == 0 || last_start < PIDS_GETULL(START)) {
+                last_pid = PIDS_GETINT(TGID);
+                last_start = PIDS_GETULL(START);
+                strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
+            }
+            jcpu += (PIDS_GETULL(TICS_ALL));
+        } else { // Changed TTY
+            if (current_tty != -1) { // We have data
+                print_terminal_user(longform, maxcmd, from, userlen, fromlen, ip_addresses, show_pids, first_start, first_pid, last_pid, ttyname, jcpu, pcpu, cmdline);
+            }
+            // Reset and get ready for next round
+            current_tty = PIDS_GETINT(TTY);
+            first_pid = PIDS_GETINT(TGID);
+            first_start = PIDS_GETULL(START);
+            strncpy(ttyname, PIDS_GETSTR(TTY_NAME), UT_NAMESIZE);
+            pcpu = PIDS_GETULL(TICS_ALL);
+            jcpu = (PIDS_GETULL(TICS_ALL));
+            /* With one process, first is last */
+            last_pid = PIDS_GETINT(TGID);
+            last_start = PIDS_GETULL(START);
+            strncpy(cmdline, PIDS_GETSTR(CMDLINE), MAX_CMD_WIDTH);
         }
-        closedir(dirp);
     }
-    if ( (dirp = opendir("/dev/pts")) != NULL)
-    {
-        while ((dent = readdir(dirp))) {
-            if (dent->d_type != DT_CHR)
-                continue; // Not a character device
-            snprintf(pathname, 300, "/dev/pts/%s", dent->d_name);
-            print_terminal_proc(match_user, longform, maxcmd, from, userlen, fromlen, ip_addresses, show_pids, pids_cache, pathname, 5);
-        }
-        closedir(dirp);
+    if (current_tty != -1) {
+        print_terminal_user(longform, maxcmd, from, userlen, fromlen, ip_addresses, show_pids, first_start, first_pid, last_pid, ttyname, jcpu, pcpu, cmdline);
     }
 
 }
+#undef PIDS_GETINT
+#undef PIDS_GETUNT
+#undef PIDS_GETULL
+#undef PIDS_GETSTR
+
 int main(int argc, char **argv)
 {
 	char *match_user = NULL, *p;
@@ -1054,7 +1081,7 @@ int main(int argc, char **argv)
 	}
 
         if (term_mode) {
-            print_user_terminals(match_user, longform, maxcmd, from, userlen, fromlen, ip_addresses, pids, pids_cache);
+            print_user_terminals(longform, maxcmd, from, userlen, fromlen, ip_addresses, pids, info, pids_cache);
         } else {
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
 	char **sessions_list;

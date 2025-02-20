@@ -57,3 +57,10 @@ set test "w with pids display"
 spawn $w -p
 expect_pass "$test" "^${w_std_header}${w_pid_userlines}"
 
+set test "w with terminal mode"
+spawn $w -t
+expect_pass "$test" "^${w_std_header}${w_std_userlines}"
+
+set test "w with terminal mode from and short flags"
+spawn $w -tfs
+expect_pass "$test" "^${w_fromshort_header}${w_fromshort_userlines}"
