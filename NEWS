@@ -4,6 +4,7 @@ procps-ng-NEXT
   * top: provides for ignoring configuration file(s)       issue #365
   * pgrep: Fix unhex breakage for signal numbers           issue #369
   * pgrep: Match on process ID                             Debian #612146
+  * pgrep: Add process_mrelease                            merge !250
   * pgrep.1: Note that we can only go to 100th of second   issue #376
   * pmap: add -k option to print raw names from kernel     merge !251
   * ps: parse --help correctly                             issue #381

@@ -333,6 +333,16 @@ AS_IF([[test "x$enable_pidwait" = xyes -a "x$have_pidfd_open" = xno]],
     )
    ,[])
 
+AC_MSG_CHECKING([for process_mrelease()])
+AC_LINK_IFELSE(
+  [AC_LANG_PROGRAM([#include <sys/mman.h>],
+                   [[return process_mrelease(1, 0);]])],
+  [have_process_mrelease=yes
+   AC_DEFINE([HAVE_PROCESS_MRELEASE], [1], [process_mrelease is defined])
+   AC_MSG_RESULT([yes])],
+  [have_process_mrelease=no
+   AC_MSG_RESULT([no])])
+
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--disable-kill], [do not build kill]),
   [], [enable_kill=yes]

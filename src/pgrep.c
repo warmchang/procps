@@ -41,10 +41,11 @@
 #include <getopt.h>
 #include <stdbool.h>
 #include <time.h>
+#include <sys/syscall.h>
+#include <sys/mman.h>
 
 #ifdef ENABLE_PIDWAIT
 #include <sys/epoll.h>
-#include <sys/syscall.h>
 #endif
 
 /* EXIT_SUCCESS is 0 */
@@ -122,6 +123,8 @@ static int opt_signal = SIGTERM;
 static int opt_case = 0;
 static int opt_echo = 0;
 static int opt_threads = 0;
+static bool opt_mrelease = false;
+
 static pid_t opt_ns_pid = 0;
 static bool use_sigqueue = false;
 static bool require_handler = false;
@@ -167,6 +170,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
         fputs(_(" -H, --require-handler     match only if signal handler is present\n"), fp);
         fputs(_(" -q, --queue <value>       integer value to be sent with the signal\n"), fp);
         fputs(_(" -e, --echo                display what is killed\n"), fp);
+        fputs(_(" -m, --mrelease            release process memory immediately after kill\n"), fp);
         break;
 #ifdef ENABLE_PIDWAIT
     case PIDWAIT:
@@ -874,7 +878,7 @@ static int signal_option(int *argc, char **argv)
     return -1;
 }
 
-#if defined(ENABLE_PIDWAIT) && !defined(HAVE_PIDFD_OPEN)
+#if !defined(HAVE_PIDFD_OPEN)
 
 #ifndef __NR_pidfd_open
 #ifdef __alpha__
@@ -887,6 +891,22 @@ static int signal_option(int *argc, char **argv)
 static int pidfd_open (pid_t pid, unsigned int flags)
 {
 	return syscall(__NR_pidfd_open, pid, flags);
+}
+#endif
+
+#if !defined(HAVE_PROCESS_MRELEASE)
+
+#ifndef __NR_process_mrelease
+#ifdef __alpha__
+#define __NR_process_mrelease 558
+#else
+#define __NR_process_mrelease 448
+#endif
+#endif
+
+static int process_mrelease(int pidfd, unsigned int flags)
+{
+	return syscall(__NR_process_mrelease, pidfd, flags);
 }
 #endif
 
@@ -938,6 +958,7 @@ static void parse_opts (int argc, char **argv)
         {"queue", required_argument, NULL, 'q'},
         {"runstates", required_argument, NULL, 'r'},
         {"env", required_argument, NULL, ENV_OPTION},
+        {"mrelease", no_argument, NULL, 'm'},
         {"help", no_argument, NULL, 'h'},
         {"version", no_argument, NULL, 'V'},
         {NULL, 0, NULL, 0}
@@ -958,7 +979,7 @@ static void parse_opts (int argc, char **argv)
         sig = signal_option(&argc, argv);
         if (-1 < sig)
             opt_signal = sig;
-	strcat (opts, "eq:");
+	strcat (opts, "eq:m");
     } else {
         strcat (opts, "lad:vw");
         prog_mode = PGREP;
@@ -1144,6 +1165,9 @@ static void parse_opts (int argc, char **argv)
             require_handler = true;
             ++criteria_count;
             break;
+        case 'm':
+            opt_mrelease = true;
+            break;
         case 'h':
         case '?':
             usage (opt);
@@ -1196,6 +1220,7 @@ int main (int argc, char **argv)
     int num;
     int i;
     int kill_count = 0;
+    bool mrelease_failed = false;
 #ifdef ENABLE_PIDWAIT
     int poll_count = 0;
     int wait_count = 0;
@@ -1227,10 +1252,24 @@ int main (int argc, char **argv)
         return !num;
     case PKILL:
         for (i = 0; i < num; i++) {
+            int pidfd = -1;
+            if (opt_mrelease) {
+                pidfd = pidfd_open(procs[i].num, 0);
+                if (pidfd < 0)
+                    err(EXIT_FAILURE, _("pidfd_open for process %ld failed"), procs[i].num);
+            }
             if (execute_kill (procs[i].num, opt_signal) != -1) {
                 if (opt_echo)
                     printf(_("%s killed (pid %lu)\n"), procs[i].str, procs[i].num);
                 kill_count++;
+                if (opt_mrelease) {
+                    int res = process_mrelease(pidfd, 0);
+                    if (res != 0 && errno != ESRCH) {
+                        warn(_("pid %ld killed, but process_mrelease failed"), procs[i].num);
+                        mrelease_failed = true;
+                    }
+                    close(pidfd);
+                }
                 continue;
             }
             if (errno==ESRCH)
@@ -1240,6 +1279,8 @@ int main (int argc, char **argv)
         }
         if (opt_count)
             fprintf(stdout, "%d\n", num);
+        if (mrelease_failed)
+            return 1;
         return !kill_count;
 #ifdef ENABLE_PIDWAIT
     case PIDWAIT:

@@ -238,6 +238,10 @@ installed a handler for this signal using the SA_SIGINFO flag to
 then it can obtain this data via the si_value field of the
 siginfo_t structure.
 .TP
+\fB\-m\fR, \fB\-\-mrelease\fR
+After sending the signal, invoke the process_mrelease system call to immediately free
+the target process's memory.
+.TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
 .TP
