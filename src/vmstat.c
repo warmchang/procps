@@ -419,13 +419,13 @@ static void new_format(void)
     // long hz = procps_hertz_get();
 
     if (procps_vmstat_new(&vm_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
+        errx(EXIT_FAILURE, _("Unable to create vmstat structure"));
     if (procps_stat_new(&stat_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
+        errx(EXIT_FAILURE, _("Unable to create system stat structure"));
     if (procps_meminfo_new(&mem_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+        errx(EXIT_FAILURE, _("Unable to create meminfo structure"));
     if (procps_uptime(&uptime, NULL) < 0)
-        xerr(EXIT_FAILURE, _("Unable to get uptime"));
+        err(EXIT_FAILURE, _("Unable to get uptime"));
     if (0.0 == uptime)
         uptime = 1.0;
     new_header();
@@ -436,7 +436,7 @@ static void new_format(void)
     pswpout[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int);
 
     if (!(mem_stack = procps_meminfo_select(mem_info, Mem_items, MAX_mem)))
-        xerrx(EXIT_FAILURE, _("Unable to select memory information"));
+        errx(EXIT_FAILURE, _("Unable to select memory information"));
 
     if (y_option == 0) {
         if (t_option) {
@@ -450,7 +450,7 @@ static void new_format(void)
         }
         /* Do the initial fill */
         if (!(stat_stack = procps_stat_select(stat_info, First_stat_items, MAX_stat)))
-            xerrx(EXIT_FAILURE, _("Unable to select stat information"));
+            errx(EXIT_FAILURE, _("Unable to select stat information"));
         cpu_use = TICv(stat_USR) + TICv(stat_NIC);
         cpu_sys = TICv(stat_SYS) + TICv(stat_IRQ) + TICv(stat_SRQ);
         cpu_idl = TICv(stat_IDL);
@@ -499,7 +499,7 @@ static void new_format(void)
         tog = !tog;
 
         if (!(stat_stack = procps_stat_select(stat_info, Loop_stat_items, MAX_stat)))
-            xerrx(EXIT_FAILURE, _("Unable to select stat information"));
+            errx(EXIT_FAILURE, _("Unable to select stat information"));
 
         cpu_use = DTICv(stat_USR) + DTICv(stat_NIC);
         cpu_sys = DTICv(stat_SYS) + DTICv(stat_IRQ) + DTICv(stat_SRQ);
@@ -513,7 +513,7 @@ static void new_format(void)
         pswpout[tog] = VMSTAT_GET(vm_info, VMSTAT_PSWPOUT, ul_int);
 
         if (!(mem_stack = procps_meminfo_select(mem_info, Mem_items, MAX_mem)))
-                xerrx(EXIT_FAILURE, _("Unable to select memory information"));
+                errx(EXIT_FAILURE, _("Unable to select memory information"));
 
         if (t_option) {
             (void) time( &the_time );
@@ -609,16 +609,16 @@ static void diskpartition_format(const char *partition_name)
     unsigned long i;
 
     if (procps_diskstats_new(&disk_stat) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
+        errx(EXIT_FAILURE, _("Unable to create diskstat structure"));
 
     if (!(got = procps_diskstats_get(disk_stat, partition_name, DISKSTATS_TYPE)))
-        xerrx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
+        errx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
 
     diskpartition_header(partition_name);
 
     for (i = 0; infinite_updates || i < num_updates ; i++) {
         if (!(stack = procps_diskstats_select(disk_stat, partition_name, Part_items, MAX_part)))
-            xerrx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
+            errx(EXIT_FAILURE, _("Disk/Partition %s not found"), partition_name);
         printf(format,
             partVAL(part_READ),
             partVAL(part_READ_SECT),
@@ -713,14 +713,14 @@ static void diskformat(void)
     const char wide_format[] = "%-5s %9lu %9lu %11lu %11lu %9lu %9lu %11lu %11lu %7d %7lu";
 
     if (procps_diskstats_new(&disk_stat) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
+        errx(EXIT_FAILURE, _("Unable to create diskstat structure"));
 
     if (!moreheaders)
         diskheader();
 
     for (i=0; infinite_updates || i < num_updates ; i++) {
         if (!(reap = procps_diskstats_reap(disk_stat, Disk_items, MAX_disk)))
-            xerrx(EXIT_FAILURE, _("Unable to retrieve disk statistics"));
+            errx(EXIT_FAILURE, _("Unable to retrieve disk statistics"));
         if (t_option) {
             (void) time( &the_time );
             tm_ptr = localtime( &the_time );
@@ -794,16 +794,16 @@ static void slabformat (void)
         slab_AOBJS, slab_OBJS, slab_OSIZE, slab_OPS, slab_NAME };
 
     if (procps_slabinfo_new(&slab_info) < 0)
-        xerr(EXIT_FAILURE, _("Unable to create slabinfo structure"));
+        err(EXIT_FAILURE, _("Unable to create slabinfo structure"));
 
     if (!moreheaders)
         slabheader();
 
     for (i = 0; infinite_updates || i < num_updates; i++) {
         if (!(reaped = procps_slabinfo_reap(slab_info, node_items, MAX_ITEMS)))
-            xerrx(EXIT_FAILURE, _("Unable to get slabinfo node data"));
+            errx(EXIT_FAILURE, _("Unable to get slabinfo node data"));
         if (!(procps_slabinfo_sort(slab_info, reaped->stacks, reaped->total, SLAB_NAME, SLABINFO_SORT_ASCEND)))
-            xerrx(EXIT_FAILURE, _("Unable to sort slab nodes"));
+            errx(EXIT_FAILURE, _("Unable to sort slab nodes"));
 
         for (j = 0; j < reaped->total; j++) {
             struct slabinfo_stack *p = reaped->stacks[j];
@@ -840,9 +840,9 @@ static void disksum_format(void)
     disk_count = part_count = 0;
 
     if (procps_diskstats_new(&disk_stat) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create diskstat structure"));
+        errx(EXIT_FAILURE, _("Unable to create diskstat structure"));
     if (!(reap = procps_diskstats_reap(disk_stat, Disk_items, MAX_disk)))
-        xerrx(EXIT_FAILURE, _("Unable to retrieve disk statistics"));
+        errx(EXIT_FAILURE, _("Unable to retrieve disk statistics"));
 
     for (j = 0; j < reap->total; j++) {
         if (diskVAL(disk_TYPE, s_int) != DISKSTATS_TYPE_DISK) {
@@ -893,15 +893,15 @@ static void sum_format(void)
     struct meminfo_stack *mem_stack;
 
     if (procps_stat_new(&stat_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
+        errx(EXIT_FAILURE, _("Unable to create system stat structure"));
     if (!(stat_stack = procps_stat_select(stat_info, Sum_stat_items, 14)))
-        xerrx(EXIT_FAILURE, _("Unable to select stat information"));
+        errx(EXIT_FAILURE, _("Unable to select stat information"));
     if (procps_vmstat_new(&vm_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create vmstat structure"));
+        errx(EXIT_FAILURE, _("Unable to create vmstat structure"));
     if (procps_meminfo_new(&mem_info) < 0)
-        xerrx(EXIT_FAILURE, _("Unable to create meminfo structure"));
+        errx(EXIT_FAILURE, _("Unable to create meminfo structure"));
     if (!(mem_stack = procps_meminfo_select(mem_info, Sum_mem_items, 10)))
-        xerrx(EXIT_FAILURE, _("Unable to select memory information"));
+        errx(EXIT_FAILURE, _("Unable to select memory information"));
 
     printf(_("%13lu %s total memory\n"), MEMv(smem_MTOT), szDataUnit);
     printf(_("%13lu %s used memory\n"), MEMv(smem_MUSE), szDataUnit);
@@ -952,7 +952,7 @@ static void fork_format(void)
     struct stat_info *stat_info = NULL;
 
     if (procps_stat_new(&stat_info) < 0)
-    xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
+    errx(EXIT_FAILURE, _("Unable to create system stat structure"));
 
     printf(_("%13lu forks\n"), STAT_GET(stat_info, STAT_SYS_PROC_CREATED, ul_int));
     /* Cleanup */
@@ -1057,7 +1057,7 @@ int main(int argc, char *argv[])
                 break;
             default:
                 /* Translation Hint: do not change argument characters */
-                xerrx(EXIT_FAILURE, _("-S requires k, K, m or M (default is KiB)"));
+                errx(EXIT_FAILURE, _("-S requires k, K, m or M (default is KiB)"));
             }
             szDataUnit[0] = optarg[0];
             break;
@@ -1082,9 +1082,9 @@ int main(int argc, char *argv[])
     if (optind < argc) {
         tmp = strtol_or_err(argv[optind++], _("failed to parse argument"));
         if (tmp < 1)
-            xerrx(EXIT_FAILURE, _("delay must be positive integer"));
+            errx(EXIT_FAILURE, _("delay must be positive integer"));
         else if (UINT_MAX < tmp)
-            xerrx(EXIT_FAILURE, _("too large delay value"));
+            errx(EXIT_FAILURE, _("too large delay value"));
         sleep_time = tmp;
         infinite_updates = 1;
     }

@@ -16,11 +16,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include "config.h"
+#ifdef HAVE_ERR_H
+#include <err.h>
+#endif
 #ifdef HAVE_ERROR_H
 #include <error.h>
-#else
-#include <stdarg.h>
 #endif
+#include <stdarg.h>
 
 /*
  * Compiler specific stuff
@@ -107,7 +110,8 @@ static inline char *prog_inv_sh_nm_from_file(char *f, char stripext)
 /*
  * Error printing.
  */
-#ifndef HAVE_ERROR_H
+
+#ifndef HAVE_ERROR
 /* Emulate the error() function from glibc */
 __attribute__((__format__(__printf__, 3, 4)))
 static void error(int status, int errnum, const char *format, ...)
@@ -123,7 +127,9 @@ static void error(int status, int errnum, const char *format, ...)
         if (status != 0)
                 exit(status);
 }
+#endif
 
+#ifndef HAVE_ERROR_AT_LINE
 /* Emulate the error_at_line() function from glibc */
 __attribute__((__format__(__printf__, 5, 6)))
 static void error_at_line(int status, int errnum, const char *filename,
@@ -142,10 +148,14 @@ static void error_at_line(int status, int errnum, const char *filename,
                 exit(status);
 }
 #endif
-#define xwarn(...) error(0, errno, __VA_ARGS__)
-#define xwarnx(...) error(0, 0, __VA_ARGS__)
-#define xerr(STATUS, ...) error(STATUS, errno, __VA_ARGS__)
-#define xerrx(STATUS, ...) error(STATUS, 0, __VA_ARGS__)
+
+#ifndef HAVE_ERR_H
+#define warn(...) error(0, errno, __VA_ARGS__)
+#define warnx(...) error(0, 0, __VA_ARGS__)
+#define err(STATUS, ...) error(STATUS, errno, __VA_ARGS__)
+#define errx(STATUS, ...) error(STATUS, 0, __VA_ARGS__)
+
+#endif /* HAVE_ERR_H */
 
 /*
  * Constant strings for usage() functions.

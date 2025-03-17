@@ -335,13 +335,13 @@ static void print_extended_maps (FILE *f)
 				 dev, inode, map_desc);
 		/* Must read at least up to inode, else something has changed! */
 		if (nfields < 6)
-			xerrx(EXIT_FAILURE, _("Unknown format in smaps file!"));
+			errx(EXIT_FAILURE, _("Unknown format in smaps file!"));
 		/* If line too long we dump everything else. */
 		c = mapbuf[strlen(mapbuf) - 1];
 		while (c != '\n') {
 			fgets(mapbuf, sizeof mapbuf, f);
 			if (!ret || !mapbuf[0])
-				xerrx(EXIT_FAILURE, _("Unknown format in smaps file!"));
+				errx(EXIT_FAILURE, _("Unknown format in smaps file!"));
 			c = mapbuf[strlen(mapbuf) - 1];
 		}
 
@@ -366,7 +366,7 @@ static void print_extended_maps (FILE *f)
 				assert(firstmapping == 2);
 				listnode = calloc(1, sizeof *listnode);
 				if (listnode == NULL)
-					xerrx(EXIT_FAILURE, _("ERROR: memory allocation failed"));
+					errx(EXIT_FAILURE, _("ERROR: memory allocation failed"));
 
 				if (listhead == NULL) {
 					assert(listtail == NULL);
@@ -382,7 +382,7 @@ static void print_extended_maps (FILE *f)
 			} else {
 			/* === LIST EXISTS  === */
 				if (strcmp(listnode->description, detail_desc) != 0)
-					xerrx(EXIT_FAILURE, "ERROR: %s %s",
+					errx(EXIT_FAILURE, "ERROR: %s %s",
 					      _("inconsistent detail field in smaps file, line:\n"),
 					      mapbuf);
 			}
@@ -776,7 +776,7 @@ static void range_arguments(const char *optarg)
 	char *buf, *arg1, *arg2;
 
 	if ((buf = xstrdup(optarg)) == NULL) {
-        xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
+        errx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
               (optarg?optarg:"(null)"));
     }
 	arg1 = buf;
@@ -791,7 +791,7 @@ static void range_arguments(const char *optarg)
 		range_high = strtoul(arg2, &arg2, 16);
 	if (*arg1 || *arg2) {
         free(buf);
-		xerrx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
+		errx(EXIT_FAILURE, "%s: '%s'", _("failed to parse argument"),
 		      optarg);
     }
     free(buf);
@@ -837,7 +837,7 @@ static int config_read (char *rc_filename)
 		if (length > 0 && line_buf[length - 1] == '\n') {
 			line_buf[length - 1] = '\0';
 		} else if (length == MAX_CNF_LINE_LEN) { /* no LF char -> line too long */
-			xwarnx(_("config line too long - line %d"), line_cnt);
+			warnx(_("config line too long - line %d"), line_cnt);
 			/* ignoring the tail */
 			while (fgets (tmp_buf, MAX_CNF_LINE_LEN + 1, f) &&
 				(length = strlen(tmp_buf))>0 &&
@@ -862,10 +862,10 @@ static int config_read (char *rc_filename)
 				while (*trimmed != ']' && *trimmed != '\0') trimmed++;
 				if (*trimmed == ']') {
 					section_id = SECTION_ID_UNSUPPORTED;
-					xwarnx(_("unsupported section found in the config - line %d"), line_cnt);
+					warnx(_("unsupported section found in the config - line %d"), line_cnt);
 					trimmed++;
 				} else {
-					xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+					warnx(_("syntax error found in the config - line %d"), line_cnt);
 				}
 			}
 
@@ -876,7 +876,7 @@ static int config_read (char *rc_filename)
 			if (*trimmed == '#' || *trimmed == '\0') continue;
 
 			/* anything else found on the section line ??? */
-			xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+			warnx(_("syntax error found in the config - line %d"), line_cnt);
 		}
 
 		switch (section_id) {
@@ -887,12 +887,12 @@ static int config_read (char *rc_filename)
 					tail = strtok (NULL, " \t");
 
 					if (tail && *tail != '#') {
-						xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+						warnx(_("syntax error found in the config - line %d"), line_cnt);
 					}
 
 					/* add the field in the list */
 					if (!(cnf_listnode = calloc(1, sizeof *cnf_listnode))) {
-						xwarnx(_("memory allocation failed"));
+						warnx(_("memory allocation failed"));
 						fclose(f);
 						return 0;
 					}
@@ -910,7 +910,7 @@ static int config_read (char *rc_filename)
 					tail = strtok (NULL, " \t");
 
 					if (tail && *tail != '#') {
-						xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+						warnx(_("syntax error found in the config - line %d"), line_cnt);
 					}
 
 					if (!strcmp(token,"ShowPath")) map_desc_showpath = !map_desc_showpath;
@@ -922,7 +922,7 @@ static int config_read (char *rc_filename)
 				break; /* ignore the content */
 
 			default:
-				xwarnx(_("syntax error found in the config - line %d"), line_cnt);
+				warnx(_("syntax error found in the config - line %d"), line_cnt);
 		}
         }
 
@@ -944,7 +944,7 @@ static int config_create (const char *rc_filename)
 
 	if (f) {  /* file exists ... let user to delete/remove it first */
 		fclose(f);
-		xwarnx(_("the file already exists - delete or rename it first"));
+		warnx(_("the file already exists - delete or rename it first"));
 		return 0;
 	}
 
@@ -1007,7 +1007,7 @@ static char *get_default_rc_filename(void)
 
 	homedir = getenv("HOME");
 	if (!homedir) {
-		xwarnx(_("HOME variable undefined"));
+		warnx(_("HOME variable undefined"));
 		return NULL;
 	}
 
@@ -1015,7 +1015,7 @@ static char *get_default_rc_filename(void)
 
 	rc_filename = (char *) calloc (1, rc_filename_len + 1);
 	if (!rc_filename) {
-		xwarnx(_("memory allocation failed"));
+		warnx(_("memory allocation failed"));
 		return NULL;
 	}
 
@@ -1066,7 +1066,7 @@ int main(int argc, char **argv)
 			X_option++;
 			break;
 		case 'r':
-			xwarnx(_("option -r is ignored as SunOS compatibility"));
+			warnx(_("option -r is ignored as SunOS compatibility"));
 			break;
 		case 'd':
 			d_option = 1;
@@ -1113,20 +1113,20 @@ int main(int argc, char **argv)
 	argv += optind;
 
 	if (c_option + C_option + d_option + n_option + N_option + x_option + !!X_option > 1)
-		xerrx(EXIT_FAILURE, _("options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"));
+		errx(EXIT_FAILURE, _("options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"));
 
 	if ((n_option || N_option) && (q_option || map_desc_showpath))
-		xerrx(EXIT_FAILURE, _("options -p, -q are mutually exclusive with -n, -N"));
+		errx(EXIT_FAILURE, _("options -p, -q are mutually exclusive with -n, -N"));
 
 	if ((n_option || N_option) && argc > 0)
-		xerrx(EXIT_FAILURE, _("too many arguments"));
+		errx(EXIT_FAILURE, _("too many arguments"));
 
 	if (N_option) {
 		if (config_create(rc_filename)) {
-			xwarnx(_("rc file successfully created, feel free to edit the content"));
+			warnx(_("rc file successfully created, feel free to edit the content"));
 			return (EXIT_SUCCESS);
 		} else {
-			xerrx(EXIT_FAILURE, _("couldn't create the rc file"));
+			errx(EXIT_FAILURE, _("couldn't create the rc file"));
 		}
 	}
 
@@ -1138,15 +1138,15 @@ int main(int argc, char **argv)
 		conf_ret = config_create(rc_filename); free(rc_filename);
 
 		if (conf_ret) {
-			xwarnx(_("~/.%src file successfully created, feel free to edit the content"), program_invocation_short_name);
+			warnx(_("~/.%src file successfully created, feel free to edit the content"), program_invocation_short_name);
 			return (EXIT_SUCCESS);
 		} else {
-			xerrx(EXIT_FAILURE, _("couldn't create ~/.%src"), program_invocation_short_name);
+			errx(EXIT_FAILURE, _("couldn't create ~/.%src"), program_invocation_short_name);
 		}
 	}
 
 	if (argc < 1)
-		xerrx(EXIT_FAILURE, _("argument missing"));
+		errx(EXIT_FAILURE, _("argument missing"));
 
 	if (C_option) c_option = 1;
 
@@ -1159,18 +1159,18 @@ int main(int argc, char **argv)
 
 		if (!conf_ret) {
 			if (C_option) {
-				xerrx(EXIT_FAILURE, _("couldn't read the rc file"));
+				errx(EXIT_FAILURE, _("couldn't read the rc file"));
 			} else {
-				xwarnx(_("couldn't read ~/.%src"), program_invocation_short_name);
+				warnx(_("couldn't read ~/.%src"), program_invocation_short_name);
 				free(rc_filename);
 				return(EXIT_FAILURE);
 			}
 		}
 	}
 	if ((size_t)argc >= INT_MAX / sizeof(pid_t))
-		xerrx(EXIT_FAILURE, _("too many arguments"));
+		errx(EXIT_FAILURE, _("too many arguments"));
 	if (procps_pids_new(&Pids_info, Pid_items, 4))
-		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
+		errx(EXIT_FAILURE, _("library failed pids statistics"));
 	pidlist = xmalloc(sizeof(pid_t) * argc);
 
 	user_count = 0;
@@ -1195,7 +1195,7 @@ int main(int argc, char **argv)
 	discover_shm_minor();
 
 	if (!(pids_fetch = procps_pids_select(Pids_info, pidlist, user_count, PIDS_SELECT_PID)))
-		xerrx(EXIT_FAILURE, _("library failed pids statistics"));
+		errx(EXIT_FAILURE, _("library failed pids statistics"));
 
 	for (reap_count = 0; reap_count < pids_fetch->counts->total; reap_count++) {
 		ret |= one_proc(pids_fetch->stacks[reap_count]);

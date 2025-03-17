@@ -141,7 +141,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	exit(out == stderr ? 1 : EXIT_SUCCESS);
 }
 
-#define endwin_xerr(...) do { endwin(); xerr(__VA_ARGS__); } while (0)
+#define endwin_xerr(...) do { endwin(); err(__VA_ARGS__); } while (0)
 #define endwin_error(...) do { endwin(); error(__VA_ARGS__); } while (0)
 #define endwin_exit(status) do { endwin(); exit(status); } while (0)
 

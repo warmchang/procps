@@ -46,10 +46,10 @@ static double get_uptime_secs(const int container_mode)
 
     if (container_mode) {
 	if (procps_container_uptime(&uptime_secs) < 0)
-		xerr(EXIT_FAILURE, _("Cannot get container uptime"));
+		err(EXIT_FAILURE, _("Cannot get container uptime"));
     } else {
 	if (procps_uptime(&uptime_secs, NULL) < 0)
-		xerr(EXIT_FAILURE, _("Cannot get system uptime"));
+		err(EXIT_FAILURE, _("Cannot get system uptime"));
     }
     return uptime_secs;
 }
@@ -63,7 +63,7 @@ static void print_uptime_since(const int container_mode)
 
     /* Get the current time and convert it to a double */
 	if (gettimeofday(&tim, NULL) != 0)
-        xerr(EXIT_FAILURE, "gettimeofday");
+        err(EXIT_FAILURE, "gettimeofday");
     now = (tim.tv_sec * 1000000.0) + tim.tv_usec;
 
     /* Get the uptime and calculate when that was */
@@ -72,7 +72,7 @@ static void print_uptime_since(const int container_mode)
 
     /* Show this */
 	if ((up_since = localtime(&up_since_secs)) == NULL)
-		xerrx(EXIT_FAILURE, "localtime");
+		errx(EXIT_FAILURE, "localtime");
     printf("%04d-%02d-%02d %02d:%02d:%02d\n",
         up_since->tm_year + 1900, up_since->tm_mon + 1, up_since->tm_mday,
         up_since->tm_hour, up_since->tm_min, up_since->tm_sec);
@@ -89,13 +89,13 @@ static void print_uptime_raw()
     int users=0;
 
     if ((realseconds = time(NULL)) < 0)
-        xerrx(EXIT_FAILURE, "time");
+        errx(EXIT_FAILURE, "time");
     if (procps_uptime(&uptime_secs, NULL) < 0)
-        xerrx(EXIT_FAILURE, "procps_uptime_secs");
+        errx(EXIT_FAILURE, "procps_uptime_secs");
     if ((users = procps_users()) < 0)
-        xerrx(EXIT_FAILURE, "procps_users");
+        errx(EXIT_FAILURE, "procps_users");
     if (procps_loadavg(&av1, &av5, &av15) < 0)
-        xerrx(EXIT_FAILURE, "procps_loadavg");
+        errx(EXIT_FAILURE, "procps_loadavg");
 
     printf("%lld %f %d %.2f %.2f %.2f\n",
             (long long)realseconds, uptime_secs, users, av1, av5, av15);
@@ -173,7 +173,7 @@ int main(int argc, char **argv)
     uptime_secs = get_uptime_secs(container_mode);
     len = procps_uptime_snprint( uptime_str, UPTIME_LEN, uptime_secs, p);
     if (len <= 0 || len == UPTIME_LEN)
-       xerr(EXIT_FAILURE, _("Cannot get system uptime"));
+       err(EXIT_FAILURE, _("Cannot get system uptime"));
 
     printf("%s\n", uptime_str);
     return EXIT_SUCCESS;

@@ -72,12 +72,12 @@ static void setsize(int i)
 			nrows = win.ws_row;
 	}
 	if (ncols < 2 || ncols >= INT_MAX)
-		xerrx(EXIT_FAILURE, _("screen too small or too large"));
+		errx(EXIT_FAILURE, _("screen too small or too large"));
 	if (nrows < 2 || nrows >= INT_MAX / ncols)
-		xerrx(EXIT_FAILURE, _("screen too small or too large"));
+		errx(EXIT_FAILURE, _("screen too small or too large"));
 	scr_size = nrows * ncols;
 	if (scr_size < 2)
-		xerrx(EXIT_FAILURE, _("screen too small"));
+		errx(EXIT_FAILURE, _("screen too small"));
 	if (screen == NULL)
 		screen = (char *)xmalloc(scr_size);
 	else
@@ -134,14 +134,14 @@ int main(int argc, char **argv)
 		case 's':
 			max_scale = strtod_or_err(optarg, _("failed to parse argument"));
 			if (max_scale < 0)
-			        xerrx(EXIT_FAILURE, _("scale cannot be negative"));
+			        errx(EXIT_FAILURE, _("scale cannot be negative"));
 			break;
 		case 'd':
 			tmpdly = strtol_or_err(optarg, _("failed to parse argument"));
 			if (tmpdly < 1)
-				xerrx(EXIT_FAILURE, _("delay must be positive integer"));
+				errx(EXIT_FAILURE, _("delay must be positive integer"));
 			else if (UINT_MAX < tmpdly)
-				xerrx(EXIT_FAILURE, _("too large delay value"));
+				errx(EXIT_FAILURE, _("too large delay value"));
 			dly = tmpdly;
 			break;
 		case 'V':
@@ -156,7 +156,7 @@ int main(int argc, char **argv)
 
 	if (argc > optind)
 		if ((fd = open(argv[optind], O_WRONLY)) == -1)
-			xerr(EXIT_FAILURE, _("can not open tty"));
+			err(EXIT_FAILURE, _("can not open tty"));
 
 	setsize(0);
 
@@ -178,10 +178,10 @@ int main(int argc, char **argv)
 		if ((rc = procps_loadavg(&av[0], &av[1], &av[2])) < 0)
         {
             if (rc == -ENOENT)
-                xerrx(EXIT_FAILURE,
+                errx(EXIT_FAILURE,
                       _("Load average file /proc/loadavg does not exist"));
             else
-                xerrx(EXIT_FAILURE,
+                errx(EXIT_FAILURE,
                       _("Unable to get load average"));
         }
 
@@ -224,9 +224,9 @@ int main(int argc, char **argv)
 			screen[i] = ' ';
 
 		if (write(fd, "\033[H", 3) < 0)
-			xerr(EXIT_FAILURE, _("writing to tty failed"));
+			err(EXIT_FAILURE, _("writing to tty failed"));
 		if (write(fd, screen, scr_size - 1) < 0)
-			xerr(EXIT_FAILURE, _("writing to tty failed"));
+			err(EXIT_FAILURE, _("writing to tty failed"));
 		pause();
 	}
 }

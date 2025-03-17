@@ -90,7 +90,7 @@ enum rel_items {
 };
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
-		xerrx(EXIT_FAILURE, _("integer overflow")); \
+		errx(EXIT_FAILURE, _("integer overflow")); \
 	(x) = (x) * 5 / 4 + 4; \
 } while (0)
 
@@ -222,7 +222,7 @@ static struct el *get_our_ancestors(void)
         struct pids_info *info = NULL;
 
         if (procps_pids_new(&info, Items, ITEMS_COUNT) < 0)
-            xerrx(EXIT_FATAL, _("Unable to create pid info structure"));
+            errx(EXIT_FATAL, _("Unable to create pid info structure"));
 
         if (i == size) {
             grow_size(size);
@@ -361,14 +361,14 @@ static struct el *read_pidfile(
         fp = stdin;
     else
         if ((fp = fopen(pidfile, "r")) == NULL) {
-            xerr(EXIT_FAILURE, _("Unable to open pidfile"));
+            err(EXIT_FAILURE, _("Unable to open pidfile"));
             return NULL;
         }
     if (check_lock) {
         int fd = fileno(fp);
         if (fp < 0 || (!has_flock(fd) && !has_fcntl(fd))) {
             fclose(fp);
-            xerr(EXIT_FAILURE, _("Locking check for pidfile failed"));
+            err(EXIT_FAILURE, _("Locking check for pidfile failed"));
             return NULL;
         }
     }
@@ -398,7 +398,7 @@ static int conv_uid (const char *restrict name, struct el *restrict e)
 
     pwd = getpwnam (name);
     if (pwd == NULL) {
-        xwarnx(_("invalid user name: %s"), name);
+        warnx(_("invalid user name: %s"), name);
         return 0;
     }
     e->num = pwd->pw_uid;
@@ -415,7 +415,7 @@ static int conv_gid (const char *restrict name, struct el *restrict e)
 
     grp = getgrnam (name);
     if (grp == NULL) {
-        xwarnx(_("invalid group name: %s"), name);
+        warnx(_("invalid group name: %s"), name);
         return 0;
     }
     e->num = grp->gr_gid;
@@ -426,7 +426,7 @@ static int conv_gid (const char *restrict name, struct el *restrict e)
 static int conv_pgrp (const char *restrict name, struct el *restrict e)
 {
     if (! strict_atol (name, &e->num)) {
-        xwarnx(_("invalid process group: %s"), name);
+        warnx(_("invalid process group: %s"), name);
         return 0;
     }
     if (e->num == 0)
@@ -438,7 +438,7 @@ static int conv_pgrp (const char *restrict name, struct el *restrict e)
 static int conv_sid (const char *restrict name, struct el *restrict e)
 {
     if (! strict_atol (name, &e->num)) {
-        xwarnx(_("invalid session id: %s"), name);
+        warnx(_("invalid session id: %s"), name);
         return 0;
     }
     if (e->num == 0)
@@ -450,7 +450,7 @@ static int conv_sid (const char *restrict name, struct el *restrict e)
 static int conv_num (const char *restrict name, struct el *restrict e)
 {
     if (! strict_atol (name, &e->num)) {
-        xwarnx(_("not a number: %s"), name);
+        warnx(_("not a number: %s"), name);
         return 0;
     }
     return 1;
@@ -500,7 +500,7 @@ static unsigned long long unhex (const char *restrict in)
     errno = 0;
     ret = strtoull(in, &rem, 16);
     if (errno || *rem != '\0') {
-        xwarnx(_("not a hex string: %s"), in);
+        warnx(_("not a hex string: %s"), in);
         return 0;
     }
     return ret;
@@ -534,7 +534,7 @@ static int match_ns (const int pid,
     int i;
 
     if (procps_ns_read_pid(pid, &proc_ns) < 0)
-        xerrx(EXIT_FATAL,
+        errx(EXIT_FATAL,
               _("Unable to read process namespace information"));
     for (i = 0; i < PROCPS_NS_COUNT; i++) {
         if (ns_flags & (1 << i)) {
@@ -645,7 +645,7 @@ static regex_t * do_regcomp (void)
 
         if (re_err) {
             regerror (re_err, preg, errbuf, sizeof(errbuf));
-            xerrx(EXIT_USAGE, _("regex error: %s"), errbuf);
+            errx(EXIT_USAGE, _("regex error: %s"), errbuf);
         }
     }
     return preg;
@@ -727,12 +727,12 @@ static struct el * select_procs (int *num)
     if (opt_newest) saved_pid = 0;
     if (opt_oldest) saved_pid = INT_MAX;
     if (opt_ns_pid && procps_ns_read_pid(opt_ns_pid, &nsp) < 0) {
-        xerrx(EXIT_FATAL,
+        errx(EXIT_FATAL,
               _("Error reading reference namespace information\n"));
     }
 
     if (procps_pids_new(&info, Items, ITEMS_COUNT) < 0)
-        xerrx(EXIT_FATAL,
+        errx(EXIT_FATAL,
               _("Unable to create pid info structure"));
     which = PIDS_FETCH_TASKS_ONLY;
     // pkill and pidwait don't support -w, but this is checked in getopt
@@ -827,7 +827,7 @@ static struct el * select_procs (int *num)
             } else if (list) {
                 list[matches++].num = PIDS_GETINT(PID);
             } else {
-                xerrx(EXIT_FATAL, _("internal error"));
+                errx(EXIT_FATAL, _("internal error"));
             }
         }
     }
@@ -844,7 +844,7 @@ static struct el * select_procs (int *num)
     *num = matches;
 
     if ((!matches) && (!opt_full) && is_long_match(opt_pattern))
-        xwarnx(_("pattern that searches for process name longer than 15 characters will result in zero matches\n"
+        warnx(_("pattern that searches for process name longer than 15 characters will result in zero matches\n"
                  "Try `%s -f' option to match against the complete command line."),
                program_invocation_short_name);
     return list;
@@ -1144,14 +1144,14 @@ static void parse_opts (int argc, char **argv)
     }
 
     if(opt_lock && !opt_pidfile)
-        xerrx(EXIT_USAGE, _("-L without -F makes no sense\n"
+        errx(EXIT_USAGE, _("-L without -F makes no sense\n"
                      "Try `%s --help' for more information."),
                      program_invocation_short_name);
 
     if(opt_pidfile){
         opt_pid = read_pidfile(opt_pidfile, opt_lock);
         if(!opt_pid)
-            xerrx(EXIT_FAILURE, _("pidfile not valid\n"
+            errx(EXIT_FAILURE, _("pidfile not valid\n"
                          "Try `%s --help' for more information."),
                          program_invocation_short_name);
     }
@@ -1160,11 +1160,11 @@ static void parse_opts (int argc, char **argv)
         opt_pattern = argv[optind];
 
     else if (argc - optind > 1)
-        xerrx(EXIT_USAGE, _("only one pattern can be provided\n"
+        errx(EXIT_USAGE, _("only one pattern can be provided\n"
                      "Try `%s --help' for more information."),
                      program_invocation_short_name);
     else if (criteria_count == 0)
-        xerrx(EXIT_USAGE, _("no matching criteria specified\n"
+        errx(EXIT_USAGE, _("no matching criteria specified\n"
                      "Try `%s --help' for more information."),
                      program_invocation_short_name);
 }
@@ -1223,7 +1223,7 @@ int main (int argc, char **argv)
             if (errno==ESRCH)
                  /* gone now, which is OK */
                 continue;
-            xwarn(_("killing pid %ld failed"), procs[i].num);
+            warn(_("killing pid %ld failed"), procs[i].num);
         }
         if (opt_count)
             fprintf(stdout, "%d\n", num);
@@ -1239,10 +1239,10 @@ int main (int argc, char **argv)
             int pidfd = pidfd_open(procs[i].num, 0);
             if (pidfd == -1) {
 		if (errno == ENOSYS)
-		    xerrx(EXIT_FAILURE, _("pidfd_open() not implemented in Linux < 5.3"));
+		    errx(EXIT_FAILURE, _("pidfd_open() not implemented in Linux < 5.3"));
                 /* ignore ESRCH, same as pkill */
                 if (errno != ESRCH)
-                    xwarn(_("opening pid %ld failed"), procs[i].num);
+                    warn(_("opening pid %ld failed"), procs[i].num);
                 continue;
             }
             ev.events = EPOLLIN | EPOLLET;
@@ -1256,7 +1256,7 @@ int main (int argc, char **argv)
             if (ew == -1) {
                 if (errno == EINTR)
                     continue;
-                xwarn(_("epoll_wait failed"));
+                warn(_("epoll_wait failed"));
             }
             wait_count += ew;
         }

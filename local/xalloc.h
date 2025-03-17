@@ -24,7 +24,7 @@ void *xmalloc(const size_t size)
 {
 	void *ret = malloc(size);
 	if (!ret && size)
-		xerrx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
+		errx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
 	return ret;
 }
 
@@ -33,7 +33,7 @@ void *xrealloc(void *ptr, const size_t size)
 {
 	void *ret = realloc(ptr, size);
 	if (!ret && size)
-		xerrx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
+		errx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", size);
 	return ret;
 }
 
@@ -42,7 +42,7 @@ void *xcalloc(const size_t nelems, const size_t size)
 {
 	void *ret = calloc(nelems, size);
 	if (!ret && size && nelems)
-		xerrx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", nelems*size);
+		errx(XALLOC_EXIT_CODE, "cannot allocate %zu bytes", nelems*size);
 	return ret;
 }
 
@@ -53,7 +53,7 @@ static inline char *xstrdup(const char *str)
 		return NULL;
 	ret = strdup(str);
 	if (!ret)
-		xerrx(XALLOC_EXIT_CODE, "cannot duplicate string");
+		errx(XALLOC_EXIT_CODE, "cannot duplicate string");
 	return ret;
 }
 
@@ -63,7 +63,7 @@ static inline char *xstrndup(const char *s, size_t n)
 		return NULL;
 	char *ret = strndup(s, n);
 	if (! ret)
-		xerrx(XALLOC_EXIT_CODE, "cannot duplicate string");
+		errx(XALLOC_EXIT_CODE, "cannot duplicate string");
 	return ret;
 }
 

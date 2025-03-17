@@ -59,9 +59,9 @@ int main(int argc, char *argv[])
 
     /* get some shared memory */
     if ( (shm_id = shmget(IPC_PRIVATE, SHM_SIZE, IPC_CREAT | 0666)) < 0)
-        xerr(EXIT_FAILURE, "Unable to shmget()");
+        err(EXIT_FAILURE, "Unable to shmget()");
     if ( (shm_addr = shmat(shm_id, NULL, SHM_RDONLY)) < 0)
-        xerr(EXIT_FAILURE, "Unable to shmat()");
+        err(EXIT_FAILURE, "Unable to shmat()");
     printf("SHMID: %x\n", shm_id);
     sleep(sleep_time);
     return EXIT_SUCCESS;

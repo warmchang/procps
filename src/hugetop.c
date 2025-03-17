@@ -445,7 +445,7 @@ int main(int argc, char **argv)
 				errno = 0;
 				delay = strtol_or_err(optarg, _("illegal delay"));
 				if (delay < 1)
-					xerrx(EXIT_FAILURE,
+					errx(EXIT_FAILURE,
 							_("delay must be positive integer"));
 				break;
 			case 'n':
@@ -474,7 +474,7 @@ int main(int argc, char **argv)
 	if (!run_once) {
 		is_tty = isatty(STDIN_FILENO);
 		if (is_tty && tcgetattr(STDIN_FILENO, &saved_tty) == -1)
-			xwarn(_("terminal setting retrieval"));
+			warn(_("terminal setting retrieval"));
 
 		old_rows = rows;
 		term_size(0);

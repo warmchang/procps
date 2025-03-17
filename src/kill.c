@@ -107,7 +107,7 @@ int main(int argc, char **argv)
                 const char *s = strtosig(sig_option);
                 if (s)
                     puts(s);
-                else xwarnx(_("unknown signal name %s"), sig_option);
+                else warnx(_("unknown signal name %s"), sig_option);
             } else {
                 unix_print_signals();
             }
@@ -129,7 +129,7 @@ int main(int argc, char **argv)
 	    break;
         case '?':
             if (!isdigit(optopt)) {
-                xwarnx(_("invalid argument %c"), optopt);
+                warnx(_("invalid argument %c"), optopt);
                 print_usage(stderr);
             } else {
                 /* Special case for signal digit negative
@@ -139,7 +139,7 @@ int main(int argc, char **argv)
 		    exitvalue = EXIT_FAILURE;
                 exit(exitvalue);
             }
-            xerrx(EXIT_FAILURE, _("internal error"));
+            errx(EXIT_FAILURE, _("internal error"));
         default:
             print_usage(stderr);
         }

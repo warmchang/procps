@@ -114,7 +114,7 @@ int main(int argc, char *argv[])
 		buf = xmalloc(buflen);
 
 		if (check_pid_argument(argv[i]))
-			xerrx(EXIT_FAILURE, _("invalid process id: %s"),
+			errx(EXIT_FAILURE, _("invalid process id: %s"),
 			     argv[i]);
 		/*
 		 * At this point, all arguments are in the form

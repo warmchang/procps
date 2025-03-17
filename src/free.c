@@ -103,7 +103,7 @@ static void __attribute__ ((__noreturn__))
 static void check_unit_set(int *unit_set)
 {
     if (*unit_set)
-	xerrx(EXIT_FAILURE,
+	errx(EXIT_FAILURE,
 		_("Multiple unit options don't make sense."));
     *unit_set = 1;
 }
@@ -272,7 +272,7 @@ int main(int argc, char **argv)
 			errno = 0;
             args.repeat_interval = (1000000 * strtod_nol_or_err(optarg, "seconds argument failed"));
 			if (args.repeat_interval < 1)
-				xerrx(EXIT_FAILURE,
+				errx(EXIT_FAILURE,
 				     _("seconds argument `%s' is not positive number"), optarg);
 			break;
 		case 'c':
@@ -301,10 +301,10 @@ int main(int argc, char **argv)
 	if ( (rc = procps_meminfo_new(&mem_info)) < 0)
     {
         if (rc == -ENOENT)
-            xerrx(EXIT_FAILURE,
+            errx(EXIT_FAILURE,
                   _("Memory information file /proc/meminfo does not exist"));
         else
-            xerrx(EXIT_FAILURE,
+            errx(EXIT_FAILURE,
                   _("Unable to create meminfo structure"));
     }
 	do {

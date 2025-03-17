@@ -101,7 +101,7 @@ static unsigned int boot_time(void)
     struct stat_info *stat_info = NULL;
     if (boot_time == 0) {
         if (procps_stat_new(&stat_info) < 0)
-             xerrx(EXIT_FAILURE, _("Unable to get system boot time"));
+             errx(EXIT_FAILURE, _("Unable to get system boot time"));
         boot_time = STAT_GET(stat_info, STAT_SYS_TIME_OF_BOOT, ul_int);
         procps_stat_unref(&stat_info);
     }
@@ -115,7 +115,7 @@ static unsigned long memory_total()
 
     if (memory_total == 0) {
         if (procps_meminfo_new(&mem_info) < 0)
-	        xerrx(EXIT_FAILURE,
+	        errx(EXIT_FAILURE,
                   _("Unable to get total memory"));
        memory_total = MEMINFO_GET(mem_info, MEMINFO_MEM_TOTAL, ul_int);
        procps_meminfo_unref(&mem_info);

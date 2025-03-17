@@ -413,10 +413,10 @@ static struct pids_fetch *cache_pids(struct pids_info **info)
 #define ITEMS_COUNT (sizeof items / sizeof *items)
 
     if (procps_pids_new(info, items, ITEMS_COUNT) < 0)
-        xerrx(EXIT_FAILURE,
+        errx(EXIT_FAILURE,
               _("Unable to create pid info structure"));
     if ((reap = procps_pids_reap(*info, PIDS_FETCH_TASKS_ONLY)) == NULL)
-        xerrx(EXIT_FAILURE,
+        errx(EXIT_FAILURE,
               _("Unable to load process information"));
     return reap;
 }
@@ -535,13 +535,13 @@ static void show_uptime(
 
     if ( (getenv("PROCPS_CONTAINER") != NULL) || container) {
 	if (procps_container_uptime(&uptime_secs) < 0)
-		xerr(EXIT_FAILURE, _("Cannot get container uptime"));
+		err(EXIT_FAILURE, _("Cannot get container uptime"));
     } else {
 	if (procps_uptime(&uptime_secs, NULL) < 0)
-		xerr(EXIT_FAILURE, _("Cannot get system uptime"));
+		err(EXIT_FAILURE, _("Cannot get system uptime"));
     }
     if (procps_uptime_snprint(buf, 100, uptime_secs, 0) < 0)
-        xerr(EXIT_FAILURE, _("Cannot format uptime"));
+        err(EXIT_FAILURE, _("Cannot format uptime"));
 
     printf("%s\n", buf);
 }
@@ -721,9 +721,9 @@ time_t get_starttime(
         struct stat_info *stat_info = NULL;
         struct stat_stack *stat_stack;
         if (procps_stat_new(&stat_info) < 0)
-            xerrx(EXIT_FAILURE, _("Unable to create system stat structure"));
+            errx(EXIT_FAILURE, _("Unable to create system stat structure"));
         if (!(stat_stack = procps_stat_select(stat_info, stat_items, 1)))
-            xerrx(EXIT_FAILURE, _("Unable to select stat information"));
+            errx(EXIT_FAILURE, _("Unable to select stat information"));
         boot_time = STAT_VAL(0, ul_int, stat_stack);
     }
     return proc_start / hertz + boot_time;
@@ -881,11 +881,11 @@ void print_user_terminals(
     if (!procps_pids_sort(pids_info,
                 reap->stacks, total_procs,
                 PIDS_TICS_BEGAN, PIDS_SORT_ASCEND))
-        xerrx(EXIT_FAILURE, _("Unable to sort pids"));
+        errx(EXIT_FAILURE, _("Unable to sort pids"));
     if (!procps_pids_sort(pids_info,
                 reap->stacks, total_procs,
                 PIDS_TTY, PIDS_SORT_ASCEND))
-        xerrx(EXIT_FAILURE, _("Unable to sort pids"));
+        errx(EXIT_FAILURE, _("Unable to sort pids"));
 
     for (i=0; i < total_procs; i++) {
         /* Skip if:
@@ -1031,7 +1031,7 @@ int main(int argc, char **argv)
 		int ut_namesize = UT_NAMESIZE;
 		userlen = atoi(env_var);
 		if (userlen < 8 || ut_namesize < userlen) {
-			xwarnx
+			warnx
 			    (_("User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"),
 			     ut_namesize);
 			userlen = 8;
@@ -1041,7 +1041,7 @@ int main(int argc, char **argv)
 	if ((env_var = getenv("PROCPS_FROMLEN")) != NULL) {
 		fromlen = atoi(env_var);
 		if (fromlen < 8 || UT_HOSTSIZE < fromlen) {
-			xwarnx
+			warnx
 			    (_("from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"),
 			     UT_HOSTSIZE);
 			fromlen = 16;

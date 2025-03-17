@@ -37,7 +37,7 @@
 
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
-		xerrx(EXIT_FAILURE, _("integer overflow")); \
+		errx(EXIT_FAILURE, _("integer overflow")); \
 	(x) = (x) * 5 / 4 + 1024; \
 } while (0)
 
@@ -247,7 +247,7 @@ static void select_procs (void)
 				if (procs) {
 					procs[proc_count++].pid = tid;
 				} else {
-					xerrx(EXIT_FAILURE, _("internal error"));
+					errx(EXIT_FAILURE, _("internal error"));
 				}
 			}
 
@@ -287,10 +287,10 @@ static void add_to_omit_list (char *input_arg)
 			if (omitted_procs) {
 				omitted_procs[omit_count++].pid = omit_pid;
 			} else {
-				xerrx(EXIT_FAILURE, _("internal error"));
+				errx(EXIT_FAILURE, _("internal error"));
 			}
 		} else {
-			xwarnx(_("illegal omit pid value (%s)!\n"), omit_str);
+			warnx(_("illegal omit pid value (%s)!\n"), omit_str);
 		}
 
 		omit_str = strtok(NULL, ",;:");
