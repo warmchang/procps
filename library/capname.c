@@ -72,7 +72,7 @@ PROCPS_EXPORT int procps_capmask_names(
         strcpy(str, "-");
         return 1;
     }
-    
+
     if (mask_in == FULL_CAP_MASK) {
         size_t namelen;
         namelen = strlen(FULL_CAP);

@@ -716,7 +716,7 @@ time_t get_starttime(
     enum stat_item stat_items[] = {
         STAT_SYS_TIME_OF_BOOT
     };
-    
+
     if (boot_time == 0) {
         struct stat_info *stat_info = NULL;
         struct stat_stack *stat_stack;
@@ -810,7 +810,7 @@ void print_terminal_user(
             print_logintime(get_starttime(first_start, hertz), stdout);
 
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
-        } 
+        }
 #endif
     }
     print_time_ival7(idletime(ttypath), 0, stdout);
