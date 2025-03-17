@@ -1177,7 +1177,7 @@ static void autogroup_fill (const char *path, proc_t *p) {
 
 
 static inline void stat_fd (const char *path, proc_t *p) {
-    char buf[PROCPATHLEN];
+    char buf[PROCPATHLEN+3]; // +"/fd"
     struct stat sb;
 
     p->fds = 0;
