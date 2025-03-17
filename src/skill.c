@@ -71,7 +71,7 @@ static int ns_flags = 0x3f;
 
 #define ENLIST(thing,addme) do{ \
 if(thing##_count < 0 || (size_t)thing##_count >= INT_MAX / sizeof(*thing##s)) \
-	xerrx(EXIT_FAILURE, _("integer overflow")); \
+	errx(EXIT_FAILURE, _("integer overflow")); \
 thing##s = xrealloc(thing##s, sizeof(*thing##s)*(thing##_count+1)); \
 thing##s[thing##_count++] = addme; \
 }while(0)
@@ -158,7 +158,7 @@ static int match_ns(const int pid)
     int i;
 
     if (procps_ns_read_pid(pid, &proc_ns) < 0)
-        xerrx(EXIT_FAILURE,
+        errx(EXIT_FAILURE,
               _("Unable to read process namespace information"));
     for (i = 0; i < PROCPS_NS_COUNT; i++) {
         if (ns_flags & (1 << i)) {
@@ -281,10 +281,10 @@ static void scan_procs(struct run_time_conf_t *run_time)
     int i, total_procs;
 
     if (procps_pids_new(&Pids_info, items, 6) < 0)
-        xerrx(EXIT_FAILURE,
+        errx(EXIT_FAILURE,
               _("Unable to create pid Pids_info structure"));
     if ((reap = procps_pids_reap(Pids_info, PIDS_FETCH_TASKS_ONLY)) == NULL)
-        xerrx(EXIT_FAILURE,
+        errx(EXIT_FAILURE,
               _("Unable to load process information"));
 
     total_procs = reap->counts->total;
@@ -380,7 +380,7 @@ static int snice_prio_option(int *argc, char **argv)
             prio = strtol_or_err(argv[i],
                          _("failed to parse argument"));
             if (prio < INT_MIN || INT_MAX < prio)
-                xerrx(EXIT_FAILURE,
+                errx(EXIT_FAILURE,
                      _("priority %lu out of range"), prio);
 			memmove(argv + i, argv + i + 1,
 				sizeof(char *) * (nargs - i));
@@ -490,11 +490,11 @@ static void parse_options(int argc,
         case NS_OPTION:
             ns_pid = atoi(optarg);
             if (ns_pid == 0) {
-                xwarnx(_("invalid pid number %s"), optarg);
+                warnx(_("invalid pid number %s"), optarg);
                 skillsnice_usage(stderr);
             }
             if (procps_ns_read_pid(ns_pid, &match_namespaces) < 0) {
-                xwarnx(_("error reading reference namespace "
+                warnx(_("error reading reference namespace "
                      "information"));
                 skillsnice_usage(stderr);
             }
@@ -502,7 +502,7 @@ static void parse_options(int argc,
             break;
         case NSLIST_OPTION:
             if (parse_namespaces(optarg)) {
-                xwarnx(_("invalid namespace list"));
+                warnx(_("invalid namespace list"));
                 skillsnice_usage(stderr);
             }
             break;
@@ -539,15 +539,15 @@ static void parse_options(int argc,
 
     /* No more arguments to process. Must sanity check. */
     if (!tty_count && !uid_count && !cmd_count && !pid_count && !ns_pid)
-        xerrx(EXIT_FAILURE, _("no process selection criteria"));
+        errx(EXIT_FAILURE, _("no process selection criteria"));
     if ((run_time->fast | run_time->interactive | run_time->
          verbose | run_time->warnings | run_time->noaction) & ~1)
-        xerrx(EXIT_FAILURE, _("general flags may not be repeated"));
+        errx(EXIT_FAILURE, _("general flags may not be repeated"));
     if (run_time->interactive
         && (run_time->verbose | run_time->fast | run_time->noaction))
-        xerrx(EXIT_FAILURE, _("-i makes no sense with -v, -f, and -n"));
+        errx(EXIT_FAILURE, _("-i makes no sense with -v, -f, and -n"));
     if (run_time->verbose && (run_time->interactive | run_time->fast))
-        xerrx(EXIT_FAILURE, _("-v makes no sense with -i and -f"));
+        errx(EXIT_FAILURE, _("-v makes no sense with -i and -f"));
     if (run_time->noaction) {
         program = PROG_SKILL;
         /* harmless */
