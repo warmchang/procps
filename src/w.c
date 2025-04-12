@@ -332,10 +332,17 @@ static void print_time_ival7(time_t t, int centi_sec, FILE * fout)
 /* stat the device file to get an idle time */
 static time_t idletime(const char *restrict const tty)
 {
-	struct stat sbuf;
-	if (stat(tty, &sbuf) != 0)
-		return 0;
-	return time(NULL) - sbuf.st_atime;
+    char *ttypath=NULL;
+    struct stat sbuf;
+
+    if (asprintf(&ttypath, "/dev/%s", tty) < 0)
+        return 0;
+    if (stat(ttypath, &sbuf) != 0) {
+        free(ttypath);
+        return 0;
+    }
+    free(ttypath);
+    return time(NULL) - sbuf.st_atime;
 }
 
 /* 7 character formatted login time */
@@ -546,25 +553,23 @@ static void show_uptime(
     printf("%s\n", buf);
 }
 
-static void showinfo(
-            const char *session, const char *name,
-            utmp_t * u, const int longform, int maxcmd, int from,
-            const int userlen, const int fromlen, const int ip_addresses,
-            const int pids,
-            struct pids_fetch *reap)
+/*
+ * Try to get the TTY of the session using various means
+ */
+#define PIDS_GETINT(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[i])
+#define PIDS_GETSTR(e) PIDS_VAL(EU_ ## e, str, reap->stacks[i])
+#define PIDS_GETINT2(e) PIDS_VAL(EU_ ## e, s_int, reap->stacks[j])
+#define PIDS_GETSTR2(e) PIDS_VAL(EU_ ## e, str, reap->stacks[j])
+static void get_session_tty(
+        char *tty,
+        const char *session,
+        utmp_t *u,
+        struct pids_fetch *reap)
 {
-    unsigned long long jcpu, pcpu;
-    unsigned i;
-    char uname[UT_NAMESIZE + 1] = "", tty[5 + UT_LINESIZE + 1] = "/dev/";
-    long hertz;
-    char cmdline[MAX_CMD_WIDTH + 1];
-    pid_t best_pid = -1;
-    int pids_length = 0;
+    int i, j, total_procs;
+    pid_t leader_pid=-1;
 
-    strcpy(cmdline, "-");
-
-    hertz = procps_hertz_get();
-
+    /* First method - use systemd */
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
     if (session) {
         char *sd_tty;
@@ -574,29 +579,86 @@ static void showinfo(
 		if (sd_tty[i] == '\0') break;
                 /* clean up tty if garbled */
 	        if (isalnum(sd_tty[i]) || (sd_tty[i] == '/'))
-		    tty[i + 5] = sd_tty[i];
+		    tty[i] = sd_tty[i];
 		else
-		    tty[i + 5] = '\0';
+		    tty[i] = '\0';
 	    }
 	    free(sd_tty);
+            return; /* found tty via systemd */
 	}
-    } else {
-#endif
-    for (i = 0; i < UT_LINESIZE; i++)
-        /* clean up tty if garbled */
-        if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
-            tty[i + 5] = u->ut_line[i];
-        else
-            tty[i + 5] = '\0';
-#if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
+        sd_session_get_leader(session, &leader_pid);
     }
 #endif
+    /* Second method - use utmp */
+    if (u) {
+        for (i = 0; i < UT_LINESIZE; i++) {
+            if (tty[i] == 0)
+                break;
+            /* clean up tty if garbled */
+            if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
+                tty[i] = u->ut_line[i];
+        }
+        tty[i] = '\0';
+        if (tty[0] != '\0')
+            return; /* found via utmp */
+        if (leader_pid == -1)
+            leader_pid = u->ut_pid;
+    }
+
+    /* Third method - scan processes to find the tty, this is at most two down
+     * from the session leader */
+    if (leader_pid == -1)
+        return;
+
+    total_procs = reap->counts->total;
+    for (i=0; i < total_procs; i++) {
+        if (PIDS_GETINT(PPID) != leader_pid)
+            continue;
+        if (PIDS_GETINT(TTY) != 0) {
+            strncpy(tty, PIDS_GETSTR(TTY_NAME), UT_NAMESIZE);
+            return; /* found via top scan */
+        }
+        for (j=i; j < total_procs; j++) {
+            if (PIDS_GETINT2(PPID) != PIDS_GETINT(PID))
+                continue;
+            if (PIDS_GETINT2(TTY) != 0) {
+                strncpy(tty, PIDS_GETSTR2(TTY_NAME), UT_NAMESIZE);
+                return; /* found via second scan */
+            }
+        }
+    }
+}
+#undef PIDS_GETINT
+#undef PIDS_GETSTR
+#undef PIDS_GETINT2
+#undef PIDS_GETSTR2
+
+static void showinfo(
+            const char *session, const char *name,
+            utmp_t * u, const int longform, int maxcmd, int from,
+            const int userlen, const int fromlen, const int ip_addresses,
+            const int pids,
+            struct pids_fetch *reap)
+{
+    unsigned long long jcpu, pcpu;
+    unsigned i;
+    char uname[UT_NAMESIZE + 1] = "", tty[UT_LINESIZE + 1] = "";
+    long hertz;
+    char cmdline[MAX_CMD_WIDTH + 1];
+    pid_t best_pid = -1;
+    int pids_length = 0;
+
+    strcpy(cmdline, "-");
+
+    hertz = procps_hertz_get();
+
+    get_session_tty(tty, session, u, reap);
 
     if (find_best_proc(
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
 		       session,
 #endif
-		       u, tty + 5, &jcpu, &pcpu, cmdline, &best_pid, reap) == 0)
+		       u, tty, &jcpu, &pcpu, cmdline, &best_pid, reap) == 0)
     /*
      * just skip if stale utmp entry (i.e. login proc doesn't
      * exist). If there is a desire a cmdline flag could be
@@ -610,7 +672,7 @@ static void showinfo(
     /* force NUL term for printf */
     uname[UT_NAMESIZE] = '\0';
 
-    printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, tty + 5);
+    printf("%-*.*s%-9.8s", userlen + 1, userlen, uname, tty);
     if (from)
         print_from(session, u, ip_addresses, fromlen);
 
@@ -638,7 +700,7 @@ static void showinfo(
     if (u && *u->ut_line == ':')
         /* idle unknown for xdm logins */
         printf(" ?xdm? ");
-    else if (tty[5])
+    else if (tty[0])
         print_time_ival7(idletime(tty), 0, stdout);
     else
 	printf("       ");
@@ -813,7 +875,7 @@ void print_terminal_user(
         }
 #endif
     }
-    print_time_ival7(idletime(ttypath), 0, stdout);
+    print_time_ival7(idletime(ttyname), 0, stdout);
     /* jpcpu/pcpu */
     if (longform) {
         print_time_ival7(jcpu / hertz, (jcpu % hertz) * (100. / hertz),
@@ -880,12 +942,8 @@ void print_user_terminals(
 
     if (!procps_pids_sort(pids_info,
                 reap->stacks, total_procs,
-                PIDS_TICS_BEGAN, PIDS_SORT_ASCEND))
-        errx(EXIT_FAILURE, _("Unable to sort pids"));
-    if (!procps_pids_sort(pids_info,
-                reap->stacks, total_procs,
                 PIDS_TTY, PIDS_SORT_ASCEND))
-        errx(EXIT_FAILURE, _("Unable to sort pids"));
+        errx(EXIT_FAILURE, _("Unable to sort processes by TTY"));
 
     for (i=0; i < total_procs; i++) {
         /* Skip if:
@@ -1066,6 +1124,11 @@ int main(int argc, char **argv)
         if ( (pids_cache = cache_pids(&info)) == NULL) {
             return(EXIT_FAILURE);
         }
+
+        if (!procps_pids_sort(info,
+                    pids_cache->stacks, pids_cache->counts->total,
+                    PIDS_TICS_BEGAN, PIDS_SORT_ASCEND))
+             errx(EXIT_FAILURE, _("Unable to sort processes by PID"));
 	if (header) {
 		/* print uptime and headers */
                 show_uptime(container);

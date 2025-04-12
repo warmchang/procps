@@ -6,6 +6,7 @@ procps-ng-NEXT
   * pgrep.1: Note that we can only go to 100th of second   issue #376
   * sysctl: Return error if EPERM or EISDIR                merge !228
   * w: Add terminal mode to show all terminal sessions     issue #375
+  * w: Use process TTY as backup for user TTY              Debian #1080335
 
 procps-ng-4.0.5
 ---------------
