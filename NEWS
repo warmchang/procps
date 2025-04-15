@@ -8,6 +8,7 @@ procps-ng-NEXT
   * w: Add terminal mode to show all terminal sessions     issue #375
   * w: Use process TTY as backup for user TTY              Debian #1080335
   * watch: Add --follow option                             Debian #469156
+  * watch: 256 color support                               issue #44
 
 procps-ng-4.0.5
 ---------------

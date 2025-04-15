@@ -201,11 +201,37 @@ static void init_ansi_colors(void)
 		//init_color(15, 1000, 1000, 1000);  // Bright white
 		nr_of_colors += 7;
 	}
+        if (COLORS >= 256 && COLOR_PAIRS >= 65536)
+        {
+            int red,green,blue;
+            int code, r,g,b;
+            // 16 to 231 are a 6x6x6 color cube
+            for (red=0; red<6; red++)
+                for(green=0; green<6; green++)
+                    for(blue=0; blue<6; blue++) {
+                        code = 16 + (red * 36) + (green * 6) + blue;
+                        r = g = b = 0;
+                        if (red > 0)
+                            r = (red * 40 + 55) * 1000 / 256;
+                        if (green > 0)
+                            g = (green * 40 + 55) * 1000 / 256;
+                        if (blue > 0)
+                            b = (blue * 40 + 55) * 1000 / 256;
+                        init_extended_color(code, r, g, b);
+                        nr_of_colors++;
+                    }
+            for (red=0; red<24; red++) {
+                code = 232 + red;
+                r = (red * 10 + 8) * 1000 / 256;
+                init_extended_color(code, r, r, r);
+                nr_of_colors++;
+            }
+        }
 
 	// Initialize all color pairs with ncurses
 	for (bg_col = 0; bg_col < nr_of_colors; bg_col++)
 		for (fg_col = 0; fg_col < nr_of_colors; fg_col++)
-			init_pair(bg_col * nr_of_colors + fg_col + 1, fg_col - 1, bg_col - 1);
+			init_extended_pair(bg_col * nr_of_colors + fg_col + 1, fg_col - 1, bg_col - 1);
 
 	reset_ansi();
 }
@@ -242,10 +268,11 @@ static uf8 process_ansi_color_escape_sequence(char **const escape_sequence) {
 			 return more_colors ? num + 1 : num - 8 + 1;
 		}
 
-		// Remainder aren't yet implemented
 		// 16-231:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b
 		//                                       (0 ≤ r, g, b ≤ 5)
 		// 232-255:  grayscale from black to white in 24 steps
+                if (num > 15 && num < 256)
+                    return more_colors ? num + 1 : 0;
 	}
 
 	return 0; /* not understood */
@@ -335,7 +362,8 @@ static bool set_ansi_attribute(const int attrib, char** escape_sequence)
 			return false; /* Not understood */
 		}
 	}
-    wattr_set(mainwin, attributes, bg_col * nr_of_colors + fg_col + 1, NULL);
+    int c = bg_col * nr_of_colors + fg_col + 1;
+    wattr_set(mainwin, attributes, 0, &c);
     return true;
 }
 
