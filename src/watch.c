@@ -3,7 +3,7 @@
  *
  * Copyright © 2023 Roman Žilka <roman.zilka@gmail.com>
  * Copyright © 2010-2023 Jim Warner <james.warner@comcast.net>
- * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2015-2024 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
  * Copyright © 2002-2007 Albert Cahalan
  * Copyright © 1999      Mike Coleman <mkc@acm.org>.
@@ -81,6 +81,7 @@
 #define WIDTH_FALLBACK 80
 #define TAB_WIDTH 8
 #define MAX_ANSIBUF 100
+#define HEADER_HEIGHT 2
 
 /* Boolean command line options */
 #define WATCH_DIFF     (1 << 0)
@@ -95,6 +96,7 @@
 #define WATCH_PRECISE  (1 << 9)
 #define WATCH_NOWRAP   (1 << 10)
 #define WATCH_NOTITLE  (1 << 11)
+#define WATCH_FOLLOW   (1 << 12)
 // Do we care about screen contents changes at all?
 #define WATCH_ALL_DIFF (WATCH_DIFF | WATCH_CHGEXIT | WATCH_EQUEXIT)
 
@@ -108,6 +110,7 @@ static char *const *command_argv;
 static const char *shotsdir = "";
 
 
+WINDOW *mainwin;
 
 // don't use EXIT_FAILURE, it can be anything and manpage makes guarantees about
 // exitcodes
@@ -123,6 +126,7 @@ static void __attribute__ ((__noreturn__)) usage(FILE * out)
 	fputs(_("  -d, --differences[=<permanent>]\n"
 	        "                         highlight changes between updates\n"), out);
 	fputs(_("  -e, --errexit          exit if command has a non-zero exit\n"), out);
+        fputs(_("  -f, --follow           Follow the output and don't clear screen\n"), out);
 	fputs(_("  -g, --chgexit          exit when output from command changes\n"), out);
 	fputs(_("  -q, --equexit <cycles>\n"
 	        "                         exit when output from command does not change\n"), out);
@@ -331,7 +335,7 @@ static bool set_ansi_attribute(const int attrib, char** escape_sequence)
 			return false; /* Not understood */
 		}
 	}
-    attr_set(attributes, bg_col * nr_of_colors + fg_col + 1, NULL);
+    wattr_set(mainwin, attributes, bg_col * nr_of_colors + fg_col + 1, NULL);
     return true;
 }
 
@@ -475,9 +479,10 @@ static void screenshot(void) {
 		endwin_error(1, EOVERFLOW, "%s(%s)", __func__, dumpfile);
 	char *const buf = xmalloc(bufsize);
 
-	int yin, xout;
+	int yin, xout, tmpy, tmpx;
+        getyx(mainwin, tmpy, tmpx);
 	for (int y=0; y<height; ++y) {
-		yin = mvinnstr(y, 0, buf, bufsize-1);
+		yin = mvwinnstr(mainwin, y, 0, buf, bufsize-1);
 		if (yin == ERR)  // screen resized
 			yin = 0;
 		buf[yin] = '\n';
@@ -487,6 +492,7 @@ static void screenshot(void) {
 				endwin_xerr(1, "write(%s)", dumpfile);
 		}
 	}
+        wmove(mainwin, tmpy, tmpx);
 	free(buf);
 
 	if (close(f) == -1)
@@ -498,7 +504,9 @@ static void screenshot(void) {
 
 
 
-static void output_header(void)
+static void output_header(
+        WINDOW *hdrwin // Header window
+        )
 {
 	if (flags & WATCH_NOTITLE)
 		return;
@@ -563,7 +571,7 @@ static void output_header(void)
 	// TODO: a gettext string for rheader no longer used
 	const time_t t = time(NULL);
 	rheader_len = rheader_lenmid;
-	rheader_len += strftime(rheader+rheader_lenmid, sizeof(rheader)-rheader_lenmid, "%X", localtime(&t));
+	rheader_len += strftime(rheader+rheader_lenmid, sizeof(rheader)-rheader_lenmid, "%c", localtime(&t));
 	if (rheader_len == rheader_lenmid)
 		rheader[rheader_len] = '\0';
 #ifdef WITH_WATCH8BIT
@@ -576,8 +584,8 @@ static void output_header(void)
 #endif
 
 	if (first_screen) {
-		move(0, 0);
-		clrtoeol();
+		wmove(hdrwin, 0, 0);
+		wclrtoeol(hdrwin);
 	}
 
 	/* left justify interval and command, right justify hostname and time,
@@ -596,13 +604,13 @@ static void output_header(void)
 // (w)command_* can be large, *header_* are relatively small
 #ifdef WITH_WATCH8BIT
 	if (width >= wrheader_wid) {
-		mvaddwstr(0, width - wrheader_wid, wrheader);
+		mvwaddwstr(hdrwin, 0, width - wrheader_wid, wrheader);
 		const int avail4cmd = width - wlheader_wid - wrheader_wid;
 		if (avail4cmd >= 0) {
-			mvaddwstr(0, 0, wlheader);
+			mvwaddwstr(hdrwin,0, 0, wlheader);
 			// All of cmd fits, +1 for delimiting space
 			if (avail4cmd > wcommand_wid)
-				addwstr(wcommand);
+				waddwstr(hdrwin, wcommand);
 			// Else print truncated cmd (to 0 chars, possibly) + ellipsis. If
 			// there's too little space even for the ellipsis, print nothing.
 			else if (avail4cmd > ellipsis_wid) {
@@ -612,23 +620,23 @@ static void output_header(void)
 				// from the back
 				do newwcmdwid = wcswidth(wcommand, --newwcmdlen);
 				while (newwcmdwid > avail4cmd-ellipsis_wid-1);
-				addnwstr(wcommand, newwcmdlen&INT_MAX);
-				addwstr(L"\u2026");
+				waddnwstr(hdrwin, wcommand, newwcmdlen&INT_MAX);
+				waddwstr(hdrwin, L"\u2026");
 			}
 		}
 	}
 	free(wrheader);
 #else
 	if (width >= rheader_len) {
-		mvaddstr(0, width - rheader_len, rheader);
+		mvwaddstr(hdrwin, 0, width - rheader_len, rheader);
 		const int avail4cmd = width - lheader_len - rheader_len;
 		if (avail4cmd >= 0) {
-			mvaddstr(0, 0, lheader);
+			mvwaddstr(hdrwin, 0, 0, lheader);
 			if ((uintmax_t)avail4cmd > command_len)
-				addstr(command);
+				waddstr(hdrwin, command);
 			else if (avail4cmd > 3) {
-				addnstr(command, avail4cmd - 3 - 1);
-				addstr("...");
+				waddnstr(hdrwin, command, avail4cmd - 3 - 1);
+				waddstr(hdrwin, "...");
 			}
 		}
 	}
@@ -637,15 +645,22 @@ static void output_header(void)
 
 
 
-static void output_lowheader_pre(void) {
+static void output_lowheader_pre(
+        WINDOW *hdrwin
+        )
+{
 	if (flags & WATCH_NOTITLE)
 		return;
 
-	move(1, 0);
-	clrtoeol();
+	wmove(hdrwin, 1, 0);
+	wclrtoeol(hdrwin);
 }
 
-static void output_lowheader(watch_usec_t span, uint8_t exitcode) {
+static void output_lowheader(
+        WINDOW *hdrwin,
+        watch_usec_t span,
+        uint8_t exitcode)
+{
 	if (flags & WATCH_NOTITLE)
 		return;
 
@@ -659,8 +674,8 @@ static void output_lowheader(watch_usec_t span, uint8_t exitcode) {
 		snprintf(s, sizeof(s), "%s <%.3f%s (%" PRIu8 ")", "in", 0.001, "s", exitcode);
 	else snprintf(s, sizeof(s), "%s %.3Lf%s (%" PRIu8 ")", "in", (long double)span/USECS_PER_SEC, "s", exitcode);
 
-	move(1, 0);
-	clrtoeol();
+	wmove(hdrwin, 1, 0);
+	wclrtoeol(hdrwin);
 
 #ifdef WITH_WATCH8BIT
 	wchar_t *ws;
@@ -669,12 +684,12 @@ static void output_lowheader(watch_usec_t span, uint8_t exitcode) {
 		return;
 	skip = width - skip;
 	if (skip >= 0)
-		mvaddwstr(1, skip, ws);
+		mvwaddwstr(hdrwin, 1, skip, ws);
 	free(ws);
 #else
 	skip = width - (int)strlen(s);
 	if (skip >= 0)
-		mvaddstr(1, skip, s);
+		mvwaddstr(hdrwin, 1, skip, s);
 #endif
 }
 
@@ -728,7 +743,7 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 			// 日a -> a日a (日 highlighted because of change in its 2nd column).
 			for (i=0; i<cwid; ++i) {
 				// terrible interface, so much copying
-				mvin_wch(y, x+i, &cc);  // c fits => ok
+				mvwin_wch(mainwin, y, x+i, &cc);  // c fits => ok
 				getcchar(&cc, oldcc[i], &attr, &dummy, NULL);
 				oldstnd |= attr & A_STANDOUT;
 				oldcclen[i] = wcslen(oldcc[i]);
@@ -771,17 +786,18 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 		old_standout = oldstnd;
 	}
 
-	move(y, x);
+        if (!(flags & WATCH_FOLLOW))
+	        wmove(mainwin, y, x);
 	if (cwid > 0) {
 		wchar_t c2 = c;
-		addnwstr(&c2, 1);
+		waddnwstr(mainwin, &c2, 1);
 	}
 	else {
 		cchar_t cc;
 		wchar_t wcs[CCHARW_MAX];
 		short dummy;
 		attr_t dummy2;
-		in_wch(&cc);
+		win_wch(mainwin,&cc);
 		getcchar(&cc, wcs, &dummy2, &dummy, NULL);
 		uf8 len = wcslen(wcs);
 		if (len < CCHARW_MAX - 1) {
@@ -789,28 +805,29 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 			wcs[len+1] = L'\0';
 		}
 		setcchar(&cc, wcs, dummy2, dummy, NULL);
-		add_wch(&cc);
+		wadd_wch(mainwin, &cc);
 	}
 #else
 	if (! first_screen && flags&WATCH_ALL_DIFF) {
-		chtype oldc = mvinch(y, x);
+		chtype oldc = mvwinch(mainwin, y, x);
 		changed = (unsigned char)c != (oldc & A_CHARTEXT);
 		old_standout = oldc & A_STANDOUT;
 	}
 
-	move(y, x);
-	addch(c);
+	wmove(mainwin,y, x);
+	waddch(mainwin, c);
 #endif
 
 	if (flags & WATCH_DIFF) {
 		attr_t newattr;
 		short newcolor;
-		attr_get(&newattr, &newcolor, NULL);
+		wattr_get(mainwin, &newattr, &newcolor, NULL);
 		// standout can flip on/off as the components of a compound char arrive
+                
 		if (changed || (flags&WATCH_CUMUL && old_standout))
-			mvchgat(y, x, 1, newattr | A_STANDOUT, newcolor, NULL);
+			mvwchgat(mainwin, y, x, 1, newattr | A_STANDOUT, newcolor, NULL);
 		else
-			mvchgat(y, x, 1, newattr & ~(attr_t)A_STANDOUT, newcolor, NULL);
+			mvwchgat(mainwin, y, x, 1, newattr & ~(attr_t)A_STANDOUT, newcolor, NULL);
 	}
 
 	return changed;
@@ -841,8 +858,8 @@ static bool my_clrtoeol(int y, int x)
 	}
 
 	// make sure color is preserved
-	move(y, x);
-	clrtoeol();  // faster, presumably
+	wmove(mainwin, y, x);
+	wclrtoeol(mainwin);  // faster, presumably
 	return false;
 }
 
@@ -858,10 +875,11 @@ static bool my_clrtobot(int y, int x)
 		}
 		return changed;
 	}
-
 	// make sure color is preserved
-	move(y, x);
-	clrtobot();  // faster, presumably
+        if (!(flags & WATCH_FOLLOW)) {
+            wmove(mainwin, y, x);
+            wclrtobot(mainwin);  // faster, presumably
+        }
 	return false;
 }
 
@@ -937,7 +955,7 @@ static uint8_t run_command(void)
 	int cwid, y, x;  // cwid = character width in terminal columns
 	screen_changed = false;
 
-	for (y = flags&WATCH_NOTITLE?0:2; y < height; ++y) {
+	for (y = 0; y < height || (flags & WATCH_FOLLOW); ++y) {
 		x = 0;
 		while (true) {
 			// x is where the next char will be put. When x==width only
@@ -956,12 +974,17 @@ static uint8_t run_command(void)
 			assert(carry == XEOF);
 
 			if (c == XEOF) {
-				screen_changed = my_clrtobot(y, x) || screen_changed;
-				y = height - 1;
+                                if (!(flags & WATCH_FOLLOW)) {
+				    screen_changed = my_clrtobot(y, x) || screen_changed;
+				    y = height - 1;
+                                }
 				break;
 			}
 			if (c == XL('\n')) {
-				screen_changed = my_clrtoeol(y, x) || screen_changed;
+                                if (flags & WATCH_FOLLOW)
+                                    waddch(mainwin, c);
+                                else
+				    screen_changed = my_clrtoeol(y, x) || screen_changed;
 				break;
 			}
 			if (c == XL('\033')) {
@@ -1022,6 +1045,9 @@ static uint8_t run_command(void)
 				x += cwid;
 			}
 		}
+                if (c == XEOF) {
+                    break;
+                }
 	}
 
 	skiptoeof(p);  // avoid SIGPIPE in child
@@ -1090,6 +1116,7 @@ static void get_terminal_size(void)
 			putenv(env_col_buf);
 		}
 	}
+        height -= 2;
 
 	assert(width > 0 && height > 0);
 }
@@ -1105,6 +1132,8 @@ int main(int argc, char *argv[])
 	uint8_t cmdexit;
 	struct timeval tosleep;
 	bool sleep_dontsleep, sleep_scrdumped, sleep_exit;
+        int height, width;
+        WINDOW *hdrwin = NULL;
 	const struct option longopts[] = {
 		{"color", no_argument, 0, 'c'},
 		{"no-color", no_argument, 0, 'C'},
@@ -1113,6 +1142,7 @@ int main(int argc, char *argv[])
 		{"interval", required_argument, 0, 'n'},
 		{"beep", no_argument, 0, 'b'},
 		{"errexit", no_argument, 0, 'e'},
+		{"follow", no_argument, 0, 'f'},
 		{"chgexit", no_argument, 0, 'g'},
 		{"equexit", required_argument, 0, 'q'},
 		{"exec", no_argument, 0, 'x'},
@@ -1149,7 +1179,7 @@ int main(int argc, char *argv[])
 	if (interval_string != NULL)
 		interval_real = strtod_nol_or_err(interval_string, _("Could not parse interval from WATCH_INTERVAL"));
 
-	while ((i = getopt_long(argc,argv,"+bCced::ghq:n:prs:twvx",longopts,NULL)) != EOF) {
+	while ((i = getopt_long(argc,argv,"+bCcefd::ghq:n:prs:twvx",longopts,NULL)) != EOF) {
 		switch (i) {
 		case 'b':
 			flags |= WATCH_BEEP;
@@ -1168,6 +1198,9 @@ int main(int argc, char *argv[])
 		case 'e':
 			flags |= WATCH_ERREXIT;
 			break;
+                case 'f':
+                        flags |= WATCH_FOLLOW;
+                        break;
 		case 'g':
 			flags |= WATCH_CHGEXIT;
 			break;
@@ -1213,6 +1246,10 @@ int main(int argc, char *argv[])
 	if (optind >= argc)
 		usage(stderr);
 
+        if ((flags & WATCH_FOLLOW) && (flags & WATCH_ALL_DIFF)) {
+            fprintf(stderr, _("Follow -f option conflicts with change options -d,-e or -q"));
+            usage(stderr);
+        }
 	command_argv = argv + optind;  // for exec*()
 	command_len = strlen(argv[optind]);
 	command = xmalloc(command_len+1);  // never freed
@@ -1250,6 +1287,15 @@ int main(int argc, char *argv[])
 	/* Set up tty for curses use.  */
 	get_terminal_size();
 	initscr();  // succeeds or exit()s, may install sig handlers
+        getmaxyx(stdscr, height, width);
+        if (flags & WATCH_NOTITLE) {
+            mainwin = newwin(height, width, 0,0);
+        } else {
+            mainwin = newwin(height-HEADER_HEIGHT, width, HEADER_HEIGHT,0);
+            hdrwin = newwin(HEADER_HEIGHT, width, 0, 0);
+        }
+        if (flags & WATCH_FOLLOW)
+            scrollok(mainwin, TRUE);
 	if (flags & WATCH_COLOR) {
 		if (has_colors()) {
 			start_color();
@@ -1273,19 +1319,19 @@ int main(int argc, char *argv[])
 			first_screen = true;
 		}
 
-		output_lowheader_pre();
-		refresh();
-		output_header();
+		output_lowheader_pre(hdrwin);
+		output_header(hdrwin);
 		t = get_time_usec();
 		if (flags & WATCH_PRECISE)
 			last_tick = t;
 		cmdexit = run_command();
 		if (flags & WATCH_PRECISE)
-			output_lowheader(get_time_usec() - t, cmdexit);
+			output_lowheader(hdrwin, get_time_usec() - t, cmdexit);
 		else {
 			last_tick = get_time_usec();
-			output_lowheader(last_tick - t, cmdexit);
+			output_lowheader(hdrwin, last_tick - t, cmdexit);
 		}
+		wrefresh(hdrwin);
 
 		if (cmdexit) {
 			if (flags & WATCH_BEEP)
@@ -1293,7 +1339,7 @@ int main(int argc, char *argv[])
 			if (flags & WATCH_ERREXIT) {
 				// TODO: Hard to see when there's cmd output around it. Add
 				// spaces or move to lowheader.
-				mvaddstr(height-1, 0, _("command exit with a non-zero status, press a key to exit"));
+				mvwaddstr(mainwin, height-1, 0, _("command exit with a non-zero status, press a key to exit"));
 				i = fcntl(STDIN_FILENO, F_GETFL);
 				if (i >= 0 && fcntl(STDIN_FILENO, F_SETFL, i|O_NONBLOCK) >= 0) {
 					while (getchar() != EOF) ;
@@ -1322,7 +1368,7 @@ int main(int argc, char *argv[])
 			}
 		}
 
-		refresh();  // takes some time
+		wrefresh(mainwin);  // takes some time
 		first_screen = false;
 
 		// first process all available input, then respond to
