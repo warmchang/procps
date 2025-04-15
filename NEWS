@@ -4,6 +4,7 @@ procps-ng-NEXT
   * top: provides for ignoring configuration file(s)       issue #365
   * pgrep: Fix unhex breakage for signal numbers           issue #369
   * pgrep.1: Note that we can only go to 100th of second   issue #376
+  * slabtop: Increase column width                         Debian #959375
   * sysctl: Return error if EPERM or EISDIR                merge !228
   * w: Add terminal mode to show all terminal sessions     issue #375
   * w: Use process TTY as backup for user TTY              Debian #1080335

@@ -286,13 +286,13 @@ static void print_headings (void)
 {
     /* Translation Hint: Please keep alignment of the
      * following intact. */
-    PRINT_line("%-78s\n", _("  OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"));
+    PRINT_line("%-80s\n", _("    OBJS   ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"));
 }
 
 static void print_details (struct slabinfo_stack *stack)
 {
  #define nodeVAL(e,t) SLABINFO_VAL(e, t, stack)
-    PRINT_line("%6u %6u %3u%% %7.2fK %6u %8u %10s %-23s\n"
+    PRINT_line("%8u %8u %3u%% %7.2fK %6u %8u %10s %-23s\n"
         , nodeVAL(nod_OBJS,  u_int)
         , nodeVAL(nod_AOBJS, u_int)
         , nodeVAL(nod_USE,   u_int)
