@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH WATCH 1 2025-04-15 procps-ng
+.TH WATCH 1 2025-04-16 procps-ng
 .SH NAME
 watch \- execute a program periodically, showing output fullscreen
 .SH SYNOPSIS
@@ -41,7 +41,8 @@ Do not interpret ANSI color and style sequences.
 \fB\-d\fR, \fB\-\-differences\fR[=\fIpermanent\fR]
 Highlight the differences between successive updates. If the optional
 \fIpermanent\fR argument is specified then \fBwatch\fR will show all changes
-since the first iteration.
+since the first iteration. The \fIpermanent\fR argument needs to be linked to
+the option, such as \fB\-d1\fR or \fB\-\-differences=1\fR.
 .TP
 \fB\-e\fR, \fB\-\-errexit\fR
 Freeze updates on \fIcommand\fR error, and exit after a key press. The exit code
