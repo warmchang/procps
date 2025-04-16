@@ -8,7 +8,7 @@ set used "\\\(% used\\\)\\s+:"
 set pct "\\\(\\d+\\.\\d+%\\\)"
 
 #set slabtop_header "^ $avst Objects $used \\d+ / \\d+ ${pct}\\s+$avst Slabs $used \\d+ / \\d+ ${pct}\\s+$avst Caches $used \\d+ / \\d+ ${pct}\\s+$avst Size $used \\d+\\.\\d+K / \\d+\\.\\d+K ${pct}\\s+Minimum / Average / Maximum Object : \\d+\\.\\d+K / \\d+\\.\\d+K / \\d+\\.\\d+K\\s+OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME\\s+"
-set slabtop_header "^ $avst Objects $used \\d+ / \\d+ ${pct}\\s+$avst Slabs $used \\d+ / \\d+ ${pct}\\s+$avst Caches $used \\d+ / \\d+ ${pct}\\s+$avst Size $used \\d+ / \\d+ ${pct}\\s+Minimum / Average / Maximum Object : \\d+\\.\\d+K / \\d+\\.\\d+K / \\d+\\.\\d+K\\s+OBJS ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME\\s+"
+set slabtop_header "^ $avst Objects $used \\d+ / \\d+ ${pct}\\s+$avst Slabs $used \\d+ / \\d+ ${pct}\\s+$avst Caches $used \\d+ / \\d+ ${pct}\\s+$avst Size $used \\d+ / \\d+ ${pct}\\s+Minimum / Average / Maximum Object : \\d+\\.\\d+K / \\d+\\.\\d+K / \\d+\\.\\d+K\\s+OBJS\\s+ACTIVE\\s+USE\\s+OBJ SIZE\\s+SLABS\\s+OBJ/SLAB\\s+CACHE\\s+SIZE\\s+NAME\\s+"
 
 
 set test "slabtop help"
