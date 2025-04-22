@@ -201,6 +201,7 @@ static void init_ansi_colors(void)
 		//init_color(15, 1000, 1000, 1000);  // Bright white
 		nr_of_colors += 7;
 	}
+#ifdef WITH_WATCH8BIT
         if (COLORS >= 256 && COLOR_PAIRS >= 65536)
         {
             int red,green,blue;
@@ -227,11 +228,15 @@ static void init_ansi_colors(void)
                 nr_of_colors++;
             }
         }
-
+#endif /*8bit*/
 	// Initialize all color pairs with ncurses
 	for (bg_col = 0; bg_col < nr_of_colors; bg_col++)
 		for (fg_col = 0; fg_col < nr_of_colors; fg_col++)
+#ifdef WITH_WATCH8BIT
 			init_extended_pair(bg_col * nr_of_colors + fg_col + 1, fg_col - 1, bg_col - 1);
+#else
+			init_pair(bg_col * nr_of_colors + fg_col + 1, fg_col - 1, bg_col - 1);
+#endif
 
 	reset_ansi();
 }
@@ -267,12 +272,13 @@ static uf8 process_ansi_color_escape_sequence(char **const escape_sequence) {
 			// 8-15 are standard colors  same as SGR 90-97
 			 return more_colors ? num + 1 : num - 8 + 1;
 		}
-
 		// 16-231:  6 × 6 × 6 cube (216 colors): 16 + 36 × r + 6 × g + b
 		//                                       (0 ≤ r, g, b ≤ 5)
 		// 232-255:  grayscale from black to white in 24 steps
+#ifdef WITH_WATCH8BIT
                 if (num > 15 && num < 256)
                     return more_colors ? num + 1 : 0;
+#endif
 	}
 
 	return 0; /* not understood */
