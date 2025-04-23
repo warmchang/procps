@@ -1,7 +1,7 @@
 /*
  * Sysctl - A utility to read and manipulate the sysctl parameters
  *
- * Copyright © 2009-2024 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2009-2025 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2012-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2017-2018 Werner Fink <werner@suse.de>
  * Copyright © 2014      Jaromir Capik <jcapik@redhat.com>
@@ -925,6 +925,7 @@ int main(int argc, char *argv[])
 	bool WriteMode = false;
 	bool DisplayAllOpt = false;
 	bool preloadfileOpt = false;
+        bool SystemOpt = false;
 	int ReturnCode = 0;
 	int c;
 	int rc = 0;
@@ -1023,9 +1024,8 @@ int main(int argc, char *argv[])
 			break;
 		case SYSTEM_OPTION:
 			IgnoreError = true;
-			rc |= PreloadSystem(setlist);
-            rc |= write_setting_list(setlist);
-            return rc;
+                        SystemOpt = true;
+                        break;
         case DRYRUN_OPTION:
             DryRun = true;
             break;
@@ -1067,7 +1067,12 @@ int main(int argc, char *argv[])
 			ret |= Preload(setlist, argv[i]);
         ret |= write_setting_list(setlist);
 		return ret;
-	}
+	} else if (SystemOpt) {
+            ReturnCode |= PreloadSystem(setlist);
+            ReturnCode |= write_setting_list(setlist);
+            if (argc < 1)
+                return ReturnCode;
+        }
 
 	if (argc < 1)
 		errx(EXIT_FAILURE, _("no variables specified\n"

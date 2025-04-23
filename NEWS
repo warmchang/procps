@@ -8,6 +8,7 @@ procps-ng-NEXT
   * ps.1: cols and collums alias width option              Debian #926361
   * slabtop: Increase column width                         Debian #959375
   * sysctl: Return error if EPERM or EISDIR                merge !228
+  * sysctl: Use options after --system                     Debian #978989
   * w: Add terminal mode to show all terminal sessions     issue #375
   * w: Use process TTY as backup for user TTY              Debian #1080335
   * watch: Add --follow option                             Debian #469156
