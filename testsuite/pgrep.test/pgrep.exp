@@ -63,6 +63,14 @@ set test "pgrep find oldest test pid"
 spawn $pgrep -o $testproc_comm
 expect_pass "$test" "^$testproc1_pid\\s*$"
 
+set test "prep with matching pid"
+spawn $pgrep -p $testproc1_pid
+expect_pass "$test" "^$testproc1_pid\\s*$"
+
+set test "pgrep pid and pidfile opption conflict"
+spawn $pgrep -p 42 -F /dev/null
+expect_pass "$test" "^pgrep: Cannot use pidfile and pid option together"
+
 set test "pgrep matches with parent pid"
 spawn $pgrep -P $mypid $testproc_comm
 expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"

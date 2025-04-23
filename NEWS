@@ -3,6 +3,7 @@ procps-ng-NEXT
   * local: guard SIGPOLL for MacOS                         merge !246
   * top: provides for ignoring configuration file(s)       issue #365
   * pgrep: Fix unhex breakage for signal numbers           issue #369
+  * pgrep: Match on process ID                             Debian #612146
   * pgrep.1: Note that we can only go to 100th of second   issue #376
   * ps.1: cols and collums alias width option              Debian #926361
   * slabtop: Increase column width                         Debian #959375

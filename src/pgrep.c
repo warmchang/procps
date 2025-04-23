@@ -1,7 +1,7 @@
 /*
  * pgrep/pkill -- utilities to filter the process table
  *
- * Copyright © 2009-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2009-2025 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2013-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
  * Copyright © 2012      Roberto Polli <rpolli@babel.it>
@@ -182,6 +182,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -n, --newest              select most recently started\n"), fp);
     fputs(_(" -o, --oldest              select least recently started\n"), fp);
     fputs(_(" -O, --older <seconds>     select where older than seconds\n"), fp);
+    fputs(_(" -p, --pid <PID,...>       match process PIDs\n"), fp);
     fputs(_(" -P, --parent <PPID,...>   match only child processes of the given parent\n"), fp);
     fputs(_(" -s, --session <SID,...>   match session IDs\n"), fp);
     fputs(_("     --signal <sig>        signal to send (either number or name)\n"), fp);
@@ -920,6 +921,7 @@ static void parse_opts (int argc, char **argv)
         {"newest", no_argument, NULL, 'n'},
         {"oldest", no_argument, NULL, 'o'},
         {"older", required_argument, NULL, 'O'},
+        {"pid", required_argument, NULL, 'p'},
         {"parent", required_argument, NULL, 'P'},
         {"session", required_argument, NULL, 's'},
         {"terminal", required_argument, NULL, 't'},
@@ -962,7 +964,7 @@ static void parse_opts (int argc, char **argv)
         prog_mode = PGREP;
     }
 
-    strcat (opts, "LF:cfinoxP:O:AHg:s:u:U:G:t:r:?Vh");
+    strcat (opts, "LF:cfinoxp:P:O:AHg:s:u:U:G:t:r:?Vh");
 
     while ((opt = getopt_long (argc, argv, opts, longopts, NULL)) != -1) {
         switch (opt) {
@@ -1004,6 +1006,12 @@ static void parse_opts (int argc, char **argv)
  *            break; */
 /*        case 'N':   / * FreeBSD: specify alternate namelist file (for us, System.map -- but we don't need it) * /
  *            break; */
+        case 'p':
+            opt_pid = split_list (optarg, conv_num);
+            if (opt_pid == NULL)
+                usage('?');
+            ++criteria_count;
+            break;
         case 'P':   /* Solaris: match by PPID */
             opt_ppid = split_list (optarg, conv_num);
             if (opt_ppid == NULL)
@@ -1149,6 +1157,10 @@ static void parse_opts (int argc, char **argv)
                      program_invocation_short_name);
 
     if(opt_pidfile){
+        if (opt_pid != NULL)
+            errx(EXIT_FAILURE,
+                    _("Cannot use pidfile and pid option together"),
+                    program_invocation_short_name);
         opt_pid = read_pidfile(opt_pidfile, opt_lock);
         if(!opt_pid)
             errx(EXIT_FAILURE, _("pidfile not valid\n"

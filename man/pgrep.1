@@ -10,7 +10,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP 1 2025-02-17 procps-ng
+.TH PGREP 1 2025-04-23 procps-ng
 .SH NAME
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
@@ -127,6 +127,10 @@ Select only the oldest (least recently started) of the matching processes.
 \fB\-O\fR, \fB\-\-older\fR \fIsecs\fP
 Select processes older than secs.
 .TP
+\fB\-p\fR, \fB\-\-pid\fR \fIpid\fP,.\|.\|.
+Only match processes whose process ID is listed. Conflicts with the
+\fB\-\-pidfile\fR option.
+.TP
 \fB\-P\fR, \fB\-\-parent\fR \fIppid\fP,.\|.\|.
 Only match processes whose parent process ID is listed.
 .TP
@@ -183,6 +187,7 @@ or
 than
 .BR pgrep .
 The filename "\-" can be used to read from \fISTDIN\fR.
+Conflicts with the \fB\-\-pid\fR option.
 .TP
 \fB\-L\fR, \fB\-\-logpidfile\fR
 Fail if pidfile (see \fB\-F\fR) not locked.
