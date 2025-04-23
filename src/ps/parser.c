@@ -811,6 +811,7 @@ static const char *parse_gnu_option(void){
   {"context",       &&case_context},
   {"cumulative",    &&case_cumulative},
   {"date-format",   &&case_dateformat},
+  {"delimiter",     &&case_delimiter},
   {"deselect",      &&case_deselect},    /* -N */
   {"forest",        &&case_forest},      /* f -H */
   {"format",        &&case_format},
@@ -904,6 +905,12 @@ static const char *parse_gnu_option(void){
     if (!arg) return _("date format must follow --date-format");
     if (lstart_format) free(lstart_format);
     lstart_format = xstrdup(arg);
+    return NULL;
+  case_delimiter:
+    arg=grab_gnu_arg();
+    if (!arg) return _("delimiter character must follow --delimiter");
+    if (arg[1] != '\0') return _("delimiter must be a single character");
+    delimiter_option = arg[0];
     return NULL;
   case_deselect:
     trace("--deselect\n");

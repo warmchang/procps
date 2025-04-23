@@ -2327,7 +2327,8 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
      * legit     space we were allowed to steal, and thus did steal
      */
     space = correct - actual + leftpad;
-    if(space<1) space=dospace;
+    if (space < 1 || delimiter_option != '\0')
+        space = dospace;
     if(space>SPACE_AMOUNT) space=SPACE_AMOUNT;  // only so much available
 
     /* real size -- don't forget in 'amount' is number of cells */
@@ -2385,7 +2386,7 @@ void init_output(void)
     if(outbuf == MAP_FAILED)
         catastrophic_failure(__FILE__, __LINE__, _("please report this bug"));
 
-    memset(outbuf, ' ', SPACE_AMOUNT);
+    memset(outbuf, (delimiter_option?delimiter_option:' '), SPACE_AMOUNT);
     if(SPACE_AMOUNT==page_size)
 	mprotect(outbuf, page_size, PROT_READ);
     mprotect(outbuf + page_size*outbuf_pages, page_size, PROT_NONE); // guard page

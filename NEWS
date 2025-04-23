@@ -6,6 +6,7 @@ procps-ng-NEXT
   * pgrep: Match on process ID                             Debian #612146
   * pgrep.1: Note that we can only go to 100th of second   issue #376
   * ps: parse --help correctly                             issue #381
+  * ps: Add --delimiter option                             issue #118
   * ps.1: cols and collums alias width option              Debian #926361
   * ps.1: Add format equivalents                           Debian #925437
   * slabtop: Increase column width                         Debian #959375

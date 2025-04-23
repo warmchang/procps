@@ -151,6 +151,7 @@ void do_help (const char *opt, int rc) {
     fputs(_("  X                   register format\n"), out);
     fputs(_(" -y                   do not show flags, show rss vs. addr (used with -l)\n"), out);
     fputs(_("     --context        display security context (for SELinux)\n"), out);
+    fputs(_("     --delimiter <d>  Use <d> as a column delimiter instead of variable space\n"), out);
     fputs(_("     --headers        repeat header lines, one per page\n"), out);
     fputs(_("     --no-headers     do not print header at all\n"), out);
     fputs(_("     --cols, --columns, --width <num>\n"
