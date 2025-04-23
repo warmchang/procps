@@ -33,6 +33,8 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdbool.h>
+#include <ctype.h>
+#include <wctype.h>
 
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -1106,23 +1108,24 @@ static void reset_parser(void){
   w_count = 0;
 }
 
-static int arg_type(const char *str){
-  int tmp = str[0];
-  if((tmp>='a') && (tmp<='z'))   return ARG_BSD;
-  if((tmp>='A') && (tmp<='Z'))   return ARG_BSD;
-  if((tmp>='0') && (tmp<='9'))   return ARG_PID;
-  if(tmp=='+')                   return ARG_SESS;
-  if(tmp!='-')                   return ARG_FAIL;
-  tmp = str[1];
-  if((tmp>='a') && (tmp<='z'))   return ARG_SYSV;
-  if((tmp>='A') && (tmp<='Z'))   return ARG_SYSV;
-  if((tmp>='0') && (tmp<='9'))   return ARG_PGRP;
-  if(tmp!='-')                   return ARG_FAIL;
-  tmp = str[2];
-  if((tmp>='a') && (tmp<='z'))   return ARG_GNU;
-  if((tmp>='A') && (tmp<='Z'))   return ARG_GNU;
-  if(tmp=='\0')                  return ARG_END;
-  return ARG_FAIL;
+static int arg_type(const char *str)
+{
+    wchar_t wtmp[2];
+
+    if (isalpha(str[0]))        return ARG_BSD;
+    if (isdigit(str[0]))        return ARG_PID;
+    if (str[0] == '+')          return ARG_SESS;
+    if (str[0] != '-')          return ARG_FAIL;
+
+    if (isalpha(str[1]))        return ARG_SYSV;
+    if (isdigit(str[1]))        return ARG_PGRP;
+    if (str[1] != '-')          return ARG_FAIL;
+
+    if (isalpha(str[2]))        return ARG_GNU;
+    if (str[2] == '\0')         return ARG_END;
+    if (mbstowcs(wtmp, str+2, 1) == 1
+         && iswalpha(wtmp[0]))  return ARG_GNU;
+    return ARG_FAIL;
 }
 
 /* First assume sysv, because that is the POSIX and Unix98 standard. */
