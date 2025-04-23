@@ -1159,7 +1159,8 @@ static void parse_opts (int argc, char **argv)
     if(opt_pidfile){
         if (opt_pid != NULL)
             errx(EXIT_FAILURE,
-                    _("Cannot use pidfile and pid option together"),
+                    _("Cannot use pidfile and pid option together\n"
+                     "Try `%s --help' for more information."),
                     program_invocation_short_name);
         opt_pid = read_pidfile(opt_pidfile, opt_lock);
         if(!opt_pid)
