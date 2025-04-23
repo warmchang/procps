@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH PS 1 2025-04-16 procps-ng
+.TH PS 1 2025-04-23 procps-ng
 .\"
 .\" Ragged-right text.
 .na
@@ -396,15 +396,16 @@ and
 .SH "OUTPUT FORMAT CONTROL"
 These options are used to choose the information displayed by
 .BR ps .
-The output may differ by personality.
+The output may differ by personality. The options in brackets at the end
+of the description are the format equivalents.
 .TP
 .B \-c
 Show different scheduler information for the
 .B \-l
-option.
+option. (\fB\-O cls,pri\fR).
 .TP
 .B \-\-context
-Display security context format (for SELinux).
+Display security context format (for SELinux). (\fB\-o pid,context,cmd\fR).
 .TP
 .B \-f
 Do full\-format listing.  This option can be combined with many other
@@ -418,13 +419,14 @@ option, the format keyword
 .BR args ,
 and the format keyword
 .BR comm .
+(\fB\-o uid,pid,ppid,c,stime,tty,time,cmd\fR).
 .TP
 .B \-F
 Extra full format.  See the
 .B \-f
 option, which
 .B \-F
-implies.
+implies. (\fB\-o uid,pid,ppid,c,sz,rss,psr,stime,tty,time,cmd\fR).
 .TP
 .BI \-\-format \ format
 user\-defined format.  Identical to
@@ -433,23 +435,23 @@ and
 .BR o .
 .TP
 .B j
-BSD job control format.
+BSD job control format. (\fB\-o ppid,pid,pgid,sid,tty,tpgid,stat,uid,time,cmd a\fR)
 .TP
 .B \-j
-Jobs format.
+Jobs format. (\fB\-o pid,pgid,sid,tty,time,ucmd\fR)
 .TP
 .B l
-Display BSD long format.
+Display BSD long format. (\fB\-o f,uid,pid,ppid,pri,ni,vsz,rss,wchan,stat,tty,time,cmd a\fR)
 .TP
 .B \-l
 Long format.  The
 .B \-y
-option is often useful with this.
+option is often useful with this. (\fB\-o f,uid,pid,ppid,c,pri,ni,addr,sz,wchan,tty,time,ucmd\fR)
 .TP
 .B \-M
 Add a column of security data.  Identical to
 .B Z
-(for SELinux).
+(for SELinux). (\fB\-o context,pid,tty,time,ucmd\fR)
 .TP
 .BI O \ format
 is preloaded
@@ -515,19 +517,19 @@ environment variable to specify a default as desired; DefSysV and DefBSD are
 macros that may be used to choose the default Unix or BSD columns.
 .TP
 .B \-P
-Add a column showing \fBpsr\fR.
+Add a column showing \fBpsr\fR. (\fB\-o pid,psr,s,tty,time,ucmd\fR)
 .TP
 .B s
-Display signal format.
+Display signal format. (\fB\-o uid,pid,pending,blocked,ignored,caught,stat,tty,bsdtime,cmd a\fR)
 .TP
 .B u
-Display user\-oriented format.
+Display user\-oriented format. (\fB\-o user,pid,pcpu,pmem,vsz,rss,tty,stat,start_time,bsdtime,args a\fR)
 .TP
 .B v
-Display virtual memory format.
+Display virtual memory format. (\fB\-o pid,tty,stat,bsdtime,majflt,trs,drs,rss,pmem,args a\fR)
 .TP
 .B X
-Register format.
+Register format. (\fB \-o pid,stackp,esp,eip,tmout,alarm,stat,tty,bsdtime,args a\fR)
 .TP
 .B \-y
 Do not show flags; show rss in place of addr.  This option can only be used
