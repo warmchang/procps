@@ -157,6 +157,9 @@ static int escape_str_utf8 (char *dst, const char *src, int bufsize, int *maxcel
 
   SECURE_ESCAPE_ARGS(dst, bufsize, *maxcells);
 
+  if (NULL == src)
+      return 0;
+
   memset(&s, 0, sizeof (s));
 
   for(;;) {
