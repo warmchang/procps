@@ -61,7 +61,7 @@ char *pwcache_get_user(uid_t uid) {
         return ERRname;
     (*p)->uid = uid;
     pw = getpwuid(uid);
-    if(!pw || strlen(pw->pw_name) >= P_G_SZ)
+    if(!pw || strlen(pw->pw_name) >= P_G_SZ || pw->pw_name[0] == '\0')
         sprintf((*p)->name, "%u", uid);
     else
         strcpy((*p)->name, pw->pw_name);
@@ -90,7 +90,7 @@ char *pwcache_get_group(gid_t gid) {
         return ERRname;
     (*g)->gid = gid;
     gr = getgrgid(gid);
-    if (!gr || strlen(gr->gr_name) >= P_G_SZ)
+    if (!gr || strlen(gr->gr_name) >= P_G_SZ || gr->gr_name[0] == '\0')
         sprintf((*g)->name, "%u", gid);
     else
         strcpy((*g)->name, gr->gr_name);
