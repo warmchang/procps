@@ -14,7 +14,7 @@ set pmap_generic_header "${pmap_procname}\\s+\(?:\[A-Z\]\[a-z\]+ +\)+"
 set pmap_std_items "\(\[0-9a-f\]+\\s+\\d+K \[rwx-\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
 set pmap_device_items "\(\[0-9a-f\]+\\s+\\d+ \[rwx-\]{5}\\s+\[0-9a-f\]+\\s+\[0-9a-f\]{3}:\[0-9a-f\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
 set pmap_ext_items "\(\[0-9a-f\]+\\s+\\d+\\s+\\d+\\s+\\d+ \[rwx-\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
-set pmap_kernel_items "\(\[0-9a-f\]+\\s+\\d+K \[rwx-\]{5}\\s+\\\[vsyscall\\\]\\s*\)+"
+set pmap_kernel_items "\(\[0-9a-f\]+\\s+\\d+K \[rwx-\]{5}\\s+\\\[(vdso|vsyscall)\\\]\\s*\)+"
 
 set pmap_std_footer "total\\s+\\d+K\\s*\$"
 set pmap_device_footer "mapped:\\s+\\d+K\\s+writeable\/private:\\s+\\d+K\\s+shared:\\s+\\d+K\\s*\$"
@@ -112,19 +112,16 @@ if { $shmid == "" } {
 kill_testshm_proc
 
 proc expect_any { test match_item } {
-    set do_loop 1
-    while true {
-	expect {
-	    -re $match_item {
-		pass $test
-		break
-	    }
-	    default {}
-	    eof {
-		fail "$test (items eof)"
-		break
-	    }
-	}
+    expect {
+        eof {
+            fail "$test (items eof)"
+        }
+        -re $match_item {
+            pass $test
+        }
+        default {
+            exp_continue
+        }
     }
 }
 

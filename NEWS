@@ -5,6 +5,7 @@ procps-ng-NEXT
   * pgrep: Fix unhex breakage for signal numbers           issue #369
   * pgrep: Match on process ID                             Debian #612146
   * pgrep.1: Note that we can only go to 100th of second   issue #376
+  * pmap: add -k option to print raw names from kernel     merge !251
   * ps: parse --help correctly                             issue #381
   * ps: Add --delimiter option                             issue #118
   * ps: ps f forest works under pid 1                      issue #102
@@ -18,7 +19,6 @@ procps-ng-NEXT
   * watch: Add --follow option                             Debian #469156
   * watch: 256 color support                               issue #44
   * watch.1: Warn about -d permanent option                Debian #883638
-  * pmap: add -k option to print raw names provided by kernel
 
 procps-ng-4.0.5
 ---------------
