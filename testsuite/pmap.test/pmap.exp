@@ -128,6 +128,12 @@ if { $shmaddr == "" } {
     expect_table $test [pmap_make_ext_header $testshmproc_pid] \
         "0*${shmaddr}\\s+\\d+\\s+\\d+\\s+\\d+ \[-rs\]{5}\\s+\\\[ shmid=0x$shmid \\\]\\s*" \
         $pmap_ext_footer
+
+    set test "pmap finding a map containing address $shmaddr with -X"
+    spawn $pmap -X -A $shmaddr $testshmproc_pid
+    expect_table $test [pmap_make_generic_header $testshmproc_pid] \
+        "\[^\\r=\]+\\r\\s*0*${shmaddr}\[^\\r\]+\\r" \
+        "\[= \]+"
 }
 kill_testshm_proc
 

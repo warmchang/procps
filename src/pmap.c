@@ -328,6 +328,7 @@ static void print_extended_maps (FILE *f)
 	int maxw1=0, maxw2=0, maxw3=0, maxw4=0, maxw5=0, maxwv=0;
 	int nfields, firstmapping, footer_gap, i, maxw_;
 	char *ret, *map_basename, c, has_vmflags = 0;
+	int in_range;
 
 	ret = fgets(mapbuf, sizeof mapbuf, f);
 	firstmapping = 2;
@@ -350,6 +351,18 @@ static void print_extended_maps (FILE *f)
 			if (!ret || !mapbuf[0])
 				errx(EXIT_FAILURE, _("Unknown format in smaps file!"));
 			c = mapbuf[strlen(mapbuf) - 1];
+		}
+
+		in_range = 1;
+		{
+			unsigned long start_n, end_n;
+			start_n = strtoul(start, NULL, 16);
+			end_n = strtoul(end, NULL, 16);
+
+			if (end_n - 1 < range_low)
+				in_range = 0;
+			if (range_high < start_n)
+				in_range = 0;
 		}
 
 		/* Store maximum widths for printing nice later */
@@ -396,11 +409,13 @@ static void print_extended_maps (FILE *f)
 			strcpy(listnode->value_str, value_str);
 			sscanf(value_str, "%lu", &listnode->value);
 			if (firstmapping == 2) {
-				listnode->total += listnode->value;
-				if (q_option) {
-					maxw_ = strlen(listnode->value_str);
-					if (maxw_ > listnode->max_width)
-						listnode->max_width = maxw_;
+				if (in_range) {
+					listnode->total += listnode->value;
+					if (q_option) {
+						maxw_ = strlen(listnode->value_str);
+						if (maxw_ > listnode->max_width)
+							listnode->max_width = maxw_;
+					}
 				}
 			}
 			listnode = listnode->next;
@@ -468,6 +483,9 @@ loop_end:
 					printf("\n");
 			}
 
+			if (!in_range)
+				goto skip_this_data;
+
 			/* Print data */
 			printf("%*s", maxw1, start);    /* Address field is always enabled */
 
@@ -505,6 +523,7 @@ loop_end:
 
 			printf("\n");
 
+		  skip_this_data:
 			firstmapping = 0;
 
 		}
