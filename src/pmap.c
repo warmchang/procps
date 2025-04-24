@@ -131,6 +131,7 @@ usage(FILE * out)
 	fputs(_(" -d, --device                show the device format\n"), out);
 	fputs(_(" -q, --quiet                 do not display header and footer\n"), out);
 	fputs(_(" -p, --show-path             show path in the mapping\n"), out);
+	fputs(_(" -k, --use-kernel-name       use names provided by kernel\n"), out);
 	fputs(_(" -A, --range=<low>[,<high>]  limit results to the given range\n"), out);
 	fputs(USAGE_SEPARATOR, out);
 	fputs(USAGE_HELP, out);
@@ -229,7 +230,8 @@ out_destroy:
 static const char *mapping_name(struct pids_stack *p, unsigned long addr,
 				unsigned long len, const char *mapbuf_b,
 				unsigned showpath, unsigned dev_major,
-				unsigned dev_minor, unsigned long long inode)
+				unsigned dev_minor, unsigned long long inode,
+				unsigned use_kname)
 {
 	const char *cp;
 
@@ -245,6 +247,11 @@ static const char *mapping_name(struct pids_stack *p, unsigned long addr,
 			return strchr(mapbuf_b, '/');
 		return cp[1] ? cp + 1 : cp;
 	}
+
+	if (use_kname
+	    && (cp = strrchr(mapbuf_b, ']')) && cp[1] == '\0'
+	    && (cp = strchr(mapbuf_b, '[')))
+		return cp;
 
 	cp = _("  [ anon ]");
 	if (PIDS_VAL(start_stack, ul_int, p) >= addr
@@ -536,7 +543,7 @@ loop_end:
 	// variable placed here to silence compiler 'uninitialized' warning
 static unsigned long start_To_Avoid_Warning;
 
-static int one_proc (struct pids_stack *p)
+static int one_proc (struct pids_stack *p, unsigned use_kname)
 {
 	char buf[32];
 	FILE *fp;
@@ -697,14 +704,14 @@ static int one_proc (struct pids_stack *p)
 		if (x_option) {
 			cp2 =
 			    mapping_name(p, start_To_Avoid_Warning, diff, mapbuf, map_desc_showpath, dev_major,
-					 dev_minor, inode);
+					 dev_minor, inode, use_kname);
 			/* printed with the keys */
 			continue;
 		}
 		if (d_option) {
 			const char *cp =
 			    mapping_name(p, start_To_Avoid_Warning, diff, mapbuf, map_desc_showpath, dev_major,
-					 dev_minor, inode);
+					 dev_minor, inode, use_kname);
 			printf("%0*lx %*lu %*s %0*llx %*.*s%03x:%05x %s\n",
 			       maxw1, start_To_Avoid_Warning,
 			       maxw2, (unsigned long)(diff >> 10),
@@ -716,7 +723,7 @@ static int one_proc (struct pids_stack *p)
 		if (!x_option && !d_option) {
 			const char *cp =
 			    mapping_name(p, start_To_Avoid_Warning, diff, mapbuf, map_desc_showpath, dev_major,
-					 dev_minor, inode);
+					 dev_minor, inode, use_kname);
 			printf((sizeof(long) == 8)
 			       ? "%016lx %6luK %s %s\n"
 			       : "%08lx %6luK %s %s\n",
@@ -1032,6 +1039,7 @@ int main(int argc, char **argv)
 	int reap_count, user_count;
 	int ret = 0, c, conf_ret;
 	char *rc_filename = NULL;
+	unsigned use_kname = 0;
 
 	static const struct option longopts[] = {
 		{"extended", no_argument, NULL, 'x'},
@@ -1045,6 +1053,7 @@ int main(int argc, char **argv)
 		{"create-rc", no_argument, NULL, 'n'},
 		{"create-rc-to", required_argument, NULL, 'N'},
 		{"show-path", no_argument, NULL, 'p'},
+		{"use-kernel-name", no_argument, NULL, 'k'},
 		{NULL, 0, NULL, 0}
 	};
 
@@ -1057,7 +1066,7 @@ int main(int argc, char **argv)
 	if (argc < 2)
 		usage(stderr);
 
-	while ((c = getopt_long(argc, argv, "xXrdqA:hVcC:nN:p", longopts, NULL)) != -1)
+	while ((c = getopt_long(argc, argv, "xXrdqA:hVcC:nN:pk", longopts, NULL)) != -1)
 		switch (c) {
 		case 'x':
 			x_option = 1;
@@ -1098,6 +1107,9 @@ int main(int argc, char **argv)
 			break;
 		case 'p':
 			map_desc_showpath = 1;
+			break;
+		case 'k':
+			use_kname = 1;
 			break;
 		case 'a':	/* Sun prints anon/swap reservations */
 		case 'F':	/* Sun forces hostile ptrace-like grab */
@@ -1198,7 +1210,7 @@ int main(int argc, char **argv)
 		errx(EXIT_FAILURE, _("library failed pids statistics"));
 
 	for (reap_count = 0; reap_count < pids_fetch->counts->total; reap_count++) {
-		ret |= one_proc(pids_fetch->stacks[reap_count]);
+		ret |= one_proc(pids_fetch->stacks[reap_count], use_kname);
 	}
 
 	free(pidlist);
