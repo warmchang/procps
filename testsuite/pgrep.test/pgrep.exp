@@ -137,3 +137,19 @@ expect_pass "$test" "pattern that searches for process name longer than 15 chara
 
 # Cleanup
 kill_testproc
+
+make_testproc "foo bar"
+
+set test "pgrep shell quote for process name with spaces"
+spawn $pgrep -Ql "foo bar"
+expect_pass "$test" "'foo bar'"
+
+kill_testproc
+
+make_testproc "foobar"
+
+set test "pgrep shell quote for process name without spaces"
+spawn $pgrep -Ql "foobar"
+expect_pass "$test" {[^']foobar}
+
+kill_testproc

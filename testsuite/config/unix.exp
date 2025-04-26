@@ -171,11 +171,17 @@ proc make_pipeproc { } {
     set pipeproc_spawnid $spawn_id
 
 }
-proc make_testproc { } {
+proc make_testproc {args} {
     global testproc_path testproc_comm testproc_arg_str testproc1_pid testproc2_pid topdir
 
     set testproc_realpath "${topdir}/src/tests/test_process"
-    set testproc_comm "spcorp"
+    if {[llength $args] > 0} {
+        set testproc_comm [lindex $args 0]
+        set use_comm_flag 1
+    } else {
+        set testproc_comm "spcorp"
+        set use_comm_flag 0
+    }
 
     set testproc_path [ exec mktemp -u ]
     exec ln -s $testproc_realpath $testproc_path
@@ -199,8 +205,14 @@ proc make_testproc { } {
       incr i
       append testproc_arg_str "a"
     }
-    set testproc1_pid [ exec $testproc_path $testproc_arg_str & ]
-    set testproc2_pid [ exec $testproc_path & ]
+
+    if {$use_comm_flag} {
+        set testproc1_pid [ exec $testproc_path -c $testproc_comm $testproc_arg_str & ]
+        set testproc2_pid [ exec $testproc_path -c $testproc_comm & ]
+    } else {
+        set testproc1_pid [ exec $testproc_path $testproc_arg_str & ]
+        set testproc2_pid [ exec $testproc_path & ]
+    }
 }
 
 proc make_testshm_proc { } {

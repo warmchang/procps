@@ -33,6 +33,7 @@ static void usage(void)
 {
     fprintf(stderr, " %s [options]\n", program_invocation_short_name);
     fprintf(stderr, " -s <seconds>\n");
+    fprintf(stderr, " -c <comm>\n");
     exit(EXIT_FAILURE);
 }
 
@@ -80,9 +81,10 @@ int main(int argc, char *argv[])
 {
     int sleep_time, opt;
     struct sigaction signal_action;
+    char *comm = MY_NAME;
 
     sleep_time = DEFAULT_SLEEPTIME;
-    while ((opt = getopt(argc, argv, "s:")) != -1) {
+    while ((opt = getopt(argc, argv, "s:c:")) != -1) {
 	switch(opt) {
 	    case 's':
 		sleep_time = atoi(optarg);
@@ -91,6 +93,9 @@ int main(int argc, char *argv[])
 		    usage();
 		}
 		break;
+            case 'c':
+                comm = optarg;
+                break;
 	    default:
 		usage();
 	}
@@ -105,7 +110,7 @@ int main(int argc, char *argv[])
 
 #ifdef __linux__
     /* set process name */
-    prctl(PR_SET_NAME, MY_NAME, NULL, NULL, NULL);
+    prctl(PR_SET_NAME, comm, NULL, NULL, NULL);
 #endif
 
     while (sleep_time > 0) {

@@ -76,6 +76,7 @@ enum pids_item Items[] = {
     PIDS_TTY_NAME,
     PIDS_CMD,
     PIDS_CMDLINE,
+    PIDS_CMDLINE_V,
     PIDS_STATE,
     PIDS_TIME_ELAPSED,
     PIDS_CGROUP_V,
@@ -86,8 +87,8 @@ enum pids_item Items[] = {
 
 enum rel_items {
     EU_PID, EU_PPID, EU_PGRP, EU_EUID, EU_RUID, EU_RGID, EU_SESSION,
-    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_STA, EU_ELAPSED,
-    EU_CGROUP, EU_SIGCATCH, EU_ENVIRON
+    EU_TGID, EU_STARTTIME, EU_TTYNAME, EU_CMD, EU_CMDLINE, EU_CMDLINE_V, EU_STA,
+    EU_ELAPSED, EU_CGROUP, EU_SIGCATCH, EU_ENVIRON
 };
 #define grow_size(x) do { \
 	if ((x) < 0 || (size_t)(x) >= INT_MAX / 5 / sizeof(struct el)) \
@@ -123,6 +124,7 @@ static int opt_signal = SIGTERM;
 static int opt_case = 0;
 static int opt_echo = 0;
 static int opt_threads = 0;
+static int opt_shell_quote = 0;
 static bool opt_mrelease = false;
 
 static pid_t opt_ns_pid = 0;
@@ -198,6 +200,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
     fputs(_(" -L, --logpidfile          fail if PID file is not locked\n"), fp);
     fputs(_(" -r, --runstates <state>   match runstates [D,S,Z,...]\n"), fp);
     fputs(_(" -A, --ignore-ancestors    exclude our ancestors from results\n"), fp);
+    fputs(_(" -Q, --shell-quote         output the command line in shell-quoted form\n"), fp);
     fputs(_(" --cgroup <grp,...>        match by cgroup v2 names\n"), fp);
     fputs(_(" --ns <PID>                match the processes that belong to the same\n"
         "                           namespace as <pid>\n"), fp);
@@ -627,6 +630,87 @@ static void output_strlist (const struct el *restrict list, int num)
     }
 }
 
+static int is_token_safe(const char *token) {
+    for (; *token; token++) {
+        char c = *token;
+        if ((c >= 'a' && c <= 'z') ||
+            (c >= 'A' && c <= 'Z') ||
+            (c >= '0' && c <= '9'))
+            continue;
+        switch (c) {
+            case '_':
+            case '@':
+            case '%':
+            case '+':
+            case ':':
+            case ',':
+            case '.':
+            case '/':
+            case '-':
+                break;
+            default:
+                return 0;
+        }
+    }
+    return 1;
+}
+
+static char *shell_quote_vector(char **argv_vector)
+{
+    size_t total_worst = 0;
+
+    /* The worst case is that every character is a single quote needing
+     * expansion. Preallocate enough space for the surrounding quotes, and for
+     * each character possibly expanding to 4 bytes. Also add one character for
+     * a space between tokens. Doing a full pass up front avoids xrealloc()
+     * hell later. */
+    for (int i = 0; argv_vector[i] != NULL; i++) {
+        if (i > 0)
+            total_worst += 1;  /* space separator */
+        const char *token = argv_vector[i];
+        if (is_token_safe(token))
+            total_worst += strlen(token);
+        else {
+            size_t len = strlen(token);
+            total_worst += 2 + len * 4;
+        }
+    }
+    total_worst += 1;
+
+    char *result = xmalloc(total_worst);
+    size_t pos = 0;
+
+    for (int i = 0; argv_vector[i] != NULL; i++) {
+        if (i > 0)
+            result[pos++] = ' ';
+        const char *token = argv_vector[i];
+        if (is_token_safe(token)) {
+            size_t token_len = strlen(token);
+            memcpy(result + pos, token, token_len);
+            pos += token_len;
+        } else {
+            result[pos++] = '\'';
+            for (const char *p = token; *p; p++) {
+                if (*p == '\'') {
+                    memcpy(result + pos, "'\\''", 4);
+                    pos += 4;
+                } else {
+                    result[pos++] = *p;
+                }
+            }
+            result[pos++] = '\'';
+        }
+    }
+    result[pos] = '\0';
+    return result;
+}
+
+static char *shell_quote_cmd(char *token)
+{
+    char *argv[2] = { token, NULL };
+    return shell_quote_vector(argv);
+}
+
 static regex_t * do_regcomp (void)
 {
     regex_t *preg = NULL;
@@ -786,8 +870,18 @@ static struct el * select_procs (int *num)
 
         task_cmdline = PIDS_GETSTR(CMDLINE);
 
-        if (opt_long || opt_longlong || (match && opt_pattern)) {
-            if (opt_longlong)
+        if (opt_long || opt_longlong || opt_shell_quote || (match && opt_pattern)) {
+            if (opt_shell_quote) {
+                char *quoted;
+                if (opt_longlong) {
+                    char **argv_vector = PIDS_GETSTV(CMDLINE_V);
+                    quoted = shell_quote_vector(argv_vector);
+                } else {
+                    quoted = shell_quote_cmd(PIDS_GETSTR(CMD));
+                }
+                strncpy(cmdoutput, quoted, cmdlen - 1);
+                free(quoted);
+            } else if (opt_longlong)
                 strncpy (cmdoutput, task_cmdline, cmdlen -1);
             else
                 strncpy (cmdoutput, PIDS_GETSTR(CMD), cmdlen -1);
@@ -826,7 +920,7 @@ static struct el * select_procs (int *num)
 				grow_size(size);
                 list = xrealloc(list, size * sizeof *list);
             }
-            if (list && (opt_long || opt_longlong || opt_echo)) {
+            if (list && (opt_long || opt_longlong || opt_echo || opt_shell_quote)) {
                 list[matches].num = PIDS_GETINT(PID);
                 list[matches++].str = xstrdup (cmdoutput);
             } else if (list) {
@@ -958,6 +1052,7 @@ static void parse_opts (int argc, char **argv)
         {"queue", required_argument, NULL, 'q'},
         {"runstates", required_argument, NULL, 'r'},
         {"env", required_argument, NULL, ENV_OPTION},
+        {"shell-quote", no_argument, NULL, 'Q'},
         {"mrelease", no_argument, NULL, 'm'},
         {"help", no_argument, NULL, 'h'},
         {"version", no_argument, NULL, 'V'},
@@ -979,9 +1074,9 @@ static void parse_opts (int argc, char **argv)
         sig = signal_option(&argc, argv);
         if (-1 < sig)
             opt_signal = sig;
-	strcat (opts, "eq:m");
+	strcat (opts, "eq:mQ");
     } else {
-        strcat (opts, "lad:vw");
+        strcat (opts, "lad:vwQ");
         prog_mode = PGREP;
     }
 
@@ -1167,6 +1262,9 @@ static void parse_opts (int argc, char **argv)
             break;
         case 'm':
             opt_mrelease = true;
+            break;
+        case 'Q':
+            opt_shell_quote = 1;
             break;
         case 'h':
         case '?':
