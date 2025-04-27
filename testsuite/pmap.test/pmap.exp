@@ -4,12 +4,15 @@
 set pmap "${topdir}src/pmap"
 set mypid [pid]
 
-set pmap_procname "${mypid}:\\s+\\S+\[^\\r\]+\\s+"
-set pmap_initname "1:\\s+\\S+\[^\\r\]+\\s+"
+proc pmap_make_name {name} {return "${name}:\\s+\\S+\[^\\r\]+\\s+"}
+set pmap_procname [pmap_make_name ${mypid}]
+set pmap_initname [pmap_make_name 1]
 set pmap_std_header $pmap_procname
 set pmap_device_header "${pmap_procname}Address\\s+Kbytes\\s+Mode\\s+Offset\\s+Device\\s+Mapping\\s+"
-set pmap_ext_header "${pmap_procname}Address\\s+Kbytes\\s+RSS\\s+Dirty\\s+Mode\\s+Mapping\\s+"
-set pmap_generic_header "${pmap_procname}\\s+\(?:\[A-Z\]\[a-z\]+ +\)+"
+proc pmap_make_ext_header {name} {return "[pmap_make_name ${name}]Address\\s+Kbytes\\s+RSS\\s+Dirty\\s+Mode\\s+Mapping\\s+"}
+set pmap_ext_header [pmap_make_ext_header ${mypid}]
+proc pmap_make_generic_header {name} {return "[pmap_make_name ${name}]\\s+\(?:\[A-Z\]\[a-z\]+ +\)+"}
+set pmap_generic_header [pmap_make_generic_header ${mypid}]
 
 set pmap_std_items "\(\[0-9a-f\]+\\s+\\d+K \[rwx-\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
 set pmap_device_items "\(\[0-9a-f\]+\\s+\\d+ \[rwx-\]{5}\\s+\[0-9a-f\]+\\s+\[0-9a-f\]{3}:\[0-9a-f\]{5}\\s+\\S+\[^\\r\]+\\s*\)+"
