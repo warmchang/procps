@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
     if ( (shm_addr = shmat(shm_id, NULL, SHM_RDONLY)) < 0)
         err(EXIT_FAILURE, "Unable to shmat()");
     printf("SHMID: %x\n", shm_id);
+    printf("SHMADDR: %p\n", shm_addr);
     sleep(sleep_time);
     return EXIT_SUCCESS;
 }
-

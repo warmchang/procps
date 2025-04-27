@@ -239,7 +239,7 @@ proc make_testproc {args} {
 }
 
 proc make_testshm_proc { } {
-    global testshmproc_pid testshm_spawnid topdir shmid
+    global testshmproc_pid testshm_spawnid topdir shmid shmaddr
 
     set testshm_realpath "${topdir}/src/tests/test_shm"
 
@@ -247,7 +247,16 @@ proc make_testshm_proc { } {
     set testshmproc_spawnid $spawn_id
     expect {
 	-i $testshmproc_spawnid
-	-re "^SHMID: (\[0-9a-f\]+)" { set shmid $expect_out(1,string) }
+	-re "^SHMID: (\[0-9a-f\]+)" {
+	    set shmid $expect_out(1,string)
+            expect {
+		-i $testshmproc_spawnid
+		-re "SHMADDR: 0x(\[0-9a-f\]+)" {
+		    set shmaddr $expect_out(1,string)
+		}
+		default { set shmaddr "" }
+	    }
+	}
 	default { set shmid "" }
     }
 
