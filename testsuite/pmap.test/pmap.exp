@@ -113,6 +113,22 @@ if { $shmid == "" } {
     spawn $pmap $testshmproc_pid
     expect_pass $test "\[ shmid=0x$shmid \]"
 }
+
+set test "pmap finding a map containing address $shmaddr"
+if { $shmaddr == "" } {
+    unsupported "$test - could not know the address of shm"
+} {
+    spawn $pmap -A $shmaddr $testshmproc_pid
+    expect_table $test [pmap_make_name ${testshmproc_pid}] \
+        "0*${shmaddr}\\s+\\d+K \[-rs\]{5}\\s+\\\[ shmid=0x$shmid \\\]\\s*" \
+        $pmap_std_footer
+
+    set test "pmap finding a map containing address $shmaddr with -x"
+    spawn $pmap -x -A $shmaddr $testshmproc_pid
+    expect_table $test [pmap_make_ext_header $testshmproc_pid] \
+        "0*${shmaddr}\\s+\\d+\\s+\\d+\\s+\\d+ \[-rs\]{5}\\s+\\\[ shmid=0x$shmid \\\]\\s*" \
+        $pmap_ext_footer
+}
 kill_testshm_proc
 
 proc expect_any { test match_item } {
