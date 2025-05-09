@@ -631,6 +631,8 @@ static void output_strlist (const struct el *restrict list, int num)
 }
 
 static int is_token_safe(const char *token) {
+    if (*token == '\0') /* Zero‐length, so needs quoting */
+        return 0;
     for (; *token; token++) {
         char c = *token;
         if ((c >= 'a' && c <= 'z') ||

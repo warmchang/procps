@@ -153,3 +153,17 @@ spawn $pgrep -Ql "foobar"
 expect_pass "$test" {[^']foobar}
 
 kill_testproc
+
+make_testproc ""
+
+set pidfile [exec mktemp]
+set fh [open $pidfile w]
+puts $fh $testproc1_pid
+close $fh
+
+set test "pgrep shell quote for zero-length process name"
+spawn $pgrep -QlF $pidfile
+expect_pass "$test" "''"
+
+file delete $pidfile
+kill_testproc
