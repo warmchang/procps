@@ -317,7 +317,7 @@ static const char *format_parse(sf_node *sfn){
   if(0) notmacro: err=_("can not set width for a macro (multi-column) format specifier");
   /*
    * Use the AIX parser if the field starts with '%' and is not
-   * literally "%cpu", "%mem", "%cpu " or "%mem " 
+   * literally "%cpu", "%mem", "%cpu " or "%mem "
    * as these are regular fields
    * "%cpublah" is treated as %c publah and parsed as AIX format
    * "%cpu blah" is an error

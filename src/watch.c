@@ -857,7 +857,7 @@ static bool display_char(int y, int x, Xint c, int cwid) {
 		short newcolor;
 		wattr_get(mainwin, &newattr, &newcolor, NULL);
 		// standout can flip on/off as the components of a compound char arrive
-                
+
 		if (changed || (flags&WATCH_CUMUL && old_standout))
 			mvwchgat(mainwin, y, x, 1, newattr | A_STANDOUT, newcolor, NULL);
 		else

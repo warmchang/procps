@@ -404,7 +404,7 @@ Modifications to the arguments are not shown.
 #define OUTBUF_SIZE_AT(endp) \
   (((endp) >= outbuf && (endp) < outbuf + OUTBUF_SIZE) ? (outbuf + OUTBUF_SIZE) - (endp) : 0)
 /*
- * Both pr_args and pr_comm almost do the same thing, but CMDLINE or CMD is determined 
+ * Both pr_args and pr_comm almost do the same thing, but CMDLINE or CMD is determined
  * by which function is called, then what flags are set (and they're different for
  * each function). The printing part is identical
  */

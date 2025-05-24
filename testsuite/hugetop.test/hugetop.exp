@@ -3,7 +3,7 @@
 #
 # You may have to enable huge tables for this to be supported
 # sudo sh -c 'echo 2 >  /proc/sys/vm/nr_hugepages'
-# 
+#
 set hugetop "${topdir}src/hugetop"
 set hugetlb "${topdir}testsuite/test-hugetlb"
 set kbytes 2048

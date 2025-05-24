@@ -41,7 +41,7 @@ void usage(const char *progname, const char *msg)
 {
     if (msg)
         fprintf(stderr, "%s\n", msg);
-    fprintf(stderr, 
+    fprintf(stderr,
             "Usage: %s size\nSize is in kbytes\n", progname);
     exit(EXIT_FAILURE);
 }
