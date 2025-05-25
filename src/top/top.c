@@ -5162,7 +5162,8 @@ static int bot_focus_str (const char *hdr, const char *str) {
  #define maxRSVD ( Screen_rows - 1 )
    char *beg, *end;
    char tmp[BIGBUFSIZ];
-   int n, x;
+   size_t n;
+   int x;
 
    if (hdr) {
       // we're a little careless with overhead here (it's a one time cost)
