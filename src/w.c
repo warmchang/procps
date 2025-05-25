@@ -641,7 +641,6 @@ static void showinfo(
             struct pids_fetch *reap)
 {
     unsigned long long jcpu, pcpu;
-    unsigned i;
     char uname[UT_NAMESIZE + 1] = "", tty[UT_LINESIZE + 1] = "";
     long hertz;
     char cmdline[MAX_CMD_WIDTH + 1];
@@ -759,11 +758,6 @@ static void __attribute__ ((__noreturn__))
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-bool
-get_utmp_by_tty(
-    const char *tty)
-{
-}
 /*
  * print_logintime expects a time of seconds since epoch
  * libproc returns a process start time in tics since

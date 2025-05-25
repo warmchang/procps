@@ -928,7 +928,6 @@ int main(int argc, char *argv[])
         bool SystemOpt = false;
 	int ReturnCode = 0;
 	int c;
-	int rc = 0;
 	const char *preloadfile = NULL;
     SettingList *setlist;
 
