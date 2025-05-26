@@ -4015,10 +4015,12 @@ static int config_wins (FILE *fp, char *buf, int wix) {
 
    if (1 != fscanf(fp, "%3s\tfieldscur=", w->rc.winname))
       return 0;
-   if (Rc.id < RCF_XFORMED_ID)
-      fscanf(fp, "%s\n", buf );
-   else {
-      for (x = 0; ; x++)
+   if (Rc.id < RCF_XFORMED_ID) {
+      fscanf(fp, "%100s\n", buf );               // buf size = LRGBUFSIZ (512)
+      if (strlen(buf) >= sizeof(CVT_FORMER))     // but if we exceed max of 86
+         return 0;                               // that rc file was corrupted
+   } else {
+      for (x = 0; x < PFLAGSSIZ; x++)
          if (1 != fscanf(fp, "%d", &w->rc.fieldscur[x]))
             break;
    }
