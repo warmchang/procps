@@ -1,7 +1,6 @@
 procps-ng-NEXT
 ---------------
   * local: guard SIGPOLL for MacOS                         merge !246
-  * top: provides for ignoring configuration file(s)       issue #365
   * pgrep: Fix unhex breakage for signal numbers           issue #369
   * pgrep: Match on process ID                             Debian #612146
   * pgrep: Add process_mrelease                            merge !250
@@ -16,6 +15,8 @@ procps-ng-NEXT
   * slabtop: Increase column width                         Debian #959375
   * sysctl: Return error if EPERM or EISDIR                merge !228
   * sysctl: Use options after --system                     Debian #978989
+  * top: provides for ignoring configuration file(s)       issue #365
+  * top: fix legacy configuration file vulnerability       issue #384
   * w: Add terminal mode to show all terminal sessions     issue #375
   * w: Use process TTY as backup for user TTY              Debian #1080335
   * watch: Add --follow option                             Debian #469156
