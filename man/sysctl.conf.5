@@ -1,6 +1,6 @@
 .\"
 .\" Copyright (c) 2016-2023 Jim Warner <james.warner@comcast.net>
-.\" Copyright (c) 2019-2024 Craig Small <csmall@dropbear.xyz>
+.\" Copyright (c) 2019-2025 Craig Small <csmall@dropbear.xyz>
 .\" Copyright (c) 2011-2012 Sami Kerola <kerolasa@iki.fi>
 .\" Copyright (c) 1999      George Staikos <staikos@0wned.org>
 .\"
@@ -10,7 +10,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH SYSCTL.CONF 5 2024-10-24 procps-ng
+.TH SYSCTL.CONF 5 2025-05-29 procps-ng
 .SH NAME
 sysctl.conf \- Linux kernel configuration parameters
 .SH DESCRIPTION
@@ -40,6 +40,10 @@ describes a kernel parameter in the following format.
 token = value
 .EE
 .RE
+.P
+.P
+There is no need to use quotation marks for \fIvalue\fR, even if the value
+is a list of items.
 .P
 Blank lines and lines that start with
 .RB \[lq] # \[rq]
@@ -96,6 +100,8 @@ entry length in the Linux kernel.
 kernel.domainname = example.com
 ; A value containing a space is written to the sysctl.
 kernel.modprobe = /sbin/mod probe
+# A list of items for the value
+net.ipv4.ip_local_reserved_ports=8080,9148
 .EE
 .SH "SEE ALSO"
 .BR sysctl.d (5),
