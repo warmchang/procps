@@ -11,7 +11,7 @@
 .\" (at your option) any later version.
 .\"
 .\"
-.TH W 1 2025-02-19 procps-ng
+.TH W 1 2025-05-29 procps-ng
 .SH NAME
 w \- Show who is logged on and what they are doing.
 .SH SYNOPSIS
@@ -118,6 +118,11 @@ Terminal device files scanned with \fB\-\-terminal\fR mode.
 When using \fB\-\-terminal\fP option,
 .B w
 assumes processes with a parent PID of 0 or 1 are
+.PP
+Idle time for users on certain sessions, such as X/Wayland sessions,
+will be incorrect. The \fB\-\-terminal\fR option will show the correct
+idle times for terminal sessions on X/Wayland.
+.PP
 .BR agetty (8)
 processes and will not display them. This is prone to both false postive
 and negative errors.
