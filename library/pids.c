@@ -906,8 +906,8 @@ static void pids_containers_check (void) {
     if (!sav_secs)
        sav_secs = cur_secs;
     else if (oneDAY <= (cur_secs - sav_secs)) {
-        lxc_containers(NULL, NULL);
-        docker_containers(NULL, NULL);
+        lxc_containers(NULL);
+        docker_containers(NULL);
         sav_secs = cur_secs;
     }
     return;

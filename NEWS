@@ -1,5 +1,7 @@
 procps-ng-NEXT
 ---------------
+  * library
+    internal: Use openat for files under /proc/<PID>
   * local: guard SIGPOLL for MacOS                         merge !246
   * pgrep: Fix unhex breakage for signal numbers           issue #369
   * pgrep: Match on process ID                             Debian #612146
