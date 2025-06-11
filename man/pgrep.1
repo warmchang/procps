@@ -10,7 +10,7 @@
 .\" the Free Software Foundation; either version 2 of the License, or
 .\" (at your option) any later version.
 .\"
-.TH PGREP 1 2025-04-23 procps-ng
+.TH PGREP 1 2025-06-11 procps-ng
 .SH NAME
 pgrep, pkill, pidwait \- look up, signal, or wait for processes based on name and other attributes
 .SH SYNOPSIS
@@ -67,6 +67,21 @@ mode only the long option can be used and has no effect unless used in conjuncti
 \fB\-\-require\-handler\fR to filter to processes with a userspace signal
 handler present for a particular signal.
 .TP
+\fB\-a\fR, \fB\-\-list\-full\fR
+List the full command line as well as the process ID.
+.RB ( pgrep
+only.)
+.TP
+\fB\-A\fR, \fB\-\-ignore-ancestors\fR\fR
+Ignore all ancestors of
+.BR pgrep ,
+.BR pkill ,
+or
+.BR pidwait .
+For example, this can be useful when elevating with
+.B sudo
+or similar tools.
+.TP
 \fB\-c\fR, \fB\-\-count\fR
 Suppress normal output; instead print a count of matching processes.  When
 count does not match anything, e.g. returns zero, the command will return
@@ -92,6 +107,16 @@ is normally only matched against the process name.  When
 .B \-f
 is set, the full command line is used.
 .TP
+\fB\-F\fR, \fB\-\-pidfile\fR \fIfile\fR
+Read \fIPID\fRs from \fIfile\fR.  This option is more useful for
+.B pkill
+or
+.B pidwait
+than
+.BR pgrep .
+The filename "\-" can be used to read from \fISTDIN\fR.
+Conflicts with the \fB\-\-pid\fR option.
+.TP
 \fB\-g\fR, \fB\-\-pgroup\fR \fIpgrp\fP,.\|.\|.
 Only match processes in the process group IDs listed.  Process group 0 is
 translated into
@@ -105,6 +130,10 @@ own process group.
 Only match processes whose real group ID is listed.  Either the numerical or
 symbolical value may be used.
 .TP
+\fB\-H\fR, \fB\-\-require\-handler\fR\fR
+Only match processes with a userspace signal handler present for the signal to
+be sent.
+.TP
 \fB\-i\fR, \fB\-\-ignore\-case\fR
 Match processes case-insensitively.
 .TP
@@ -113,10 +142,13 @@ List the process name as well as the process ID.
 .RB ( pgrep
 only.)
 .TP
-\fB\-a\fR, \fB\-\-list\-full\fR
-List the full command line as well as the process ID.
-.RB ( pgrep
-only.)
+\fB\-L\fR, \fB\-\-logpidfile\fR
+Fail if pidfile (see \fB\-F\fR) not locked.
+.TP
+\fB\-m\fR, \fB\-\-mrelease\fR
+After sending the signal, invoke the
+.BR process_mrelease ()
+system call to immediately free the target process's memory.
 .TP
 \fB\-n\fR, \fB\-\-newest\fR
 Select only the newest (most recently started) of the matching processes.
@@ -133,6 +165,28 @@ Only match processes whose process ID is listed. Conflicts with the
 .TP
 \fB\-P\fR, \fB\-\-parent\fR \fIppid\fP,.\|.\|.
 Only match processes whose parent process ID is listed.
+.TP
+\fB\-q\fR, \fB\-\-queue \fIvalue\fP
+Send the integer \fIvalue\fR along with the signal. This option will either
+use
+.BR pidfd_send_signal (2)
+with a value applied or
+.BR sigqueue (3)
+rather than
+.BR kill (2).
+If the receiving process has
+installed a handler for this signal using the SA_SIGINFO flag to
+.BR sigaction (2),
+then it can obtain this data via the si_value field of the
+siginfo_t structure.
+.TP
+\fB\-Q\fR, \fB\-\-shell\-quote\fR\fR
+Output the command line in shell-quoted form.
+.RB ( pgrep
+only.)
+.TP
+\fB\-r\fR, \fB\-\-runstates\fR \fID,R,S,Z,\fP.\|.\|.
+Match only processes which match the process state.
 .TP
 \fB\-s\fR, \fB\-\-session\fR \fIsid\fP,.\|.\|.
 Only match processes whose process session ID is listed.  Session ID 0
@@ -179,44 +233,9 @@ Only match processes whose names (or command lines if \fB\-f\fR is specified)
 match the
 .IR pattern .
 .TP
-\fB\-F\fR, \fB\-\-pidfile\fR \fIfile\fR
-Read \fIPID\fRs from \fIfile\fR.  This option is more useful for
-.B pkill
-or
-.B pidwait
-than
-.BR pgrep .
-The filename "\-" can be used to read from \fISTDIN\fR.
-Conflicts with the \fB\-\-pid\fR option.
-.TP
-\fB\-L\fR, \fB\-\-logpidfile\fR
-Fail if pidfile (see \fB\-F\fR) not locked.
-.TP
-\fB\-r\fR, \fB\-\-runstates\fR \fID,R,S,Z,\fP.\|.\|.
-Match only processes which match the process state.
-.TP
-\fB\-A\fR, \fB\-\-ignore-ancestors\fR\fR
-Ignore all ancestors of
-.BR pgrep ,
-.BR pkill ,
-or
-.BR pidwait .
-For example, this can be useful when elevating with
-.B sudo
-or similar tools.
-.TP
-\fB\-H\fR, \fB\-\-require\-handler\fR\fR
-Only match processes with a userspace signal handler present for the signal to
-be sent.
-.TP
-\fB\-Q\fR, \fB\-\-shell\-quote\fR\fR
-Output the command line in shell-quoted form.
-.RB ( pgrep
-only.)
-.TP
 \fB\-\-cgroup \fIname\fP,.\|.\|.
 Match on provided control group (cgroup) v2 name. See
-.BR cgroups (8)
+.BR cgroups (7)
 .TP
 \fB\-\-env \fIname\fR[\fI=value\fR],.\|.\|.
 Match on process that have these environment variables. If the \fI=value\fR
@@ -230,22 +249,6 @@ limit which namespaces to match.
 \fB\-\-nslist \fIname\fP,.\|.\|.
 Match only the provided namespaces. Available namespaces:
 ipc, mnt, net, pid, user, uts.
-.TP
-\fB\-q\fR, \fB\-\-queue \fIvalue\fP
-Use
-.BR sigqueue (3)
-rather than
-.BR kill (2)
-and the value argument is used to specify
-an integer to be sent with the signal. If the receiving process has
-installed a handler for this signal using the SA_SIGINFO flag to
-.BR sigaction (2),
-then it can obtain this data via the si_value field of the
-siginfo_t structure.
-.TP
-\fB\-m\fR, \fB\-\-mrelease\fR
-After sending the signal, invoke the process_mrelease system call to immediately free
-the target process's memory.
 .TP
 \fB\-V\fR, \fB\-\-version\fR
 Display version information and exit.
@@ -271,10 +274,10 @@ reread its configuration file:
 $ pkill \-HUP syslogd
 .PP
 Example 3: Give detailed information on all
-.B xterm
+.B bash
 processes:
 .IP
-$ ps \-fp $(pgrep \-d, \-x xterm)
+$ ps \-fp $(pgrep \-d, \-x bash)
 .PP
 Example 4: Make all
 .B chrome
@@ -320,6 +323,15 @@ match.
 The
 .B \-O \-\-older
 option will silently fail if \fI/proc\fR is mounted with the \fIsubset=pid\fR option.
+.PP
+.B pkill
+will attempt to use
+.BR pidfd_send_signal (2)
+instead of
+.BR kill (2)
+or
+.BR sigqueue (3)
+to send a signal to the target process if it is able to get the process file descriptor.
 .SH BUGS
 The options
 .B \-n
@@ -331,7 +343,7 @@ can not be combined.  Let
 me know if you need to do this.
 .PP
 If processes start in the same clock tick (usually but not always a 100th
-of a second, the options
+of a second), the options
 .B \-n
 and
 .B \-o
@@ -345,19 +357,18 @@ requires the
 .BR pidfd_open (2)
 system call which first appeared in Linux 5.3.
 .SH "SEE ALSO"
-.BR ps (1),
-.BR regex (7),
-.BR signal (7),
-.BR sigqueue (3),
 .BR killall (1),
-.BR skill (1),
 .BR kill (1),
+.BR ps (1),
+.BR skill (1),
 .BR kill (2),
-.BR cgroups (8).
-.SH AUTHOR
-.MT kjetilho@ifi.uio.no
-Kjetil Torgrim Homme
-.ME
+.BR sigaction (2),
+.BR pidfd_open (2),
+.BR pidfd_send_signal (2),
+.BR sigqueue (3),
+.BR cgroups (7),
+.BR regex (7),
+.BR signal (7)
 .SH "REPORTING BUGS"
 Please send bug reports to
 .MT procps@freelists.org

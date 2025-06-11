@@ -64,7 +64,7 @@ PROCPS_PROG_PO4A
 
 # Checks for header files.
 AC_HEADER_MAJOR
-AC_CHECK_HEADERS([arpa/inet.h err.h fcntl.h float.h langinfo.h libintl.h limits.h locale.h ncursesw/ncurses.h stdint.h stdio_ext.h stdlib.h string.h sys/file.h sys/ioctl.h sys/param.h sys/time.h termios.h unistd.h utmp.h utmpx.h values.h wchar.h wctype.h])
+AC_CHECK_HEADERS([arpa/inet.h err.h fcntl.h float.h langinfo.h libintl.h limits.h locale.h ncursesw/ncurses.h stdint.h stdio_ext.h stdlib.h string.h sys/file.h sys/ioctl.h sys/pidfd.h sys/param.h sys/time.h termios.h unistd.h utmp.h utmpx.h values.h wchar.h wctype.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_CHECK_HEADER_STDBOOL
@@ -314,7 +314,7 @@ AC_ARG_ENABLE([pidwait],
 )
 AM_CONDITIONAL(BUILD_PIDWAIT, test "x$enable_pidwait" = xyes)
 AC_MSG_CHECKING([for pidfd_open()])
-AC_LINK_IFELSE([AC_LANG_PROGRAM([], [[pidfd_open(1,1)]])],
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[#include <sys/pidfd.h>]], [[pidfd_open(1,1)]])],
   have_pidfd_open=yes; AC_DEFINE(HAVE_PIDFD_OPEN, 1, [pidfd_open is defined]) AC_MSG_RESULT([yes]),
   have_pidfd_open=no; AC_MSG_RESULT([no])
   )
@@ -439,7 +439,7 @@ then
 fi
 AC_SUBST(DEJAGNU)
 
-AC_CHECK_FUNCS([__fpending alarm atexit dup2 clock_gettime error error_at_line gethostname getpagesize gettimeofday iswprint memchr memmove memset mkdir nl_langinfo putenv regcomp rpmatch select setlocale sigabbrev_np strcasecmp strchr strcspn strdup strerror strncasecmp strndup strpbrk strrchr strspn strstr strtol strtoul strverscmp utmpname wcwidth])
+AC_CHECK_FUNCS([__fpending alarm atexit dup2 clock_gettime error error_at_line gethostname getpagesize gettimeofday iswprint memchr memmove memset mkdir nl_langinfo pidfd_send_signal putenv regcomp rpmatch select setlocale sigabbrev_np strcasecmp strchr strcspn strdup strerror strncasecmp strndup strpbrk strrchr strspn strstr strtol strtoul strverscmp utmpname wcwidth])
 
 AC_CONFIG_FILES([Makefile
                  local/Makefile

@@ -48,6 +48,9 @@
 #include <sys/epoll.h>
 #endif
 
+#ifdef HAVE_SYS_PIDFD_H
+#include <sys/pidfd.h>
+#endif
 /* EXIT_SUCCESS is 0 */
 /* EXIT_FAILURE is 1 */
 #define EXIT_USAGE 2
@@ -990,6 +993,23 @@ static int pidfd_open (pid_t pid, unsigned int flags)
 }
 #endif
 
+#ifndef HAVE_PIDFD_SEND_SIGNAL
+
+#ifndef __NR_pidfd_send_signal
+#ifdef __alpha__
+#define __NR_pidfd_send_signal 534
+#else
+#define __NR_pidfd_send_signal 424
+#endif
+#endif
+
+static int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
+        unsigned int flags)
+{
+    return syscall(SYS_pidfd_send_signal, pidfd, sig, info, flags);
+}
+#endif
+
 #if !defined(HAVE_PROCESS_MRELEASE)
 
 #ifndef __NR_process_mrelease
@@ -1306,8 +1326,24 @@ static void parse_opts (int argc, char **argv)
                      program_invocation_short_name);
 }
 
-inline static int execute_kill(pid_t pid, int sig_num)
+inline static int execute_kill(int pidfd, pid_t pid, int sig_num)
 {
+    if (pidfd >= 0) {
+        siginfo_t sinfo;
+        int rc;
+        if (use_sigqueue) {
+            memset(&sinfo, 0, sizeof(sinfo));
+            sinfo.si_code = SI_QUEUE;
+            sinfo.si_signo = sig_num;
+            sinfo.si_errno = 0;
+            sinfo.si_uid = getuid();
+            sinfo.si_pid = getpid();
+            sinfo.si_value.sival_int = sigval.sival_int;
+        }
+        rc = pidfd_send_signal(pidfd, sig_num, (use_sigqueue?&sinfo:NULL), 0);
+        if (rc == 0 || errno != ENOSYS)
+            return rc;
+    } // ENOSYS will fall through to below
     if (use_sigqueue)
         return sigqueue(pid, sig_num, sigval);
     else
@@ -1353,12 +1389,10 @@ int main (int argc, char **argv)
     case PKILL:
         for (i = 0; i < num; i++) {
             int pidfd = -1;
-            if (opt_mrelease) {
-                pidfd = pidfd_open(procs[i].num, 0);
-                if (pidfd < 0)
-                    err(EXIT_FAILURE, _("pidfd_open for process %ld failed"), procs[i].num);
-            }
-            if (execute_kill (procs[i].num, opt_signal) != -1) {
+            pidfd = pidfd_open(procs[i].num, 0);
+            if (opt_mrelease && pidfd < 0)
+                err(EXIT_FAILURE, _("pidfd_open for process %ld failed"), procs[i].num);
+            if (execute_kill (pidfd, procs[i].num, opt_signal) != -1) {
                 if (opt_echo)
                     printf(_("%s killed (pid %lu)\n"), procs[i].str, procs[i].num);
                 kill_count++;
