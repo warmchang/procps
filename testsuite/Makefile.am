@@ -21,7 +21,7 @@ DEJATOOL += \
 
 if !CYGWIN
 if WITH_NCURSES
-DEJATOOL += slabtop
+DEJATOOL += slabtop hugetop
 endif
 
 DEJATOOL += sysctl
@@ -37,7 +37,6 @@ endif
 
 DEJATOOL += \
 	free \
-	hugetop \
 	lib \
 	pgrep \
 	pkill \
