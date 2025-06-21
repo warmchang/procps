@@ -22,6 +22,7 @@ procps-ng-NEXT
   * top: fix legacy configuration file vulnerability       issue #384
   * w: Add terminal mode to show all terminal sessions     issue #375
   * w: Use process TTY as backup for user TTY              Debian #1080335
+  * w: Use correct return value for sd_get_sessions        Debian #1068904
   * watch: Add --follow option                             Debian #469156
   * watch: 256 color support                               issue #44
   * watch.1: Warn about -d permanent option                Debian #883638

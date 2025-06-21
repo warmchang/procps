@@ -1147,7 +1147,7 @@ int main(int argc, char **argv)
 	if (sd_booted() > 0)
 		sessions = sd_get_sessions (&sessions_list);
 
-	if (sessions < 0 && sessions != -ENOENT)
+	if (sessions < 0 && ( sessions != -ENOENT && sessions != -EPERM))
 		error(EXIT_FAILURE, -sessions, _("error getting sessions"));
 
 	if (sessions > 0) {
