@@ -979,27 +979,27 @@ static int signal_option(int *argc, char **argv)
 
 #if !defined(HAVE_PIDFD_OPEN)
 
-#ifndef __NR_pidfd_open
+#ifndef SYS_pidfd_open
 #ifdef __alpha__
-#define __NR_pidfd_open 544
+#define SYS_pidfd_open 544
 #else
-#define __NR_pidfd_open 434
+#define SYS_pidfd_open 434
 #endif
 #endif
 
 static int pidfd_open (pid_t pid, unsigned int flags)
 {
-	return syscall(__NR_pidfd_open, pid, flags);
+	return syscall(SYS_pidfd_open, pid, flags);
 }
 #endif
 
 #ifndef HAVE_PIDFD_SEND_SIGNAL
 
-#ifndef __NR_pidfd_send_signal
+#ifndef SYS_pidfd_send_signal
 #ifdef __alpha__
-#define __NR_pidfd_send_signal 534
+#define SYS_pidfd_send_signal 534
 #else
-#define __NR_pidfd_send_signal 424
+#define SYS_pidfd_send_signal 424
 #endif
 #endif
 
@@ -1012,17 +1012,17 @@ static int pidfd_send_signal(int pidfd, int sig, siginfo_t *info,
 
 #if !defined(HAVE_PROCESS_MRELEASE)
 
-#ifndef __NR_process_mrelease
+#ifndef SYS_process_mrelease
 #ifdef __alpha__
-#define __NR_process_mrelease 558
+#define SYS_process_mrelease 558
 #else
-#define __NR_process_mrelease 448
+#define SYS_process_mrelease 448
 #endif
 #endif
 
 static int process_mrelease(int pidfd, unsigned int flags)
 {
-	return syscall(__NR_process_mrelease, pidfd, flags);
+	return syscall(SYS_process_mrelease, pidfd, flags);
 }
 #endif
 
