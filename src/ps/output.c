@@ -1697,7 +1697,7 @@ static const format_struct format_array[] = { /*
 {"command",   "COMMAND", pr_args,          PIDS_CMDLINE,            27,    XXX,  PO|UNLIMITED}, /*args*/
 {"context",   "CONTEXT", pr_context,       PIDS_ID_TGID,            31,    LNX,  ET|LEFT},
 {"cp",        "CP",      pr_cp,            PIDS_UTILIZATION,         3,    DEC,  ET|RIGHT}, /*cpu*/
-{"cpu",       "CPU",     pr_nop,           PIDS_noop,                3,    BSD,  AN|RIGHT}, /* FIXME ... HP-UX wants this as the CPU number for SMP? */
+{"cpu",       "CPU",     pr_psr,           PIDS_PROCESSOR,           3,    BSD,  TO|RIGHT},
 {"cpuid",     "CPUID",   pr_psr,           PIDS_PROCESSOR,           5,    BSD,  TO|RIGHT}, // OpenBSD: 8 wide!
 {"cputime",   "TIME",    pr_time,          PIDS_TIME_ALL,            8,    DEC,  ET|RIGHT}, /*time*/
 {"cputimes",  "TIME",    pr_times,         PIDS_TIME_ALL,            8,    LNX,  ET|RIGHT}, /*time*/
