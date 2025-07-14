@@ -1185,6 +1185,13 @@ per\-mill (tenths of a percent) CPU usage.  (see
 .BR %cpu ).
 T}
 
+cpuid	CPUID	T{
+See
+.BR psr .
+(alias
+.BR lastcpu ", " psr ).
+T}
+
 cputime	TIME	T{
 cumulative CPU time, "[DD\-]hh:mm:ss" format.  (alias
 .BR time ).
@@ -1384,6 +1391,13 @@ security label, most commonly used for SELinux context data.  This is for
 the
 .I Mandatory Access Control
 ("MAC") found on high\-security systems.
+T}
+
+lastcpu	C	T{
+See
+.BR psr .
+(alias
+.BR cpuid ", " psr ).
 T}
 
 lstart	STARTED	T{
@@ -1592,6 +1606,8 @@ T}
 
 psr	PSR	T{
 processor that process last executed on.
+(alias
+.BR cpuid ", " lastcpu ).
 T}
 
 pss	PSS	T{
