@@ -303,17 +303,15 @@ static void simple_spew(void){
       pidlist[i] = selection_list->u[selection_list->n-i-1].pid;
     which = (thread_flags & (TF_loose_tasks|TF_show_task))
       ? PIDS_SELECT_PID_THREADS : PIDS_SELECT_PID;
-    pidread = procps_pids_select(Pids_info, pidlist, selection_list->n, which);
+    if ((pidread = procps_pids_select(Pids_info, pidlist, selection_list->n, which)) == NULL)
+        err(EXIT_FAILURE, _("Fatal library error, unable to select pids"));
     free(pidlist);
   } else {
     enum pids_fetch_type which;
     which = (thread_flags & (TF_loose_tasks|TF_show_task))
       ? PIDS_FETCH_THREADS_TOO : PIDS_FETCH_TASKS_ONLY;
-    pidread = procps_pids_reap(Pids_info, which);
-  }
-  if (!pidread) {
-    fprintf(stderr, _("fatal library error, reap\n"));
-    exit(EXIT_FAILURE);
+    if ((pidread = procps_pids_reap(Pids_info, which)) == NULL)
+        err(EXIT_FAILURE, _("Fatal library error, unable to reap pids"));
   }
 
   switch(thread_flags & (TF_show_proc|TF_loose_tasks|TF_show_task)){
