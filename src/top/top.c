@@ -5215,7 +5215,8 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
  #define maxRSVD ( Screen_rows - 1 )
    static int nsav;
    char tmp[SCREENMAX], *p;
-   int i, n, x;
+   size_t n;
+   int i, x;
 
    if (hdr) {
       // we're a little careless with overhead here (it's a one time cost)
@@ -5227,7 +5228,7 @@ static int bot_focus_strv (const char *hdr, const char **strv) {
          strcpy(Bot_buf, N_txt(X_BOT_nodata_txt));
       for (nsav= 0, p = Bot_buf, x = 0; strv[nsav] != NULL; nsav++) {
          p += strlen(strv[nsav]) + 1;
-         if ((p - Bot_buf) >= sizeof(Bot_buf))
+         if ((size_t)(p - Bot_buf) >= sizeof(Bot_buf))
             break;
          x += utf8_delta(strv[nsav]);
       }
