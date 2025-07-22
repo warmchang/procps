@@ -377,7 +377,7 @@ static struct el *read_pidfile(
         }
     if (check_lock) {
         int fd = fileno(fp);
-        if (fp < 0 || (!has_flock(fd) && !has_fcntl(fd))) {
+        if (fd < 0 || (!has_flock(fd) && !has_fcntl(fd))) {
             fclose(fp);
             err(EXIT_FAILURE, _("Locking check for pidfile failed"));
             return NULL;
