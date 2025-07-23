@@ -279,7 +279,7 @@ static void hg_states_new(struct nodes_hg_states *nodes)
 
 static void hg_states_free(struct nodes_hg_states *states)
 {
-	for (int n = 0; n < states->nr_nodes; n++) {
+	for (unsigned int n = 0; n < states->nr_nodes; n++) {
 		struct node_hg_states *node = &states->nodes[n];
 
 		free(node->state);
@@ -303,7 +303,7 @@ static void print_node(struct node_hg_states *node, int numa)
 		bytes = snprintf(line, cols, "node(s):");
 
 	/* append ' 2.0Mi - xxx/yyy, 1.0Gi - mmm/nnn' */
-	for (int i = 0; i < node->nr_hg_state; i++) {
+	for (unsigned int i = 0; i < node->nr_hg_state; i++) {
 		state = &node->state[i];
 		bytes += snprintf(line + bytes, cols - bytes, " %s - %ld/%ld",
 				scale_size(state->size, 3, 0, 1),
@@ -335,16 +335,16 @@ static void print_summary(void)
 	hg_states_new(&nodes);
 
 	if (numa) {
-		for (int n = 0; n < nodes.nr_nodes; n++) {
+		for (unsigned int n = 0; n < nodes.nr_nodes; n++) {
 			node = &nodes.nodes[n];
 			print_node(node, numa);
 		}
 	} else {
 		/* merge node[1-n] into node[0] */
 		node0 = &nodes.nodes[0];
-		for (int n = 1; n < nodes.nr_nodes; n++) {
+		for (unsigned int n = 1; n < nodes.nr_nodes; n++) {
 			node = &nodes.nodes[n];
-			for (int i = 0; i < node->nr_hg_state; i++) {
+			for (unsigned int i = 0; i < node->nr_hg_state; i++) {
 				struct hg_state *state = &node->state[i];
 				struct hg_state *state0 = &node0->state[i];
 

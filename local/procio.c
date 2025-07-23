@@ -59,8 +59,8 @@ FILE *fprocopen(const char *path, const char *mode)
 	pcookie_t *cookie = NULL;
 	FILE *handle = NULL;
 	mode_t flags = 0;
-	size_t len = 0;
-	int c, delim;
+	size_t c, len = 0;
+	int delim;
 
 	if (!mode || !(len = strlen(mode))) {
 		errno = EINVAL;
@@ -190,7 +190,7 @@ ssize_t proc_read(void *c, char *buf, size_t count)
 	}
 
 	len = count;
-	if (cookie->length - cookie->offset < len)
+	if (cookie->length - cookie->offset < (size_t)len)
 		len = cookie->length - cookie->offset;
 
 	if (len < 0)

@@ -726,7 +726,7 @@ static int write_setting_list(const SettingList *sl)
             if (glob(node->path, 0, NULL, &globbuf) != 0)
                 continue;
 
-            for(i=0; i < globbuf.gl_pathc; i++) {
+            for(i=0; i < (int)globbuf.gl_pathc; i++) {
                 if (settinglist_findpath(sl, globbuf.gl_pathv[i]))
                     continue; // override or exclude
 
@@ -789,7 +789,7 @@ static int Preload(SettingList *setlist, const char *restrict const filename)
 	if (globerr != 0 && globerr != GLOB_NOMATCH)
 		err(EXIT_FAILURE, _("glob failed"));
 
-	for (j = 0; j < globbuf.gl_pathc; j++) {
+	for (j = 0; j < (int)globbuf.gl_pathc; j++) {
 		fp = (globbuf.gl_pathv[j][0] == '-' && !globbuf.gl_pathv[j][1])
 		    ? stdin : fopen(globbuf.gl_pathv[j], "r");
 		if (!fp) {

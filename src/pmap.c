@@ -353,11 +353,11 @@ static void print_extended_maps (FILE *f)
 		}
 
 		/* Store maximum widths for printing nice later */
-		if (strlen(start ) > maxw1)	maxw1 = strlen(start);
-		if (strlen(perms ) > maxw2)	maxw2 = strlen(perms);
-		if (strlen(offset) > maxw3)	maxw3 = strlen(offset);
-		if (strlen(dev   ) > maxw4)	maxw4 = strlen(dev);
-		if (strlen(inode ) > maxw5)	maxw5 = strlen(inode);
+		if ((int)strlen(start ) > maxw1)	maxw1 = strlen(start);
+		if ((int)strlen(perms ) > maxw2)	maxw2 = strlen(perms);
+		if ((int)strlen(offset) > maxw3)	maxw3 = strlen(offset);
+		if ((int)strlen(dev   ) > maxw4)	maxw4 = strlen(dev);
+		if ((int)strlen(inode ) > maxw5)	maxw5 = strlen(inode);
 
 		ret = fgets(mapbuf, sizeof mapbuf, f);
 		nfields = ret ? sscanf(mapbuf, "%"DETL"[^:]: %"NUML"[0-9] kB %c",
