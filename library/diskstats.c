@@ -635,7 +635,7 @@ static int diskstats_stacks_fetch (
 
     // initialize stuff -----------------------------------
     if (!info->fetch.anchor) {
-        if (!(info->fetch.anchor = calloc(sizeof(void *), STACKS_INCR)))
+        if (!(info->fetch.anchor = calloc(STACKS_INCR, sizeof(void *))))
             return -ENOMEM;
         n_alloc = STACKS_INCR;
     }

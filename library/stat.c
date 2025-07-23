@@ -974,7 +974,7 @@ static int stat_stacks_fetch (
 
     // initialize stuff -----------------------------------
     if (!this->anchor) {
-        if (!(this->anchor = calloc(sizeof(void *), STACKS_INCR)))
+        if (!(this->anchor = calloc(STACKS_INCR, sizeof(void *))))
             return -1;
         n_alloc = STACKS_INCR;
     }
