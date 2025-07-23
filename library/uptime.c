@@ -232,7 +232,8 @@ static int snprint_uptime_only(
     if ( (l = snprintf(str + pos, size-pos, "%s%d %s", comma > 0 ? ", " : "", (VAL), (UNITS))) >= size) \
         return size; \
     else pos +=l
-    int pos=0, l;
+    size_t l;
+    int pos=0;
     int updecades = 0, upyears = 0, upweeks = 0, updays = 0, uphours = 0, upminutes = 0;
     int comma = 0;
 
@@ -329,7 +330,8 @@ PROCPS_EXPORT int procps_uptime_snprint(
         double uptime_secs,
         const int pretty)
 {
-    int l,pos=0;
+    size_t l;
+    int pos=0;
     time_t realseconds;
     struct tm realtime;
     int users;

@@ -557,7 +557,7 @@ static inline void stat_derive_unique (
         struct hist_tic *this)
 {
     unsigned long long *new, *old;
-    int i;
+    size_t i;
 
     /* note: we calculate these derived values in a manner consistent with
              the calculations for cgroup accounting, as nearly as possible
