@@ -255,29 +255,29 @@ struct field {
 	char *header;
 	int width;
 	int wide_width;		/* If -w option is given */
-	unsigned long value;	/* Set by program code, not initialized */
+	unsigned long value;	/* Set by program code */
 };
 
 static struct field fields[] = {
-	{ "r",		2,  4	},	/* fields[0] */
-	{ "b",		2,  4	},
-	{ "swpd",	6, 12	},
-	{ "free",	6, 12	},
-	{ "buff",	6, 12	},	/* modified to "inact" if a_option */
-	{ "cache",	6, 12	},	/* modified to "active" if a_option */
-	{ "si",		4,  4	},
-	{ "so",		4,  4	},
-	{ "bi",		5,  5	},
-	{ "bo",		5,  5	},
-	{ "in",		4,  4	},
-	{ "cs",		4,  4	},
-	{ "us",		2,  3	},
-	{ "sy",		2,  3	},
-	{ "id",		2,  3	},
-	{ "wa",		2,  3	},
-	{ "st",		2,  3	},
-	{ "gu",		2,  3	},	/* fields[17] */
-	{ NULL,		0,  0	}	/* Sentinel */
+	{ "r",		2,  4,	0 },	/* fields[0] */
+	{ "b",		2,  4,	0 },
+	{ "swpd",	6, 12,	0 },
+	{ "free",	6, 12,	0 },
+	{ "buff",	6, 12,	0 },	/* modified to "inact" if a_option */
+	{ "cache",	6, 12,	0 },	/* modified to "active" if a_option */
+	{ "si",		4,  4,	0 },
+	{ "so",		4,  4,	0 },
+	{ "bi",		5,  5,	0 },
+	{ "bo",		5,  5,	0 },
+	{ "in",		4,  4,	0 },
+	{ "cs",		4,  4,	0 },
+	{ "us",		2,  3,	0 },
+	{ "sy",		2,  3,	0 },
+	{ "id",		2,  3,	0 },
+	{ "wa",		2,  3,	0 },
+	{ "st",		2,  3,	0 },
+	{ "gu",		2,  3,	0 },	/* fields[17] */
+	{ NULL,		0,  0,	0 }	/* Sentinel */
 };
 
 static void new_header(void)
