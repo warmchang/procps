@@ -1875,17 +1875,20 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
             if (width >= snprintf(buf, sizeof(buf), "%lu:%02lu.%02lu", mins, secs % 60, cent))
                goto end_justifies;
          }
-      case TICS_AS_MINS:                        // fall through
+      // fall through
+      case TICS_AS_MINS:
          if (mins < mmLIMIT + 1) {
             if (width >= snprintf(buf, sizeof(buf), "%lu:%02lu", mins, secs % 60))
                goto end_justifies;
          }
-      case TICS_AS_HOUR:                        // fall through
+      // fall through
+      case TICS_AS_HOUR:
          if (hour < hhLIMIT + 1) {
             if (width >= snprintf(buf, sizeof(buf), "%lu,%02lu", hour, mins % 60))
                goto end_justifies;
          }
-      case TICS_AS_DAY1:                        // fall through
+      // fall through
+      case TICS_AS_DAY1:
          if (days < ddLIMIT + 1) {
             if (width >= snprintf(buf, sizeof(buf), DD "+" HH, days, hour % 24))
                goto end_justifies;
@@ -1893,21 +1896,24 @@ static const char *scale_tics (TIC_t tics, int width, int justr, int target) {
             if (width >= snprintf(buf, sizeof(buf), DD "+%lu", days, hour % 24))
                goto end_justifies;
 #endif
-      case TICS_AS_DAY2:                        // fall through
+      case TICS_AS_DAY2:
             if (width >= snprintf(buf, sizeof(buf), DD, days))
                goto end_justifies;
          }
-      case TICS_AS_WEEK:                        // fall through
+      // fall through
+      case TICS_AS_WEEK:
          if (width >= snprintf(buf, sizeof(buf), WW "+" DD, week, days % 7))
             goto end_justifies;
 #ifdef SCALE_POSTFX
          if (width >= snprintf(buf, sizeof(buf), WW "+%lu", week, days % 7))
             goto end_justifies;
 #endif
-      case TICS_AS_LAST:                        // fall through
+      // fall through
+      case TICS_AS_LAST:
          if (width >= snprintf(buf, sizeof(buf), WW, week))
             goto end_justifies;
-      default:                                  // fall through
+      // fall through
+      default:
          break;
    }
  #undef mmLIMIT
