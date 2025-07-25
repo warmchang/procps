@@ -46,7 +46,6 @@
 
 //#define UNREF_RPTHASH                // report hash details at uref() time
 
-#define FILL_ID_MAX  255               // upper limit with select of pid/uid
 #define STACKS_INIT  1024              // amount of initial stack allocation
 #define STACKS_GROW  128               // amount reap stack allocations grow
 #define NEWOLD_INIT  1024              // amount for initial hist allocation
@@ -100,6 +99,7 @@ struct pids_info {
     proc_t fetch_proc;                 // the proc_t used by pids_stacks_fetch
     SET_t *func_array;                 // extracted Item_table 'setsfunc' pointers
     int containers_yes;                // need to call pids_containers_check
+    unsigned *select_ids;              // copy of user 'these' (pids/uids)
 };
 
 
@@ -1449,6 +1449,9 @@ PROCPS_EXPORT int procps_pids_unref (
         if ((*info)->func_array)
             free((*info)->func_array);
 
+        if ((*info)->select_ids)
+            free((*info)->select_ids);
+
         numa_uninit();
 
         free(*info);
@@ -1639,14 +1642,13 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
         int numthese,
         enum pids_select_type which)
 {
-    unsigned ids[FILL_ID_MAX + 1];
     struct timespec ts;
     int rc;
 
     errno = EINVAL;
     if (info == NULL || these == NULL)
         return NULL;
-    if (numthese < 1 || numthese > FILL_ID_MAX)
+    if (numthese < 1)
         return NULL;
     if ((which != PIDS_SELECT_PID && which != PIDS_SELECT_UID)
     && ((which != PIDS_SELECT_PID_THREADS && which != PIDS_SELECT_UID_THREADS)))
@@ -1660,11 +1662,13 @@ PROCPS_EXPORT struct pids_fetch *procps_pids_select (
     if (info->containers_yes)
         pids_containers_check();
 
-    // this zero delimiter is really only needed with PIDS_SELECT_PID
-    memcpy(ids, these, sizeof(unsigned) * numthese);
-    ids[numthese] = 0;
+    // the zero delimiter is really only needed with PIDS_SELECT_PID
+    if (!(info->select_ids = realloc(info->select_ids, sizeof(unsigned) * (numthese + 1))))
+        return NULL;
+    memcpy(info->select_ids, these, sizeof(unsigned) * numthese);
+    info->select_ids[numthese] = 0;
 
-    if (!pids_oldproc_open(&info->fetch_PT, (info->oldflags | which), ids, numthese))
+    if (!pids_oldproc_open(&info->fetch_PT, (info->oldflags | which), info->select_ids, numthese))
         return NULL;
     info->read_something = (which & PIDS_FETCH_THREADS_TOO) ? readeither : readproc;
 
