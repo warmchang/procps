@@ -1433,7 +1433,7 @@ int main (int argc, char **argv)
                     warn(_("opening pid %ld failed"), procs[i].num);
                 continue;
             }
-            ev.events = EPOLLIN | EPOLLET;
+            ev.events = EPOLLIN | EPOLLET | EPOLLONESHOT;
             ev.data.fd = pidfd;
             if (epoll_ctl(epollfd, EPOLL_CTL_ADD, pidfd, &ev) != -1)
                 poll_count++;
