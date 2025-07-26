@@ -528,10 +528,11 @@ static int DisplayAll(const char *restrict const path)
 			rc2 = stat(tmpdir, &ts);
 			if (rc2 != 0) {
 				warn(_("cannot stat %s"), tmpdir);
+				rc |= EXIT_FAILURE;
 			} else {
 				if (S_ISDIR(ts.st_mode)) {
 					strcat(tmpdir, "/");
-					DisplayAll(tmpdir);
+					rc |= DisplayAll(tmpdir);
 				} else {
 					rc |=
 					    ReadSetting(tmpdir +
