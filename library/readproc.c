@@ -756,7 +756,7 @@ static void smaps2proc (const char *s, proc_t *restrict P) {
 
 static int file2str(int dirfd, const char *what, struct utlbuf_s *ub) {
  #define buffGRW 1024
-    int fd, num, tot_read = 0, len;
+    int fd, num, tot_read = 0;
 
     /* on first use we preallocate a buffer of minimum size to emulate
        former 'local static' behavior -- even if this read fails, that
@@ -869,7 +869,7 @@ static char **file2strvec(int dirfd, const char *what) {
     // generalized in support of these new libproc flags:
     //     PROC_EDITCGRPCVT, PROC_EDITCMDLCVT and PROC_EDITENVRCVT
 static int read_unvectored(char *restrict const dst, unsigned sz, int dirfd, const char *what, char sep) {
-    int fd, len;
+    int fd;
     unsigned n = 0;
 
     if(sz <= 0) return 0;
