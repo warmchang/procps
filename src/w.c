@@ -930,8 +930,8 @@ void print_user_terminals(
     pid_t last_pid;
     char cmdline[MAX_CMD_WIDTH+1];
     char ttyname[UT_NAMESIZE+1];
-    unsigned long long jcpu;
-    unsigned long long pcpu;
+    unsigned long long jcpu = 0;
+    unsigned long long pcpu = 0;
 
 
     if (!procps_pids_sort(pids_info,
