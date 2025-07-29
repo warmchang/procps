@@ -400,7 +400,7 @@ PROCPS_EXPORT char *procps_uptime_sprint(void)
 
     upbuf[0] = '\0';
     if (procps_uptime(&uptime_secs, NULL) < 0)
-        return shortbuf;
+        return upbuf;
 
     procps_uptime_snprint( upbuf, UPTIME_BUFLEN, uptime_secs, 0);
     return upbuf;
