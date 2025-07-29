@@ -4582,8 +4582,8 @@ static void win_names (WIN_t *q, const char *name) {
    /* note: sprintf/snprintf results are "undefined" when src==dst,
             according to C99 & POSIX.1-2001 (thanks adc) */
    if (q->rc.winname != name)
-      snprintf(q->rc.winname, sizeof(q->rc.winname), "%s", name);
-   snprintf(q->grpname, sizeof(q->grpname), "%d:%s", q->winnum, name);
+      snprintf(q->rc.winname, sizeof(q->rc.winname), "%.3s", name);
+   snprintf(q->grpname, sizeof(q->grpname), "%d:%.3s", q->winnum, name);
 } // end: win_names
 
 
