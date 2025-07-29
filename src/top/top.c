@@ -3702,8 +3702,8 @@ static void before (char *me) {
       behavior but we can't exploit that since we don't follow a normal
       ld route to symbol resolution (we use that dlopen() guy instead)! */
    Stderr_save = dup(fileno(stderr));
-   if (-1 < Stderr_save && freopen("/dev/null", "w", stderr))
-      ;                           // avoid -Wunused-result
+   if (-1 < Stderr_save)
+      freopen("/dev/null", "w", stderr);
 #endif
 
    // establish some cpu particulars
