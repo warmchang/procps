@@ -2,6 +2,7 @@ procps-ng-NEXT
 ---------------
   * library
     internal: Use openat for files under /proc/<PID>
+    internal: Don't check for sd_booted                    Debian #1108549
   * local: guard SIGPOLL for MacOS                         merge !246
   * pgrep: Fix unhex breakage for signal numbers           issue #369
   * pgrep: Match on process ID                             Debian #612146
@@ -24,6 +25,7 @@ procps-ng-NEXT
   * w: Add terminal mode to show all terminal sessions     issue #375
   * w: Use process TTY as backup for user TTY              Debian #1080335
   * w: Use correct return value for sd_get_sessions        Debian #1068904
+  * w: Don't check for sd_booted                           Debian #1108549
   * watch: Add --follow option                             Debian #469156
   * watch: 256 color support                               issue #44
   * watch.1: Warn about -d permanent option                Debian #883638
