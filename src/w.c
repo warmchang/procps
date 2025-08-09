@@ -898,6 +898,7 @@ void print_terminal_user(
     /* what */
     printf(" %.*s\n", maxcmd, cmdline);
     free(session);
+    (void)first_pid;
 }
 
 /*
