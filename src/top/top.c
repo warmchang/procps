@@ -5457,7 +5457,7 @@ static void help_view (void) {
    char key = 1;
 
    putp((Cursor_state = Cap_curs_huge));
-signify_that:
+signify_main:
    putp(Cap_clr_scr);
    adj_geometry();
 
@@ -5471,17 +5471,29 @@ signify_that:
    putp(Cap_clr_eos);
    fflush(stdout);
 
-   if (Frames_signal) goto signify_that;
+   if (Frames_signal) goto signify_main;
    key = iokey(IOKEY_ONCE);
    if (key < 1) goto signify_that;
 
    switch (key) {
-      // these keys serve the primary help screen
       case kbd_ESC: case 'q':
          break;
-      case '?': case 'h': case 'H':
+      case '?': case 'h':
          do {
 signify_this:
+            putp(Cap_clr_scr);
+            adj_geometry();
+            show_special(1, fmtmk(N_unq(SPECIAL_help_fmt)
+               , PACKAGE_STRING));
+            putp(Cap_clr_eos);
+            fflush(stdout);
+            if (Frames_signal || (key = iokey(IOKEY_ONCE)) < 1)
+               goto signify_this;
+         } while (key != kbd_ESC && key != 'q');
+         break;
+      case 'H':
+         do {
+signify_that:
             putp(Cap_clr_scr);
             adj_geometry();
             show_special(1, fmtmk(N_unq(WINDOWS_help_fmt)
@@ -5491,13 +5503,12 @@ signify_this:
             putp(Cap_clr_eos);
             fflush(stdout);
             if (Frames_signal || (key = iokey(IOKEY_ONCE)) < 1)
-               goto signify_this;
+               goto signify_that;
             else w = win_select(key);
-         // these keys serve the secondary help screen
          } while (key != kbd_ENTER && key != kbd_ESC && key != 'q');
          break;
       default:
-         goto signify_that;
+         goto signify_main;
    }
    // signal that we just corrupted entire screen
    Frames_signal = BREAK_screen;
