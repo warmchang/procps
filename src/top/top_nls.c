@@ -706,8 +706,8 @@ static void build_uniq_nlstab (void) {
       " ~1*~4  = , +   . Rebalance tasks:  '~1=~5' ~1Current~2 window; '~1+~5' ~1Every~2 window\n"
       "              (this also forces the ~1current~2 or ~1every~2 window to become visible)\n"
       "\n"
-      "In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the '~1a~2' and '~1w~2'\n"
-      "commands plus the 'g' sub-commands NOW.  Press <Enter> to make 'Current' ");
+      "In '~1A~2' mode, '~1*~4' keys are your ~1essential~2 commands.  Please try the 'a' and 'w'\n"
+      "commands or the 'g' command numbers NOW.  Press <Enter> to make 'Current' ");
 
 /* Translation Notes ------------------------------------------------
    .  The following 'Help for color mapping' simulated screen should
