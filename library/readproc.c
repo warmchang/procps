@@ -105,7 +105,9 @@ static inline void free_acquired (proc_t *p) {
     // so we'll follow the convention used elsewhere in this module ...
     p->ruser = p->suser = p->fuser
         = p->rgroup = p->sgroup = p->fgroup
+#ifndef FALSE_THREADS
         = p->supgid = p->supgrp
+#endif
         = str_none;
 }
 
@@ -312,16 +314,10 @@ ENTER(0x220);
             raw[u++] = c;
         }
         raw[u] = '\0';
-#ifdef FALSE_THREADS
-        if (!IS_THREAD(P)) {
-#endif
         if (!P->cmd) {
             escape_str(buf, raw, sizeof(buf));
             if (!(P->cmd = strdup(buf))) return 1;
         }
-#ifdef FALSE_THREADS
-        }
-#endif
         S--;   // put back the '\n' or '\0'
         continue;
     }
@@ -621,9 +617,6 @@ ENTER(0x160);
     S++;
     tmp = strrchr(S, ')');
     if (!tmp || !tmp[1]) return 0;
-#ifdef FALSE_THREADS
-    if (!IS_THREAD(P)) {
-#endif
     if (!P->cmd) {
        num = tmp - S;
        memcpy(raw, S, num);
@@ -631,9 +624,6 @@ ENTER(0x160);
        escape_str(buf, raw, sizeof(buf));
        if (!(P->cmd = strdup(buf))) return 1;
     }
-#ifdef FALSE_THREADS
-     }
-#endif
     S = tmp + 2;                 // skip ") "
 
     sscanf(S,
@@ -1447,9 +1437,6 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLGRP)
         t->egroup = pwcache_get_group(t->egid);
 
-#ifdef FALSE_THREADS
-    if (!IS_THREAD(t)) {
-#endif
     if (flags & PROC_FILLARG)                   // read /proc/#/task/#/cmdline
         if (!(t->cmdline_v = file2strvec(PT->taskfd, "cmdline")))
             rc += vectorize_dash_rc(&t->cmdline_v);
@@ -1475,9 +1462,6 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
         if (!(t->exe = readlink_exe(PT->taskfd)))
             rc += 1;
     }
-#ifdef FALSE_THREADS
-    }
-#endif
 
     if (flags & PROC_FILLOOM) {
         if (file2str(PT->taskfd, "oom_score", &ub) != -1)

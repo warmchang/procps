@@ -31,7 +31,8 @@
 #include "misc.h"
 
 // the following is development only, forcing display of "[ duplicate ENUM ]" strings
-// #define FALSE_THREADS        /* set most child string fields to NULL */
+// for the supgid and supgrp fields when displaying threads ...
+//#define FALSE_THREADS
 
 
 // This is to help document a transition from pid to tgid/tid caused
