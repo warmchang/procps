@@ -549,11 +549,11 @@ static int sd2proc (proc_t *restrict p) {
     uid_t uid;
 
     if (0 > sd_pid_get_machine_name(p->tid, &p->sd_mach)) {
-        if (!(p->sd_mach = strdup("-")))
+        if (!(p->sd_mach = strdup(str_none)))
             return 1;
     }
     if (0 > sd_pid_get_owner_uid(p->tid, &uid)) {
-        if (!(p->sd_ouid = strdup("-")))
+        if (!(p->sd_ouid = strdup(str_none)))
             return 1;
     } else {
         snprintf(buf, sizeof(buf), "%d", (int)uid);
@@ -561,23 +561,23 @@ static int sd2proc (proc_t *restrict p) {
             return 1;
     }
     if (0 > sd_pid_get_session(p->tid, &p->sd_sess)) {
-        if (!(p->sd_sess = strdup("-")))
+        if (!(p->sd_sess = strdup(str_none)))
             return 1;
-        if (!(p->sd_seat = strdup("-")))
+        if (!(p->sd_seat = strdup(str_none)))
             return 1;
     } else {
         if (0 > sd_session_get_seat(p->sd_sess, &p->sd_seat))
-            if (!(p->sd_seat = strdup("-")))
+            if (!(p->sd_seat = strdup(str_none)))
                 return 1;
     }
     if (0 > sd_pid_get_slice(p->tid, &p->sd_slice))
-        if (!(p->sd_slice = strdup("-")))
+        if (!(p->sd_slice = strdup(str_none)))
             return 1;
     if (0 > sd_pid_get_unit(p->tid, &p->sd_unit))
-        if (!(p->sd_unit = strdup("-")))
+        if (!(p->sd_unit = strdup(str_none)))
             return 1;
     if (0 > sd_pid_get_user_unit(p->tid, &p->sd_uunit))
-        if (!(p->sd_uunit = strdup("-")))
+        if (!(p->sd_uunit = strdup(str_none)))
             return 1;
 #else
     if (!(p->sd_mach  = strdup("?")))
@@ -933,7 +933,7 @@ char **vectorize_this_str (const char *src) {
     // This littl' guy just serves those true vectorized fields
     // ( when a /proc source field didn't exist )
 static int vectorize_dash_rc (char ***vec) {
-    if (!(*vec = vectorize_this_str("-")))
+    if (!(*vec = vectorize_this_str(str_none)))
         return 1;
     return 0;
 }
@@ -962,7 +962,7 @@ static int fill_cgroup_cvt (int dirfd, proc_t *restrict p) {
         dst += len;
         dst += escape_str(dst, grp, vMAX);
     }
-    if (!(p->cgroup = strdup(dst_buffer[0] ? dst_buffer : "-")))
+    if (!(p->cgroup = strdup(dst_buffer[0] ? dst_buffer : str_none)))
         return 1;
     name = strstr(p->cgroup, ":name=");
     if (name && *(name+6)) name += 6; else name = p->cgroup;
@@ -996,7 +996,7 @@ static int fill_environ_cvt (int dirfd, proc_t *restrict p) {
     dst_buffer[0] = '\0';
     if (read_unvectored(src_buffer, MAX_BUFSZ, dirfd, "environ", ' '))
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
-    p->environ = strdup(dst_buffer[0] ? dst_buffer : "-");
+    p->environ = strdup(dst_buffer[0] ? dst_buffer : str_none);
     if (!p->environ)
         return 1;
     return 0;
@@ -1180,7 +1180,7 @@ static char *readlink_exe (const int dirfd){
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
         return strdup(dst_buffer);
     }
-    return strdup("-");
+    return strdup(str_none);
 }
 
 
