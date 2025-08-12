@@ -105,10 +105,12 @@ struct pids_info {
 
 // ___ Free Storage Support |||||||||||||||||||||||||||||||||||||||||||||||||||
 
+extern char *str_none;
+
 #define freNAME(t) free_pids_ ## t
 
 static void freNAME(str) (struct pids_result *R) {
-    if (R->result.str) free(R->result.str);
+    if (R->result.str && R->result.str != str_none) free(R->result.str);
 }
 
 static void freNAME(strv) (struct pids_result *R) {
@@ -1067,10 +1069,12 @@ static inline void pids_libflags_set (
         info->oldflags |= Item_table[e].oldflags;
         info->history_yes |= Item_table[e].needhist;
     }
-    if (info->oldflags & f_either) {
-        if (!(info->oldflags & (f_stat | f_status)))
-            info->oldflags |= f_stat;
-    }
+//  note: the read of f_stat has been made unconditional in readproc.c
+//        so this logic is no longer useful ...
+//  if (info->oldflags & f_either) {
+//      if (!(info->oldflags & (f_stat | f_status)))
+//          info->oldflags |= f_stat;
+//  }
     info->containers_yes = info->oldflags & (f_lxc | z_docker);
     return;
 } // end: pids_libflags_set

@@ -79,6 +79,7 @@ struct utlbuf_s {
 
 static int task_dir_missing;
 
+char *str_none = "-";
 
 // free any additional dynamically acquired storage associated with a proc_t
 static inline void free_acquired (proc_t *p) {
@@ -96,9 +97,16 @@ static inline void free_acquired (proc_t *p) {
     if (p->sd_slice) free(p->sd_slice);
     if (p->sd_unit)  free(p->sd_unit);
     if (p->sd_uunit) free(p->sd_uunit);
-    if (p->supgid)   free(p->supgid);
+    if (p->supgid && p->supgid != str_none)  free(p->supgid);
 
     memset(p, '\0', sizeof(proc_t));
+
+    // if /proc/<pid>/status wasn't available we won't be calling the pwcache guys,
+    // so we'll follow the convention used elsewhere in this module ...
+    p->ruser = p->suser = p->fuser
+        = p->rgroup = p->sgroup = p->fgroup
+        = p->supgid = p->supgrp
+        = str_none;
 }
 
 static void close_dirfd(int *fd)
@@ -466,11 +474,8 @@ ENTER(0x220);
 #ifdef FALSE_THREADS
     if (!IS_THREAD(P)) {
 #endif
-    if (!P->supgid) {
-        P->supgid = strdup("-");
-        if (!P->supgid)
-            return 1;
-    }
+    if (!P->supgid)
+        P->supgid = str_none;
 #ifdef FALSE_THREADS
     }
 #endif
@@ -487,8 +492,10 @@ static int supgrps_from_supgids (proc_t *p) {
 #ifdef FALSE_THREADS
     if (IS_THREAD(p)) return 0;
 #endif
-    if (!p->supgid || '-' == *p->supgid)
+    if (!p->supgid || p->supgid == str_none)
         goto wrap_up;
+    // ensure we're not pointing to str_none ...
+    p->supgrp = NULL;
 
     s = p->supgid;
     t = 0;
@@ -515,9 +522,8 @@ static int supgrps_from_supgids (proc_t *p) {
     } while (*s);
 
 wrap_up:
-    if (!p->supgrp
-    && !(p->supgrp = strdup("-")))
-        return 1;
+    if (!p->supgrp)
+        p->supgrp = str_none;
     return 0;
 }
 
@@ -976,7 +982,7 @@ static int fill_cmdline_cvt (int dirfd, proc_t *restrict p) {
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
     else
         escape_command(dst_buffer, p, MAX_BUFSZ, uFLG);
-    p->cmdline = strdup(dst_buffer[0] ? dst_buffer : "?");
+    p->cmdline = strdup(dst_buffer[0] ? dst_buffer : str_none);
     if (!p->cmdline)
         return 1;
     return 0;
@@ -1248,11 +1254,14 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     p->euid = sb.st_uid;                        /* need a way to get real uid */
     p->egid = sb.st_gid;                        /* need a way to get real gid */
 
-    if (flags & PROC_FILLSTAT) {                // read /proc/#/stat
+    /* this attempted read of 'stat' is now unconditional to ensure a 'cmd' name
+       as a minimum. this prevents a NULL 'cmdline' pointer for kernel threads
+       in case the 'status' file is missing or not otherwise read ... */
+//  if (flags & PROC_FILLSTAT) {                // read /proc/#/stat
         if (file2str(PT->pidfd, "stat", &ub) == -1)
             goto next_proc;
         rc += stat2proc(ub.buf, p);
-    }
+//  }
 
     if (flags & PROC_FILLIO) {                  // read /proc/#/io
         if (file2str(PT->pidfd, "io", &ub) != -1)
@@ -1330,8 +1339,9 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLSYSTEMD)               // get sd-login.h stuff
         rc += sd2proc(p);
 
-    if (flags & (PROC_FILL_LXC | PROC_FILL_DOCKER)
-    && (file2str(PT->pidfd, "cgroup", &ub) > 0)) {
+    if (flags & (PROC_FILL_LXC | PROC_FILL_DOCKER)) {
+        // ok if nothing is read, an empty buffer will do just fine ...
+        file2str(PT->pidfd, "cgroup", &ub);
         if (flags & PROC_FILL_LXC)              // value the lxc name
             p->lxcname = lxc_containers(&ub);
         if (flags & PROC_FILL_DOCKER) {         // value the dockerids
@@ -1388,11 +1398,14 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     t->euid = sb.st_uid;                        /* need a way to get real uid */
     t->egid = sb.st_gid;                        /* need a way to get real gid */
 
-    if (flags & PROC_FILLSTAT) {                // read /proc/#/task/#/stat
+    /* this attempted read of 'stat' is now unconditional to ensure a 'cmd' name
+       as a minimum. this prevents a NULL 'cmdline' pointer for kernel threads
+       in case the 'status' file is missing or not otherwise read ... */
+//  if (flags & PROC_FILLSTAT) {                // read /proc/#/task/#/stat
         if (file2str(PT->taskfd, "stat", &ub) == -1)
             goto next_task;
         rc += stat2proc(ub.buf, t);
-    }
+//  }
 
     if (flags & PROC_FILLIO) {                  // read /proc/#/task/#/io
         if (file2str(PT->taskfd, "io", &ub) != -1)
@@ -1475,8 +1488,9 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILLNS)                    // read /proc/#/task/#/ns/*
         procps_ns_read_pid(t->tid, &(t->ns));
 
-    if (flags & (PROC_FILL_LXC | PROC_FILL_DOCKER)
-    && (file2str(PT->taskfd, "cgroup", &ub) > 0)) {
+    if (flags & (PROC_FILL_LXC | PROC_FILL_DOCKER)) {
+        // ok if nothing is read, an empty buffer will do just fine ...
+        file2str(PT->taskfd, "cgroup", &ub);
         if (flags & PROC_FILL_LXC)              // value the lxc name
             t->lxcname = lxc_containers(&ub);
         if (flags & PROC_FILL_DOCKER) {         // value the dockerids
