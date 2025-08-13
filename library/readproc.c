@@ -87,17 +87,17 @@ static inline void free_acquired (proc_t *p) {
      * here we free those items that might exist even when not explicitly |
      * requested by our caller.  it is expected that pid.c will then free |
      * any remaining dynamic memory which might be dangling off a proc_t. | */
-    if (p->cgname)   free(p->cgname);
-    if (p->cgroup)   free(p->cgroup);
-    if (p->cmd)      free(p->cmd);
-    if (p->sd_mach)  free(p->sd_mach);
-    if (p->sd_ouid)  free(p->sd_ouid);
-    if (p->sd_seat)  free(p->sd_seat);
-    if (p->sd_sess)  free(p->sd_sess);
-    if (p->sd_slice) free(p->sd_slice);
-    if (p->sd_unit)  free(p->sd_unit);
-    if (p->sd_uunit) free(p->sd_uunit);
-    if (p->supgid && p->supgid != str_none)  free(p->supgid);
+    if (p->cgname)  free(p->cgname);
+    if (p->cgroup)  free(p->cgroup);
+    if (p->cmd)     free(p->cmd);
+    if (p->sd_mach  && p->sd_mach  != str_none)  free(p->sd_mach);
+    if (p->sd_ouid  && p->sd_ouid  != str_none)  free(p->sd_ouid);
+    if (p->sd_seat  && p->sd_seat  != str_none)  free(p->sd_seat);
+    if (p->sd_sess  && p->sd_sess  != str_none)  free(p->sd_sess);
+    if (p->sd_slice && p->sd_slice != str_none)  free(p->sd_slice);
+    if (p->sd_unit  && p->sd_unit  != str_none)  free(p->sd_unit);
+    if (p->sd_uunit && p->sd_uunit != str_none)  free(p->sd_uunit);
+    if (p->supgid   && p->supgid   != str_none)  free(p->supgid);
 
     memset(p, '\0', sizeof(proc_t));
 
@@ -544,37 +544,31 @@ static int sd2proc (proc_t *restrict p) {
     char buf[64];
     uid_t uid;
 
-    if (0 > sd_pid_get_machine_name(p->tid, &p->sd_mach)) {
-        if (!(p->sd_mach = strdup(str_none)))
-            return 1;
-    }
+    if (0 > sd_pid_get_machine_name(p->tid, &p->sd_mach))
+        p->sd_mach = str_none;
+
     if (0 > sd_pid_get_owner_uid(p->tid, &uid)) {
-        if (!(p->sd_ouid = strdup(str_none)))
-            return 1;
+        p->sd_ouid = str_none;
     } else {
         snprintf(buf, sizeof(buf), "%d", (int)uid);
         if (!(p->sd_ouid = strdup(buf)))
             return 1;
     }
     if (0 > sd_pid_get_session(p->tid, &p->sd_sess)) {
-        if (!(p->sd_sess = strdup(str_none)))
-            return 1;
-        if (!(p->sd_seat = strdup(str_none)))
-            return 1;
+        p->sd_sess = str_none;
+        p->sd_seat = str_none;
     } else {
         if (0 > sd_session_get_seat(p->sd_sess, &p->sd_seat))
-            if (!(p->sd_seat = strdup(str_none)))
-                return 1;
+            p->sd_seat = str_none;
     }
     if (0 > sd_pid_get_slice(p->tid, &p->sd_slice))
-        if (!(p->sd_slice = strdup(str_none)))
-            return 1;
+        p->sd_slice = str_none;
+
     if (0 > sd_pid_get_unit(p->tid, &p->sd_unit))
-        if (!(p->sd_unit = strdup(str_none)))
-            return 1;
+        p->sd_unit = str_none;
+
     if (0 > sd_pid_get_user_unit(p->tid, &p->sd_uunit))
-        if (!(p->sd_uunit = strdup(str_none)))
-            return 1;
+        p->sd_uunit = str_none;
 #else
     if (!(p->sd_mach  = strdup("?")))
         return 1;
