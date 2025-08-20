@@ -5473,7 +5473,7 @@ signify_main:
 
    if (Frames_signal) goto signify_main;
    key = iokey(IOKEY_ONCE);
-   if (key < 1) goto signify_that;
+   if (key < 1) goto signify_main;
 
    switch (key) {
       case kbd_ESC: case 'q':
