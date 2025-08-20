@@ -1407,8 +1407,13 @@ There are two help levels available.
 The first will provide a reminder of all the basic \*(CIs.
 If \*(We is\fI secured\fR, that screen will be abbreviated.
 
-Typing \[oq]h\[cq] or \[oq]?\[cq] on that help screen will take you to
+Typing \[oq]h\[cq] or \[oq]?\[cq] on the primary help screen will take you to
+help for specialize keys.
+\*(XT 4d. BOTTOM WINDOW Commands for additional information.
+
+Typing \[oq]H\[cq] on the primary help screen will take you to
 help for those \*(CIs applicable to \*(AM.
+\*(XT 5. ALTERNATE-DISPLAY Provisions for additional information.
 
 .TP 7
 \ \ \ \fB=\fR\ \ :\fIExit-Display-Limits \fR
@@ -2075,28 +2080,28 @@ normal \*(We monitoring continues uninterrupted.
 Keying the\fI same\fR \[oq]Ctrl\[cq] command a second time removes that
 separate window as does the \[oq]=\[cq] command.
 
-.P
-\ \ \ \fB^A\fR\ \ :\fIDisplay-Capabilities \fR         (Ctrl key + \[oq]a\[cq])
-.br
-\ \ \ \fB^G\fR\ \ :\fIDisplay-Control-Groups \fR       (Ctrl key + \[oq]g\[cq])
-.br
-\ \ \ \fB^K\fR\ \ :\fIDisplay-Cmdline \fR              (Ctrl key + \[oq]k\[cq])
-.br
-\ \ \ \fB^L\fR\ \ :\fIDisplay-Logged-Messages \fR      (Ctrl key + \[oq]l\[cq])
-.br
-\ \ \ \fB^N\fR\ \ :\fIDisplay-Environment \fR          (Ctrl key + \[oq]n\[cq])
-.br
-\ \ \ \fB^P\fR\ \ :\fIDisplay-Namesspaces \fR          (Ctrl key + \[oq]p\[cq])
-.br
-\ \ \ \fB^U\fR\ \ :\fIDisplay-Supplementary-Groups \fR (Ctrl key + \[oq]u\[cq])
-.br
+The following are applied to the 1st task displayed. The Up/Down arrow keys
+will be important in choosing a target process as is a more stable display
+like forest view or a sort on PID or a larger delay interval.
 
-Except for the Ctrl+L command, all the above keys are applied to the first
-process displayed and will show that task's full (potentially wrapped) information.
-Thus, the Up/Down \*(KAs or their aliases will be important.
+.nf
+   \fB^A\fR\ \ :\fIDisplay-Capabilities \fR         (Ctrl key + \[oq]a\[cq])
+   \fB^G\fR\ \ :\fIDisplay-Control-Groups \fR       (Ctrl key + \[oq]g\[cq])
+   \fB^K\fR\ \ :\fIDisplay-Cmdline \fR              (Ctrl key + \[oq]k\[cq])
+   \fB^N\fR\ \ :\fIDisplay-Environment \fR          (Ctrl key + \[oq]n\[cq])
+   \fB^P\fR\ \ :\fIDisplay-Namesspaces \fR          (Ctrl key + \[oq]p\[cq])
+   \fB^U\fR\ \ :\fIDisplay-Supplementary-Groups \fR (Ctrl key + \[oq]u\[cq])
+.fi
 
-The \fBTab\fR key or \fBShift+Tab\fR combination can be used to highlight individual
-elements being displayed in the bottom window.
+This command is not associated with a specific task.
+Rather, up to 10 of the most recent messages issued by \*(We are recalled for review.
+
+.nf
+   \fB^L\fR\ \ :\fIDisplay-Logged-Messages \fR      (Ctrl key + \[oq]l\[cq])
+.fi
+
+The \fBTab\fR key (forward) or \fBShift+Tab\fR combination (backward) can be used to
+highlight individual elements being displayed in the bottom window.
 
 Notable among these provisions is the Ctrl+N (environment) command.
 Its output can be extensive and not easily read when line wrapped.
@@ -2109,11 +2114,6 @@ in the rcfile like the following.
 
 \*(XC \[oq]Y\[cq] \*(CI under 4a. GLOBAL Commands and topic
 6b. ADDING INSPECT Entries for additional information.
-
-Unlike the other commands, \fBCtrl+L\fR (logged messages) is not associated
-with a specific task.
-Rather, up to 10 of the most recent messages issued by \*(We are
-recalled for review.
 
 .\" ......................................................................
 .SS 4e. COLOR Mapping
