@@ -1185,11 +1185,18 @@ per\-mill (tenths of a percent) CPU usage.  (see
 .BR %cpu ).
 T}
 
+cpu	CPU	T{
+See
+.BR psr .
+(alias
+.BR cpuid ", " lastcpu ", " psr ).
+T}
+
 cpuid	CPUID	T{
 See
 .BR psr .
 (alias
-.BR lastcpu ", " psr ).
+.BR cpu ", " lastcpu ", " psr ).
 T}
 
 cputime	TIME	T{
@@ -1397,7 +1404,7 @@ lastcpu	C	T{
 See
 .BR psr .
 (alias
-.BR cpuid ", " psr ).
+.BR cpu ", " cpuid ", " psr ).
 T}
 
 lstart	STARTED	T{
@@ -1607,7 +1614,7 @@ T}
 psr	PSR	T{
 processor that process last executed on.
 (alias
-.BR cpuid ", " lastcpu ).
+.BR cpu ", " cpuid ", " lastcpu ).
 T}
 
 pss	PSS	T{
