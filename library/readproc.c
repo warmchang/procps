@@ -87,9 +87,10 @@ static inline void free_acquired (proc_t *p) {
      * here we free those items that might exist even when not explicitly |
      * requested by our caller.  it is expected that pid.c will then free |
      * any remaining dynamic memory which might be dangling off a proc_t. | */
-    if (p->cgname)  free(p->cgname);
-    if (p->cgroup)  free(p->cgroup);
-    if (p->cmd)     free(p->cmd);
+    if (p->cmd)    free(p->cmd);
+    if (p->cgname) free(p->cgname);
+
+    if (p->cgroup   && p->cgroup   != str_none)  free(p->cgroup);
     if (p->sd_mach  && p->sd_mach  != str_none)  free(p->sd_mach);
     if (p->sd_ouid  && p->sd_ouid  != str_none)  free(p->sd_ouid);
     if (p->sd_seat  && p->sd_seat  != str_none)  free(p->sd_seat);
@@ -946,8 +947,11 @@ static int fill_cgroup_cvt (int dirfd, proc_t *restrict p) {
         dst += len;
         dst += escape_str(dst, grp, vMAX);
     }
-    if (!(p->cgroup = strdup(dst_buffer[0] ? dst_buffer : str_none)))
-        return 1;
+    if (dst_buffer[0]) {
+        if (!(p->cgroup = strdup(dst_buffer)))
+            return 1;
+    } else
+        p->cgroup = str_none;
     name = strstr(p->cgroup, ":name=");
     if (name && *(name+6)) name += 6; else name = p->cgroup;
     if (!(p->cgname = strdup(name)))
@@ -966,9 +970,11 @@ static int fill_cmdline_cvt (int dirfd, proc_t *restrict p) {
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
     else
         escape_command(dst_buffer, p, MAX_BUFSZ, uFLG);
-    p->cmdline = strdup(dst_buffer[0] ? dst_buffer : str_none);
-    if (!p->cmdline)
-        return 1;
+    if (dst_buffer[0]) {
+        if (!(p->cmdline = strdup(dst_buffer)))
+            return 1;
+    } else
+        p->cmdline = str_none;
     return 0;
  #undef uFLG
 }
@@ -980,9 +986,11 @@ static int fill_environ_cvt (int dirfd, proc_t *restrict p) {
     dst_buffer[0] = '\0';
     if (read_unvectored(src_buffer, MAX_BUFSZ, dirfd, "environ", ' '))
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
-    p->environ = strdup(dst_buffer[0] ? dst_buffer : str_none);
-    if (!p->environ)
-        return 1;
+    if (dst_buffer[0]) {
+        if (!(p->environ = strdup(dst_buffer)))
+            return 1;
+    } else
+        p->environ = str_none;
     return 0;
 }
 
@@ -1164,7 +1172,7 @@ static char *readlink_exe (const int dirfd){
         escape_str(dst_buffer, src_buffer, MAX_BUFSZ);
         return strdup(dst_buffer);
     }
-    return strdup(str_none);
+    return str_none;
 }
 
 
