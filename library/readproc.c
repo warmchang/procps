@@ -1249,11 +1249,14 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     /* this attempted read of 'stat' is now unconditional to ensure a 'cmd' name
        as a minimum. this prevents a NULL 'cmdline' pointer for kernel threads
        in case the 'status' file is missing or not otherwise read ... */
-//  if (flags & PROC_FILLSTAT) {                // read /proc/#/stat
-        if (file2str(PT->pidfd, "stat", &ub) == -1)
-            goto next_proc;
-        rc += stat2proc(ub.buf, p);
-//  }
+    if (file2str(PT->pidfd, "stat", &ub) == -1)
+        goto next_proc;
+    rc += stat2proc(ub.buf, p);
+
+    if (PT->hide_kernel && (p->ppid == 2 || p->tid == 2)) {
+        free_acquired(p);
+        goto next_proc;
+    }
 
     if (flags & PROC_FILLIO) {                  // read /proc/#/io
         if (file2str(PT->pidfd, "io", &ub) != -1)
@@ -1357,14 +1360,8 @@ static proc_t *simple_readproc(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILL_FDS)                  // value the proc_t.fds field
         stat_fd(PT->pidfd, p);
 
-    // openproc() ensured that a ppid will be present when needed ...
-    if (rc == 0) {
-        if (PT->hide_kernel && (p->ppid == 2 || p->tid == 2)) {
-           free_acquired(p);
-           return NULL;
-        }
+    if (rc == 0)
         return p;
-    }
     errno = ENOMEM;
 next_proc:
     return NULL;
@@ -1393,11 +1390,14 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     /* this attempted read of 'stat' is now unconditional to ensure a 'cmd' name
        as a minimum. this prevents a NULL 'cmdline' pointer for kernel threads
        in case the 'status' file is missing or not otherwise read ... */
-//  if (flags & PROC_FILLSTAT) {                // read /proc/#/task/#/stat
-        if (file2str(PT->taskfd, "stat", &ub) == -1)
-            goto next_task;
-        rc += stat2proc(ub.buf, t);
-//  }
+    if (file2str(PT->taskfd, "stat", &ub) == -1)
+        goto next_task;
+    rc += stat2proc(ub.buf, t);
+
+    if (PT->hide_kernel && (t->ppid == 2 || t->tid == 2)) {
+        free_acquired(t);
+        goto next_task;
+    }
 
     if (flags & PROC_FILLIO) {                  // read /proc/#/task/#/io
         if (file2str(PT->taskfd, "io", &ub) != -1)
@@ -1495,14 +1495,8 @@ static proc_t *simple_readtask(PROCTAB *restrict const PT, proc_t *restrict cons
     if (flags & PROC_FILL_FDS)                  // value the proc_t.fds field
         stat_fd(PT->taskfd, t);
 
-    // openproc() ensured that a ppid will be present when needed ...
-    if (rc == 0) {
-        if (PT->hide_kernel && (t->ppid == 2 || t->tid == 2)) {
-           free_acquired(t);
-           return NULL;
-        }
+    if (rc == 0)
         return t;
-    }
     errno = ENOMEM;
 next_task:
     return NULL;
@@ -1711,12 +1705,8 @@ PROCTAB *openproc(unsigned flags, ...) {
     }
     va_end(ap);
 
-    if (hide_kernel > 0) {
+    if (hide_kernel > 0)
         PT->hide_kernel = 1;
-        // we'll need the ppid, ensure it's obtained via cheapest means ...
-        if (!(PT->flags & (PROC_FILLSTAT | PROC_FILLSTATUS)))
-            PT->flags |= PROC_FILLSTAT;
-    }
 
     if (!src_buffer
     && !(src_buffer = malloc(MAX_BUFSZ))) {
