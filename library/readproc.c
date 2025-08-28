@@ -1521,7 +1521,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
                 p->tid = p->tgid;
                 snprintf(path, PROCPATHLEN, "/proc/%d", p->tgid);
                 PT->pidfd = open(path, O_RDONLY | O_DIRECTORY);
-                return 1;
+                return (PT->pidfd != -1);
             }
         }
     }
