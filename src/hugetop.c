@@ -513,7 +513,7 @@ int main(int argc, char **argv)
 		FD_SET(STDIN_FILENO, &readfds);
 		tv.tv_sec = delay;
 		tv.tv_usec = 0;
-		if (select(STDOUT_FILENO, &readfds, NULL, NULL, &tv) > 0) {
+		if (select(STDIN_FILENO + 1, &readfds, NULL, NULL, &tv) > 0) {
 			if (read(STDIN_FILENO, &c, 1) != 1)
 				break;
 			parse_input(c);
