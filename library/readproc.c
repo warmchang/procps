@@ -134,7 +134,8 @@ static DIR* opendirat(
     int fd;
     DIR *dirp;
 
-   if ((fd = openat(dirfd, pathname, O_DIRECTORY | O_RDONLY)) < 0)
+   if ((dirfd < 0)
+   || ((fd = openat(dirfd, pathname, O_DIRECTORY | O_RDONLY)) < 0))
        return NULL;
    if ((dirp = fdopendir(fd)) == NULL) {
        int tmperrno = errno;
@@ -1521,7 +1522,7 @@ static int simple_nextpid(PROCTAB *restrict const PT, proc_t *restrict const p) 
                 p->tid = p->tgid;
                 snprintf(path, PROCPATHLEN, "/proc/%d", p->tgid);
                 PT->pidfd = open(path, O_RDONLY | O_DIRECTORY);
-                return (PT->pidfd != -1);
+                return 1;
             }
         }
     }
