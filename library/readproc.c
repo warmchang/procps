@@ -1568,7 +1568,7 @@ static int listed_nextpid (PROCTAB *PT, proc_t *p) {
   pid_t pid = *(PT->pids)++;
   char path[PROCPATHLEN];
 
-  if (pid) {
+  if (pid > 0) {
     snprintf(path, PROCPATHLEN, "/proc/%d", pid);
     PT->pidfd = open(path, O_RDONLY | O_DIRECTORY);
     p->tid = p->tgid = pid;        // this tgid may be a huge fib |
@@ -1681,7 +1681,7 @@ PROCTAB *openproc(unsigned flags, ...) {
     }
     PT->pidfd = -1;
     PT->taskdir = NULL;
-    PT->taskdir_user = -1;
+    PT->taskdir_user = -2;
     PT->taskfd = -1;
     PT->taskfinder = simple_nexttid;
     PT->taskreader = simple_readtask;
