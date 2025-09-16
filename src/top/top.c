@@ -4421,6 +4421,7 @@ static void parse_args (int argc, char **argv) {
                if (Monpidsidx >= MONPIDMAX)
                   error_exit(fmtmk(N_fmt(LIMIT_exceed_fmt), MONPIDMAX));
                if (1 != sscanf(cp, "%d", &pid)
+               || pid < 0
                || strpbrk(cp, "+-."))
                   error_exit(fmtmk(N_fmt(BAD_mon_pids_fmt), cp));
                if (!pid) pid = getpid();
