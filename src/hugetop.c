@@ -39,7 +39,6 @@
 #include <termios.h>
 #include <time.h>
 #include <unistd.h>
-#include <unistd.h>
 
 #include "c.h"
 #include "fileutils.h"
@@ -132,7 +131,7 @@ static void setup_hugepage()
 /*
  * term_size - set the globals 'cols' and 'rows' to the current terminal size
  */
-static void term_size(int unusused __attribute__ ((__unused__)))
+static void term_size(int unused __attribute__ ((__unused__)))
 {
 	struct winsize ws;
 
