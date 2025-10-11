@@ -1,7 +1,7 @@
 /*
  * stat.c - cpu/numa related definitions for libproc2
  *
- * Copyright © 2015-2024 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2025 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
@@ -43,8 +43,12 @@
 #define BUFFER_INCR   8192             // amount i/p buffer allocations grow
 #define STACKS_INCR   64               // amount reap stack allocations grow
 #define NEWOLD_INCR   64               // amount jiffs hist allocations grow
+#define THREAD_INCR   16               // amount core 'cpu' allocations grow
 
 #define ECORE_BEGIN   10               // PRETEND_E_CORES begin at this cpu#
+
+#define TYPE_E_CORE   1                // a TIC_TYPE_CORE, also # of threads
+#define TYPE_P_CORE   2                // a TIC_TYPE_CORE, also # of threads
 
 /* ------------------------------------------------------------------------- +
    this provision just does what its name sugggests - it will create several |
@@ -86,8 +90,9 @@ struct stat_jifs {
 struct stat_core {
     int id;
     int type;                          // 2 = p-core, 1 = e-core, 0 = unsure
-    int thread_1;
-    int thread_2;
+    int thread_cur;
+    int thread_max;
+    int *threads;
     struct stat_core *next;
 };
 
@@ -115,7 +120,6 @@ struct hist_tic {
     unsigned long edge;                // only valued/valid with cpu summary
 #endif
     struct stat_core *core;
-    int saved_id;
 };
 
 struct stacks_extent {
@@ -419,24 +423,27 @@ static inline void stat_assign_results (
 } // end: stat_assign_results
 
 
-#define E_CORE  1
-#define P_CORE  2
-#define VACANT -1
-
 static int stat_core_add (
         struct stat_info *info,
         int a_core,
         int a_cpu)
 {
     struct stat_core *last = NULL, *core = info->cores;
+    int i;
 
     while (core) {
         if (core->id == a_core) {
-            if (a_cpu == core->thread_1
-            || (a_cpu == core->thread_2))
-                return 1;
-            core->thread_2 = a_cpu;
-            core->type = P_CORE;
+            for (i = 0; i < core->thread_cur; i++) {
+                if (a_cpu == core->threads[i])
+                    return 1;
+            }
+            if (core->thread_cur >= core->thread_max) {
+                core->thread_max += THREAD_INCR;
+                if (!(core->threads = realloc(core->threads, core->thread_max * sizeof (int))))
+                    return 0;
+            }
+            core->threads[core->thread_cur] = a_cpu;
+            core->thread_cur += 1;
             return 1;
         }
         last = core;
@@ -444,16 +451,19 @@ static int stat_core_add (
     }
     if (!(core = calloc(1, sizeof(struct stat_core))))
         return 0;
+    if (!(core->threads = calloc(THREAD_INCR, sizeof(int))))
+        return 0;
+    core->thread_max = THREAD_INCR;
     if (last) last->next = core;
     else info->cores = core;
     core->id = a_core;
-    core->thread_1 = a_cpu;
-    core->thread_2 = VACANT;
+    core->threads[0] = a_cpu;
+    core->thread_cur = 1;
     return 1;
 } // end: stat_core_add
 
 
-static void stat_cores_check (
+static void stat_cores_classify (
     struct stat_info *info)
 {
     struct stat_core *core;
@@ -462,51 +472,77 @@ static void stat_cores_check (
 
     core = info->cores;
     while (core) {
-        if (core->type == P_CORE) {
+        if (core->thread_cur == 2) {
+            core->type = TYPE_P_CORE;
             p_core = 1;
-            break;
         }
         core = core->next;
     }
     if (p_core) {
         core = info->cores;
-        do {
-            if (core->thread_2 == VACANT)
-                core->type = E_CORE;
-        } while ((core = core->next));
+        while (core) {
+            if (core->thread_cur == 1)
+                core->type = TYPE_E_CORE;
+            core = core->next;
+        }
     }
 #else
     core = info->cores;
     while (core) {
-        core->type = P_CORE;
-        if (core->thread_1 >= ECORE_BEGIN
-        || (core->thread_2 >= ECORE_BEGIN))
-            core->type = E_CORE;
-        core = core->next;
-    }
-#endif
-} // end: stat_cores_check
-
-#undef E_CORE
-#undef P_CORE
-#undef VACANT
-
-
-static void stat_cores_link (
-        struct stat_info *info,
-        struct hist_tic *this)
-{
-    struct stat_core *core = info->cores;
-
-    while (core) {
-        if (this->id == core->thread_1
-        || (this->id == core->thread_2)) {
-            this->core = core;
-            break;
+        int i;
+        core->type = TYPE_P_CORE;
+        for (i = 0; i < core->thread_cur; i++) {
+            if (core->threads[i] >= ECORE_BEGIN)
+                core->type = TYPE_E_CORE;
         }
         core = core->next;
     }
+#endif
+} // end: stat_cores_classify
+
+
+static void stat_cores_link (
+        struct stat_info *info)
+{
+    struct stat_core *core;
+    struct hist_tic *cpu;
+    int i, j;
+
+    i = 0;
+    cpu = info->cpus.hist.tics;
+    do {
+        cpu->core = NULL;
+        core = info->cores;
+        while (core) {
+            for (j = 0; j < core->thread_cur; j++) {
+                if (cpu->id == core->threads[j]) {
+                    cpu->core = core;
+                    goto carry_on;
+                }
+            }
+            core = core->next;
+        }
+carry_on:
+        ++cpu;
+        ++i;
+    } while (i < info->cpus.hist.n_inuse);
+
 } // end: stat_cores_link
+
+
+static void stat_cores_reset (
+        struct stat_info *info)
+{
+    struct stat_core *core = info->cores;
+    int i;
+
+    while (core) {
+        for (i = 0; i < core->thread_max; i++)
+            core->threads[i] = -1;
+        core->thread_cur = 0;
+        core = core->next;
+    };
+} // end: stat_cores_reset
 
 
 static int stat_cores_verify (
@@ -548,7 +584,7 @@ static int stat_cores_verify (
     }
 wrap_up:
     fclose(fp);
-    stat_cores_check(info);
+    stat_cores_classify(info);
     return 1;
 } // end: stat_cores_verify
 
@@ -720,6 +756,7 @@ static int stat_read_failed (
     char *bp, *b;
     int i, rc, num, tot_read;
     unsigned long long llnum;
+    int refresh_cores = 0;
 
     if (!info->cpus.hist.n_alloc) {
         info->cpus.hist.tics = calloc(NEWOLD_INCR, sizeof(struct hist_tic));
@@ -798,8 +835,6 @@ reap_em_again:
     cpu_ptr = info->cpus.hist.tics + i;   // adapt to relocated if reap_em_again
 
     do {
-        static int once_sw;
-
         bp = 1 + strchr(bp, '\n');
         // remember this cpu from last time around
         memcpy(&cpu_ptr->old, &cpu_ptr->new, sizeof(struct stat_jifs));
@@ -820,18 +855,6 @@ reap_em_again:
                 break;                   // we must tolerate cpus taken offline
         }
         stat_derive_unique(cpu_ptr);
-
-        // force a one time core link for cpu0 (if possible) ...
-        if (!once_sw)
-            once_sw = cpu_ptr->saved_id = -1;
-
-        /* this happens if cpus are taken offline/brought back online
-           so we better force the proper current core association ... */
-        if (cpu_ptr->saved_id != cpu_ptr->id) {
-            cpu_ptr->saved_id = cpu_ptr->id;
-            cpu_ptr->core = NULL;
-            stat_cores_link(info, cpu_ptr);
-        }
 
 #ifdef CPU_IDLE_FORCED
         // first time through (that priming read) sum_ptr->edge will be zero |
@@ -855,16 +878,11 @@ reap_em_again:
 
     info->cpus.total = info->cpus.hist.n_inuse = sum_ptr->count = i;
     /* whoa, if a new cpu was brought online, we better
-       ensure that no new cores have now become visible */
-    if (info->cpu_count_hwm < info->cpus.total) {
-        /* next means it's not the first time, so we'll re-verify.
-           otherwise, procps_stat_new() already setup any cores so
-           that they could be linked above during tics processing. */
-        if (info->cpu_count_hwm) {
-            if (!stat_cores_verify(info))
-                return 1;
-        }
+       ensure that no new cores have now become visible
+       or become invisible when a cpu is taken offline. */
+    if (info->cpu_count_hwm != info->cpus.total) {
         info->cpu_count_hwm = info->cpus.total;
+        refresh_cores = 1;
     }
 
     // remember sys_hist stuff from last time around
@@ -902,6 +920,12 @@ reap_em_again:
         llnum--; //exclude itself
     info->sys_hist.new.procs_running = llnum;
 
+    if (refresh_cores) {
+        stat_cores_reset(info);
+        if (!stat_cores_verify(info))
+            return 1;
+        stat_cores_link(info);
+    }
     return 0;
 } // end: stat_read_failed
 
@@ -1111,12 +1135,6 @@ PROCPS_EXPORT int procps_stat_new (
 
     numa_init();
 
-    // identify the current P-cores and E-cores, if any
-    if (!stat_cores_verify(p)) {
-        procps_stat_unref(&p);
-        return -errno;
-    }
-
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
          2) make delta results potentially useful, even if 1st time |
@@ -1191,6 +1209,7 @@ PROCPS_EXPORT int procps_stat_unref (
             struct stat_core *next, *this = (*info)->cores;
             while (this) {
                 next = this->next;
+                if (this->threads) free(this->threads);
                 free(this);
                 this = next;
            };
