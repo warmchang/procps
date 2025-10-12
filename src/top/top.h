@@ -120,7 +120,7 @@ char *strcasestr(const char *haystack, const char *needle);
         /* Length of time a message is displayed and the duration
            of a 'priming' wait during library startup (in microseconds) */
 #define MSG_USLEEP  1250000
-#define LIB_USLEEP  100000
+#define LIB_USLEEP  200000
 
         /* Specific process id monitoring support (command line only) */
 #define MONPIDMAX  20
@@ -190,10 +190,6 @@ char *strcasestr(const char *haystack, const char *needle);
 #define kbd_CtrlP  '\020'
 #define kbd_CtrlR  '\022'
 #define kbd_CtrlU  '\025'
-
-        /* Special value in Pseudo_row to force an additional procs refresh
-           -- used at startup and for task/thread mode transitions */
-#define PROC_XTRA  -1
 
 
 /* #####  Enum's and Typedef's  ############################################ */
@@ -708,6 +704,7 @@ typedef struct WIN_t {
 //atic void         *cpus_refresh (void *unused);
 //atic void         *memory_refresh (void *unused);
 //atic void         *tasks_refresh (void *unused);
+//atic void          usleep_refresh (void);
 /*------  Inspect Other Output  ------------------------------------------*/
 //atic void          insp_cnt_nl (void);
 #ifndef INSP_OFFDEMO

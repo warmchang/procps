@@ -180,7 +180,7 @@ static int   Cap_can_goto = 0;
            The Stdout_buf is transparent to our code and regardless of whose
            buffer is used, stdout is flushed at frame end or if interactive. */
 static char  *Pseudo_screen;
-static int    Pseudo_row = PROC_XTRA;
+static int    Pseudo_row;
 static size_t Pseudo_size;
 #ifndef OFF_STDIOLBF
         // less than stdout's normal buffer but with luck mostly '\n' anyway
@@ -2889,6 +2889,20 @@ static void *tasks_refresh (void *unused) {
  #undef nALGN2
  #undef n_reap
 } // end: tasks_refresh
+
+
+        /*
+         * This guy is available to effectively force a task priming read then
+         * wait LIB_USLEEP to avoid delta value distortions in the next frame. */
+static void usleep_refresh (void) {
+#ifdef THREADED_TSK
+   sem_post(&Semaphore_tasks_beg);
+   sem_wait(&Semaphore_tasks_end);
+#else
+   tasks_refresh(NULL);
+#endif
+   usleep(LIB_USLEEP);
+} // end: usleep_refresh
 
 /*######  Inspect Other Output  ##########################################*/
 
@@ -3776,13 +3790,11 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(X_THREADINGS_fmt), __LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_tasks, "update tasks");
 #endif
+
    // lastly, establish support for graphing cpus & memory
    Graph_cpus = alloc_c(sizeof(struct graph_parms));
    Graph_mems = alloc_c(sizeof(struct graph_parms));
  #undef doALL
-
-   // don't distort startup cpu(s) display ...
-   usleep(LIB_USLEEP);
 } // end: before
 
 
@@ -5738,8 +5750,8 @@ static void keys_global (int ch) {
                , Thread_mode ? N_txt(ON_word_only_txt) : N_txt(OFF_one_word_txt)));
          for (i = 0 ; i < GROUPSMAX; i++)
             Winstk[i].begtask = Winstk[i].focus_pid = 0;
-         // force an extra procs refresh to avoid %cpu distortions...
-         Pseudo_row = PROC_XTRA;
+         // do an extra procs refresh to avoid %cpu distortions...
+         usleep_refresh();
          // signal that we just corrupted entire screen
          Frames_signal = BREAK_screen;
          break;
@@ -7407,18 +7419,7 @@ static void frame_make (void) {
 #endif
    }
 
-   // whoa either first time or thread/task mode change, (re)prime the pump...
-   if (Pseudo_row == PROC_XTRA) {
-      usleep(LIB_USLEEP);
-#ifdef THREADED_TSK
-      sem_wait(&Semaphore_tasks_end);
-      sem_post(&Semaphore_tasks_beg);
-#else
-      tasks_refresh(NULL);
-#endif
-      putp(Cap_clr_scr);
-   } else
-      putp(Batch ? "\n\n" : Cap_home);
+   putp(Batch ? "\n\n" : Cap_home);
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
@@ -7478,6 +7479,7 @@ int main (int argc, char *argv[]) {
    whack_terminal();                    //                 > more stuff. <
    wins_stage_2();                      //                 as bottom slice
                                         //                 +-------------+
+   usleep_refresh();
 
    for (;;) {
       struct timespec ts;
