@@ -26,6 +26,7 @@ procps-ng-NEXT
   * top: fix legacy configuration file vulnerability       issue #384
   * top: added a new help screen for specialized keys
   * top: avoid potential segfault due to library race      issue #390
+  * top: new feature to show physical core percentages
   * w: Add terminal mode to show all terminal sessions     issue #375
   * w: Use process TTY as backup for user TTY              Debian #1080335
   * w: Use correct return value for sd_get_sessions        Debian #1068904

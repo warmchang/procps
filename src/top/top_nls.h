@@ -1,6 +1,6 @@
 /* top_nls.h - provide the basis for future nls translations */
 /*
- * Copyright © 2011-2024 Jim Warner <james.warner@comcast.net
+ * Copyright © 2011-2025 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -81,13 +81,13 @@ enum norm_nls {
    RC_bad_files_fmt, SCROLL_coord_fmt, SELECT_clash_txt, THREADS_show_fmt,
    TIME_accumed_fmt, UNKNOWN_cmds_txt, UNKNOWN_opts_fmt, VERSION_opts_fmt,
    WORD_abv_mem_txt, WORD_abv_swp_txt, WORD_allcpus_txt, WORD_another_txt,
-   WORD_eachcpu_fmt, WORD_exclude_txt, WORD_include_txt, WORD_noneone_txt,
-   WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt, XTRA_args_no_fmt,
-   XTRA_badflds_fmt, XTRA_fixwide_fmt, XTRA_modebad_txt, XTRA_vforest_fmt,
-   XTRA_warncfg_txt, XTRA_warnold_txt, XTRA_winsize_txt, X_BOT_capprm_fmt,
-   X_BOT_cmdlin_fmt, X_BOT_ctlgrp_fmt, X_BOT_envirn_fmt, X_BOT_msglog_txt,
-   X_BOT_namesp_fmt, X_BOT_nodata_txt, X_BOT_supgrp_fmt, X_RESTRICTED_txt,
-   X_SEMAPHORES_fmt, X_THREADINGS_fmt,
+   WORD_core_vs_fmt, WORD_eachcpu_fmt, WORD_exclude_txt, WORD_include_txt,
+   WORD_noneone_txt, WORD_process_txt, WORD_threads_txt, WRITE_rcfile_fmt,
+   XTRA_args_no_fmt, XTRA_badflds_fmt, XTRA_fixwide_fmt, XTRA_modebad_txt,
+   XTRA_vforest_fmt, XTRA_warncfg_txt, XTRA_warnold_txt, XTRA_winsize_txt,
+   X_BOT_capprm_fmt, X_BOT_cmdlin_fmt, X_BOT_ctlgrp_fmt, X_BOT_envirn_fmt,
+   X_BOT_msglog_txt, X_BOT_namesp_fmt, X_BOT_nodata_txt, X_BOT_supgrp_fmt,
+   X_CORE_wrong_txt, X_RESTRICTED_txt, X_SEMAPHORES_fmt, X_THREADINGS_fmt,
    YINSP_demo01_txt, YINSP_demo02_txt, YINSP_demo03_txt, YINSP_deqfmt_txt,
    YINSP_deqtyp_txt, YINSP_dstory_txt,
    YINSP_failed_fmt, YINSP_noent1_txt, YINSP_noent2_txt, YINSP_pidbad_fmt,

@@ -1,6 +1,6 @@
 /* top_nls.c - provide the basis for future nls translations */
 /*
- * Copyright © 2011-2024 Jim Warner <james.warner@comcast.net
+ * Copyright © 2011-2025 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -613,6 +613,8 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[X_BOT_supgrp_fmt] = _("supplementary groups for pid %d, %s");
    Norm_nlstab[X_BOT_msglog_txt] = _("message log, last 10 messages:");
    Norm_nlstab[XTRA_args_no_fmt] = _("option '%s' must be used alone");
+   Norm_nlstab[WORD_core_vs_fmt] = _("Core%-3d:");
+   Norm_nlstab[X_CORE_wrong_txt] = _("sorry, system cpu core data is unavailable");
 }
 
 
@@ -678,10 +680,10 @@ static void build_uniq_nlstab (void) {
       "\n"
       "%s"
       "  Y,^E      Inspect a task '~1Y~2'; Scale process time '~1^E~2'\n"
-      "  !         Progressively Combine Cpus '~1!~2'\n"
+      "  !,^       Progressively Combine Cpus '~1!~2'; Display Cores vs. Cpus '~1^~2' \n"
       "  W         Write config file '~1W~2'\n"
       "\n"
-      "Press '~1h~2' for help with ~1Specialized~2 keys, '~1H~2' for help  with ~1Windows~2,\n"
+      "Press '~1h~2' for help with ~1Specialized~2 keys, '~1H~2' for help with ~1Windows~2,\n"
       "Type 'q' or <Esc> to continue ");
 
    Uniq_nlstab[SPECIAL_help_fmt] = _(""

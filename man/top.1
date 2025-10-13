@@ -1361,7 +1361,7 @@ depending on the context in which they are issued.
         A, B, d, E, e, g, H, h, I, k, q, r, s, W, X, Y, Z,
         ^E, ^R
   4b.\fI Summary-Area-Commands \fR
-        C, l, t, m, 1, 2, 3, 4, 5, !
+        C, l, t, m, 1, 2, 3, 4, 5, !, ^
   4c.\fI Task-Area-Commands \fR
         Appearance:  b, J, j, x, y, z
         Content:     c, F, f, O, o, S, U, u, V, v
@@ -1818,6 +1818,18 @@ Such progression continues until individual \*(Pus are again displayed
 and impacts both the \[oq]1\[cq] and \[oq]4\[cq] toggles
 (one or multiple columns).
 Use the \[oq]=\[cq] command to exit \fBCombine Cpus\fR mode.
+
+.TP 7
+\ \ \ \fB^\fR\ \ :\fIShow-Cores-vs-Cpus\fR toggle \fR
+Modern platforms typically implement a form of Simultaneous Multithreading
+(SMT) that allows multiple threads to be executed simultaneously on a
+single physical core.
+Two threads per core is the most common.
+However, some enterprise and specialized architectures support higher
+thread counts.
+
+This \*(CT is used to display the utilization of physical \*(PU cores
+rather than individually reported \*(PUs or threads.
 
 .PP
 \*(NT If the entire \*(SA has been toggled \*F for any window, you would

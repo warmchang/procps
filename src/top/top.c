@@ -1,6 +1,6 @@
 /* top.c - Source file:         show Linux processes */
 /*
- * Copyright © 2002-2024 Jim Warner <james.warner@comcast.net
+ * Copyright © 2002-2025 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -283,6 +283,7 @@ static struct pids_fetch *Pids_reap;        // for reap or select
 static struct stat_info *Stat_ctx;
 static struct stat_reaped *Stat_reap;
 static enum stat_item Stat_items[] = {
+   STAT_TIC_ID_CORE,
    STAT_TIC_ID,             STAT_TIC_NUMA_NODE,
    STAT_TIC_DELTA_USER,     STAT_TIC_DELTA_SYSTEM,
    STAT_TIC_DELTA_NICE,     STAT_TIC_DELTA_IDLE,
@@ -295,6 +296,7 @@ static enum stat_item Stat_items[] = {
    STAT_TIC_SUM_DELTA_TOTAL, STAT_TIC_TYPE_CORE };
 #endif
 enum Rel_statitems {
+   stat_COR_ID,
    stat_ID, stat_NU,
    stat_US, stat_SY,
    stat_NI, stat_IL,
@@ -4362,6 +4364,7 @@ static void parse_args (int argc, char **argv) {
             else TOGw(Curwin, View_CPUSUM);
             OFFw(Curwin, View_CPUNOD);
             SETw(Curwin, View_STATES);
+            Curwin->rc.cores_vs_cpus = 0;
             break;
          case 'A':
             if (argc > 2)
@@ -4615,6 +4618,7 @@ static void win_reset (WIN_t *q) {
          q->findstr[0] = '\0';
          q->rc.combine_cpus = 0;
          q->rc.core_types = 0;
+         q->rc.cores_vs_cpus = 0;
 
          // these next guys are global, not really windows based
          Monpidsidx = 0;
@@ -5881,14 +5885,37 @@ static void keys_summary (int ch) {
    }
    switch (ch) {
       case '!':
-         if (CHKw(w, View_CPUSUM) || CHKw(w, View_CPUNOD))
+         if (w->rc.cores_vs_cpus)
             show_msg(N_txt(XTRA_modebad_txt));
          else {
+            OFFw(w, View_CPUSUM | View_CPUNOD);
+            w->rc.core_types = 0;
             if (!w->rc.combine_cpus) w->rc.combine_cpus = 2;
             else w->rc.combine_cpus *= 2;
             if (w->rc.combine_cpus >= Cpu_cnt) w->rc.combine_cpus = 0;
-            w->rc.core_types = 0;
          }
+         break;
+      case '^':
+#ifndef PRETEND48CPU
+         if (w->rc.combine_cpus)
+            show_msg(N_txt(XTRA_modebad_txt));
+         else {
+            int i;
+            for (i = 0; i < Cpu_cnt; i++) {
+               // careful, -1 is from the library and -2 is used by sum_versus() ...
+               if (Stat_reap->cpus->stacks[i]->head[stat_COR_ID].result.s_int == -1) {
+                  show_msg(N_txt(X_CORE_wrong_txt));
+                  return;
+               }
+            }
+            OFFw(w, View_CPUSUM | View_CPUNOD);
+            w->rc.core_types = 0;
+            if (!w->rc.cores_vs_cpus) w->rc.cores_vs_cpus = 1;
+            else w->rc.cores_vs_cpus = 0;
+         }
+#else
+         show_msg(N_txt(X_CORE_wrong_txt));
+#endif
          break;
       case '1':
          if (CHKw(w, View_CPUNOD)) OFFw(w, View_CPUSUM);
@@ -5897,6 +5924,8 @@ static void keys_summary (int ch) {
          SETw(w, View_STATES);
          w->rc.double_up = 0;
          w->rc.core_types = 0;
+         w->rc.combine_cpus = 0;
+         w->rc.cores_vs_cpus = 0;
          break;
       case '2':
          if (!Numa_node_tot)
@@ -5908,6 +5937,8 @@ static void keys_summary (int ch) {
             Numa_node_sel = -1;
             w->rc.double_up = 0;
             w->rc.core_types = 0;
+            w->rc.combine_cpus = 0;
+            w->rc.cores_vs_cpus = 0;
          }
          break;
       case '3':
@@ -5922,6 +5953,8 @@ static void keys_summary (int ch) {
                   OFFw(w, View_CPUSUM);
                   w->rc.double_up = 0;
                   w->rc.core_types = 0;
+                  w->rc.combine_cpus = 0;
+                  w->rc.cores_vs_cpus = 0;
                } else
                   show_msg(N_txt(NUMA_nodebad_txt));
             }
@@ -5952,7 +5985,10 @@ static void keys_summary (int ch) {
                w->rc.core_types += 1;
                if (w->rc.core_types > E_CORES_ONLY)
                   w->rc.core_types = 0;
-           } else w->rc.core_types = 0;
+           } else {
+              w->rc.core_types = 0;
+              show_msg(N_txt(X_CORE_wrong_txt));
+           }
          }
          break;
 #endif
@@ -6543,6 +6579,57 @@ static int sum_unify (struct stat_stack *this, int nobuf) {
    return 0;
  #undef rSv
 } // end: sum_unify
+
+
+        /*
+         * Cpu *Helper* function that will consolidate threads as a cpu core |
+         * in our effort to reduce the total number of processors displayed. | */
+static int sum_versus (void) {
+ // a stat_COR_ID of -1 is from the library so we'll use -2 to denote 'ignore'
+ #define gotTHIS -2
+  // a tailored 'results stack value' extractor macro that allows assigment
+ #define rXv(E,T,X)  Stat_reap->cpus->stacks[X]->head[E].result.T
+   static struct stat_result stack[MAXTBL(Stat_items)];
+   static struct stat_stack core = { &stack[0] };
+   int a_core, found, i, j, n;
+   char pfx[16];
+
+   n = found = 0;
+   for (i = 0; i < Cpu_cnt; i++) {
+      if (rXv(stat_COR_ID, s_int, i) == gotTHIS)
+         continue;
+      a_core = rXv(stat_COR_ID, s_int, i);
+      memset(&stack, 0, sizeof(stack));
+      for (j = i; j < Cpu_cnt; j++) {
+         if (a_core == rXv(stat_COR_ID, s_int, j)) {
+            stack[stat_US].result.sl_int += rXv(stat_US, sl_int, j);
+            stack[stat_SY].result.sl_int += rXv(stat_SY, sl_int, j);
+            stack[stat_NI].result.sl_int += rXv(stat_NI, sl_int, j);
+            stack[stat_IL].result.sl_int += rXv(stat_IL, sl_int, j);
+            stack[stat_IO].result.sl_int += rXv(stat_IO, sl_int, j);
+            stack[stat_IR].result.sl_int += rXv(stat_IR, sl_int, j);
+            stack[stat_SI].result.sl_int += rXv(stat_SI, sl_int, j);
+            stack[stat_ST].result.sl_int += rXv(stat_ST, sl_int, j);
+            stack[stat_SUM_USR].result.sl_int += rXv(stat_SUM_USR, sl_int, j);
+            stack[stat_SUM_SYS].result.sl_int += rXv(stat_SUM_SYS, sl_int, j);
+            stack[stat_SUM_TOT].result.sl_int += rXv(stat_SUM_TOT, sl_int, j);
+
+            rXv(stat_COR_ID, s_int, j) = gotTHIS;
+            found = 1;
+         }
+      }
+      if (found) {
+         snprintf(pfx, sizeof(pfx), N_fmt(WORD_core_vs_fmt), a_core);
+         n += sum_tics(&core, pfx, (i+1 >= Cpu_cnt));
+         if (Msg_row + n + 1 >= SCREEN_ROWS - 1)
+            break;
+         found = 0;
+      }
+   }
+   return n;
+ #undef rXv
+ #undef gotTHIS
+} // end: sum_versus
 
 /*######  Secondary summary display support (summary_show helpers)  ######*/
 
@@ -6623,6 +6710,8 @@ numa_oops:
             Msg_row += sum_unify(Stat_reap->cpus->stacks[i], (i+1 >= Cpu_cnt));
             if (noMAS) break;
          }
+      } else if (Curwin->rc.cores_vs_cpus) {
+         Msg_row += sum_versus();
       } else {
          for (i = 0; i < Cpu_cnt; i++) {
 #ifndef CORE_TYPE_NO
@@ -6795,9 +6884,9 @@ static void do_key (int ch) {
          , kbd_CtrlE, kbd_CtrlR, kbd_ENTER, kbd_SPACE, '\0' } },
       { keys_summary,
  #ifdef CORE_TYPE_NO
-         { '!', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
+         { '!', '^', '1', '2', '3', '4', 'C', 'l', 'm', 't', '\0' } },
  #else
-         { '!', '1', '2', '3', '4', '5', 'C', 'l', 'm', 't', '\0' } },
+         { '!', '^', '1', '2', '3', '4', '5', 'C', 'l', 'm', 't', '\0' } },
  #endif
       { keys_task,
          { '#', '<', '>', 'b', 'c', 'F', 'i', 'J', 'j', 'n', 'O', 'o'
