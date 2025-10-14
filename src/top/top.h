@@ -534,7 +534,7 @@ typedef struct WIN_t {
 #define RCF_XFORMED_ID  'k'
         // this next guy is incremented when columns change
         // ( to prevent older top versions from accessing )
-#define RCF_VERSION_ID  'm'
+#define RCF_VERSION_ID  'n'
 
 #define FLD_OFFSET  ( (int)'%' )
 #define FLD_ROWMAX  20

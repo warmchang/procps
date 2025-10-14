@@ -4047,9 +4047,9 @@ static int config_wins (FILE *fp, char *buf, int wix) {
 
    // be tolerant of missing release 3.3.10 graph modes additions
    if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
-                      ", double_up=%d, combine_cpus=%d, core_types=%d\n"
+                      ", double_up=%d, combine_cpus=%d, core_types=%d, cores_vs_cpus=%d\n"
       , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems
-      , &w->rc.double_up, &w->rc.combine_cpus, &w->rc.core_types))
+      , &w->rc.double_up, &w->rc.combine_cpus, &w->rc.core_types, &w->rc.cores_vs_cpus))
          return 0;
    if (w->rc.sortindx < 0 || w->rc.sortindx >= EU_MAXPFLGS)
       return 0;
@@ -4065,6 +4065,8 @@ static int config_wins (FILE *fp, char *buf, int wix) {
    if (w->rc.combine_cpus < 0)
       return 0;
    if (w->rc.core_types < 0 || w->rc.core_types > E_CORES_ONLY)
+      return 0;
+   if (w->rc.cores_vs_cpus < 0 || w->rc.cores_vs_cpus > 1)
       return 0;
 
    // 4 colors through release 4.0.4, 5 colors after ...
@@ -4106,8 +4108,11 @@ static int config_wins (FILE *fp, char *buf, int wix) {
       case 'l':                          // no release, development only
          w->rc.task_xy = w->rc.taskclr;
       // fall through
-      case 'm':                          // current RCF_VERSION_ID
-      // fall through                       ( added rc.task_xy )
+      case 'm':                          // this is release 4.0.5
+         w->rc.cores_vs_cpus = 0;
+      // fall through
+      case 'n':                          // current RCF_VERSION_ID
+      // fall through
       default:
          if (mlen(w->rc.fieldscur) < EU_MAXPFLGS)
             return 0;
@@ -5616,10 +5621,10 @@ static void write_rcfile (void) {
       }
       fprintf(fp, "\n");
       fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
-                  ", double_up=%d, combine_cpus=%d, core_types=%d\n"
+                  ", double_up=%d, combine_cpus=%d, core_types=%d, cores_vs_cpus=%d\n"
          , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks
          , Winstk[i].rc.graph_cpus, Winstk[i].rc.graph_mems, Winstk[i].rc.double_up
-         , Winstk[i].rc.combine_cpus, Winstk[i].rc.core_types);
+         , Winstk[i].rc.combine_cpus, Winstk[i].rc.core_types, Winstk[i].rc.cores_vs_cpus);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr, Winstk[i].rc.task_xy);
