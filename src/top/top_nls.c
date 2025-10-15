@@ -595,7 +595,6 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[LIB_errorpid_fmt] = _("library failed pids statistics, at %d: %s");
    Norm_nlstab[BAD_memscale_fmt] = _("bad memory scaling arg '%s'");
    Norm_nlstab[XTRA_vforest_fmt] = _("PID to collapse/expand [default pid = %d]");
-   Norm_nlstab[XTRA_modebad_txt] = _("wrong mode, command inactive");
    Norm_nlstab[XTRA_warnold_txt] = _("saving prevents older top from reading, save anyway?");
    Norm_nlstab[X_SEMAPHORES_fmt] = _("failed sem_init() at %d: %s");
    Norm_nlstab[X_THREADINGS_fmt] = _("failed pthread_create() at %d: %s");

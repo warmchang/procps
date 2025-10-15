@@ -1772,13 +1772,8 @@ way to 8, simply use the \[oq]1\[cq] \*(CT.
 
 .TP 7
 \ \ \ \fB5\fR\ \ :\fIDisplay-P-Cores-and-E-Cores\fR toggle \fR
-This \*(CT is only active when the \[oq]t\[cq] toggle is \*O and the
-\[oq]1\[cq],
-\[oq]2\[cq],
-\[oq]3\[cq] and \[oq]!\[cq] toggles are \*F,
-thus showing individual \*(PU results.
-It assumes a platform has multiple cores of two distinct types,
-either multi-threaded (P-Core) or single-threaded (E-Core).
+This \*(CT is only active when a platform has multiple cores of two
+distinct types, multi-threaded (P-Core) and single-threaded (E-Core).
 
 While normally each \*(Pu is displayed as
 \[oq]%Cpu0, %Cpu1, .\|.\|.\[cq],
@@ -1792,9 +1787,6 @@ The 2nd time, only P-Cores (%Cp\fBP\fR) will be shown.
 The 3rd time, only E-Cores (%Cp\fBE\fR) are displayed.
 When this \*(CT is struck for the 4th time, the \*(PU display
 returns to the normal \[oq]%Cpu\[cq] convention.
-
-If separate\fI performance\fR and\fI efficient\fR categories are
-not present, this \*(CT will have no effect.
 
 .TP 7
 \ \ \ \fB!\fR\ \ :\fICombine-Cpus-Mode\fR toggle \fR
@@ -1814,9 +1806,7 @@ Then the third \[oq]!\[cq] press,
 combining eight \*(Pus, shows as \[oq]0-7, 8-15, .\|.\|.\[cq],
 etc.
 
-Such progression continues until individual \*(Pus are again displayed
-and impacts both the \[oq]1\[cq] and \[oq]4\[cq] toggles
-(one or multiple columns).
+Such progression continues until individual \*(Pus are again displayed.
 Use the \[oq]=\[cq] command to exit \fBCombine Cpus\fR mode.
 
 .TP 7
@@ -1828,8 +1818,8 @@ Two threads per core is the most common.
 However, some enterprise and specialized architectures support higher
 thread counts.
 
-This \*(CT is used to display the utilization of physical \*(PU cores
-rather than individually reported \*(PUs or threads.
+This \*(CT is used to display the utilization of physical \*(Pu cores
+rather than individually reported \*(Pus or threads.
 
 .PP
 \*(NT If the entire \*(SA has been toggled \*F for any window, you would

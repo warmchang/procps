@@ -4365,10 +4365,11 @@ static void parse_args (int argc, char **argv) {
 #endif
       switch (ch) {
          case '1':   // ensure behavior identical to run-time toggle
-            if (CHKw(Curwin, View_CPUNOD)) OFFw(Curwin, View_CPUSUM);
-            else TOGw(Curwin, View_CPUSUM);
-            OFFw(Curwin, View_CPUNOD);
             SETw(Curwin, View_STATES);
+            OFFw(Curwin, View_CPUNOD);
+            TOGw(Curwin, View_CPUSUM);
+            Curwin->rc.core_types = 0;
+            Curwin->rc.combine_cpus = 0;
             Curwin->rc.cores_vs_cpus = 0;
             break;
          case 'A':
@@ -5883,6 +5884,7 @@ static void keys_global (int ch) {
 
 static void keys_summary (int ch) {
    WIN_t *w = Curwin;             // avoid gcc bloat with a local copy
+   int i;
 
    if (Restrict_some && ch != 'C') {
       show_msg(N_txt(X_RESTRICTED_txt));
@@ -5890,44 +5892,38 @@ static void keys_summary (int ch) {
    }
    switch (ch) {
       case '!':
-         if (w->rc.cores_vs_cpus)
-            show_msg(N_txt(XTRA_modebad_txt));
-         else {
-            OFFw(w, View_CPUSUM | View_CPUNOD);
-            w->rc.core_types = 0;
-            if (!w->rc.combine_cpus) w->rc.combine_cpus = 2;
-            else w->rc.combine_cpus *= 2;
-            if (w->rc.combine_cpus >= Cpu_cnt) w->rc.combine_cpus = 0;
-         }
+         SETw(w, View_STATES);
+         OFFw(w, View_CPUSUM | View_CPUNOD);
+         if (!w->rc.combine_cpus) w->rc.combine_cpus = 2;
+         else w->rc.combine_cpus *= 2;
+         if (w->rc.combine_cpus >= Cpu_cnt) w->rc.combine_cpus = 0;
+         w->rc.core_types = 0;
+         w->rc.cores_vs_cpus = 0;
          break;
       case '^':
 #ifndef PRETEND48CPU
-         if (w->rc.combine_cpus)
-            show_msg(N_txt(XTRA_modebad_txt));
-         else {
-            int i;
-            for (i = 0; i < Cpu_cnt; i++) {
-               // careful, -1 is from the library and -2 is used by sum_versus() ...
-               if (Stat_reap->cpus->stacks[i]->head[stat_COR_ID].result.s_int == -1) {
-                  show_msg(N_txt(X_CORE_wrong_txt));
-                  return;
-               }
+         for (i = 0; i < Cpu_cnt; i++) {
+            // careful, -1 is from the library and -2 is used by sum_versus() ...
+            if (Stat_reap->cpus->stacks[i]->head[stat_COR_ID].result.s_int == -1) {
+               show_msg(N_txt(X_CORE_wrong_txt));
+               return;
             }
-            OFFw(w, View_CPUSUM | View_CPUNOD);
-            w->rc.core_types = 0;
-            if (!w->rc.cores_vs_cpus) w->rc.cores_vs_cpus = 1;
-            else w->rc.cores_vs_cpus = 0;
          }
+         SETw(w, View_STATES);
+         OFFw(w, View_CPUSUM | View_CPUNOD);
+         w->rc.combine_cpus = 0;
+         w->rc.core_types = 0;
+         if (!w->rc.cores_vs_cpus) w->rc.cores_vs_cpus = 1;
+         else w->rc.cores_vs_cpus = 0;
 #else
          show_msg(N_txt(X_CORE_wrong_txt));
 #endif
          break;
       case '1':
-         if (CHKw(w, View_CPUNOD)) OFFw(w, View_CPUSUM);
-         else TOGw(w, View_CPUSUM);
-         OFFw(w, View_CPUNOD);
          SETw(w, View_STATES);
-         w->rc.double_up = 0;
+         OFFw(w, View_CPUNOD);
+         TOGw(w, View_CPUSUM);
+         if (CHKw(w, View_CPUSUM)) w->rc.double_up = 0;
          w->rc.core_types = 0;
          w->rc.combine_cpus = 0;
          w->rc.cores_vs_cpus = 0;
@@ -5936,9 +5932,9 @@ static void keys_summary (int ch) {
          if (!Numa_node_tot)
             show_msg(N_txt(NUMA_nodenot_txt));
          else {
+            SETw(w, View_STATES);
             if (Numa_node_sel < 0) TOGw(w, View_CPUNOD);
             if (!CHKw(w, View_CPUNOD)) SETw(w, View_CPUSUM);
-            SETw(w, View_STATES);
             Numa_node_sel = -1;
             w->rc.double_up = 0;
             w->rc.core_types = 0;
@@ -5953,9 +5949,9 @@ static void keys_summary (int ch) {
             int num = get_int(fmtmk(N_fmt(NUMA_nodeget_fmt), Numa_node_tot -1));
             if (num > GET_NUM_NOT) {
                if (num >= 0 && num < Numa_node_tot) {
-                  Numa_node_sel = num;
-                  SETw(w, View_CPUNOD | View_STATES);
+                  SETw(w, View_STATES | View_CPUNOD);
                   OFFw(w, View_CPUSUM);
+                  Numa_node_sel = num;
                   w->rc.double_up = 0;
                   w->rc.core_types = 0;
                   w->rc.combine_cpus = 0;
@@ -5977,23 +5973,21 @@ static void keys_summary (int ch) {
          break;
 #ifndef CORE_TYPE_NO
       case '5':
-         if (!CHKw(w, View_STATES)
-         || ((CHKw(w, View_CPUSUM | View_CPUNOD))
-         || ((w->rc.combine_cpus))))
-            show_msg(N_txt(XTRA_modebad_txt));
-         else {
-            int scanned;
-            for (scanned = 0; scanned < Cpu_cnt; scanned++)
-               if (CPU_VAL(stat_COR_TYP, scanned) == E_CORE)
-                  break;
-            if (scanned < Cpu_cnt) {
-               w->rc.core_types += 1;
-               if (w->rc.core_types > E_CORES_ONLY)
-                  w->rc.core_types = 0;
-           } else {
-              w->rc.core_types = 0;
-              show_msg(N_txt(X_CORE_wrong_txt));
-           }
+         for (i = 0; i < Cpu_cnt; i++) {
+            if (CPU_VAL(stat_COR_TYP, i) == E_CORE)
+               break;
+         }
+         if (i < Cpu_cnt) {
+            SETw(w, View_STATES);
+            OFFw(w, View_CPUSUM | View_CPUNOD);
+            w->rc.combine_cpus = 0;
+            w->rc.core_types += 1;
+            if (w->rc.core_types > E_CORES_ONLY)
+               w->rc.core_types = 0;
+            w->rc.cores_vs_cpus = 0;
+         } else {
+             w->rc.core_types = 0;
+             show_msg(N_txt(X_CORE_wrong_txt));
          }
          break;
 #endif
