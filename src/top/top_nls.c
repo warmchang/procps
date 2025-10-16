@@ -613,7 +613,8 @@ static void build_norm_nlstab (void) {
    Norm_nlstab[X_BOT_msglog_txt] = _("message log, last 10 messages:");
    Norm_nlstab[XTRA_args_no_fmt] = _("option '%s' must be used alone");
    Norm_nlstab[WORD_core_vs_fmt] = _("Core%-3d:");
-   Norm_nlstab[X_CORE_wrong_txt] = _("sorry, system cpu core data is unavailable");
+   Norm_nlstab[CORE_type_no_txt] = _("sorry, distinct cpu core types do not exist");
+   Norm_nlstab[CORE_unavail_txt] = _("sorry, system cpu core data is unavailable");
 }
 
 

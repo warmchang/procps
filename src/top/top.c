@@ -5905,7 +5905,7 @@ static void keys_summary (int ch) {
          for (i = 0; i < Cpu_cnt; i++) {
             // careful, -1 is from the library and -2 is used by sum_versus() ...
             if (Stat_reap->cpus->stacks[i]->head[stat_COR_ID].result.s_int == -1) {
-               show_msg(N_txt(X_CORE_wrong_txt));
+               show_msg(N_txt(CORE_unavail_txt));
                return;
             }
          }
@@ -5916,7 +5916,7 @@ static void keys_summary (int ch) {
          if (!w->rc.cores_vs_cpus) w->rc.cores_vs_cpus = 1;
          else w->rc.cores_vs_cpus = 0;
 #else
-         show_msg(N_txt(X_CORE_wrong_txt));
+         show_msg(N_txt(CORE_unavail_txt));
 #endif
          break;
       case '1':
@@ -5987,7 +5987,7 @@ static void keys_summary (int ch) {
             w->rc.cores_vs_cpus = 0;
          } else {
              w->rc.core_types = 0;
-             show_msg(N_txt(X_CORE_wrong_txt));
+             show_msg(N_txt(CORE_type_no_txt));
          }
          break;
 #endif
