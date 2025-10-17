@@ -4081,35 +4081,40 @@ static int config_wins (FILE *fp, char *buf, int wix) {
    if (w->rc.task_xy < -1 || w->rc.task_xy > 255) return 0;
 
    switch (Rc.id) {
-      case 'a':                          // 3.2.8 (former procps)
+      case 'a':                          // this is release 3.2.8 (procps)
       // fall through
-      case 'f':                          // 3.3.0 thru 3.3.3 (ng)
+      case 'f':                          // releases 3.3.0 thru 3.3.3 (procps-ng)
          SETw(w, Show_JRNUMS);
       // fall through
-      case 'g':                          // from 3.3.4 thru 3.3.8
+      case 'g':                          // releases 3.3.4 thru 3.3.8
          if (Rc.id > 'a') scat(buf, RCF_PLUS_H);
       // fall through
       case 'h':                          // this is release 3.3.9
-         w->rc.graph_cpus = w->rc.graph_mems = 0;
+         /* the following simple assignmentas have been commented out
+            since that 'Rc' RCF_t has alreeady effectively done that.
+            ( they will now just document when they were introduced ) */
+//       w->rc.graph_cpus = w->rc.graph_mems = 0;
          // these next 2 are really global, but best documented here
-         Rc.summ_mscale = Rc.task_mscale = SK_Kb;
+//       Rc.summ_mscale = SK_Gb;
+//       Rc.task_mscale = SK_Mb;
       // fall through
       case 'i':                          // from 3.3.10 thru 3.3.16
          if (Rc.id > 'a') scat(buf, RCF_PLUS_J);
-         w->rc.double_up = w->rc.combine_cpus = 0;
+//       w->rc.double_up = w->rc.combine_cpus = 0;
       // fall through
       case 'j':                          // this is release 3.3.17
          if (cfg_xform(w, buf, def_flds[wix]))
             return 0;
-         Rc.tics_scaled = 0;
+//       Rc.tics_scaled = 0;                added in 4.0.0
+//       w->rc.core_types = 0;              added in 4.0.1
       // fall through
       case 'k':                          // releases 4.0.1 thru 4.0.4
       // fall through                       ( transitioned to integer )
       case 'l':                          // no release, development only
-         w->rc.task_xy = w->rc.taskclr;
+//       w->rc.task_xy = w->rc.taskclr;     added in 4.0.5
       // fall through
       case 'm':                          // this is release 4.0.5
-         w->rc.cores_vs_cpus = 0;
+//       w->rc.cores_vs_cpus = 0;           added in 4.0.6
       // fall through
       case 'n':                          // current RCF_VERSION_ID
       // fall through

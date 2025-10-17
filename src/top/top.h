@@ -533,6 +533,7 @@ typedef struct WIN_t {
         // ( transitioned from 'char' to 'int' )
 #define RCF_XFORMED_ID  'k'
         // this next guy is incremented when columns change
+        // or anything is added to the RCW_t/RCF_t typedefs
         // ( to prevent older top versions from accessing )
 #define RCF_VERSION_ID  'n'
 
