@@ -10,8 +10,9 @@ MakeCheck:
     - make
     - make check
   artifacts:
-    - testsuite/*.log
-    - testsuite/*.sum
+    paths:
+      - testsuite/*.log
+      - testsuite/*.sum
 
 clean_job:
   stage: cleanup
