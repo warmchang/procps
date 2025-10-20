@@ -11,11 +11,8 @@ MakeCheck:
     - make check
   artifacts:
     paths:
+      - test-suite.log
       - testsuite/*.log
       - testsuite/*.sum
-
-clean_job:
-  stage: cleanup
-  script:
+  after_script:
     - make clean
-  needs: [MakeCheck] # Cleanup after build
