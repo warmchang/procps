@@ -142,7 +142,11 @@ Display a line showing the column totals.
 \fB\-v\fR, \fB\-\-committed\fR
 Display a line showing the memory commit limit and amount of committed/uncommitted
 memory. The \fBtotal\fR column on this line will display the memory commit
-limit.   This line is relevant if memory overcommit is disabled.
+limit.   This line is relevant if memory overcommit is disabled.   On systems
+with memory overcommit enabled, the \fBfree\fR value can temporarily appear
+negative. This is not a bug, but an effect of overcommit, as the system has promised
+more memory than the total of its virtual address space.
+The negative value indicates the magnitude of the system's memory over-allocation.
 .TP
 \fB\-\-help\fR
 Print help.
