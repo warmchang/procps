@@ -1235,7 +1235,7 @@ int arg_parse(int argc, char *argv[]){
   if(err) goto try_bsd;
   err = process_sf_options();
   if(err) goto try_bsd;
-  err = select_bits_setup();
+  err = select_setup();
   if(err) goto try_bsd;
 
   choose_dimensions();
@@ -1264,7 +1264,7 @@ try_bsd:
   if(err2) goto total_failure;
   err2 = process_sf_options();
   if(err2) goto total_failure;
-  err2 = select_bits_setup();
+  err2 = select_setup();
   if(err2) goto total_failure;
 
   choose_dimensions();

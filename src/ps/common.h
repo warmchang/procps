@@ -501,7 +501,7 @@ extern void reset_sortformat(void);
 
 /* select.c */
 extern int want_this_proc(proc_t *buf);
-extern const char *select_bits_setup(void);
+extern const char *select_setup(void);
 
 /* help.c */
 extern void __attribute__ ((__noreturn__)) do_help(const char *opt, int rc);

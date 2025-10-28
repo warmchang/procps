@@ -2,7 +2,7 @@
  * select.c - ps process selection
  *
  * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net
- * Copyright © 2004-2020 Craig Small <csmall@dropbear.xyz
+ * Copyright © 2004-2025 Craig Small <csmall@dropbear.xyz
  * Copyright © 1998-2002 Albert Cahalan
  *
  * This library is free software; you can redistribute it and/or
@@ -23,65 +23,81 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 #include "common.h"
 
-//#define process_group_leader(p) (rSv(ID_PID, s_int, p) == rSv(ID_TGID, s_int, p))
-//#define some_other_user(p)      (rSv(ID_EUID, u_int, p) != cached_euid)
-#define has_our_euid(p)         (rSv(ID_EUID, u_int, p) == cached_euid)
-#define on_our_tty(p)           (rSv(TTY, s_int, p) == cached_tty)
 #define running(p)              (rSv(STATE, s_ch, p) == 'R' || rSv(STATE, s_ch, p) == 'D')
-#define session_leader(p)       (rSv(ID_SESSION, s_int, p) == rSv(ID_TGID, s_int, p))
-#define without_a_tty(p)        (!rSv(TTY, s_int, p))
 
-static unsigned long select_bits = 0;
+/* process selection flags */
+static bool select_my_euid = false;
+static bool select_my_tty = false;
+static bool select_running = false;
+static bool select_no_leader = false;
+static bool select_has_tty = false;
 
-/***** prepare select_bits for use */
-const char *select_bits_setup(void){
-  int switch_val = 0;
-  /* don't want a 'g' screwing up simple_select */
-  if(!simple_select && !prefer_bsd_defaults){
-    select_bits = 0xaa00; /* the STANDARD selection */
-    return NULL;
-  }
-  /* For every BSD but SunOS, the 'g' option is a NOP. (enabled by default) */
-  if( !(personality & PER_NO_DEFAULT_g) && !(simple_select&(SS_U_a|SS_U_d)) )
-    switch_val = simple_select|SS_B_g;
-  else
-    switch_val = simple_select;
-  switch(switch_val){
-  /* UNIX options */
-  case SS_U_a | SS_U_d:           select_bits = 0x3f3f; break; /* 3333 or 3f3f */
-  case SS_U_a:                    select_bits = 0x0303; break; /* 0303 or 0f0f */
-  case SS_U_d:                    select_bits = 0x3333; break;
-  /* SunOS 4 only (others have 'g' enabled all the time) */
-  case 0:                         select_bits = 0x0202; break;
-  case                   SS_B_a:  select_bits = 0x0303; break;
-  case          SS_B_x         :  select_bits = 0x2222; break;
-  case          SS_B_x | SS_B_a:  select_bits = 0x3333; break;
-  /* General BSD options */
-  case SS_B_g                  :  select_bits = 0x0a0a; break;
-  case SS_B_g |          SS_B_a:  select_bits = 0x0f0f; break;
-  case SS_B_g | SS_B_x         :  select_bits = 0xaaaa; break;
-  case SS_B_g | SS_B_x | SS_B_a:  /* convert to -e instead of using 0xffff */
-    all_processes = 1;
-    simple_select = 0;
-    break;
-  default:
-    return _("process selection options conflict");
-    break;
-  }
-  return NULL;
+const char *select_setup(void)
+{
+    /* SunOS by default will not select session leaders without the g option */
+    if ( (personality & PER_NO_DEFAULT_g) && !(simple_select & (SS_B_g)))
+        select_no_leader = true;
+
+    switch (simple_select) {
+        case 0:
+            /* The default with no selection is my euid */
+            select_my_euid = true;
+            /* BSD wants any tty, non-BSD wants my TTY */
+            if (prefer_bsd_defaults == 1)
+                select_has_tty = true;
+            else
+                select_my_tty = true;
+            break;
+        case SS_U_a:
+            /* -a flag: Not session leaders, has a tty */
+            select_no_leader = true;
+            select_has_tty = true;
+            break;
+        case SS_U_d:
+            /* fallthrough - they are the same */
+        case SS_U_a | SS_U_d:
+            /* -d or -da flags: Not session leaders */
+            select_no_leader = true;
+            break;
+        /* BSD style options */
+        case SS_B_a:
+        case SS_B_a | SS_B_g:
+            select_has_tty = true;
+            break;
+        case SS_B_x:
+        case SS_B_x | SS_B_g:
+            select_my_euid = true;
+            break;
+        case SS_B_a | SS_B_x:
+        case SS_B_a | SS_B_x | SS_B_g:
+            /* everything */
+            simple_select = 0;
+            all_processes = 1;
+            break;
+        default:
+            return _("process selection options conflict");
+    }
+    return NULL; /* no error */
 }
 
-/***** selected by simple option? */
-static int table_accept(proc_t *buf){
-  unsigned proc_index;
-  proc_index = (has_our_euid(buf)    <<0)
-             | (session_leader(buf)  <<1)
-             | (without_a_tty(buf)   <<2)
-             | (on_our_tty(buf)      <<3);
-  return (select_bits & (1<<proc_index));
+static bool simple_accept(
+    proc_t *p)
+{
+    if (select_my_euid && rSv(ID_EUID, u_int, p) != cached_euid)
+        return false;
+    if (select_my_tty && rSv(TTY, s_int, p) != cached_tty)
+        return false;
+    if (select_running && (rSv(STATE, s_ch, p) != 'R' && rSv(STATE, s_ch, p) != 'D'))
+        return false;
+    if (select_no_leader && (rSv(ID_SESSION, s_int, p) == rSv(ID_TGID, s_int, p)))
+        return false;
+    if (select_has_tty && (rSv(TTY, s_int, p)== 0))
+        return false;
+    return true;
 }
 
 /***** selected by some kind of list? */
@@ -146,7 +162,7 @@ int want_this_proc(proc_t *buf){
 
   /* use table for -a a d g x */
   if((simple_select || !selection_list))
-    if(table_accept(buf)) goto finish;
+    if(simple_accept(buf)) goto finish;
 
   /* search lists */
   if(proc_was_listed(buf)) goto finish;

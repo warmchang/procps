@@ -70,7 +70,25 @@ expect_pass "$test" "\\s*COMMAND\\s+puc\\s+"
 
 set test "ps with l and m options"
 spawn $ps -lm
+expect_spawn_retval "$test" 0
 expect_fail "$test" "please report this bug"
+
+set test "ps with invalid -a and g options"
+spawn $ps -a g
+expect_spawn_retval "$test" 1
+expect_pass "$test" "error: process selection options conflict"
+
+set test "ps -a has no session leaders"
+spawn $ps -a -o pid,sid
+expect_fail "$test" "***:\[\[:<:\]\]\\s*(\\d+)\\s+\\1\[\[:>:\]\]"
+
+set test "ps -d has no session leaders"
+spawn $ps -d -o pid,sid
+expect_fail "$test" "***:\[\[:<:\]\]\\s*(\\d+)\\s+\\1\[\[:>:\]\]"
+
+set test "ps -ad has no session leaders"
+spawn $ps -ad -o pid,sid
+expect_fail "$test" "***:\[\[:<:\]\]\\s*(\\d+)\\s+\\1\[\[:>:\]\]"
 
 # The remaining tests require a test process
 make_testproc
