@@ -74,6 +74,7 @@
 //#define TREE_VCPUOFF            /* a collapsed parent excludes child's cpu */
 //#define TREE_VPROMPT            /* pid collapse/expand prompt, vs. top row */
 //#define TREE_VWINALL            /* pid collapse/expand impacts all windows */
+//#define TTY_ABATE_NO            /* do NOT optimize (maybe discard) tty o/p */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define WIDEN_COLUMN            /* base column widths on translated header */
 
@@ -465,16 +466,17 @@ typedef struct WIN_t {
         /* Used to clear all or part of our Pseudo_screen */
 #define PSU_CLREOS(y) memset(&Pseudo_screen[ROWMAXSIZ*y], '\0', Pseudo_size-(ROWMAXSIZ*y))
 
-/*
- * The following three macros are used to 'inline' those portions of the
- * display process involved in formatting, while protecting against any
- * potential embedded 'millesecond delay' escape sequences.
- */
+#ifndef TTY_ABATE_NO
+ /*
+  * The following three macros are used to 'inline' those portions of the
+  * display process involved in formatting, while protecting against any
+  * potential embedded 'millesecond delay' escape sequences.
+  */
         /**  PUTT - Put to Tty (used in many places)
                . for temporary, possibly interactive, 'replacement' output
                . may contain ANY valid terminfo escape sequences
                . need NOT represent an entire screen row */
-#define PUTT(fmt,arg...) do { \
+ #define PUTT(fmt,arg...) do { \
       char _str[ROWMAXSIZ]; \
       snprintf(_str, sizeof(_str), fmt, ## arg); \
       putp(_str); \
@@ -485,7 +487,7 @@ typedef struct WIN_t {
                . may NOT contain cursor motion terminfo escapes
                . assumed to represent a complete screen ROW
                . subject to optimization, thus MAY be discarded */
-#define PUFF(fmt,arg...) do { \
+ #define PUFF(fmt,arg...) do { \
       char _str[ROWMAXSIZ]; \
       const int _len = snprintf(_str, sizeof(_str), fmt, ## arg); \
       if (Batch) { \
@@ -503,11 +505,26 @@ typedef struct WIN_t {
         /**  POOF - Pulled Out of Frame (used in only 1 place)
                . for output that is/was sent directly to the terminal
                  but would otherwise have been counted as a Pseudo_row */
-#define POOF(str,cap) do { \
+ #define POOF(str,cap) do { \
       putp(str); putp(cap); \
       Pseudo_screen[Pseudo_row * ROWMAXSIZ] = '\0'; \
       if (Pseudo_row + 1 < Screen_rows) ++Pseudo_row; \
    } while (0)
+#else
+ #define PUTT(fmt,arg...) do { \
+      char _str[ROWMAXSIZ]; \
+      snprintf(_str, sizeof(_str), fmt, ## arg); \
+      putp(_str); \
+   } while (0)
+ #define PUFF(fmt,arg...) do { \
+      char _str[ROWMAXSIZ]; \
+      snprintf(_str, sizeof(_str), fmt, ## arg); \
+      putp(_str); \
+   } while (0)
+ #define POOF(str,cap) do { \
+      putp(str); putp(cap); \
+   } while (0)
+#endif
 
         /* Orderly end, with any sort of message - see fmtmk */
 #define debug_END(s) { \
