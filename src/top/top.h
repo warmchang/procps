@@ -323,22 +323,22 @@ enum warn_enum {
 
         /* This type helps support both a window AND the rcfile */
 typedef struct RCW_t {  // the 'window' portion of an rcfile
-   int    sortindx,               // sort field (represented as procflag)
-          winflags,               // 'view', 'show' and 'sort' mode flags
+   char   winname [WINNAMSIZ];    // name for the window, user changeable
+   FLG_t  fieldscur [PFLAGSSIZ];  // the fields for display & their order
+   int    winflags,               // 'view', 'show' and 'sort' mode flags
+          sortindx,               // sort field (represented as procflag)
           maxtasks,               // user requested maximum, 0 equals all
           graph_cpus,             // 't' - View_STATES supplementary vals
           graph_mems,             // 'm' - View_MEMORY supplememtary vals
           double_up,              // '4' - show multiple cpus on one line
           combine_cpus,           // '!' - keep combining additional cpus
-          core_types,             // '5' - show/filter P-core/E-core cpus
-          cores_vs_cpus,          // '^' - show cores versus cpus/threads
           summclr,                // a colors 'number' used for summ info
           msgsclr,                //             "           in msgs/pmts
           headclr,                //             "           in cols head
           taskclr,                //             "           in task data
-          task_xy;                //             "           for task x/y
-   char   winname [WINNAMSIZ];    // name for the window, user changeable
-   FLG_t  fieldscur [PFLAGSSIZ];  // the fields for display & their order
+          task_xy,                //             "           for task x/y
+          core_types,             // '5' - show/filter P-core/E-core cpus
+          cores_vs_cpus;          // '^' - show cores versus cpus/threads
 } RCW_t;
 
         /* This represents the complete rcfile */
@@ -615,18 +615,18 @@ typedef struct WIN_t {
         /* The default values for the local config file */
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
-   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, 1, 0, DEF_CORES_2,\
-      COLOR_RED, COLOR_RED, COLOR_YELLOW, -1, COLOR_RED, \
-      "Def", DEF_FIELDS }, \
-   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, DEF_CORES_2,\
-      COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, -1, COLOR_CYAN, \
-      "Job", JOB_FIELDS }, \
-   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, DEF_CORES_2,\
-      COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, -1, COLOR_MAGENTA, \
-      "Mem", MEM_FIELDS }, \
-   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, DEF_CORES_2,\
-      COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, -1, COLOR_YELLOW, \
-      "Usr", USR_FIELDS } \
+   { "Def", DEF_FIELDS, \
+     DEF_WINFLGS, EU_CPU, 0, DEF_GRAPHS2, 1, 0, \
+     COLOR_RED, COLOR_RED, COLOR_YELLOW, -1, COLOR_RED, DEF_CORES_2 }, \
+   { "Job", JOB_FIELDS, \
+     ALT_WINFLGS, EU_PID, 0, ALT_GRAPHS2, 1, 0, \
+     COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, -1, COLOR_CYAN, DEF_CORES_2 }, \
+   { "Mem", MEM_FIELDS, \
+     ALT_WINFLGS, EU_MEM, 0, ALT_GRAPHS2, 1, 0, \
+     COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, -1, COLOR_MAGENTA, DEF_CORES_2 }, \
+   { "Usr", USR_FIELDS, \
+     ALT_WINFLGS, EU_UEN, 0, ALT_GRAPHS2, 1, 0, \
+     COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, -1, COLOR_YELLOW, DEF_CORES_2 } \
    }, 0, DEF_SCALES2, 0, 0 }
 
         /* Summary Lines specially formatted string(s) --
