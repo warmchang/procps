@@ -4047,9 +4047,9 @@ static int config_wins (FILE *fp, char *buf, int wix) {
 
    // be tolerant of missing release 3.3.10 graph modes additions
    if (3 > fscanf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
-                      ", double_up=%d, combine_cpus=%d, core_types=%d, cores_vs_cpus=%d\n"
+                      ", double_up=%d, combine_cpus=%d\n"
       , &w->rc.winflags, &w->rc.sortindx, &w->rc.maxtasks, &w->rc.graph_cpus, &w->rc.graph_mems
-      , &w->rc.double_up, &w->rc.combine_cpus, &w->rc.core_types, &w->rc.cores_vs_cpus))
+      , &w->rc.double_up, &w->rc.combine_cpus))
          return 0;
    if (w->rc.sortindx < 0 || w->rc.sortindx >= EU_MAXPFLGS)
       return 0;
@@ -4069,9 +4069,11 @@ static int config_wins (FILE *fp, char *buf, int wix) {
    if (w->rc.cores_vs_cpus < 0 || w->rc.cores_vs_cpus > 1)
       return 0;
 
-   // 4 colors through release 4.0.4, 5 colors after ...
-   if (4 > fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d\n"
-      , &w->rc.summclr, &w->rc.msgsclr, &w->rc.headclr, &w->rc.taskclr, &w->rc.task_xy))
+   // 4 colors thru 4.0.4, 5 colors after (and core stuff added in 4.0.6) ...
+   if (4 > fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d"
+                      ", core_types=%d, cores_vs_cpus=%d\n"
+      , &w->rc.summclr, &w->rc.msgsclr, &w->rc.headclr, &w->rc.taskclr, &w->rc.task_xy
+      , &w->rc.core_types, &w->rc.cores_vs_cpus))
          return 0;
    // would prefer to use 'max_colors', but it isn't available yet...
    if (w->rc.summclr < -1 || w->rc.summclr > 255) return 0;
@@ -5627,13 +5629,15 @@ static void write_rcfile (void) {
       }
       fprintf(fp, "\n");
       fprintf(fp, "\twinflags=%d, sortindx=%d, maxtasks=%d, graph_cpus=%d, graph_mems=%d"
-                  ", double_up=%d, combine_cpus=%d, core_types=%d, cores_vs_cpus=%d\n"
+                  ", double_up=%d, combine_cpus=%d\n"
          , Winstk[i].rc.winflags, Winstk[i].rc.sortindx, Winstk[i].rc.maxtasks
          , Winstk[i].rc.graph_cpus, Winstk[i].rc.graph_mems, Winstk[i].rc.double_up
-         , Winstk[i].rc.combine_cpus, Winstk[i].rc.core_types, Winstk[i].rc.cores_vs_cpus);
-      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d\n"
+         , Winstk[i].rc.combine_cpus);
+      fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d"
+                  ", core_types=%d, cores_vs_cpus=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
-         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr, Winstk[i].rc.task_xy);
+         , Winstk[i].rc.headclr, Winstk[i].rc.taskclr, Winstk[i].rc.task_xy
+         , Winstk[i].rc.core_types, Winstk[i].rc.cores_vs_cpus);
    }
 
    // any new addition(s) last, for older rcfiles compatibility...

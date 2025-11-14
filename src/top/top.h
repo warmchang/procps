@@ -298,6 +298,7 @@ typedef          long long SIC_t;
 #define DEF_SCALES2  SK_Mb, SK_Kb
 #define ALT_WINFLGS  DEF_WINFLGS
 #define ALT_GRAPHS2  0, 0
+#define DEF_CORES_2  0, 0
 #else
 #define DEF_WINFLGS ( View_LOADAV | View_STATES | View_MEMORY | Show_CMDLIN \
    | Show_COLORS | Show_FOREST | Show_HIROWS | Show_IDLEPS | Show_JRNUMS | Show_TASKON \
@@ -306,6 +307,7 @@ typedef          long long SIC_t;
 #define DEF_SCALES2  SK_Gb, SK_Mb
 #define ALT_WINFLGS DEF_WINFLGS & ~Show_FOREST
 #define ALT_GRAPHS2  1, 1
+#define DEF_CORES_2  0, 0
 #endif
 
         /* These are used to direct wins_reflag */
@@ -326,8 +328,8 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
           graph_cpus,             // 't' - View_STATES supplementary vals
           graph_mems,             // 'm' - View_MEMORY supplememtary vals
           double_up,              // '4' - show multiple cpus on one line
-          core_types,             // '5' - show/filter P-core/E-core cpus
           combine_cpus,           // '!' - keep combining additional cpus
+          core_types,             // '5' - show/filter P-core/E-core cpus
           cores_vs_cpus,          // '^' - show cores versus cpus/threads
           summclr,                // a colors 'number' used for summ info
           msgsclr,                //             "           in msgs/pmts
@@ -610,16 +612,16 @@ typedef struct WIN_t {
         /* The default values for the local config file */
 #define DEF_RCFILE { \
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
-   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, 1, 0, 0, 0, \
+   { EU_CPU, DEF_WINFLGS, 0, DEF_GRAPHS2, 1, 0, DEF_CORES_2,\
       COLOR_RED, COLOR_RED, COLOR_YELLOW, -1, COLOR_RED, \
       "Def", DEF_FIELDS }, \
-   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, 0, 0, \
+   { EU_PID, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, DEF_CORES_2,\
       COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, -1, COLOR_CYAN, \
       "Job", JOB_FIELDS }, \
-   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, 0, 0, \
+   { EU_MEM, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, DEF_CORES_2,\
       COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, -1, COLOR_MAGENTA, \
       "Mem", MEM_FIELDS }, \
-   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, 0, 0, \
+   { EU_UEN, ALT_WINFLGS, 0, ALT_GRAPHS2, 1, 0, DEF_CORES_2,\
       COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, -1, COLOR_YELLOW, \
       "Usr", USR_FIELDS } \
    }, 0, DEF_SCALES2, 0, 0 }
