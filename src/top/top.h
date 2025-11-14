@@ -77,6 +77,7 @@
 //#define TTY_ABATE_NO            /* do NOT optimize (maybe discard) tty o/p */
 //#define USE_X_COLHDR            /* emphasize header vs. whole col, for 'x' */
 //#define WIDEN_COLUMN            /* base column widths on translated header */
+//#define WINS_RCF_TBL            /* table driven approach to rcfile changes */
 
 
 /*######  Notes, etc.  ###################################################*/
@@ -458,8 +459,10 @@ typedef struct WIN_t {
 
 /*######  Some Miscellaneous Macro definitions  ##########################*/
 
-        /* Yield table size as 'int' */
+        /* Yield table size as 'int' and a stringify pair */
 #define MAXTBL(t)  (int)(sizeof(t) / sizeof(t[0]))
+#define MKSTR_arg(a)  #a
+#define MKSTR(a)  MKSTR_arg(a)
 
         /* A null-terminating strncpy, assuming strlcpy is not available.
            ( and assuming callers don't need the string length returned ) */
