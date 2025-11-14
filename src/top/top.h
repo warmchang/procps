@@ -755,7 +755,7 @@ typedef struct WIN_t {
 //atic int           cfg_xform (WIN_t *q, char *flds, const char *defs);
 //atic void          config_insp (FILE *fp, char *buf, size_t size);
 //atic void          config_osel (FILE *fp, char *buf, size_t size);
-//atic int           config_wins (FILE *fp, char *buf, int wix);
+//atic int           config_wins (FILE *fp, int wix);
 //atic const char   *configs_file (FILE *fp, const char *name, float *delay);
 //atic int           configs_path (const char *const fmts, ...);
 //atic void          configs_reads (void);

@@ -4028,7 +4028,7 @@ end_oops:
         /*
          * A configs_file *Helper* function responsible for reading
          * and validating a single window's portion of the rcfile */
-static int config_wins (FILE *fp, char *buf, int wix) {
+static int config_wins (FILE *fp, int wix) {
 #ifdef WINS_RCF_TBL
  // the following sizeof includes the '\0', but we'll pretend it's the '='
  #define mkITEM(x) MKSTR(x) "=", sizeof(MKSTR(x)), offsetof(RCW_t, x)
@@ -4046,6 +4046,7 @@ static int config_wins (FILE *fp, char *buf, int wix) {
    char buf2[MEDBUFSIZ], *p;
 #endif
    static const char *def_flds[] = { DEF_FORMER, JOB_FORMER, MEM_FORMER, USR_FORMER };
+   char buf[MEDBUFSIZ];
    WIN_t *w;
    int x;
 
@@ -4053,7 +4054,7 @@ static int config_wins (FILE *fp, char *buf, int wix) {
    if (1 != fscanf(fp, "%3s\tfieldscur=", w->rc.winname))
       return 0;
    if (Rc.id < RCF_XFORMED_ID) {
-      fscanf(fp, "%100s\n", buf );               // buf size = LRGBUFSIZ (512)
+      fscanf(fp, "%100s\n", buf );               // buffer is actually 256 big
       if (strlen(buf) >= sizeof(CVT_FORMER))     // but if we exceed max of 86
          return 0;                               // that rc file was corrupted
    } else {
@@ -4218,7 +4219,7 @@ static const char *configs_file (FILE *fp, const char *name, float *delay) {
    *delay = (float)tmp_whole + (float)tmp_fract / 1000;
 
    for (i = 0 ; i < GROUPSMAX; i++)
-      if (!config_wins(fp, fbuf, i))
+      if (!config_wins(fp, i))
          return fmtmk(N_fmt(RC_bad_entry_fmt), i+1, name);
 
    // any new addition(s) last, for older rcfiles compatibility...
