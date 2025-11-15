@@ -1,7 +1,7 @@
 /*
  * slabinfo.c - slab pools related definitions for libproc2
  *
- * Copyright © 2015-2024 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2025 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2023 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2004-2006 Albert Cahalan
  * Copyright © 2003      Chris Rivera
@@ -26,6 +26,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <sort.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -985,7 +986,8 @@ PROCPS_EXPORT struct slabinfo_stack **procps_slabinfo_sort (
     parms.offset = offset;
     parms.order = order;
 
-    qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
+    if (!mergesort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms))
+        return NULL;
     return stacks;
 } // end: procps_slabinfo_sort
 

@@ -1,7 +1,7 @@
 /*
  * pids.c - process related definitions for libproc2
  *
- * Copyright © 2015-2024 Jim Warner <james.warner@comcast.net>
+ * Copyright © 2015-2025 Jim Warner <james.warner@comcast.net>
  * Copyright © 2015-2024 Craig Small <csmall@dropbear.xyz>
  *
  * This library is free software; you can redistribute it and/or
@@ -19,12 +19,11 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-//efine _GNU_SOURCE             // for qsort_r
-
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <sort.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -1737,7 +1736,8 @@ PROCPS_EXPORT struct pids_stack **procps_pids_sort (
     parms.offset = offset;
     parms.order = order;
 
-    qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
+    if (!mergesort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms))
+        return NULL;
     return stacks;
 } // end: procps_pids_sort
 

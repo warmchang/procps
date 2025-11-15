@@ -21,6 +21,7 @@
 
 #include <errno.h>
 #include <fcntl.h>
+#include <sort.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -1408,7 +1409,8 @@ PROCPS_EXPORT struct stat_stack **procps_stat_sort (
     parms.offset = offset;
     parms.order = order;
 
-    qsort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms);
+    if (!mergesort_r(stacks, numstacked, sizeof(void *), (QSR_t)Item_table[p->item].sortfunc, &parms))
+        return NULL;
     return stacks;
 } // end: procps_stat_sort
 
