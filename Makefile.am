@@ -291,18 +291,20 @@ library_libproc2_la_SOURCES = \
 	library/include/pwcache.h \
 	library/readproc.c \
 	library/include/readproc.h \
+	library/signames.c \
 	library/slabinfo.c \
 	library/include/slabinfo.h \
-	library/signames.c \
+	library/sort.c \
+	library/include/sort.h \
 	library/stat.c \
 	library/include/stat.h \
 	library/sysinfo.c \
+	library/uptime.c \
 	library/version.c \
 	library/vmstat.c \
 	library/include/vmstat.h \
 	library/wchan.c \
 	library/include/wchan.h \
-	library/uptime.c \
 	library/include/xtra-procps-debug.h
 
 library_libproc2_la_includedir = $(includedir)/libproc2/
