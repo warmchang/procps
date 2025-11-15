@@ -495,8 +495,11 @@ static void fancy_spew(void){
   if (n) {
     if(forest_type) prep_forest_sort();
     while(sort_list) {
+      sort_node *prev;
       procps_pids_sort(Pids_info, processes, n, sort_list->sr, sort_list->reverse);
+      prev = sort_list;
       sort_list = sort_list->next;
+      free(prev);
     }
     if(forest_type) show_forest(n);
     else show_proc_array(n);
