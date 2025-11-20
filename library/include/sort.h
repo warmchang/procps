@@ -25,14 +25,20 @@
  * mergesort with callback and user parameter (like qsort_r)
  *   base:   pointer to the first element
  *   nmemb:  number of elements
- *   size:   size of each element in bytes
  *   compar: comparator function (returns <0, 0, >0)
  *   arg:    extra user parameter passed to comparator
  *
  * but, we return 1 on success, 0 on malloc failure!
+ *
+ * Attention:
+ *   This guy deals EXCLUSIVELY with sorting pointers,
+ *   implied by the absence of that qsort 'size' parm!
  */
-int mergesort_r (void *base, size_t nmemb, size_t size,
-                 int (*compar)(const void *, const void *, void *),
-                 void *arg);
+
+int mergesort_r (
+        void *base,
+        size_t nmemb,
+        int (*compar)(const void *, const void *, void *),
+        void *arg);
 
 #endif

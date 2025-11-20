@@ -1,5 +1,8 @@
 /*
- * sort.c - a 'stable' mergesort (with minimum malloc overhead)
+ * sort.c - a 'stable' mergesort with:
+ *    minimum malloc overhead
+ *    minimum memcpy overhead
+ *    no need for a size parm
  *
  * Copyright © 2025 Jim Warner <james.warner@comcast.net>
  *
@@ -25,28 +28,34 @@
  * mergesort with callback and user parameter (like qsort_r)
  *   base:   pointer to the first element
  *   nmemb:  number of elements
- *   size:   size of each element in bytes
  *   compar: comparator function (returns <0, 0, >0)
  *   arg:    extra user parameter passed to comparator
  *
- * but, we return 1 on success or 0 on malloc failure!
- * plus we issue only a single malloc each invocation!
+ * but, we return 1 on success or 0 on malloc failure! |
+ * plus we issue only a single malloc each invocation! |
+ * plus we issue only a single memcpy each invocation! |
+ *
+ * Note:
+ *   This guy deals EXCLUSIVELY with sorting pointers. |
+ *   As a result of this, we can move them around much |
+ *   more efficiently than thousands of memcpy() calls |
+ *   who then moves a whopping 8 bytes with each call. |
  */
+
 int mergesort_r (
         void *base,
         size_t nmemb,
-        size_t size,
         int (*compar)(const void *, const void *, void *),
         void *arg)
 {
     void *aux;
-    char *bas, *buf, *tmp;
+    char **bas, **buf, **tmp;
     size_t left, mid, right, width, i, l, r, k;
 
-    if (nmemb < 2 || size == 0) return 1;
+    if (nmemb < 2) return 1;
 
     // allocate one auxiliary buffer for the entire sort
-    if (!(aux = malloc(nmemb * size)))
+    if (!(aux = malloc(nmemb * sizeof(void *))))
         return 0;
 
     bas = base;
@@ -63,11 +72,11 @@ int mergesort_r (
 
             // merge two sorted halfs into buffer
             while (l < mid && r < right) {
-                if (compar(bas + (l * size), bas + (r * size), arg) <= 0) {
-                    memcpy(buf + (k * size), bas + (l * size), size);
+                if (compar(bas + l, bas + r, arg) <= 0) {
+                    *(buf + k) = *(bas + l);
                     l++;
                 } else {
-                    memcpy(buf + (k * size), bas + (r * size), size);
+                    *(buf + k) = *(bas + r);
                     r++;
                 }
                 k++;
@@ -75,12 +84,12 @@ int mergesort_r (
 
             // copy remaining left stuff
             while (l < mid) {
-                memcpy(buf + (k * size), bas + (l * size), size);
+                *(buf + k) = *(bas + l);
                 l++; k++;
             }
             // copy remaining right stuff
             while (r < right) {
-                memcpy(buf + (k * size), bas + (r * size), size);
+                *(buf + k) = *(bas + r);
                 r++; k++;
             }
         }
@@ -92,8 +101,8 @@ int mergesort_r (
     }
 
     // if sorted data is in aux, copy back to base
-    if (bas != (char *)base)
-        memcpy(base, bas, nmemb * size);
+    if (bas != (char **)base)
+        memcpy(base, bas, nmemb * sizeof (void *));
 
     free(aux);
     return 1;
