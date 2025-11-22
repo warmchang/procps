@@ -325,7 +325,7 @@ void unix_print_signals(void)
 {
     mapstruct *sigtable2 = xmalloc(sizeof(sigtable));
     memcpy(sigtable2, sigtable, sizeof(sigtable));
-    stablesort(sigtable2, sigtable_nritems, sizeof(*sigtable), mapstruct_cmp_num);
+    qsort(sigtable2, sigtable_nritems, sizeof(*sigtable), mapstruct_cmp_num);
 
     // omit null signal(s)
     int lastseen = 0, pos = 0;
@@ -347,7 +347,7 @@ void pretty_print_signals(void)
 {
     mapstruct *sigtable2 = xmalloc(sizeof(sigtable));
     memcpy(sigtable2, sigtable, sizeof(sigtable));
-    stablesort(sigtable2, sigtable_nritems, sizeof(*sigtable), mapstruct_cmp_num);
+    qsort(sigtable2, sigtable_nritems, sizeof(*sigtable), mapstruct_cmp_num);
 
     // omit null signal(s)
     int lastseen = 0, n;
