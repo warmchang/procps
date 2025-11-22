@@ -50,7 +50,7 @@ int mergesort_r (
 {
     void *aux;
     char **bas, **buf, **tmp;
-    size_t left, mid, right, width, i, l, r, k;
+    size_t top_half, middle, bottom_half, depth, t, b, k;
 
     if (nmemb < 2) return 1;
 
@@ -62,35 +62,36 @@ int mergesort_r (
     buf = aux;
 
     // bottom-up merge sort
-    for (width = 1; width < nmemb; width *= 2) {
-        for (i = 0; i < nmemb; i += 2 * width) {
-            left  = i;
-            mid   = (i + width < nmemb) ? i + width : nmemb;
-            right = (i + (2 * width) < nmemb) ? i + (2 * width) : nmemb;
+    for (depth = 1; depth < nmemb; depth *= 2) {
 
-            l = left, r = mid, k = left;
+        for (top_half = 0; top_half < nmemb; top_half += 2 * depth) {
+            middle = (top_half + depth < nmemb) ? top_half + depth : nmemb;
+            bottom_half = (top_half + (2 * depth) < nmemb) ? top_half + (2 * depth) : nmemb;
+
+            b = middle;
+            t = k = top_half;
 
             // merge two sorted halfs into buffer
-            while (l < mid && r < right) {
-                if (compar(bas + l, bas + r, arg) <= 0) {
-                    *(buf + k) = *(bas + l);
-                    l++;
+            while (t < middle && b < bottom_half) {
+                if (compar(bas + t, bas + b, arg) <= 0) {
+                    *(buf + k) = *(bas + t);
+                    t++;
                 } else {
-                    *(buf + k) = *(bas + r);
-                    r++;
+                    *(buf + k) = *(bas + b);
+                    b++;
                 }
                 k++;
             }
 
-            // copy remaining left stuff
-            while (l < mid) {
-                *(buf + k) = *(bas + l);
-                l++; k++;
+            // copy remaining top stuff
+            while (t < middle) {
+                *(buf + k) = *(bas + t);
+                t++; k++;
             }
-            // copy remaining right stuff
-            while (r < right) {
-                *(buf + k) = *(bas + r);
-                r++; k++;
+            // copy remaining bottom stuff
+            while (b < bottom_half) {
+                *(buf + k) = *(bas + b);
+                b++; k++;
             }
         }
 
