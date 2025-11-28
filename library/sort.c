@@ -49,8 +49,8 @@ int mergesort_r (
         void *arg)
 {
     void *aux;
-    char **bas, **buf, **tmp;
-    size_t top_half, middle, bottom_half, depth, t, b, k;
+    char **bas, **buf, **p;
+    size_t top_start, bottom_start, bottom_end, half_depth, t, b;
 
     if (nmemb < 2) return 1;
 
@@ -59,46 +59,40 @@ int mergesort_r (
         return 0;
 
     bas = base;
-    buf = aux;
+    p = buf = aux;
 
     // bottom-up merge sort
-    for (depth = 1; depth < nmemb; depth *= 2) {
+    for (half_depth  = 1; half_depth  < nmemb; half_depth  *= 2) {
 
-        for (top_half = 0; top_half < nmemb; top_half += 2 * depth) {
-            middle = (top_half + depth < nmemb) ? top_half + depth : nmemb;
-            bottom_half = (top_half + (2 * depth) < nmemb) ? top_half + (2 * depth) : nmemb;
+        for (top_start = 0; top_start < nmemb; top_start += 2 * half_depth ) {
+            bottom_start = (top_start + half_depth  < nmemb) ? top_start + half_depth  : nmemb;
+            bottom_end = (top_start + (2 * half_depth ) < nmemb) ? top_start + (2 * half_depth ) : nmemb;
 
-            b = middle;
-            t = k = top_half;
+            t = top_start;
+            b = bottom_start;
 
             // merge two sorted halfs into buffer
-            while (t < middle && b < bottom_half) {
-                if (compar(bas + t, bas + b, arg) <= 0) {
-                    *(buf + k) = *(bas + t);
-                    t++;
-                } else {
-                    *(buf + k) = *(bas + b);
-                    b++;
-                }
-                k++;
+            while (t < bottom_start && b < bottom_end) {
+                if (compar(bas + t, bas + b, arg) <= 0)
+                    *p = *(bas + t++);
+                else
+                    *p = *(bas + b++);
+                p++;
             }
 
             // copy remaining top stuff
-            while (t < middle) {
-                *(buf + k) = *(bas + t);
-                t++; k++;
-            }
+            while (t < bottom_start)
+                *(p++) = *(bas + t++);
+
             // copy remaining bottom stuff
-            while (b < bottom_half) {
-                *(buf + k) = *(bas + b);
-                b++; k++;
-            }
+            while (b < bottom_end)
+                *(p++) = *(bas + b++);
         }
 
         // swap roles of bas and buf
-        tmp = bas;
+        p = bas;
         bas = buf;
-        buf = tmp;
+        buf = p;
     }
 
     // if sorted data is in aux, copy back to base
