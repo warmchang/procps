@@ -14,7 +14,7 @@ const char *scale_size(unsigned long size, unsigned int exponent, int si, int hu
 	static char buf[BUFSIZ];
 	int i;
 	float base;
-	long long bytes;
+	unsigned long long bytes;
 
 	base = si ? 1000.0 : 1024.0;
 	bytes = size * 1024LL;
@@ -23,22 +23,22 @@ const char *scale_size(unsigned long size, unsigned int exponent, int si, int hu
 		switch (exponent) {
 		case 0:
 			/* default output */
-			snprintf(buf, sizeof(buf), "%ld", (long int)(bytes / (long long int)base));
+			snprintf(buf, sizeof(buf), "%lu", (unsigned long int)(bytes / (unsigned long long int)base));
 			return buf;
 		case 1:
 			/* in bytes, which can not be in SI */
-			snprintf(buf, sizeof(buf), "%lld", bytes);
+			snprintf(buf, sizeof(buf), "%llu", bytes);
 			return buf;
 		default:
 			/* In desired scale. */
-			snprintf(buf, sizeof(buf), "%ld",
+			snprintf(buf, sizeof(buf), "%lu",
 			        (long)(bytes / power(base, exponent-1)));
 			return buf;
 		}
 	}
 
 	/* human readable output */
-	if (4 >= snprintf(buf, sizeof(buf), "%lld%c", bytes, up[0]))
+	if (4 >= snprintf(buf, sizeof(buf), "%llu%c", bytes, up[0]))
 		return buf;
 
 	for (i = 1; up[i] != 0; i++) {
@@ -46,15 +46,15 @@ const char *scale_size(unsigned long size, unsigned int exponent, int si, int hu
 			if (4 >= snprintf(buf, sizeof(buf), "%.1f%c",
 			                  (float)(bytes / power(base, i)), up[i]))
 				return buf;
-			if (4 >= snprintf(buf, sizeof(buf), "%ld%c",
-			                  (long)(bytes / power(base, i)), up[i]))
+			if (4 >= snprintf(buf, sizeof(buf), "%lu%c",
+			                  (unsigned long)(bytes / power(base, i)), up[i]))
 				return buf;
 		} else {
 			if (5 >= snprintf(buf, sizeof(buf), "%.1f%ci",
 			                  (float)(bytes / power(base, i)), up[i]))
 				return buf;
-			if (5 >= snprintf(buf, sizeof(buf), "%ld%ci",
-			                  (long)(bytes / power(base, i)), up[i]))
+			if (5 >= snprintf(buf, sizeof(buf), "%lu%ci",
+			                  (unsigned long)(bytes / power(base, i)), up[i]))
 				return buf;
 		}
 	}
