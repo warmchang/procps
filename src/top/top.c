@@ -3758,13 +3758,12 @@ static void before (char *me) {
       error_exit(fmtmk(N_fmt(LIB_errorpid_fmt), __LINE__, strerror(-rc)));
 
 #if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
-{  struct sigaction sa;
+   struct sigaction sa;
    Thread_id_main = pthread_self();
    /* in case any of our threads have been enabled, they'll inherit this mask
       with everything blocked. therefore, signals go to the main thread (us). */
    sigfillset(&sa.sa_mask);
    pthread_sigmask(SIG_BLOCK, &sa.sa_mask, NULL);
-}
 #endif
 
 #ifdef THREADED_CPU
@@ -3790,6 +3789,11 @@ static void before (char *me) {
    if (0 != pthread_create(&Thread_id_tasks, NULL, tasks_refresh, NULL))
       error_exit(fmtmk(N_fmt(X_THREADINGS_fmt), __LINE__, strerror(errno)));
    pthread_setname_np(Thread_id_tasks, "update tasks");
+#endif
+
+#if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
+   // now that theads are created, re-enable signals for main thread ...
+   pthread_sigmask(SIG_UNBLOCK, &sa.sa_mask, NULL);
 #endif
 
    // lastly, establish support for graphing cpus & memory
