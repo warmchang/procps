@@ -565,12 +565,6 @@ static void bye_bye (const char *str) {
       fputs(str, stderr);
       exit(EXIT_FAILURE);
    }
-   /* this could happen when called from several places |
-      including that sig_endpgm().  thus we must use an |
-      async-signal-safe write function just in case ... |
-      (thanks: Shaohua Zhan shaohua.zhan@windriver.com) | */
-   if (Batch)
-      write(fileno(stdout), "\n", sizeof("\n") - 1);
 
    exit(EXIT_SUCCESS);
 } // end: bye_bye
@@ -7563,7 +7557,7 @@ static void frame_make (void) {
 #endif
    }
 
-   putp(Batch ? "\n\n" : Cap_home);
+   if (!Batch) putp(Cap_home);
 
    Tree_idx = Pseudo_row = Msg_row = scrlins = 0;
    summary_show();
@@ -7587,18 +7581,21 @@ static void frame_make (void) {
       }
    }
 
-   /* clear to end-of-screen - critical if last window is 'idleps off'
-      (main loop must iterate such that we're always called before sleep) */
-   if (!Batch && scrlins < Max_lines) {
-      if (!BOT_PRESENT)
-         putp(Cap_nl_clreos);
-      else {
-         for (i = scrlins + Msg_row + 1; i < SCREEN_ROWS; i++) {
-            putp(tg2(0, i));
-            putp(Cap_clr_eol);
+   if (Batch) putp("\n\n");
+   else {
+      /* clear to end-of-screen - critical if last window is 'idleps off'
+         (main loop must iterate such that we're always called before sleep) */
+      if (scrlins < Max_lines) {
+         if (!BOT_PRESENT)
+            putp(Cap_nl_clreos);
+         else {
+            for (i = scrlins + Msg_row + 1; i < SCREEN_ROWS; i++) {
+               putp(tg2(0, i));
+               putp(Cap_clr_eol);
+            }
          }
+         PSU_CLREOS(Pseudo_row);
       }
-      PSU_CLREOS(Pseudo_row);
    }
 
    if (CHKw(w, View_SCROLL) && VIZISw(Curwin)) show_scroll();
