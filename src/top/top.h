@@ -61,6 +61,7 @@
 //#define SCROLLV_BY_1            /* when scrolling left/right do not move 8 */
 //#define STRINGCASENO            /* case insensitive compare/locate version */
 //#define TERMIOS_ONLY            /* use native input only (just limp along) */
+//#define THREADED_ALL            /* separate threads for the next 3 defines */
 //#define THREADED_CPU            /* separate background thread for cpu updt */
 //#define THREADED_MEM            /* separate background thread for mem updt */
 //#define THREADED_TSK            /* separate background thread for tsk updt */
@@ -109,6 +110,14 @@ char *strcasestr(const char *haystack, const char *needle);
 #define STRCMP  strcmp
 #endif
 
+#ifdef THREADED_ALL
+#undef THREADED_CPU
+#undef THREADED_MEM
+#undef THREADED_TSK
+#define THREADED_CPU
+#define THREADED_MEM
+#define THREADED_TSK
+#endif
 
 /*######  Some Miscellaneous constants  ##################################*/
 
