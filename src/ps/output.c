@@ -1489,10 +1489,10 @@ setREL1(ID_TGID)
   if(!ps_getpidcon && !tried_load){
     void *handle = dlopen("libselinux.so.1", RTLD_NOW);
     if(handle){
+      dlerror();
       ps_freecon = dlsym(handle, "freecon");
       if(dlerror())
         ps_freecon = 0;
-      dlerror();
       ps_getpidcon = dlsym(handle, "getpidcon");
       if(dlerror())
         ps_getpidcon = 0;
@@ -1505,7 +1505,7 @@ setREL1(ID_TGID)
     tried_load++;
   }
 #endif
-  if(ps_getpidcon && selinux_enabled && !ps_getpidcon(rSv(ID_TGID, s_int, pp), &context)){
+  if(ps_freecon && ps_getpidcon && selinux_enabled && !ps_getpidcon(rSv(ID_TGID, s_int, pp), &context)){
     size_t max_len = OUTBUF_SIZE-1;
     len = strlen(context);
     if(len > max_len) len = max_len;
