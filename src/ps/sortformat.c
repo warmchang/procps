@@ -515,7 +515,7 @@ static const char *short_sort_parse(sf_node *sfn){
  * Recursion is to preserve original order.
  */
 static const char *parse_O_option(sf_node *sfn){
-  const char *err;     /* error code that could or did happen */
+  const char *err = NULL; /* error code that could or did happen */
 
   if(sfn->next){
     err = parse_O_option(sfn->next);

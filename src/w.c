@@ -807,7 +807,7 @@ void print_terminal_user(
     char ttypath[5 + UT_LINESIZE + 1] = "/dev/";
     char uname[UT_NAMESIZE + 1] = "?";
     int pids_length = 0;
-    utmp_t *u;
+    utmp_t *u = NULL;  // unnecessary, just avoid -Wmaybe-uninitialized
 
     hertz = procps_hertz_get();
     strncpy(ttypath + 5, ttyname, UT_LINESIZE);

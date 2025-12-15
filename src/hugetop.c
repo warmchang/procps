@@ -418,7 +418,7 @@ int main(int argc, char **argv)
 {
 	int is_tty = isatty(STDIN_FILENO);
 	int o;
-	unsigned short old_rows;
+	unsigned short old_rows = 0;
 
 	static const struct option longopts[] = {
 		{ "delay",      required_argument, NULL, 'd' },
