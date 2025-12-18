@@ -25,81 +25,79 @@
 #include "library/escape.c"
 
 #define MAXTBL(t) (int)( sizeof(t) / sizeof(t[0]) )
-/*
- * ASCII characters are always a single character
- */
-int check_size_ascii(void *data)
-{
-    int i;
-    const char test_chars[][5] = {
-        "\x09", "A", "Z", "a", "z",
-        "]", "~" };
 
-    testname = "escape: check u8charlen ascii";
-    for (i=0; i < MAXTBL(test_chars); i++) {
-            //printf("t %s\n", test_chars[i]);
-        if (1 != u8charlen((const unsigned char *)test_chars[i], 5)) {
-            //asprintf(&testname, "escape: check u8charlen(%s) ascii", test_chars[i]);
+
+int check_ascii_untouched (void *data) {
+    const char test_chars[][5] = {
+        "A", "Z", "a", "z", "]", "~", "\x40"  };
+    char test_dst[5];
+    int i, n;
+
+    testname = "escape: check ascii untouched";
+    for (i = 0; i < MAXTBL(test_chars); i++) {
+        n = snprintf(test_dst, sizeof(test_dst), "%s", test_chars[i]);
+        u8charlen((unsigned char *)test_dst, n);
+//printf("%s: src:%s  dst:%s\n", __func__, test_chars[i], test_dst);
+        if (strcmp(test_chars[i], test_dst) != 00)
             return 0;
-        }
     }
+//printf("\n\n");
     return 1;
 }
 
-/*
- * Check that characters that are the string size are the u8charlen
- */
-int check_size_strlen(void *data)
-{
-    int i;
+
+int check_none_escaped (void *data) {
     const char test_chars[][5] = {
-        //"\x00",
-        "\x44", "\x7f", "\xc2\x80", "\u0188", "\u07ff",
+        "\x44", "\u0188", "\u07ff",
         "\u0800", "\u8888", "\ud7ff", "\uffff",
-        "\U00010000", "\U00018888", "\U0010ffff"};
+        "\U00010000", "\U00018888", "\U0010ffff",
+        "\xe2\x99\xa5", "\xf0\x9f\x8c\x8e",
+        "\xf0\x9f\x9a\xab" };
+    char test_dst[5];
+    int i, n;
 
-    testname = "escape: check u8charlen == strlen";
-    for (i=0; i < MAXTBL(test_chars); i++) {
-            //printf("t %s\n", test_chars[i]);
-        if (strlen(test_chars[i]) != u8charlen((const unsigned char *)test_chars[i], 5)) {
-            //asprintf(&testname, "escape: check u8charlen(%s) == strlen", test_chars[i]);
+    testname = "escape: check none escaped";
+    for (i = 0; i < MAXTBL(test_chars); i++) {
+        n = snprintf(test_dst, sizeof(test_dst), "%s", test_chars[i]);
+        u8charlen((unsigned char *)test_dst, n);
+//printf("%s: src:%s  dst:%s\n", __func__, test_chars[i], test_dst);
+        if (strcmp(test_chars[i], test_dst))
             return 0;
-        }
     }
+//printf("\n\n");
     return 1;
 }
-/*
- * All of these characters will return -1 for u8charlen
- */
-int check_size_negative(void *data)
-{
-    int i;
+
+
+int check_all_escaped (void *data) {
     const char test_chars[][5] = {
-        "\x80", "\xbf", "\xc0", "\xc1", "\xc1\xbf",
+        "\x7f", "\x80", "\xbf", "\xc0", "\xc1", "\xc1\xbf",
+        "\xc2\x80",
         "\xe0\x9f\xbf", "\xed\xa0\x80", "\xed\xbf\xbf",
-        "\xee\x00\x80","\xee\x80\x40", "\xdf\x7f",
+        "\xee\x00\x80","\xee\x80", "\xdf\x7f",
         "\xfc\x8f\xbf\xbf", "\xfc\xbf\xbf", "\xf0\x80\xa0\xa0",
         "\xf0\x8f\xbf\xbf", "\xf4\x90\x80\x80",
         "\ue000", "\uf8ff",                    // main PUA    begin/end
         "\U000F0000", "\U000FFFFD",            // supp PUA-A  begin/end
         "\U00100000", "\U0010FFFD" };          // supp PUA-B  begin/end
+    char test_dst[50];
+    int i, j, n;
 
-    testname = "escape: check u8charlen == -1";
-    for (i=0; i < MAXTBL(test_chars); i++) {
-            //printf("t %s\n", test_chars[i]);
-        if (-1 != u8charlen((const unsigned char *)test_chars[i], 5)) {
-            // Leaks memory but process will exit
-            //asprintf(&testname, "escape: check u8charlen(%s) == -1", test_chars[i]);
-            return 0;
-        }
+    testname = "escape: check all escaped";
+    for (i = 0; i < MAXTBL(test_chars); i++) {
+        n = snprintf(test_dst, sizeof(test_dst), "%s", test_chars[i]);
+        u8charlen((unsigned char *)test_dst, n);
+//printf("%s: src:%s  dst:%s\n", __func__, test_chars[i], test_dst);
+        for (j = 0; j < n; j++)
+            if (test_dst[j] != '?')
+                return 0;
     }
+//printf("\n\n");
     return 1;
 }
 
-int check_esc_ctl(void *data)
-{
-    int i;
 
+int check_some_escaped (void *data) {
     // Array of input,expected_output pairs
     char test_strs[][2][20] = {
         { "A", "A" },                               // A
@@ -113,25 +111,26 @@ int check_esc_ctl(void *data)
         { "\xdf\xbf H", "\u07ff H"}, // end boundary
         { "\x80\xbf\x41 I", "??A I"} // wrong continuation bytes
     };
+    char test_dst[50];
+    int i, n;
 
-    testname = "esc_ctl()";
-    for (i=0; i < MAXTBL(test_strs); i++) {
-        esc_ctl(test_strs[i][0],strlen(test_strs[i][0]));
-        //printf("Is: \"%s\"==\"%s\"\n", test_strs[i][0], test_strs[i][1]);
-        if (strcmp(test_strs[i][0], test_strs[i][1]) != 0) {
-            // Leaks memory but process will exit
-            asprintf(&testname, "escape: check esc_ctl(%s) not %s", test_strs[i][0], test_strs[i][1]);
+    testname = "escape: check some escaped";
+    for (i = 0; i < MAXTBL(test_strs); i++) {
+        n = snprintf(test_dst, sizeof(test_dst), "%s", test_strs[i][0]);
+        u8charlen((unsigned char *)test_dst, n);
+//printf("%s: inout \"%s\"  -->  output \"%s\"\n", __func__, test_strs[i][0], test_dst);
+        if (strcmp(test_strs[i][1], test_dst) != 0)
             return 0;
-        }
     }
+//printf("\n");
     return 1;
 };
 
 TestFunction test_funcs[] = {
-    check_size_ascii,
-    check_size_strlen,
-    check_size_negative,
-    check_esc_ctl,
+    check_ascii_untouched,
+    check_none_escaped,
+    check_all_escaped,
+    check_some_escaped,
     NULL
 };
 
@@ -139,4 +138,3 @@ int main(int argc, char *argv[])
 {
     return run_tests(test_funcs, NULL);
 }
-
