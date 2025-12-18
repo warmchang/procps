@@ -51,7 +51,7 @@ static void u8charlen (unsigned char *s, unsigned size) {
       if (s[0] <= 0x7f) { n = 1; goto esc_maybe; }
       if (size >= 2 && (s[1] & 0xc0) == 0x80) {
          // 110xxxxx 10xxxxxx, U+0080 - U+07FF
-         if (s[0] >= 0xc2 && s[0] <= 0xdf) { n = 2; goto next_up; };
+         if (s[0] >= 0xc2 && s[0] <= 0xdf) { n = 2; goto esc_maybe; };
          if (size >= 3 && (s[2] & 0xc0) == 0x80) {
 #ifndef OFF_UNICODE_PUA
             x = ((unsigned)s[0] << 16) + ((unsigned)s[1] << 8) + (unsigned)s[2];
@@ -92,9 +92,10 @@ esc_maybe:
       if ((n < 0)
       || ((s[0] < 0x20)
       || ((s[0] == 0x7f)
-      || ((s[0] == 0xc2 && s[1] >= 0x80 && s[1] <= 0x9f)))))
+      || ((s[0] == 0xc2 && s[1] >= 0x80 && s[1] <= 0x9f))))) {
          *s = '?';
-      n = 1;
+         n = 1;
+      }
       // fall through
 next_up:
       s += n;
