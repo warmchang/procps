@@ -746,7 +746,9 @@ static void __attribute__ ((__noreturn__))
 	fputs(_(" -u, --no-current    ignore current process username\n"),out);
 	fputs(_(" -s, --short         short format\n"),out);
 	fputs(_(" -t, --terminal      show terminals\n"),out);
-	fputs(_(" -f, --from          show remote hostname field\n"),out);
+	fprintf(out,
+	      _(" -f, --from          toggle remote hostname field (default: %s)\n"),
+	      FROM_STRING);
 	fputs(_(" -o, --old-style     old style output\n"),out);
 	fputs(_(" -i, --ip-addr       display IP address instead of hostname (if possible)\n"), out);
 	fputs(_(" -p, --pids          show the PID(s) of processes in WHAT\n"), out);
