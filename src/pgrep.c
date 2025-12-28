@@ -184,7 +184,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
 #endif
     }
     fputs(_(" -c, --count               count of matching processes\n"), fp);
-    fputs(_(" -f, --full                use full process name to match\n"), fp);
+    fputs(_(" -f, --full                use full command line to match\n"), fp);
     fputs(_(" -g, --pgroup <PGID,...>   match listed process group IDs\n"), fp);
     fputs(_(" -G, --group <GID,...>     match real group IDs\n"), fp);
     fputs(_(" -i, --ignore-case         match case insensitively\n"), fp);
