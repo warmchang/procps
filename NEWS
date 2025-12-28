@@ -20,6 +20,7 @@ procps-ng-NEXT
   * ps.1: Add format equivalents                           Debian #925437
   * ps: avoid potential segfault due to library race       issue #380
   * ps: Fix -ad option conflict                            issue #395
+  * ps: ppid of 0 is ok, fix parser                        issue #405
   * slabtop: Increase column width                         Debian #959375
   * sysctl: Return error if EPERM or EISDIR                merge !228
   * sysctl: Use options after --system                     Debian #978989

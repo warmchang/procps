@@ -2,7 +2,7 @@
  * parser.c - ps command options parser
  *
  * Copyright © 2012-2023 Jim Warner <james.warner@comcast.net
- * Copyright © 2004-2023 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2004-2025 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2012-2014 Jaromir Capik <jcapik@redhat.com>
  * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
  * Copyright © 1998-2003 Albert Cahalan
@@ -94,6 +94,17 @@ static const char *parse_pid(char *str, sel_union *ret){
   num = strtoul(str, &endp, 0);
   if(*endp != '\0')      return _("process ID list syntax error");
   if(num<1)              return _("process ID out of range");
+  if(num > 0x7fffffffUL) return _("process ID out of range");
+  ret->pid = num;
+  return 0;
+}
+
+static const char *parse_ppid(char *str, sel_union *ret){
+  char *endp;
+  unsigned long num;
+  num = strtoul(str, &endp, 0);
+  if(*endp != '\0')      return _("process ID list syntax error");
+  if(num<0)              return _("process ID out of range");
   if(num > 0x7fffffffUL) return _("process ID out of range");
   ret->pid = num;
   return 0;
@@ -988,7 +999,7 @@ static const char *parse_gnu_option(void){
     trace("--ppid\n");
     arg = grab_gnu_arg();
     if(!arg) return _("list of process IDs must follow --ppid");
-    err=parse_list(arg, parse_pid);
+    err=parse_list(arg, parse_ppid);
     if(err) return err;
     selection_list->typecode = SEL_PPID;
     return NULL;
