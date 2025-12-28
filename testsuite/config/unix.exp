@@ -159,7 +159,7 @@ proc expect_spawn_retval { test retval } {
     if {$value == $retval} {
       return
     }
-    fail "$test (exit value)"
+    fail "$test (exit value Want:$retval Got:$value)"
 }
 
 proc make_pipeproc { } {

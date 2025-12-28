@@ -129,6 +129,7 @@ static int opt_echo = 0;
 static int opt_threads = 0;
 static int opt_shell_quote = 0;
 static bool opt_mrelease = false;
+static bool opt_quiet = false;
 
 static pid_t opt_ns_pid = 0;
 static bool use_sigqueue = false;
@@ -167,6 +168,7 @@ static int __attribute__ ((__noreturn__)) usage(int opt)
         fputs(_(" -d, --delimiter <string>  specify output delimiter\n"),fp);
         fputs(_(" -l, --list-name           list PID and process name\n"),fp);
         fputs(_(" -a, --list-full           list PID and full command line\n"),fp);
+        fputs(_("     --quiet               suppress all normal output\n"), fp);
         fputs(_(" -v, --inverse             negates the matching\n"),fp);
         fputs(_(" -w, --lightweight         list all TID\n"), fp);
         break;
@@ -1040,6 +1042,7 @@ static void parse_opts (int argc, char **argv)
         NSLIST_OPTION,
         CGROUP_OPTION,
         ENV_OPTION,
+        QUIET_OPTION
     };
     static const struct option longopts[] = {
         {"signal", required_argument, NULL, SIGNAL_OPTION},
@@ -1072,6 +1075,7 @@ static void parse_opts (int argc, char **argv)
         {"ns", required_argument, NULL, NS_OPTION},
         {"nslist", required_argument, NULL, NSLIST_OPTION},
         {"queue", required_argument, NULL, 'q'},
+        {"quiet", no_argument, NULL, QUIET_OPTION},
         {"runstates", required_argument, NULL, 'r'},
         {"env", required_argument, NULL, ENV_OPTION},
         {"shell-quote", no_argument, NULL, 'Q'},
@@ -1278,6 +1282,9 @@ static void parse_opts (int argc, char **argv)
                 usage('?');
             ++criteria_count;
             break;
+        case QUIET_OPTION:
+            opt_quiet = true;
+            break;
         case 'H':
             require_handler = true;
             ++criteria_count;
@@ -1311,6 +1318,19 @@ static void parse_opts (int argc, char **argv)
             errx(EXIT_FAILURE, _("pidfile not valid\n"
                          "Try `%s --help' for more information."),
                          program_invocation_short_name);
+    }
+
+    if (opt_quiet) {
+        if (opt_longlong)
+            errx(EXIT_USAGE,
+                    _("Cannot use --quiet and -a,--list-full options together\n"
+                        "Try `%s --help' for more information."),
+                    program_invocation_short_name);
+        if (opt_long)
+            errx(EXIT_USAGE,
+                    _("Cannot use --quiet and -l,--list-name options together\n"
+                        "Try `%s --help' for more information."),
+                    program_invocation_short_name);
     }
 
     if (argc - optind == 1)
@@ -1379,7 +1399,7 @@ int main (int argc, char **argv)
     case PGREP:
         if (opt_count) {
             fprintf(stdout, "%d\n", num);
-        } else {
+        } else if (!opt_quiet) {
             if (opt_long || opt_longlong)
                 output_strlist (procs,num);
             else

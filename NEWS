@@ -11,6 +11,7 @@ procps-ng-NEXT
   * pgrep: Add shell quoting                               merge !248
   * pgrep: Use pidfd_send_signal()                         issue #207
   * pgrep.1: Note that we can only go to 100th of second   issue #376
+  * pgrep: Add --quiet option                              issue #404
   * pmap: add -k option to print raw names from kernel     merge !251
   * ps: parse --help correctly                             issue #381
   * ps: Add --delimiter option                             issue #118

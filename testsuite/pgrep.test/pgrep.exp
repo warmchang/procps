@@ -135,6 +135,15 @@ set test "pgrep with long non-matching pattern gives warning"
 spawn $pgrep gnome-session-bi
 expect_pass "$test" "pattern that searches for process name longer than 15 characters will result in zero matches"
 
+set test "pgrep quiet matching shows no output"
+spawn $pgrep --quiet $testproc_comm
+expect_blank "$test"
+expect_spawn_retval "$test" 0
+
+set test "pgrep quiet not matching shows no output too"
+spawn $pgrep --quiet XXXXXXX$testproc_comm
+expect_blank "$test"
+expect_spawn_retval "$test" 1
 # Cleanup
 kill_testproc
 
