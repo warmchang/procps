@@ -80,16 +80,16 @@ if  { [ file readable "/proc/self/smaps" ] == 0 } {
 proc expect_twice_total { test } {
     set totkb 0
     expect {
-        -re "\r\n\\s+(\\d+)\\s+.*KB" {
+        -re "\r\n\\s+(\\d+)\\s+\[0-9 \]+KB" {
             set totkb $expect_out(1,string)
             expect {
-                -re "\r\n\\s+$totkb\[0-9 \]*KB" { pass "$test" }
-                eof { fail "$test: first match" }
-                timeout { fail "$test: first match" }
+                -re "\r\n\\s+$totkb\\s+\[0-9 \]+KB" { pass "$test" }
+                eof { fail "$test: match second process: $totkb" }
+                timeout { fail "$test: match second process: $totkb" }
             }
         }
-        eof { fail "$test: second match" }
-        timeout { fail "$test: second match" }
+        eof { fail "$test: match first process" }
+        timeout { fail "$test: match first process" }
     }
 }
 
