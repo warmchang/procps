@@ -34,6 +34,7 @@ procps-ng-NEXT
   * w: Use process TTY as backup for user TTY              Debian #1080335
   * w: Use correct return value for sd_get_sessions        Debian #1068904
   * w: Don't check for sd_booted                           Debian #1108549
+  * w: Don't crash with pids in terminal mode              issue #407
   * watch: Add --follow option                             Debian #469156
   * watch: 256 color support                               issue #44
   * watch.1: Warn about -d permanent option                Debian #883638

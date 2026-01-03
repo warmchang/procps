@@ -154,8 +154,11 @@ proc expect_table_dsc { test match_header match_item } {
 }
 
 proc expect_spawn_retval { test retval } {
-    foreach {pid spawnid os_error_flag value} [wait] break
+    foreach {pid spawnid os_error_flag value x y} [wait] break
 
+    if {$y != "" } {
+        fail "$test (subprocess returned $y)"
+    }
     if {$value == $retval} {
       return
     }

@@ -17,12 +17,12 @@ set w_login "\(\\d+\[A-Z\]\[a-z\]{2}\\d+\|\[A-Z\]\[a-z\]{2}\\d+\|\\d+:\\d+\)"
 set w_idle  "\(\\?xdm\\?\|\\?\|\\d+days\|\\d+:\\d+m?\|\\d+.\\d+s\)"
 set w_ival7  "\(\\?\|\\d+days\|\\d+:\\d+m?\|\\d+.\\d+s\)"
 set w_what  "\[A-Za-z0-9_\/\\-\]+"
-set w_pids  "\\d+/\\d+"
+set w_pids  "-?\\d+/\\d+"
 set w_std_userlines "\(${w_user}\\s+${w_tty}\\s+${w_login}\\s+${w_idle}\\s+${w_ival7}\\s+${w_ival7}\\s+${w_what}\\s*\)*"
 set w_short_userlines "\(${w_user}\\s+${w_tty}\\s+${w_idle}\\s+${w_what}\\s*\)*"
 set w_from_userlines "\(${w_user}\\s+${w_tty}\\s+${w_from}\\s+${w_login}\\s+${w_idle}\\s+${w_ival7}\\s+${w_ival7}\\s+${w_what}\\s*\)*"
 set w_fromshort_userlines "\(${w_user}\\s+${w_tty}\\s+${w_from}\\s+${w_idle}\\s+${w_what}\\s*\)*"
-set w_pid_userlines "\(${w_user}\\s+${w_tty}\\s+${w_idle}\\s+%{w_pids}\s+${w_what}\\s*\)*"
+set w_pid_userlines "\(${w_user}\\s+${w_tty}\\s+${w_idle}\\s+${w_pids}\s+${w_what}\\s*\)*"
 
 set test "w with no arguments"
 spawn $w
@@ -64,3 +64,8 @@ expect_pass "$test" "^${w_std_header}${w_std_userlines}"
 set test "w with terminal mode from and short flags"
 spawn $w -tfs
 expect_pass "$test" "^${w_fromshort_header}${w_fromshort_userlines}"
+
+set test "w with terminal mode and pids flag"
+spawn $w -tp
+expect_spawn_retval "$test" 0
+expect_pass "$test" "^${w_std_header}${w_pid_userlines}"

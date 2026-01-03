@@ -1,7 +1,7 @@
 /*
  * w - show what logged in users are doing.
  *
- * Copyright © 2009-2025 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2009-2026 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2011-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
  * Copyright © 2002-2006 Albert Cahalan
@@ -888,7 +888,7 @@ void print_terminal_user(
 #if (defined(WITH_SYSTEMD) || defined(WITH_ELOGIND)) && defined(HAVE_SD_SESSION_GET_LEADER)
         sd_session_get_leader(session, &ut_pid);
 #endif
-        if (ut_pid == -1)
+        if (ut_pid == -1 && u != NULL)
             ut_pid = u->ut_pid;
         pids_length = printf(" %6d/%6d", ut_pid, last_pid);
         if (pids_length > maxcmd) {
