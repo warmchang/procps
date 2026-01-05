@@ -250,8 +250,7 @@ endif
 src_skill_SOURCES = src/skill.c local/strutils.c local/fileutils.c local/signals.c
 src_snice_SOURCES = src/skill.c local/strutils.c local/fileutils.c local/signals.c
 CHECKABLEMANS += \
-	man/skill.1 \
-	man/snice.1
+	man/skill.1
 dist_man_MANS += \
 	man/skill.1 \
 	man/snice.1
