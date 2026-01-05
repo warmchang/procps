@@ -38,10 +38,10 @@ int check_ascii_untouched (void *data) {
         n = snprintf(test_dst, sizeof(test_dst), "%s", test_chars[i]);
         u8charlen((unsigned char *)test_dst, n);
 //printf("%s: src:%s  dst:%s\n", __func__, test_chars[i], test_dst);
-        if (strcmp(test_chars[i], test_dst) != 00)
+        if (strcmp(test_chars[i], test_dst) != 0)
             return 0;
     }
-//printf("\n\n");
+//printf("\n");
     return 1;
 }
 
@@ -61,10 +61,10 @@ int check_none_escaped (void *data) {
         n = snprintf(test_dst, sizeof(test_dst), "%s", test_chars[i]);
         u8charlen((unsigned char *)test_dst, n);
 //printf("%s: src:%s  dst:%s\n", __func__, test_chars[i], test_dst);
-        if (strcmp(test_chars[i], test_dst))
+        if (strcmp(test_chars[i], test_dst) != 0)
             return 0;
     }
-//printf("\n\n");
+//printf("\n");
     return 1;
 }
 
@@ -92,7 +92,7 @@ int check_all_escaped (void *data) {
             if (test_dst[j] != '?')
                 return 0;
     }
-//printf("\n\n");
+//printf("\n");
     return 1;
 }
 
@@ -118,7 +118,7 @@ int check_some_escaped (void *data) {
     for (i = 0; i < MAXTBL(test_strs); i++) {
         n = snprintf(test_dst, sizeof(test_dst), "%s", test_strs[i][0]);
         u8charlen((unsigned char *)test_dst, n);
-//printf("%s: inout \"%s\"  -->  output \"%s\"\n", __func__, test_strs[i][0], test_dst);
+//printf("%s: input \"%s\"  -->  output \"%s\"\n", __func__, test_strs[i][0], test_dst);
         if (strcmp(test_strs[i][1], test_dst) != 0)
             return 0;
     }
