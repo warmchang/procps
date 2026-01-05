@@ -62,7 +62,7 @@ int mergesort_r (
     p = buf = aux;
 
     // bottom-up merge sort
-    for (half_depth  = 1; half_depth  < nmemb; half_depth  *= 2) {
+    for (half_depth = 1; half_depth < nmemb; half_depth *= 2) {
 
         for (top_start = 0; top_start < nmemb; top_start += 2 * half_depth ) {
             bottom_start = (top_start + half_depth  < nmemb) ? top_start + half_depth  : nmemb;
