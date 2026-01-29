@@ -598,7 +598,7 @@ static int sd2proc (proc_t *restrict p) {
 static int stat2proc (const char *S, proc_t *restrict P) {
     char buf[64], raw[64];
     size_t num;
-    char *tmp;
+    const char *tmp;
 
 ENTER(0x160);
 
@@ -725,7 +725,8 @@ static void smaps2proc (const char *s, proc_t *restrict P) {
         /*    ProtectionKey                  "            */
         /*    VmFlags                        "            */
     };
-    char *head, *tail;
+    const char *head;
+    char *tail;
     int i;
 
     if (smaptab[0].slen < 0) {

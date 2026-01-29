@@ -1026,7 +1026,8 @@ static void show_special (int interact, const char *glob) {
      ( this function is called only with a glob under top's )
      ( control and never containing any 'raw/binary' chars! ) */
    char tmp[LRGBUFSIZ], lin[LRGBUFSIZ], row[ROWMINSIZ];
-   char *rp, *lin_end, *sub_beg, *sub_end;
+   char *rp, *sub_beg, *sub_end;
+   const char *lin_end;
    int room;
 
    // handle multiple lines passed in a bunch
@@ -5485,7 +5486,7 @@ static void bot_item_toggle (int what, const char *head, char sep) {
          * If q->findstr is found in the designated buffer, he returns the
          * offset from the start of the buffer, otherwise he returns -1. */
 static inline int find_ofs (const WIN_t *q, const char *buf) {
-   char *fnd;
+   const char *fnd;
 
    if (q->findstr[0] && (fnd = STRSTR(buf, q->findstr)))
       return (int)(fnd - buf);
