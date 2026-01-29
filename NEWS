@@ -1,6 +1,7 @@
 procps-ng-4.0.6
 ---------------
   * library
+    version: inc revision to 1 now 1:1:0
     internal: Use openat for files under /proc/<PID>
     internal: Don't check for sd_booted                    Debian #1108549
     internal: Address potential race leading to segfault   issues #380, #390
