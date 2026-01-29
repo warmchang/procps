@@ -1,16 +1,16 @@
 # Swedish translation of procps-ng.
-# Copyright © 2017, 2018, 2021, 2022, 2023 Free Software Foundation, Inc.
+# Copyright © 2017, 2018, 2021, 2022, 2023, 2026 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018, 2019, 2021, 2022, 2023, 2024.
+# Göran Uddeborg <goeran@uddeborg.se>, 2017, 2018, 2019, 2021, 2022, 2023, 2024, 2026.
 #
-# $Id: procps-ng.po,v 1.31 2024-12-15 13:22:04+01 göran Exp $
+# $Id: procps-ng.po,v 1.32 2026-01-12 16:06:37+01 göran Exp göran $
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.5rc1\n"
+"Project-Id-Version: procps-ng 4.0.6rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2026-01-06 20:09+1100\n"
-"PO-Revision-Date: 2024-12-15 13:21+0100\n"
+"PO-Revision-Date: 2026-01-13 09:56+0100\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
 "Language: sv\n"
@@ -316,9 +316,8 @@ msgid " -a, --list-full           list PID and full command line\n"
 msgstr " -a, --list-full           lista PID och fullständig kommandorad\n"
 
 #: src/pgrep.c:171
-#, fuzzy
 msgid "     --quiet               suppress all normal output\n"
-msgstr "  s                   signalformat\n"
+msgstr "     --quiet               utelämna all normal utmatning\n"
 
 #: src/pgrep.c:172
 msgid " -v, --inverse             negates the matching\n"
@@ -349,6 +348,7 @@ msgstr " -e, --echo                visa vad som dödas\n"
 msgid ""
 " -m, --mrelease            release process memory immediately after kill\n"
 msgstr ""
+" -m, --mrelease            släpp processminned omedelbart efter dödandet\n"
 
 #: src/pgrep.c:184
 msgid " -e, --echo                display PIDs before waiting\n"
@@ -359,10 +359,9 @@ msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               antal matchande processer\n"
 
 #: src/pgrep.c:189
-#, fuzzy
 msgid " -f, --full                use full command line to match\n"
 msgstr ""
-" -f, --full                använd fullständigt processnamn för att matcha\n"
+" -f, --full                använd fullständig kommandorad för att matcha\n"
 
 #: src/pgrep.c:190
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
@@ -389,9 +388,8 @@ msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr " -O, --older <sek>         välj de som är äldre än sekunder\n"
 
 #: src/pgrep.c:196
-#, fuzzy
 msgid " -p, --pid <PID,...>       match process PIDs\n"
-msgstr " -U, --uid <ID,…>          matcha via verkliga ID:n\n"
+msgstr " -p, --pid <PID,…>         matcha process-PID:n\n"
 
 #: src/pgrep.c:197
 msgid ""
@@ -445,6 +443,7 @@ msgstr " -A, --ignore-ancestors    exkludera våra anfäder from resultat\n"
 msgid ""
 " -Q, --shell-quote         output the command line in shell-quoted form\n"
 msgstr ""
+" -Q, --shell-quote         skriv ut kommandoraden med citationer för skalet\n"
 
 #: src/pgrep.c:209
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
@@ -556,12 +555,12 @@ msgstr ""
 "Prova ”%s --help” för mer information."
 
 #: src/pgrep.c:1313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use pidfile and pid option together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"pid-filen är inte giltig.\n"
+"Kan inte använda pid-filen och pid-flaggan tillsammans\n"
 "Prova ”%s --help” för mer information."
 
 #: src/pgrep.c:1318
@@ -574,21 +573,21 @@ msgstr ""
 "Prova ”%s --help” för mer information."
 
 #: src/pgrep.c:1326
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -a,--list-full options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"flaggorna -N och -q kan inte vara tillsammans\n"
+"Det går inte att använda flaggorna --quiet och -a,--list-full tillsammans\n"
 "Prova ”%s --help” för mer information."
 
 #: src/pgrep.c:1331
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -l,--list-name options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"flaggorna -N och -q kan inte vara tillsammans\n"
+"Det går inte att använda flaggorna --quiet och -l,--list-name tillsammans\n"
 "Prova ”%s --help” för mer information."
 
 #: src/pgrep.c:1340
@@ -610,9 +609,9 @@ msgstr ""
 "Prova ”%s --help” för mer information."
 
 #: src/pgrep.c:1414
-#, fuzzy, c-format
+#, c-format
 msgid "pidfd_open for process %ld failed"
-msgstr "att öppna pid %ld misslyckades"
+msgstr "pidfd_open för process %ld misslyckades"
 
 #: src/pgrep.c:1417
 #, c-format
@@ -622,7 +621,7 @@ msgstr "%s dödad (pid %lu)\n"
 #: src/pgrep.c:1422
 #, c-format
 msgid "pid %ld killed, but process_mrelease failed"
-msgstr ""
+msgstr "pid %ld dödad, men process_mrelease misslyckades"
 
 #: src/pgrep.c:1432
 #, c-format
@@ -789,7 +788,7 @@ msgstr " -p, --show-path             visa sökväg i mappningarna\n"
 
 #: src/pmap.c:134
 msgid " -k, --use-kernel-name       use names provided by kernel\n"
-msgstr ""
+msgstr " -k, --use-kernel-name       använd namnet som ges av kärnan\n"
 
 #: src/pmap.c:135
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
@@ -939,14 +938,12 @@ msgid "please report this bug"
 msgstr "var vänlig och rapportera detta fel"
 
 #: src/ps/display.c:307
-#, fuzzy
 msgid "Fatal library error, unable to select pids"
-msgstr "öderstigert fel i biblioteket, slå upp själv\n"
+msgstr "Öderstigert fel i biblioteket, kan inte välja pid:er"
 
 #: src/ps/display.c:314
-#, fuzzy
 msgid "Fatal library error, unable to reap pids"
-msgstr "ödersdigert fel i biblioteket, skörda\n"
+msgstr "Ödersdigert fel i biblioteket, kan inte skörda pid:er"
 
 #: src/ps/display.c:363
 #, c-format
@@ -1287,6 +1284,8 @@ msgid ""
 "     --delimiter <d>  Use <d> as a column delimiter instead of variable "
 "space\n"
 msgstr ""
+"     --delimiter <a>  Använd <a> som en kolumnavgränsare istället för "
+"variabla blantecken\n"
 
 #: src/ps/help.c:155
 msgid "     --headers        repeat header lines, one per page\n"
@@ -1652,13 +1651,12 @@ msgid "date format must follow --date-format"
 msgstr "ett datumformat måste följa --date-format"
 
 #: src/ps/parser.c:922
-#, fuzzy
 msgid "delimiter character must follow --delimiter"
-msgstr "ett datumformat måste följa --date-format"
+msgstr "ett avgränsningstecken måste följa --delimiter"
 
 #: src/ps/parser.c:923
 msgid "delimiter must be a single character"
-msgstr ""
+msgstr "avgränsaren måste vara ett ensamt tecken"
 
 #: src/ps/parser.c:928
 msgid "option --deselect does not take an argument"
@@ -2150,9 +2148,8 @@ msgstr "Minsta / Genomsn. / Största objekt"
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
 #: src/slabtop.c:289
-#, fuzzy
 msgid "    OBJS   ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
-msgstr "   OBJ AKTIVT  ANV OBJ-STRL SKIVOR OBJ/SKIV CACHE-STRL NAMN"
+msgstr "   OBJ    AKTIVT  ANV OBJ-STRL  SKIVR OBJ/SKIV CACHE-STRL NAMN"
 
 #: src/slabtop.c:326 src/vmstat.c:797
 msgid "Unable to create slabinfo structure"
@@ -3878,21 +3875,20 @@ msgstr "meddelandelogg, 10 senaste meddelanden:"
 #: src/top/top_nls.c:614
 #, c-format
 msgid "option '%s' must be used alone"
-msgstr ""
+msgstr "flaggan ”%s” måste användas ensam"
 
 #: src/top/top_nls.c:615
-#, fuzzy, c-format
+#, c-format
 msgid "Core%-3d:"
-msgstr "%%Cp%c%-3d:"
+msgstr "Kärna%-3d:"
 
 #: src/top/top_nls.c:616
 msgid "sorry, distinct cpu core types do not exist"
-msgstr ""
+msgstr "tyvärr, distinkta cpu-kärnetyper finns inte"
 
 #: src/top/top_nls.c:617
-#, fuzzy
 msgid "sorry, system cpu core data is unavailable"
-msgstr "ledsen, NUMA-utökningar är inte tillgängliga"
+msgstr "tyvärr, system-cpu-kärndata är inte tillgängliga"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3930,7 +3926,7 @@ msgstr "ledsen, NUMA-utökningar är inte tillgängliga"
 #. .    wraps that could place them there.
 #. .
 #: src/top/top_nls.c:662
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
 "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
@@ -4002,15 +3998,15 @@ msgstr ""
 "~1Ctrl~2+”~1O~2” andra filter\n"
 "  V,v,F   . Växla ”~1V~2” skogsvy; ”~1v~2” dölj/visa barn; ”~1F~2” behåll "
 "fokus\n"
-"\n"
-"%s  ^G,K,N,U  Visa: styrgrupper ~1^G~2; kommandorad ~1^K~2; miljö ~1^N~2; "
-"kompl. grupper ~1^U~2\n"
-"  Y,!,^E,P  Inspektera ”~1Y~2”; Kombinera cpu:er Cpus ”~1!~2”; Skala tid "
-"~1^E~2; Visa namnrymder ~1^P~2\n"
-"  W,q       Skriv konfigurationsfil ”~1W~2”; Avsluta ”~1q~2”\n"
 "          ( kommandon med ”.” behöver ett ~1synligt~2 "
 "uppgifts~1fönster~2 ) \n"
-"Tryck ”~1h~2” eller ”~1?~2” för hjälp med ~1fönster~2,\n"
+"%s  Y,^E      Inspektera en uppgift ”~1Y~2”; Skala processtid ”~1^E~2”\n"
+"  !^        Kombinera succesivt cpu:er ”~1!~2”; Visa kärnor mot cpu:er "
+"”~1^~2”\n"
+"  W         Skriv konfigurationsfil ”~1W~2”\n"
+"\n"
+"Tryck ”~1h~2” för hjälp med ~1specialiserade tangenter, ”~1H~2” för hjälp "
+"med ~1fönster~2,\n"
 "Tryck ”q” eller <Esc> för att fortsätta "
 
 #: src/top/top_nls.c:689
@@ -4044,9 +4040,39 @@ msgid ""
 "\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
+"Hjälp för specialiserade tangenter — %s\n"
+"\n"
+"Dessa tangenter startar ett separat fönster längst ner på skärmen medan den\n"
+"vanliga top-övervakningen fortsätter utan avbrott. Att trycka samma\n"
+"”~1Ctrl~2”-kommando en andra gång tar bort det separata fönstret, vilket "
+"även\n"
+"kommandot ”~1=~2 gör.\n"
+"\n"
+"Följande används på den första uppgivten som visas. ~1Piltangenterna~2 upp/"
+"ner\n"
+"kommer vara viktiga för att välja målprocess liksom en mer stabil vy\n"
+"såsom skogsvyn eller att sortera på PID eller ett större\n"
+"fördröjningsintervall.\n"
+"   ~1^A~6   Visa förmågor                 (Ctrl-tangent + ”a”)\n"
+"   ~1^G~6   Visa styrgrupper              (Ctrl-tangent + ”g”)\n"
+"   ~1^K~6   Visa kommandoraden            (Ctrl-tangent + ”k”)\n"
+"   ~1^N~6   Visa miljön                   (Ctrl-tangent + ”n”)\n"
+"   ~1^P~6   Visa namnrymder               (Ctrl-tangent + ”p”)\n"
+"   ~1^U~6   Visa kompletterande grypper   (Ctrl-tangent + ”u”)\n"
+"\n"
+"Kommandot ”Ctrl+L” är inte kopplat till en specifik uppgift. Istället "
+"hämtas\n"
+"de upp till 10 senaste meddelandena tillbaka för granskning.\n"
+"   ~1^L~6  :Visa loggade meddelanden      (Ctrl-tangent + ”l”)\n"
+"\n"
+"Tabulatortangenten (framåt) eller kombinationen Skift+Tab (bakåt) kan "
+"användas\n"
+"för att markera individuella element som visas i fönstret längst ner.\n"
+"\n"
+"Tryck ”q” eller <Esc> för at fortsätta "
 
 #: src/top/top_nls.c:716
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4126,9 +4152,9 @@ msgstr ""
 "              (detta tvingar även ~1aktuellt~2 eller ~1alla~2 fönster att "
 "bli synliga)\n"
 "\n"
-"I ”~1A~2”-läge är ”~1*~4”-tecken dina ~1viktiga~2 kommandon.  Prova "
-"kommandona ”~1a~2” och ”~1w~2”\n"
-"plus underkommandona ”g” NU.  Tryck <Retur> för att göra ”aktuellt” "
+"I läget ”~1A~2” är tecknen ”~1*~4” dina ~1viktiga~2 kommandon.  Prova "
+"kommandona ”a” och ”w”\n"
+"eller underkommandotnumret ”g” NU.  Tryck <Retur> för att göra ”aktuellt” "
 
 #. Translation Notes ------------------------------------------------
 #. .  The following 'Help for color mapping' simulated screen should
@@ -4207,13 +4233,12 @@ msgstr ""
 #. .                 also embedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:780
-#, fuzzy
 msgid ""
 "  d,k,r,^R  Set delay '~1d~2'; Kill '~1k~2'; Renice '~1r~2; Renice autogroup "
 "'~1Ctrl~2+'~1R~2'\n"
 msgstr ""
-"  d,k,r,^R '~1d~2' anje fördröjning; '~1k~2' döda; '~1r~2' ändra nice; "
-"~1Ctrl~2+'~1R~2' ändra nice på autogrupp\n"
+"  d,k,r,^R  Ange fördröjning ”~1d~2”; Döda ”~1k~2”; Ändra nice ”~1r~2”; "
+"ändra nice på autogrupp ~1Ctrl~2+”~1R~2”\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -4818,9 +4843,8 @@ msgstr ""
 "  -e, --errexit          avsluta om kommandot avslutas med annat än noll\n"
 
 #: src/watch.c:129
-#, fuzzy
 msgid "  -f, --follow           Follow the output and don't clear screen\n"
-msgstr " -L, --line          visa utdata på en enda rad\n"
+msgstr "  -f, --follow           Följ utdata och töm inte skärmen\n"
 
 #: src/watch.c:130
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -4893,7 +4917,7 @@ msgstr "Kunde inte tolka intervall från WATCH_INTERVAL"
 #: src/watch.c:1284
 #, c-format
 msgid "Follow -f option conflicts with change options -d,-e or -q"
-msgstr ""
+msgstr "Följflaggan -f står i konfligt med ändringsflaggorna -d, -e eller -q"
 
 #: src/watch.c:1376
 msgid "command exit with a non-zero status, press a key to exit"
@@ -4944,14 +4968,13 @@ msgid " -s, --short         short format\n"
 msgstr " -s, --short         kort format\n"
 
 #: src/w.c:748
-#, fuzzy
 msgid " -t, --terminal      show terminals\n"
-msgstr " -t, --terminal <tty,…>    matcha via styrterminal\n"
+msgstr " -t, --terminal      visa terminaler\n"
 
 #: src/w.c:750
-#, fuzzy, c-format
+#, c-format
 msgid " -f, --from          toggle remote hostname field (default: %s)\n"
-msgstr " -f, --from          visa fält med fjärrvärdsnamn\n"
+msgstr " -f, --from          växla fält med fjärrvärdsnamn (standard: %s)\n"
 
 #: src/w.c:752
 msgid " -o, --old-style     old style output\n"
@@ -4968,9 +4991,8 @@ msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          visa PID:erna för processer i VAD\n"
 
 #: src/w.c:943
-#, fuzzy
 msgid "Unable to sort processes by TTY"
-msgstr "kan inte grena av process"
+msgstr "Kan inte sortera processer efter TTY"
 
 #: src/w.c:1090
 #, c-format
@@ -4989,9 +5011,8 @@ msgstr ""
 "ignorerar.\n"
 
 #: src/w.c:1128
-#, fuzzy
 msgid "Unable to sort processes by PID"
-msgstr "kan inte grena av process"
+msgstr "Kan inte sortera processer efter PID"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -5067,6 +5088,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s från %s\n"
-
-#~ msgid "wrong mode, command inactive"
-#~ msgstr "fel läge, kommandot inaktivt"

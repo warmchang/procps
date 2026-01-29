@@ -3,14 +3,14 @@
 # This file is distributed under the same license as the procps-ng package.
 # Boyuan Yang <073plan@gmail.com>, 2017, 2019.
 # Mingye Wang <arthur200126@gmail.com>, 2015.
-# Wenbin Lv <wenbin816@gmail.com>, 2024.
+# Wenbin Lv <wenbin816@gmail.com>, 2024, 2026.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.5rc1\n"
+"Project-Id-Version: procps-ng 4.0.6rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2026-01-06 20:09+1100\n"
-"PO-Revision-Date: 2024-12-13 18:26+0800\n"
+"PO-Revision-Date: 2026-01-07 22:38+0800\n"
 "Last-Translator: Wenbin Lv <wenbin816@gmail.com>\n"
 "Language-Team: Chinese (simplified) <i18n-zh@googlegroups.com>\n"
 "Language: zh_CN\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.8\n"
 
 #: local/fileutils.c:36
 msgid "write error"
@@ -311,9 +311,8 @@ msgid " -a, --list-full           list PID and full command line\n"
 msgstr " -a, --list-full           列出 PID 和完整的命令行\n"
 
 #: src/pgrep.c:171
-#, fuzzy
 msgid "     --quiet               suppress all normal output\n"
-msgstr "  s                   信号格式\n"
+msgstr "     --quiet               禁止所有正常输出\n"
 
 #: src/pgrep.c:172
 msgid " -v, --inverse             negates the matching\n"
@@ -342,7 +341,7 @@ msgstr " -e, --echo                显示被杀死的进程\n"
 #: src/pgrep.c:180
 msgid ""
 " -m, --mrelease            release process memory immediately after kill\n"
-msgstr ""
+msgstr " -m, --mrelease            杀死进程后立即释放进程内存\n"
 
 #: src/pgrep.c:184
 msgid " -e, --echo                display PIDs before waiting\n"
@@ -353,9 +352,8 @@ msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               显示匹配到的进程的个数\n"
 
 #: src/pgrep.c:189
-#, fuzzy
 msgid " -f, --full                use full command line to match\n"
-msgstr " -f, --full                使用进程的全名进行匹配\n"
+msgstr " -f, --full                使用进程的完整命令行进行匹配\n"
 
 #: src/pgrep.c:190
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
@@ -382,9 +380,8 @@ msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr " -O, --older <秒>          选择年龄大于 <秒> 的进程\n"
 
 #: src/pgrep.c:196
-#, fuzzy
 msgid " -p, --pid <PID,...>       match process PIDs\n"
-msgstr " -U, --uid <ID,...>        匹配真实 ID\n"
+msgstr " -p, --pid <PID,...>       匹配进程 PID\n"
 
 #: src/pgrep.c:197
 msgid ""
@@ -434,7 +431,7 @@ msgstr " -A, --ignore-ancestors    从结果中去除我自己的祖先\n"
 #: src/pgrep.c:208
 msgid ""
 " -Q, --shell-quote         output the command line in shell-quoted form\n"
-msgstr ""
+msgstr " -Q, --shell-quote         以用于 shell 的加引号的格式输出命令行\n"
 
 #: src/pgrep.c:209
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
@@ -540,12 +537,12 @@ msgstr ""
 "尝试 \"%s --help\" 以获取更多信息。"
 
 #: src/pgrep.c:1313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use pidfile and pid option together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"pid 文件无效\n"
+"pid 文件和 pid 选项不能同时使用\n"
 "尝试 \"%s --help\" 以获取更多信息。"
 
 #: src/pgrep.c:1318
@@ -558,21 +555,21 @@ msgstr ""
 "尝试 \"%s --help\" 以获取更多信息。"
 
 #: src/pgrep.c:1326
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -a,--list-full options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"选项 -N 和 -q 不能同时使用\n"
+"选项 --quiet 和 -a,--list-full 不能同时使用\n"
 "尝试 \"%s --help\" 以获得更多信息。"
 
 #: src/pgrep.c:1331
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -l,--list-name options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"选项 -N 和 -q 不能同时使用\n"
+"选项 --quiet 和 -l,--list-name 不能同时使用\n"
 "尝试 \"%s --help\" 以获得更多信息。"
 
 #: src/pgrep.c:1340
@@ -594,9 +591,9 @@ msgstr ""
 "尝试 \"%s --help\" 以获取更多信息。"
 
 #: src/pgrep.c:1414
-#, fuzzy, c-format
+#, c-format
 msgid "pidfd_open for process %ld failed"
-msgstr "打开 pid %ld 失败"
+msgstr "对进程 %ld 调用 pidfd_open 失败"
 
 #: src/pgrep.c:1417
 #, c-format
@@ -606,7 +603,7 @@ msgstr "%s 已被杀死 (pid %lu)\n"
 #: src/pgrep.c:1422
 #, c-format
 msgid "pid %ld killed, but process_mrelease failed"
-msgstr ""
+msgstr "已杀死 pid %ld，但 process_mrelease 失败"
 
 #: src/pgrep.c:1432
 #, c-format
@@ -772,7 +769,7 @@ msgstr " -p, --show-path             在映射中显示路径\n"
 
 #: src/pmap.c:134
 msgid " -k, --use-kernel-name       use names provided by kernel\n"
-msgstr ""
+msgstr " -k, --use-kernel-name       使用内核提供的名称\n"
 
 #: src/pmap.c:135
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
@@ -920,14 +917,12 @@ msgid "please report this bug"
 msgstr "请报告此问题"
 
 #: src/ps/display.c:307
-#, fuzzy
 msgid "Fatal library error, unable to select pids"
-msgstr "致命的库错误，查找自己\n"
+msgstr "致命的库错误，无法选择 pid"
 
 #: src/ps/display.c:314
-#, fuzzy
 msgid "Fatal library error, unable to reap pids"
-msgstr "致命的库错误，reap\n"
+msgstr "致命的库错误，无法收割 pid"
 
 #: src/ps/display.c:363
 #, c-format
@@ -1266,7 +1261,7 @@ msgstr "     --context        显示安全上下文（用于 SELinux）\n"
 msgid ""
 "     --delimiter <d>  Use <d> as a column delimiter instead of variable "
 "space\n"
-msgstr ""
+msgstr "     --delimiter <d>  使用 <d> 而不是可变长度的空格作为列分隔符\n"
 
 #: src/ps/help.c:155
 msgid "     --headers        repeat header lines, one per page\n"
@@ -1630,13 +1625,12 @@ msgid "date format must follow --date-format"
 msgstr "--date-format 之后必须有日期格式"
 
 #: src/ps/parser.c:922
-#, fuzzy
 msgid "delimiter character must follow --delimiter"
-msgstr "--date-format 之后必须有日期格式"
+msgstr "--delimiter 之后必须有分隔符"
 
 #: src/ps/parser.c:923
 msgid "delimiter must be a single character"
-msgstr ""
+msgstr "分隔符必须是单个字符"
 
 #: src/ps/parser.c:928
 msgid "option --deselect does not take an argument"
@@ -2120,10 +2114,9 @@ msgstr "最小 / 平均 / 最大对象             "
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
 #: src/slabtop.c:289
-#, fuzzy
 msgid "    OBJS   ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
 msgstr ""
-"  对象   活动 使用 对象大小  SLABS 对象/SLAB  缓存大小 名"
+"    对象     活动 使用 对象大小  SLABS 对象/SLAB  缓存大小 名"
 "称                   "
 
 #: src/slabtop.c:326 src/vmstat.c:797
@@ -3829,21 +3822,20 @@ msgstr "消息日志，最近的 10 条消息："
 #: src/top/top_nls.c:614
 #, c-format
 msgid "option '%s' must be used alone"
-msgstr ""
+msgstr "选项 '%s' 必须单独使用"
 
 #: src/top/top_nls.c:615
-#, fuzzy, c-format
+#, c-format
 msgid "Core%-3d:"
-msgstr "%%Cp%c%-3d:"
+msgstr "核心%-3d:"
 
 #: src/top/top_nls.c:616
 msgid "sorry, distinct cpu core types do not exist"
-msgstr ""
+msgstr "抱歉，不存在不同的CPU核心类型"
 
 #: src/top/top_nls.c:617
-#, fuzzy
 msgid "sorry, system cpu core data is unavailable"
-msgstr "抱歉，NUMA 扩展不可用"
+msgstr "抱歉，系统 CPU 核心数据不可用"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -3881,7 +3873,7 @@ msgstr "抱歉，NUMA 扩展不可用"
 #. .    wraps that could place them there.
 #. .
 #: src/top/top_nls.c:662
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
 "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
@@ -3952,14 +3944,13 @@ msgstr ""
 "他筛选器\n"
 "  V,v,F   . 切换：'~1V~2' 森林视图；'~1v~2' 隐藏/显示子进程；'~1F~2' 保持焦"
 "点\n"
-"\n"
-"%s  ^G,K,N,U  查看：控制组 ~1^G~2；命令行 ~1^K~2；环境变量 ~1^N~2；增补组 "
-"~1^U~2\n"
-"  Y,!,^E,P  检视 '~1Y~2'；合并 cpu '~1!~2'；时间单位 ~1^E~2；查看命名空间 "
-"~1^P~2\n"
-"  W,q       写入配置文件 '~1W~2'；退出 '~1q~2'\n"
 "          （带有 '.' 的命令需要~1可见的~2任务显示~1窗口~2）\n"
-"按 '~1h~2' 或 '~1?~2' 显示关于~1窗口~2的帮助，\n"
+"\n"
+"%s  Y,^E      检视一个任务 '~1Y~2'；缩放进程的时间单位 '~1^E~2'\n"
+"  !,^       逐步合并 CPU '~1!~2'；显示核心 vs. CPU '~1^~2' \n"
+"  W         写入配置文件 '~1W~2'\n"
+"\n"
+"按 '~1h~2' 显示关于~1特殊~2键的帮助，'~1H~2' 显示关于~1窗口~2的帮助，\n"
 "按 'q' 或 <Esc> 继续 "
 
 #: src/top/top_nls.c:689
@@ -3993,9 +3984,33 @@ msgid ""
 "\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
+"特殊键帮助 - %s\n"
+"\n"
+"这些键可在屏幕底部调出独立窗口，同时常规的 top\n"
+"监控功能不受影响。再次按下相同 '~1Ctrl~2' 命令\n"
+"或使用 '~1=~2' 命令即可关闭该独立窗口。\n"
+"\n"
+"以下操作应用于当前显示的第一个任务。上/下~1方向键~2\n"
+"可以选择目标进程。使用更稳定的显示方式也很重要，如\n"
+"森林视图、按 PID 排序或使用更长的延迟间隔。\n"
+"   ~1^A~6   显示进程能力                  (Ctrl 键 + 'a')\n"
+"   ~1^G~6   显示控制组                    (Ctrl 键 + 'g')\n"
+"   ~1^K~6   显示命令行                    (Ctrl 键 + 'k')\n"
+"   ~1^N~6   显示环境                      (Ctrl 键 + 'n')\n"
+"   ~1^P~6   显示命名空间                  (Ctrl 键 + 'p')\n"
+"   ~1^U~6   显示增补组                    (Ctrl 键 + 'u')\n"
+"\n"
+"'Ctrl+L' 命令不执行特定的任务，而是调取\n"
+"top 最近输出的最多 10 条消息供查阅。\n"
+"   ~1^L~6  :显示消息日志                  (Ctrl 键 + 'l')\n"
+"\n"
+"Tab 键（向前）或 Shift+Tab 组合键（向后）可用于\n"
+"高亮显示底部窗口中显示的各个元素。\n"
+"\n"
+"按 'q' 或 <Esc> 继续 "
 
 #: src/top/top_nls.c:716
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4069,8 +4084,8 @@ msgstr ""
 "              （这也会同时强制使~1当前~2或~1所有~2窗口变为可见）\n"
 "\n"
 "在 '~1A~2' 模式下，带 '~1*~4' 的命令是您~1必备~2的命令。您可以~1现在~2就尝试 "
-"'~1a~2' 和 '~1w~2'\n"
-"命令，以及 'g' 下的子命令。按 <Enter> 将其设为 \"当前窗口\" "
+"'a' 和 'w'\n"
+"命令，以及 'g' 命令下的数字。按 <Enter> 将其设为 \"当前窗口\""
 
 #. Translation Notes ------------------------------------------------
 #. .  The following 'Help for color mapping' simulated screen should
@@ -4144,13 +4159,12 @@ msgstr ""
 #. .                 also embedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:780
-#, fuzzy
 msgid ""
 "  d,k,r,^R  Set delay '~1d~2'; Kill '~1k~2'; Renice '~1r~2; Renice autogroup "
 "'~1Ctrl~2+'~1R~2'\n"
 msgstr ""
-"  d,k,r,^R '~1d~2' 设置延迟；'~1k~2' 杀死；'~1r~2' 设置 nice 值；"
-"~1Ctrl~2+'~1R~2' 设置自动组 nice 值\n"
+"  d,k,r,^R  设置延迟 '~1d~2'；杀死 '~1k~2'；设置 nice 值 '~1r~2；设置自动组 "
+"nice 值 '~1Ctrl~2+'~1R~2'\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -4749,9 +4763,8 @@ msgid "  -e, --errexit          exit if command has a non-zero exit\n"
 msgstr "  -e, --errexit          如果命令以非零返回值退出，则退出\n"
 
 #: src/watch.c:129
-#, fuzzy
 msgid "  -f, --follow           Follow the output and don't clear screen\n"
-msgstr " -L, --line          在一行内显示输出\n"
+msgstr "  -f, --follow           跟随输出且不清屏\n"
 
 #: src/watch.c:130
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -4821,7 +4834,7 @@ msgstr "无法解析 WATCH_INTERVAL 中的间隔"
 #: src/watch.c:1284
 #, c-format
 msgid "Follow -f option conflicts with change options -d,-e or -q"
-msgstr ""
+msgstr "跟随选项 -f 和变化选项 -d、-e 或 -q 冲突"
 
 #: src/watch.c:1376
 msgid "command exit with a non-zero status, press a key to exit"
@@ -4871,14 +4884,13 @@ msgid " -s, --short         short format\n"
 msgstr " -s, --short         短格式\n"
 
 #: src/w.c:748
-#, fuzzy
 msgid " -t, --terminal      show terminals\n"
-msgstr " -t, --terminal <tty,...>  匹配由指定的终端控制的进程\n"
+msgstr " -t, --terminal      显示终端\n"
 
 #: src/w.c:750
-#, fuzzy, c-format
+#, c-format
 msgid " -f, --from          toggle remote hostname field (default: %s)\n"
-msgstr " -f, --from          显示远程主机名字段\n"
+msgstr " -f, --from          切换显示远程主机名字段（默认：%s）\n"
 
 #: src/w.c:752
 msgid " -o, --old-style     old style output\n"
@@ -4894,9 +4906,8 @@ msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          在 WHAT 中显示进程的 PID\n"
 
 #: src/w.c:943
-#, fuzzy
 msgid "Unable to sort processes by TTY"
-msgstr "无法 fork 进程"
+msgstr "无法按照 TTY 对进程进行排序"
 
 #: src/w.c:1090
 #, c-format
@@ -4911,9 +4922,8 @@ msgid ""
 msgstr "来自字段长度环境变量 PROCPS_FROMLEN 必须介于 8 和 %d 之间，已忽略\n"
 
 #: src/w.c:1128
-#, fuzzy
 msgid "Unable to sort processes by PID"
-msgstr "无法 fork 进程"
+msgstr "无法按照 PID 对进程进行排序"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.

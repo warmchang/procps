@@ -1,14 +1,14 @@
 # Polish translation for procps-ng.
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2024.
+# Jakub Bogusz <qboosh@pld-linux.org>, 2014-2026.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.5rc1\n"
+"Project-Id-Version: procps-ng-4.0.6rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2026-01-06 20:09+1100\n"
-"PO-Revision-Date: 2024-12-14 21:58+0100\n"
+"PO-Revision-Date: 2026-01-07 19:51+0100\n"
 "Last-Translator: Jakub Bogusz <qboosh@pld-linux.org>\n"
 "Language-Team: Polish <translation-team-pl@lists.sourceforge.net>\n"
 "Language: pl\n"
@@ -313,9 +313,8 @@ msgid " -a, --list-full           list PID and full command line\n"
 msgstr " -a, --list-full           wypisanie PID-ów i pełnych linii poleceń\n"
 
 #: src/pgrep.c:171
-#, fuzzy
 msgid "     --quiet               suppress all normal output\n"
-msgstr "  s                   format sygnałów\n"
+msgstr "     --quiet               pominięcie całego normalnego wyjścia\n"
 
 #: src/pgrep.c:172
 msgid " -v, --inverse             negates the matching\n"
@@ -346,6 +345,8 @@ msgstr " -e, --echo                wyświetlenie, co jest zabijane\n"
 msgid ""
 " -m, --mrelease            release process memory immediately after kill\n"
 msgstr ""
+" -m, --mrelease            zwolnienie pamięci procesu bezpośrednio po "
+"zabiciu\n"
 
 #: src/pgrep.c:184
 msgid " -e, --echo                display PIDs before waiting\n"
@@ -356,10 +357,9 @@ msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               liczba pasujących procesów\n"
 
 #: src/pgrep.c:189
-#, fuzzy
 msgid " -f, --full                use full command line to match\n"
 msgstr ""
-" -f, --full                użycie pełnej nazwy procesu do dopasowania\n"
+" -f, --full                użycie pełnej linii polecenia do dopasowania\n"
 
 #: src/pgrep.c:190
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
@@ -388,9 +388,8 @@ msgid " -O, --older <seconds>     select where older than seconds\n"
 msgstr " -O, --older <sekund>      wybór starszych niż podana liczba sekund\n"
 
 #: src/pgrep.c:196
-#, fuzzy
 msgid " -p, --pid <PID,...>       match process PIDs\n"
-msgstr " -U, --uid <ID,...>        dopasowanie wg rzeczywistego ID\n"
+msgstr " -p, --pid <PID,...>       dopasowanie PID-u procesu\n"
 
 #: src/pgrep.c:197
 msgid ""
@@ -445,6 +444,8 @@ msgstr " -A, --ignore-ancestors    wykluczenie naszych przodków z wyników\n"
 msgid ""
 " -Q, --shell-quote         output the command line in shell-quoted form\n"
 msgstr ""
+" -Q, --shell-quote         wyjście linii polecenia w postaci cytowanej dla "
+"powłoki\n"
 
 #: src/pgrep.c:209
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
@@ -556,12 +557,12 @@ msgstr ""
 "`%s --help' pokaże więcej informacji."
 
 #: src/pgrep.c:1313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use pidfile and pid option together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"nieprawidłowy plik pid\n"
+"Nie można użyć łącznie opcji pidfile i pid\n"
 "`%s --help' pokaże więcej informacji."
 
 #: src/pgrep.c:1318
@@ -574,21 +575,21 @@ msgstr ""
 "`%s --help' pokaże więcej informacji."
 
 #: src/pgrep.c:1326
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -a,--list-full options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"opcje -N i -q nie mogą wystąpić wspólnie\n"
+"Nie można użyć łącznie opcji --quiet i -a,-list-full\n"
 "Polecenie `%s --help' pozwoli uzyskać więcej informacji."
 
 #: src/pgrep.c:1331
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -l,--list-name options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"opcje -N i -q nie mogą wystąpić wspólnie\n"
+"Nie można użyć łącznie opcji --quiet i -l,--list-name\n"
 "Polecenie `%s --help' pozwoli uzyskać więcej informacji."
 
 #: src/pgrep.c:1340
@@ -610,9 +611,9 @@ msgstr ""
 "`%s --help' pokaże więcej informacji."
 
 #: src/pgrep.c:1414
-#, fuzzy, c-format
+#, c-format
 msgid "pidfd_open for process %ld failed"
-msgstr "otwarcie pidu %ld nie powiodło się"
+msgstr "pidfd_open dla procesu %ld nie powiodło się"
 
 #: src/pgrep.c:1417
 #, c-format
@@ -622,7 +623,7 @@ msgstr "zabito %s (pid %lu)\n"
 #: src/pgrep.c:1422
 #, c-format
 msgid "pid %ld killed, but process_mrelease failed"
-msgstr ""
+msgstr "pid %ld zabity, ale process_mrelease nie powiodło się"
 
 #: src/pgrep.c:1432
 #, c-format
@@ -636,7 +637,7 @@ msgstr "odczekiwanie na %s (pid %lu)\n"
 
 #: src/pgrep.c:1450
 msgid "pidfd_open() not implemented in Linux < 5.3"
-msgstr "pidfd_open() nie zaimplementowane w Linuksie < 5.3"
+msgstr "pidfd_open() niezaimplementowane w Linuksie < 5.3"
 
 #: src/pgrep.c:1453
 #, c-format
@@ -794,7 +795,7 @@ msgstr " -p, --show-path             wyświetlanie ścieżki w odwzorowaniu\n"
 
 #: src/pmap.c:134
 msgid " -k, --use-kernel-name       use names provided by kernel\n"
-msgstr ""
+msgstr " -k, --use-kernel-name       użycie nazw dostarczanych przez jądro\n"
 
 #: src/pmap.c:135
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
@@ -860,7 +861,7 @@ msgstr "linia konfiguracji zbyt długa - linia %d"
 #: src/pmap.c:872
 #, c-format
 msgid "unsupported section found in the config - line %d"
-msgstr "nie obsługiwana sekcja w konfiguracji - linia %d"
+msgstr "nieobsługiwana sekcja w konfiguracji - linia %d"
 
 #: src/pmap.c:875 src/pmap.c:886 src/pmap.c:897 src/pmap.c:920 src/pmap.c:932
 #, c-format
@@ -877,7 +878,7 @@ msgstr "plik już istnieje - proszę najpierw usunąć lub zmienić nazwę"
 
 #: src/pmap.c:1017
 msgid "HOME variable undefined"
-msgstr "nie zdefiniowana zmienna HOME"
+msgstr "niezdefiniowana zmienna HOME"
 
 #: src/pmap.c:1078
 msgid "option -r is ignored as SunOS compatibility"
@@ -943,14 +944,12 @@ msgid "please report this bug"
 msgstr "proszę zgłosić ten błąd"
 
 #: src/ps/display.c:307
-#, fuzzy
 msgid "Fatal library error, unable to select pids"
-msgstr "błąd krytyczny biblioteki: wyszukanie siebie\n"
+msgstr "Błąd krytyczny biblioteki, nie można wybrać pidów"
 
 #: src/ps/display.c:314
-#, fuzzy
 msgid "Fatal library error, unable to reap pids"
-msgstr "błąd krytyczny biblioteki: sprzątnięcie\n"
+msgstr "Błąd krytyczny biblioteki, nie można sprzątnąć pidów"
 
 #: src/ps/display.c:363
 #, c-format
@@ -1295,6 +1294,8 @@ msgid ""
 "     --delimiter <d>  Use <d> as a column delimiter instead of variable "
 "space\n"
 msgstr ""
+"     --delimiter <o>  Użycie <o> jako kolumny ogranicznika zamiast zmiennych "
+"odstępów\n"
 
 #: src/ps/help.c:155
 msgid "     --headers        repeat header lines, one per page\n"
@@ -1576,7 +1577,7 @@ msgstr "znak '-' osadzony wśród opcji SysV nie ma sensu"
 
 #: src/ps/parser.c:525
 msgid "unsupported SysV option"
-msgstr "nie obsługiwana opcja SysV"
+msgstr "nieobsługiwana opcja SysV"
 
 #: src/ps/parser.c:538
 msgid "cannot happen - problem #1"
@@ -1632,7 +1633,7 @@ msgstr "znak '-' osadzony wśród opcji BSD nie ma sensu"
 
 #: src/ps/parser.c:772
 msgid "unsupported option (BSD syntax)"
-msgstr "nie obsługiwana opcja (składnia BSD)"
+msgstr "nieobsługiwana opcja (składnia BSD)"
 
 #: src/ps/parser.c:861 src/ps/parser.c:873
 msgid "unknown gnu long option"
@@ -1659,13 +1660,12 @@ msgid "date format must follow --date-format"
 msgstr "po --date-format musi wystąpić format daty"
 
 #: src/ps/parser.c:922
-#, fuzzy
 msgid "delimiter character must follow --delimiter"
-msgstr "po --date-format musi wystąpić format daty"
+msgstr "znak ogranicznika musi nastąpić po --delimiter"
 
 #: src/ps/parser.c:923
 msgid "delimiter must be a single character"
-msgstr ""
+msgstr "ogranicznik musi być pojedynczym znakiem"
 
 #: src/ps/parser.c:928
 msgid "option --deselect does not take an argument"
@@ -1926,7 +1926,7 @@ msgstr " %s [nowy priorytet] [opcje] <wyrażenie>\n"
 
 #: src/skill.c:327
 msgid " -f, --fast         fast mode (not implemented)\n"
-msgstr " -f, --fast         tryb szybki (nie zaimplementowany)\n"
+msgstr " -f, --fast         tryb szybki (niezaimplementowany)\n"
 
 #: src/skill.c:328
 msgid " -i, --interactive  interactive\n"
@@ -1954,7 +1954,7 @@ msgstr " -v, --verbose      wyjaśnianie, co jest wykonywane\n"
 
 #: src/skill.c:333
 msgid " -w, --warnings     enable warnings (not implemented)\n"
-msgstr " -w, --warnings     włączenie ostrzeżeń (nie zaimplementowane)\n"
+msgstr " -w, --warnings     włączenie ostrzeżeń (niezaimplementowane)\n"
 
 #: src/skill.c:335
 msgid ""
@@ -2103,7 +2103,7 @@ msgstr " l: sortowanie wg liczby płyt\n"
 
 #: src/slabtop.c:123
 msgid " v: sort by (non display) number of active slabs\n"
-msgstr " v: sortowanie wg (nie wyświetlanej) liczby aktywnych płyt\n"
+msgstr " v: sortowanie wg (niewyświetlanej) liczby aktywnych płyt\n"
 
 #: src/slabtop.c:124
 msgid " n: sort by name\n"
@@ -2115,7 +2115,7 @@ msgstr " o: sortowanie wg liczby obiektów (domyślne)\n"
 
 #: src/slabtop.c:126
 msgid " p: sort by (non display) pages per slab\n"
-msgstr " p: sortowanie wg (nie wyświetlanej) liczby stron na płytę\n"
+msgstr " p: sortowanie wg (niewyświetlanej) liczby stron na płytę\n"
 
 #: src/slabtop.c:127
 msgid " s: sort by object size\n"
@@ -2162,9 +2162,8 @@ msgstr "Obiektów min / średnio / max"
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
 #: src/slabtop.c:289
-#, fuzzy
 msgid "    OBJS   ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
-msgstr "  OB. AKTYWNE  UŻ. ROZM.OB.  PŁYTY  OB./PŁ. ROZM.CACHE NAZWA"
+msgstr " OBIEKTY  AKTYWNE  UŻ. ROZM.OB.  PŁYTY  OB./PŁ. ROZM.CACHE NAZWA"
 
 #: src/slabtop.c:326 src/vmstat.c:797
 msgid "Unable to create slabinfo structure"
@@ -3885,19 +3884,18 @@ msgstr "log komunikatów, ostatnie 10 komunikatów:"
 #: src/top/top_nls.c:614
 #, c-format
 msgid "option '%s' must be used alone"
-msgstr ""
+msgstr "opcja '%s' musi być użyta samodzielnie"
 
 #: src/top/top_nls.c:615
-#, fuzzy, c-format
+#, c-format
 msgid "Core%-3d:"
-msgstr "%%Cp%c%-3d:"
+msgstr "Rdzeń%-3d:"
 
 #: src/top/top_nls.c:616
 msgid "sorry, distinct cpu core types do not exist"
-msgstr ""
+msgstr "niestety osobne typy rdzeni procesora nie istnieją"
 
 #: src/top/top_nls.c:617
-#, fuzzy
 msgid "sorry, system cpu core data is unavailable"
 msgstr "niestety rozszerzenia NUMA nie są dostępne"
 
@@ -3937,7 +3935,7 @@ msgstr "niestety rozszerzenia NUMA nie są dostępne"
 #. .    wraps that could place them there.
 #. .
 #: src/top/top_nls.c:662
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
 "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
@@ -4009,16 +4007,17 @@ msgstr ""
 "~1Ctrl~2+'~1O~2' inne filtry\n"
 "  V,v,F   . Zmiana: '~1V~2' widok lasu; '~1v~2' ukrycie/pokazanie dzieci; "
 "'~1F~2' utrz.fokusu\n"
+"           (polecenia pokazane z '.' wymagają ~1widocznego~2 ~1okna~2 "
+"wyświetlania zadań)\n"
 "\n"
-"%s  ^G,K,N,U  Widok: grupy kontr. ~1^G~2; l. poleceń ~1^K~2; środowisko "
-"~1^N~2; dod. grupy ~1^U~2\n"
-"  Y,!,^E,P  Podgląd '~1Y~2'; Łączenie CPU '~1!~2'; Skala czasu ~1^E~2; Widok "
-"przestrzeni nazw ~1^P~2\n"
-"  W,q       Zapis pliku konfiguracyjnego '~1W~2'; Zakończenie '~1q~2'\n"
-"           (polecania z '.' wymagają ~1widocznego~2 ~1okna~2 wyświetlania "
-"zadań)\n"
-"Klawisz '~1h~2' lub '~1?~2' wyświetli pomoc dotyczącą ~1okien~2,\n"
-"klawisz 'q' lub <Esc> to kontynuacja "
+"%s  Y,^E      Podgląd zadania '~1Y~2'; Skala czasu procesu '~1^E~2'\n"
+"  !,^       Progresywne łączenie CPU '~1!~2'; Wyświetlanie rdzeni lub CPU "
+"'~1^~2'\n"
+"  W         Zapis pliku konfiguracyjnego '~1W~2'\n"
+"\n"
+"Klawisz '~1h~2' daje pomoc dla klawiszy ~1specjalnych~2, '~1H~2' dla "
+"~1okien~2,\n"
+"Klawisz 'q' lub <Esc> to kontynuacja "
 
 #: src/top/top_nls.c:689
 #, c-format
@@ -4051,9 +4050,34 @@ msgid ""
 "\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
+"Pomoc dla klawiszy specjalnych - %s\n"
+"\n"
+"Klawisze te wywołują osobne okno na dole ekranu, bez przerywania normalnego\n"
+"monitorowania progamu top. Naciśnięcie tego samego polecenia '~1Ctrl~2' po\n"
+"raz drugi usuwa dane osobne okno, tak jak polecenie '~1=~2'.\n"
+"\n"
+"Następujące widoki są pokazywane dla pierwszego wyświetlanego zadania.\n"
+"~1Klawisze strzałek~2 góra/dół mają znaczenie przy wyborze procesu\n"
+"docelowego przy bardziej stabilnym widoku, jak widok lasu czy sortowania\n"
+"po PID-zie albo przy dłuższym interwale.\n"
+"   ~1^A~6   Wyświetlenie zdolności                 (klawisz Ctrl + 'a')\n"
+"   ~1^G~6   Wyświetlenie grup kontrolnych          (klawisz Ctrl + 'g')\n"
+"   ~1^K~6   Wyświetlenie linii polecenia           (klawisz Ctrl + 'k')\n"
+"   ~1^N~6   Wyświetlenie środowiska                (klawisz Ctrl + 'n')\n"
+"   ~1^P~6   Wyświetlenie przestrzeni nazw          (klawisz Ctrl + 'p')\n"
+"   ~1^U~6   Wyświetlenie grup dodatkowych          (klawisz Ctrl + 'u')\n"
+"\n"
+"Polecenie 'Ctrl+L' nie jest powiązane z określonym zadaniem, ale powoduje\n"
+"wywołanie do przeglądu do 10 ostatnich komunikatów programu top.\n"
+"   ~1^L~6  :Wyświetlenie zalogowanych komunikatów  (klawisz Ctrl + 'l')\n"
+"\n"
+"Klawiszy Tab (w przód) lub kombinacji Shift+Tab (wstecz) można użyć\n"
+"do podświetlenia poszczególnych elementów wyświetlanych w dolnym oknie.\n"
+"\n"
+"Klawisz 'q' lub <Esc> to kontynuacja "
 
 #: src/top/top_nls.c:716
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4137,8 +4161,7 @@ msgstr ""
 "\n"
 "W trybie '~1A~2' klawisze '~1*~4' są ~1podstawowymi~2 poleceniami. Proszę "
 "TERAZ wypróbować\n"
-"polecenia '~1a~2' i '~1w~2' oraz podpolecenie 'g'. Klawisz <Enter> czyni "
-"\"bieżącym\". "
+"polecenia 'a' i 'w' lub polecenie 'g'. Klawisz <Enter> czyni \"bieżącym\". "
 
 #. Translation Notes ------------------------------------------------
 #. .  The following 'Help for color mapping' simulated screen should
@@ -4217,13 +4240,12 @@ msgstr ""
 #. .                 also embedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:780
-#, fuzzy
 msgid ""
 "  d,k,r,^R  Set delay '~1d~2'; Kill '~1k~2'; Renice '~1r~2; Renice autogroup "
 "'~1Ctrl~2+'~1R~2'\n"
 msgstr ""
-"  d,k,r,^R '~1d~2' ust.opóźn; '~1k~2' zabicie; '~1r~2' zm.nice; "
-"~1Ctrl~2+'~1R~2' zm.nice autogrupy\n"
+"  d,k,r,^R  Ust.opóźn. '~1d~2'; Zabicie '~1k~2'; Zm.nice '~1r~2'; Zm.nice "
+"autogrupy '~1Ctrl~2+'~1R~2'\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -4829,9 +4851,9 @@ msgid "  -e, --errexit          exit if command has a non-zero exit\n"
 msgstr "  -e, --errexit          zakończenie, jeśli polecenie zwróci błąd\n"
 
 #: src/watch.c:129
-#, fuzzy
 msgid "  -f, --follow           Follow the output and don't clear screen\n"
-msgstr " -L, --line          wyjście w pojedynczej linii\n"
+msgstr ""
+"  -f, --follow           Podążanie za wyjściem, bez czyszczenia ekranu\n"
 
 #: src/watch.c:130
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -4907,7 +4929,7 @@ msgstr "Niezrozumiały przedział z WATCH_INTERVAL"
 #: src/watch.c:1284
 #, c-format
 msgid "Follow -f option conflicts with change options -d,-e or -q"
-msgstr ""
+msgstr "Opcja podążania -f jest w konflikcie z opcjami zmiany -d, -e lub -q"
 
 #: src/watch.c:1376
 msgid "command exit with a non-zero status, press a key to exit"
@@ -4959,14 +4981,14 @@ msgid " -s, --short         short format\n"
 msgstr " -s, --short         format krótki\n"
 
 #: src/w.c:748
-#, fuzzy
 msgid " -t, --terminal      show terminals\n"
-msgstr " -t, --terminal <tty,...>  dopasowanie po terminalu sterującym\n"
+msgstr " -t, --terminal      wyświetlanie terminali\n"
 
 #: src/w.c:750
-#, fuzzy, c-format
+#, c-format
 msgid " -f, --from          toggle remote hostname field (default: %s)\n"
-msgstr " -f, --from          wyświetlenie pola nazwy zdalnego hosta\n"
+msgstr ""
+" -f, --from          przełączenie pola nazwy hosta zdalnego (domyślnie: %s)\n"
 
 #: src/w.c:752
 msgid " -o, --old-style     old style output\n"
@@ -4984,9 +5006,8 @@ msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          wypisanie PID-ów procesów w CZYM\n"
 
 #: src/w.c:943
-#, fuzzy
 msgid "Unable to sort processes by TTY"
-msgstr "nie można rozgałęzić procesu"
+msgstr "Nie można sortować procesów po TTY"
 
 #: src/w.c:1090
 #, c-format
@@ -5005,9 +5026,8 @@ msgstr ""
 "zignorowano\n"
 
 #: src/w.c:1128
-#, fuzzy
 msgid "Unable to sort processes by PID"
-msgstr "nie można rozgałęzić procesu"
+msgstr "Nie można sortować procesów po PID-ach"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -5083,6 +5103,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s z pakietu %s\n"
-
-#~ msgid "wrong mode, command inactive"
-#~ msgstr "niewłaściwy tryb, polecenie nieaktywne"

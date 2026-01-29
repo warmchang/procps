@@ -1,9 +1,9 @@
 # Romanian translation of procps-ng.
 # Mesajele în limba română pentru pachetul procps-ng.
-# Copyright © 2022, 2023, 2024 Free Software Foundation, Inc.
+# Copyright © 2022, 2023, 2024, 2026 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
 #
-# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2022, 2023, 2024.
+# Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>, 2022 - 2024, 2026.
 #
 # Cronologia traducerii fișierului „procps-ng”:
 # Traducerea inițială, făcută de R-GC, pentru versiunea procps-ng 3.3.17rc1 (99% - tradus), noi-2022.
@@ -13,14 +13,15 @@
 # Actualizare a traducerii pentru versiunea 4.0.4-rc1, făcută de R-GC, aug-2023.
 # Corectare „hezacimal” → „hexazecimal” pentru versiunea 4.0.4-rc1, făcută de R-GC, sep-2023.
 # Actualizare a traducerii pentru versiunea 4.0.5rc1, făcută de R-GC, dec-2024.
+# Actualizare a traducerii pentru versiunea 4.0.6rc1, făcută de R-GC, ian-2026.
 # Actualizare a traducerii pentru versiunea Y, făcută de X, Z(anul).
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng 4.0.5rc1\n"
+"Project-Id-Version: procps-ng 4.0.6rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2026-01-06 20:09+1100\n"
-"PO-Revision-Date: 2024-12-15 17:21+0100\n"
+"PO-Revision-Date: 2026-01-07 20:38+0100\n"
 "Last-Translator: Remus-Gabriel Chelu <remusgabriel.chelu@disroot.org>\n"
 "Language-Team: Romanian <translation-team-ro@lists.sourceforge.net>\n"
 "Language: ro\n"
@@ -30,7 +31,7 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : (n==0 || (n%100 > 0 && n%100 < "
 "20)) ? 1 : 2);\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Poedit 3.6\n"
 
 #: local/fileutils.c:36
 msgid "write error"
@@ -404,9 +405,8 @@ msgstr ""
 "completă\n"
 
 #: src/pgrep.c:171
-#, fuzzy
 msgid "     --quiet               suppress all normal output\n"
-msgstr "  s                   format de semnal\n"
+msgstr "     --quiet               suprimă toate detaliile de ieșire normale\n"
 
 #: src/pgrep.c:172
 msgid " -v, --inverse             negates the matching\n"
@@ -447,6 +447,8 @@ msgstr " -e, --echo                afișează care proces este omorât\n"
 msgid ""
 " -m, --mrelease            release process memory immediately after kill\n"
 msgstr ""
+" -m, --mrelease            eliberează memoria procesului imediat după "
+"omorârea acestuia\n"
 
 #: src/pgrep.c:184
 msgid " -e, --echo                display PIDs before waiting\n"
@@ -458,11 +460,10 @@ msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               numărul de procese care s-au potrivit\n"
 
 #: src/pgrep.c:189
-#, fuzzy
 msgid " -f, --full                use full command line to match\n"
 msgstr ""
-" -f, --full                utilizează numele complet al procesului pentru a "
-"potrivi\n"
+" -f, --full                utilizează linia de comandă completă pentru "
+"potrivire\n"
 
 #: src/pgrep.c:190
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
@@ -497,9 +498,8 @@ msgstr ""
 "                           <secunde> secunde\n"
 
 #: src/pgrep.c:196
-#, fuzzy
 msgid " -p, --pid <PID,...>       match process PIDs\n"
-msgstr " -U, --uid <ID,...>        potrivire prin ID-uri reale\n"
+msgstr " -p, --pid <PID,...>       potrivește PID-urile proceselor\n"
 
 #: src/pgrep.c:197
 msgid ""
@@ -554,6 +554,8 @@ msgstr ""
 msgid ""
 " -Q, --shell-quote         output the command line in shell-quoted form\n"
 msgstr ""
+" -Q, --shell-quote         afișează linia de comandă în formatul citat din "
+"shell\n"
 
 #: src/pgrep.c:209
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
@@ -665,12 +667,12 @@ msgstr ""
 "Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use pidfile and pid option together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"fișierul de PID nu este valid\n"
+"Opțiunile pidfile și pid nu pot fi utilizate împreună.\n"
 "Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1318
@@ -683,21 +685,21 @@ msgstr ""
 "Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1326
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -a,--list-full options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"opțiunile „-N” și „-q” nu pot coexista\n"
+"Opțiunile „--quiet” și „-a,--list-full” nu pot fi utilizate împreună.\n"
 "Încercați «%s --help» pentru informații suplimentare."
 
 #: src/pgrep.c:1331
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -l,--list-name options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"opțiunile „-N” și „-q” nu pot coexista\n"
+"Opțiunile „--quiet” și „-l,--list-name” nu pot fi utilizate împreună.\n"
 "Încercați «%s --help» pentru informații suplimentare."
 
 #: src/pgrep.c:1340
@@ -719,9 +721,9 @@ msgstr ""
 "Încercați «%s --help» pentru mai multe informații."
 
 #: src/pgrep.c:1414
-#, fuzzy, c-format
+#, c-format
 msgid "pidfd_open for process %ld failed"
-msgstr "deschiderea pid-ului %ld a eșuat"
+msgstr "pidfd_open pentru procesul %ld a eșuat"
 
 #: src/pgrep.c:1417
 #, c-format
@@ -731,7 +733,7 @@ msgstr "%s omorât (pid %lu)\n"
 #: src/pgrep.c:1422
 #, c-format
 msgid "pid %ld killed, but process_mrelease failed"
-msgstr ""
+msgstr "pid-ul %ld a fost omorât, dar process_mrelease a eșuat"
 
 #: src/pgrep.c:1432
 #, c-format
@@ -920,7 +922,7 @@ msgstr " -p, --show-path             afișează ruta în coloana de asociere\n"
 
 #: src/pmap.c:134
 msgid " -k, --use-kernel-name       use names provided by kernel\n"
-msgstr ""
+msgstr " -k, --use-kernel-name       utilizează numele furnizate de nucleul\n"
 
 #: src/pmap.c:135
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
@@ -1072,14 +1074,14 @@ msgid "please report this bug"
 msgstr "raportați acestă eroare"
 
 #: src/ps/display.c:307
-#, fuzzy
 msgid "Fatal library error, unable to select pids"
-msgstr "eroare fatală de bibliotecă, căutare a ei însăși\n"
+msgstr "Eroare fatală de bibliotecă, imposibil de selectat pid-urile"
 
 #: src/ps/display.c:314
-#, fuzzy
 msgid "Fatal library error, unable to reap pids"
-msgstr "eroare fatală de bibliotecă, reap\n"
+msgstr ""
+"Eroare fatală de bibliotecă, nu s-au putut obține datele referitoare la pid-"
+"uri"
 
 #: src/ps/display.c:363
 #, c-format
@@ -1473,6 +1475,8 @@ msgid ""
 "     --delimiter <d>  Use <d> as a column delimiter instead of variable "
 "space\n"
 msgstr ""
+"     --delimiter <d>  utilizează  <d> ca delimitator de coloană în locul "
+"spațiului variabil\n"
 
 #: src/ps/help.c:155
 msgid "     --headers        repeat header lines, one per page\n"
@@ -1858,13 +1862,13 @@ msgid "date format must follow --date-format"
 msgstr "opțiunea „--date-format”, trebuie să fie urmată de formatul de dată"
 
 #: src/ps/parser.c:922
-#, fuzzy
 msgid "delimiter character must follow --delimiter"
-msgstr "opțiunea „--date-format”, trebuie să fie urmată de formatul de dată"
+msgstr ""
+"opțiunea „--delimiter”, trebuie să fie urmată de caracterul delimitator"
 
 #: src/ps/parser.c:923
 msgid "delimiter must be a single character"
-msgstr ""
+msgstr "delimitatorul trebuie să fie un singur caracter"
 
 #: src/ps/parser.c:928
 msgid "option --deselect does not take an argument"
@@ -2398,9 +2402,8 @@ msgstr "Minim / Mediu / Maxim obiect"
 #. Translation Hint: Please keep alignment of the
 #. * following intact.
 #: src/slabtop.c:289
-#, fuzzy
 msgid "    OBJS   ACTIVE  USE OBJ SIZE  SLABS OBJ/SLAB CACHE SIZE NAME"
-msgstr "  OBJS ACTIVE  USE OBJ DIM.  SLABS OBJ/SLAB MTamp DIM. NUME"
+msgstr "    OBJS   ACTIVE  USE DIM. OBJ  SLABS OBJ/SLAB DIM. CACHE NUME"
 
 #: src/slabtop.c:326 src/vmstat.c:797
 msgid "Unable to create slabinfo structure"
@@ -4190,21 +4193,20 @@ msgstr "jurnal de mesaje, ultimele 10 mesaje:"
 #: src/top/top_nls.c:614
 #, c-format
 msgid "option '%s' must be used alone"
-msgstr ""
+msgstr "opțiunea „%s” trebuie utilizată singură"
 
 #: src/top/top_nls.c:615
-#, fuzzy, c-format
+#, c-format
 msgid "Core%-3d:"
-msgstr "%%Cp%c%-3d:"
+msgstr "Core%-3d:"
 
 #: src/top/top_nls.c:616
 msgid "sorry, distinct cpu core types do not exist"
-msgstr ""
+msgstr "scuze, nu există tipuri distincte de nuclee CPU"
 
 #: src/top/top_nls.c:617
-#, fuzzy
 msgid "sorry, system cpu core data is unavailable"
-msgstr "scuze, extensiile NUMA nu sunt disponibile"
+msgstr "scuze, datele privind nucleele cpu-ului sistemului nu sunt disponibile"
 
 # ************************
 # R-GC, scrie:
@@ -4253,7 +4255,7 @@ msgstr "scuze, extensiile NUMA nu sunt disponibile"
 #. .    wraps that could place them there.
 #. .
 #: src/top/top_nls.c:662
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Interactive Commands~2 - %s\n"
 "Window ~1%s~6: ~1Cumulative mode ~3%s~2.  ~1System~6: ~1Delay ~3%.1f secs~2; "
@@ -4325,15 +4327,17 @@ msgstr ""
 "„~1O~2” alte filtre\n"
 " V,v,F   . Comut.: „~1V~2” vizual. arbores.; „~1v~2” asc/afiș copil; „~1F~2” "
 "menține focal\n"
+"          ( comenzile cu „.” necesită o ~1fereastră~2 de afișare a sarcinii "
+"~1vizibilă~2 ) \n"
 "\n"
-"%s ^G,K,N,U  Vizualiz.: grupuri ctl ~1^G~2; linie cmd ~1^K~2; mediu ~1^N~2; "
-"grupuri supl ~1^U~2\n"
-" Y,!,^E,P   Inspect „~1Y~2”; Combină Cpus „~1!~2”; Scală timp ~1^E~2; Vizual "
-"spații_nume ~1^P~2\n"
-" W,q         Scrie fișierul config „~1W~2”;Ieșire '~1q~2'\n"
-"         (comenzile cu „.” necesită o ~1fereastră~2 de afișare a sarcinii "
-"~1vizibilă~2) \n"
-"Apăsați „~1h~2” sau „~1?~2” pentru ajutor cu ~1Fereastra~2,\n"
+"%s Y,^E       Inspect. o sarcină „~1Y~2”; Scala timpului de procesare "
+"„~1^E~2”\n"
+"  !,^       Combinare progresivă a CPU-urilor „~1!~2”; Afișează Cores vs. "
+"Cpus „~1^~2” \n"
+" W          Scrie fișierul config „~1W~2”\n"
+"\n"
+"Apăsați „~1h~2” pt. ajutor cu tastele ~1Speciale~2, „~1H~2” pentru ajutor cu "
+"~1Fereastra~2,\n"
 "Tastați „q” sau <Esc> pentru a continua "
 
 #: src/top/top_nls.c:689
@@ -4367,9 +4371,40 @@ msgid ""
 "\n"
 "Type 'q' or <Esc> to continue "
 msgstr ""
+"Ajutor pentru tastele Speciale - %s\n"
+"\n"
+"Aceste taste deschid o fereastră separată în partea de jos a ecranului,\n"
+"în timp ce monitorizarea normală din partea de sus continuă fără "
+"întrerupere.\n"
+"Apăsarea aceleiași comenzi „~1Ctrl~2” a doua oară închide fereastra "
+"separată,\n"
+"la fel ca și comanda „~1=~2”.\n"
+"\n"
+"Următoarele se aplică primei sarcini afișate. Tastele sus/jos ~1~2 vor fi\n"
+"importante în alegerea unui proces țintă, la fel ca și un afișaj mai "
+"stabil,\n"
+"cum ar fi vizualizarea arborescentă, sortarea după PID sau un interval de\n"
+"întârziere mai mare.\n"
+"   ~1^A~6   Afișează Capacități             (Tasta Ctrl + 'a')\n"
+"   ~1^G~6   Afișează Grupuri de control     (Tasta Ctrl + 'g')\n"
+"   ~1^K~6   Afișează LiniaCmd               (Tasta Ctrl + 'k')\n"
+"   ~1^N~6   Afișează Mediul                 (Tasta Ctrl + 'n')\n"
+"   ~1^P~6   Afișează Spații de nume         (Tasta Ctrl + 'p')\n"
+"   ~1^U~6   Afișează Grupuri suplimentare   (Tasta Ctrl + 'u')\n"
+"\n"
+"Comanda „Ctrl+L” nu este asociată cu o sarcină specifică. În schimb, sunt\n"
+"reapelate pt. revizuire până la 10 dintre cele mai recente mesaje emise de "
+"top.\n"
+"   ~1^L~6  :Afișează mesajele înregistrate  (Tasta Ctrl + 'l')\n"
+"\n"
+"Tasta Tab (înainte) sau combinația Shift+Tab (înapoi) poate fi utilizată "
+"pentru\n"
+"a evidenția elementele individuale afișate în fereastra inferioară.\n"
+"\n"
+"Tastați „q” sau <Esc> pentru a continua. "
 
 #: src/top/top_nls.c:716
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Help for Windows / Field Groups~2 - \"Current Window\" = ~1 %s ~6\n"
 "\n"
@@ -4453,8 +4488,8 @@ msgstr ""
 "devină vizibilă)\n"
 "\n"
 "În modul '~1A~2', tastele '~1*~4' sunt comenzile dvs ~1esențiale~2. "
-"Încercați cmds '~1a~2' și '~1w~2'\n"
-"plus subcomenzile 'g' ACUM. Apăsați <Enter> pentru a o face fereastra "
+"Încercați cmds „a” și „w”\n"
+"sau numerele comenzii „g” ACUM. Apăsați <Enter> pentru a o face fereastra "
 "„Actuală” "
 
 #. Translation Notes ------------------------------------------------
@@ -4549,13 +4584,12 @@ msgstr ""
 #. .                 also embedded in the translatable text (along with escape seqs)
 #. .                 should never themselves be translated.
 #: src/top/top_nls.c:780
-#, fuzzy
 msgid ""
 "  d,k,r,^R  Set delay '~1d~2'; Kill '~1k~2'; Renice '~1r~2; Renice autogroup "
 "'~1Ctrl~2+'~1R~2'\n"
 msgstr ""
-" d,k,r,^R „~1d~2” def. întârzierea; „~1k~2” omoară; „~1r~2” renice; ~1Ctrl~2+"
-"„~1R~2” renice autogrup\n"
+" d,k,r,^R „~1d~2” Def. întârzierea; „~1k~2” Omoară; „~1r~2” Renice; "
+"„~1Ctrl~2+~1R~2” Renice autogrup\n"
 
 #. Translation Hint:
 #. .  This Fields Management header should be 3 lines long so as
@@ -5199,9 +5233,8 @@ msgstr ""
 "  -e, --errexit          iese dacă comanda are o ieșire diferită de zero\n"
 
 #: src/watch.c:129
-#, fuzzy
 msgid "  -f, --follow           Follow the output and don't clear screen\n"
-msgstr " -L, --line          afișează ieșirea pe o singură linie\n"
+msgstr "  -f, --follow           monitorizează ieșirea și nu șterge ecranul\n"
 
 #: src/watch.c:130
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -5280,6 +5313,8 @@ msgstr "Nu s-a putut analiza intervalul de la WATCH_INTERVAL"
 #, c-format
 msgid "Follow -f option conflicts with change options -d,-e or -q"
 msgstr ""
+"Opțiunea „-f” intră în conflict cu opțiunile de modificare „-d”, „-e” sau „-"
+"q”."
 
 #: src/watch.c:1376
 msgid "command exit with a non-zero status, press a key to exit"
@@ -5339,14 +5374,15 @@ msgid " -s, --short         short format\n"
 msgstr " -s, --short         formatul scurt\n"
 
 #: src/w.c:748
-#, fuzzy
 msgid " -t, --terminal      show terminals\n"
-msgstr " -t, --terminal <tty,...>  potrivire prin terminalul de control\n"
+msgstr " -t, --terminal      afișează terminalele\n"
 
 #: src/w.c:750
-#, fuzzy, c-format
+#, c-format
 msgid " -f, --from          toggle remote hostname field (default: %s)\n"
-msgstr " -f, --from          afișează câmpul de nume de gazdă de la distanță\n"
+msgstr ""
+" -f, --from          afișează/ascunde câmpul de nume de gazdă de la distanță "
+"(implicit: %s)\n"
 
 #: src/w.c:752
 msgid " -o, --old-style     old style output\n"
@@ -5364,9 +5400,8 @@ msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          afișează numărul PID ale proceselor în WHAT\n"
 
 #: src/w.c:943
-#, fuzzy
 msgid "Unable to sort processes by TTY"
-msgstr "nu se poate bifurca procesul"
+msgstr "Imposibil de sortat procesele după TTY"
 
 #: src/w.c:1090
 #, c-format
@@ -5385,9 +5420,8 @@ msgstr ""
 "8 și %d, se ignoră\n"
 
 #: src/w.c:1128
-#, fuzzy
 msgid "Unable to sort processes by PID"
-msgstr "nu se poate bifurca procesul"
+msgstr "Imposibil de sortat procesele după PID"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.

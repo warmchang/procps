@@ -625,9 +625,9 @@ msgstr ""
 "Hãy chạy lệnh “%s --help” để có thêm thông tin."
 
 #: src/pgrep.c:1414
-#, fuzzy, c-format
+#, c-format
 msgid "pidfd_open for process %ld failed"
-msgstr "gặp lỗi khi giết tiến trình mã số %ld"
+msgstr ""
 
 #: src/pgrep.c:1417
 #, c-format
@@ -1680,7 +1680,7 @@ msgstr "đặc tả định dạng phải theo sau --format"
 #: src/ps/parser.c:922
 #, fuzzy
 msgid "delimiter character must follow --delimiter"
-msgstr "đặc tả định dạng phải theo sau --format"
+msgstr "danh sách người dùng thật phải theo sau --User"
 
 #: src/ps/parser.c:923
 msgid "delimiter must be a single character"

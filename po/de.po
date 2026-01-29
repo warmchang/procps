@@ -1,14 +1,13 @@
 # German translation of procps-ng.
 # Copyright (C) 2014 Free Software Foundation, Inc.
 # This file is distributed under the same license as the procps-ng package.
-#
-# Mario Blättermann <mario.blaettermann@gmail.com>, 2014, 2017, 2019, 2021, 2023-2024. 
+# Mario Blättermann <mario.blaettermann@gmail.com>, 2014, 2017, 2019, 2021, 2023-2024, 2026.
 msgid ""
 msgstr ""
-"Project-Id-Version: procps-ng-4.0.5rc1\n"
+"Project-Id-Version: procps-ng-4.0.6rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
 "POT-Creation-Date: 2026-01-06 20:09+1100\n"
-"PO-Revision-Date: 2024-12-12 17:36+0100\n"
+"PO-Revision-Date: 2026-01-11 23:06+0100\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
 "Language: de\n"
@@ -16,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Bugs: Report translation errors to the Language-Team address.\n"
-"X-Generator: Lokalize 24.08.3\n"
+"X-Generator: Lokalize 25.12.0\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: local/fileutils.c:36
@@ -97,6 +96,8 @@ msgstr " -t, --total         Gesamtgröße von RAM + Swap anzeigen\n"
 #: src/free.c:91
 msgid " -v, --committed     show committed memory and commit limit\n"
 msgstr ""
+" -v, --committed     reservierten Speicher und das\n"
+"                       Commit-Limit anzeigen\n"
 
 #: src/free.c:92
 msgid " -s N, --seconds N   repeat printing every N seconds\n"
@@ -200,7 +201,7 @@ msgstr "Gesamt:"
 
 #: src/free.c:391
 msgid "Comm:"
-msgstr ""
+msgstr "Comm:"
 
 #: src/hugetop.c:363
 msgid "     PID     SHARED    PRIVATE COMMAND"
@@ -213,6 +214,8 @@ msgstr " -d, --delay <sec>   Aktualisierungsverzögerung\n"
 #: src/hugetop.c:407
 msgid " -n, --numa          display per NUMA nodes Huge pages information\n"
 msgstr ""
+" -n, --numa          pro NUMA-Knoten Huge-Pages-Informationen\n"
+"                       anzeigen\n"
 
 #: src/hugetop.c:408 src/slabtop.c:111
 msgid " -o, --once          only display once, then exit\n"
@@ -318,9 +321,8 @@ msgstr ""
 " -a, --list-full           PID und vollständige Befehlszeile auflisten\n"
 
 #: src/pgrep.c:171
-#, fuzzy
 msgid "     --quiet               suppress all normal output\n"
-msgstr "  s                   Signalformat\n"
+msgstr "     --quiet               alle normalen Ausgaben unterdrücken\n"
 
 #: src/pgrep.c:172
 msgid " -v, --inverse             negates the matching\n"
@@ -337,6 +339,8 @@ msgstr " -<sig>                    zu sendendes Signal (Zahl oder Name)\n"
 #: src/pgrep.c:177
 msgid " -H, --require-handler     match only if signal handler is present\n"
 msgstr ""
+" -H, --require-handler     Übereinstimmung nur, wenn ein Signalhandler\n"
+"                             vorhanden ist\n"
 
 #: src/pgrep.c:178
 msgid " -q, --queue <value>       integer value to be sent with the signal\n"
@@ -352,6 +356,7 @@ msgstr " -e, --echo                anzeigen, was abgewürgt wird\n"
 msgid ""
 " -m, --mrelease            release process memory immediately after kill\n"
 msgstr ""
+" -m, --mrelease            Prozessspeicher sofort nach kill freigeben\n"
 
 #: src/pgrep.c:184
 msgid " -e, --echo                display PIDs before waiting\n"
@@ -362,9 +367,8 @@ msgid " -c, --count               count of matching processes\n"
 msgstr " -c, --count               Anzahl der gefundenen Prozesse\n"
 
 #: src/pgrep.c:189
-#, fuzzy
 msgid " -f, --full                use full command line to match\n"
-msgstr " -f, --full                nach vollem Prozessnamen suchen\n"
+msgstr " -f, --full                nach vollständiger Befehlszeile suchen\n"
 
 #: src/pgrep.c:190
 msgid " -g, --pgroup <PGID,...>   match listed process group IDs\n"
@@ -394,9 +398,8 @@ msgstr ""
 "                             Anzahl Sekunden ist\n"
 
 #: src/pgrep.c:196
-#, fuzzy
 msgid " -p, --pid <PID,...>       match process PIDs\n"
-msgstr " -U, --uid <ID, …>         nach realen IDs suchen\n"
+msgstr " -p, --pid <PID, …>        nach Prozess-IDs suchen\n"
 
 #: src/pgrep.c:197
 msgid ""
@@ -452,6 +455,8 @@ msgstr ""
 msgid ""
 " -Q, --shell-quote         output the command line in shell-quoted form\n"
 msgstr ""
+" -Q, --shell-quote         nur die Befehlszeile in Shell-maskierter\n"
+"                             Form ausgeben\n"
 
 #: src/pgrep.c:209
 msgid " --cgroup <grp,...>        match by cgroup v2 names\n"
@@ -479,7 +484,7 @@ msgstr ""
 
 #: src/pgrep.c:215
 msgid "  --env <name=val,...>     match on environment variable\n"
-msgstr ""
+msgstr "  --env <Name=Wert,...>    nach Umgebungsvariable suchen\n"
 
 #: src/pgrep.c:238 src/pgrep.c:832 src/w.c:424
 msgid "Unable to create pid info structure"
@@ -563,12 +568,12 @@ msgstr ""
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
 #: src/pgrep.c:1313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use pidfile and pid option together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"pidfile ist ungültig\n"
+"pidfile- und pid-Optionen können nicht zusammen verwendet werden\n"
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
 #: src/pgrep.c:1318
@@ -581,21 +586,23 @@ msgstr ""
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
 #: src/pgrep.c:1326
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -a,--list-full options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"die Optionen -N und -q können nicht zusammen verwendet werden\n"
+"die Optionen --quiet und -a,--list-full können nicht zusammen verwendet "
+"werden\n"
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
 #: src/pgrep.c:1331
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Cannot use --quiet and -l,--list-name options together\n"
 "Try `%s --help' for more information."
 msgstr ""
-"die Optionen -N und -q können nicht zusammen verwendet werden\n"
+"die Optionen --quiet und -l,--list-name können nicht zusammen verwendet "
+"werden\n"
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
 #: src/pgrep.c:1340
@@ -617,9 +624,9 @@ msgstr ""
 "Rufen Sie »%s --help« auf für weitere Informationen."
 
 #: src/pgrep.c:1414
-#, fuzzy, c-format
+#, c-format
 msgid "pidfd_open for process %ld failed"
-msgstr "Öffnen von %ld ist fehlgeschlagen"
+msgstr "pidfd_open ist für Prozess %ld fehlgeschlagen"
 
 #: src/pgrep.c:1417
 #, c-format
@@ -629,7 +636,7 @@ msgstr "%s abgewürgt (PID %lu)\n"
 #: src/pgrep.c:1422
 #, c-format
 msgid "pid %ld killed, but process_mrelease failed"
-msgstr ""
+msgstr "pid %ld wurde abgewürgt, aber process_mrelease ist fehlgeschlagen"
 
 #: src/pgrep.c:1432
 #, c-format
@@ -804,6 +811,7 @@ msgstr " -p, --show-path             Pfad in der Zuweisung anzeigen\n"
 #: src/pmap.c:134
 msgid " -k, --use-kernel-name       use names provided by kernel\n"
 msgstr ""
+" -k, --use-kernel-name       vom Kernel bereitgestellte Namen verwenden\n"
 
 #: src/pmap.c:135
 msgid " -A, --range=<low>[,<high>]  limit results to the given range\n"
@@ -962,10 +970,13 @@ msgstr "Bitte melden Sie diesen Fehler"
 #: src/ps/display.c:307
 msgid "Fatal library error, unable to select pids"
 msgstr ""
+"Schwerwiegender Bibliotheksfehler, Prozess-IDs konnten nicht ausgewählt "
+"werden"
 
 #: src/ps/display.c:314
 msgid "Fatal library error, unable to reap pids"
 msgstr ""
+"Schwerwiegender Bibliotheksfehler, Prozess-IDs konnten nicht abgerufen werden"
 
 #: src/ps/display.c:363
 #, c-format
@@ -980,7 +991,7 @@ msgstr "ppid kann nicht gefunden werden\n"
 #: src/ps/display.c:485
 #, c-format
 msgid "fatal library error, reap\n"
-msgstr ""
+msgstr "Schwerwiegender Bibliotheksfehler, reap\n"
 
 #: src/ps/global.c:294
 #, c-format
@@ -1001,12 +1012,12 @@ msgstr ""
 #: src/ps/global.c:502
 #, c-format
 msgid "fatal library error, context\n"
-msgstr ""
+msgstr "Schwerwiegender Bibliotheksfehler, context\n"
 
 #: src/ps/global.c:510
 #, c-format
 msgid "fatal library error, lookup self\n"
-msgstr ""
+msgstr "Schwerwiegender Bibliotheksfehler, lookup self\n"
 
 #. Translation Note:
 #. . The following translatable word will be used to recognize the
@@ -1310,6 +1321,8 @@ msgid ""
 "     --delimiter <d>  Use <d> as a column delimiter instead of variable "
 "space\n"
 msgstr ""
+"     --delimiter <d>  <d> als Spaltentrennzeichen anstelle von\n"
+"                        variablem Leerraum verwenden\n"
 
 #: src/ps/help.c:155
 msgid "     --headers        repeat header lines, one per page\n"
@@ -1679,13 +1692,12 @@ msgid "date format must follow --date-format"
 msgstr "Datumsformat muss auf --date-format folgen"
 
 #: src/ps/parser.c:922
-#, fuzzy
 msgid "delimiter character must follow --delimiter"
-msgstr "Datumsformat muss auf --date-format folgen"
+msgstr "Trennzeichen muss auf --delimiter folgen"
 
 #: src/ps/parser.c:923
 msgid "delimiter must be a single character"
-msgstr ""
+msgstr "Trenner muss ein einzelnes Zeichen sein"
 
 #: src/ps/parser.c:928
 msgid "option --deselect does not take an argument"
@@ -2159,7 +2171,7 @@ msgstr "Optionen -d und -o können nicht kombiniert werden"
 
 #: src/slabtop.c:247
 msgid "Error getting slab summary results"
-msgstr ""
+msgstr "Fehler beim Holen der Slab-Zusammenfassung"
 
 #. Translation Hint: Next five strings must not
 #. * exceed a length of 35 characters.
@@ -3064,7 +3076,7 @@ msgstr ""
 #. Translation Hint: maximum 'ioR' = 6
 #: src/top/top_nls.c:337
 msgid "ioR"
-msgstr ""
+msgstr "ioR"
 
 #: src/top/top_nls.c:338
 msgid "I/O Bytes Read"
@@ -3073,7 +3085,7 @@ msgstr "E/A Bytes gelesen"
 #. Translation Hint: maximum 'ioRop' = 5
 #: src/top/top_nls.c:340
 msgid "ioRop"
-msgstr ""
+msgstr "ioRop"
 
 #: src/top/top_nls.c:341
 msgid "I/O Read Operations"
@@ -3082,7 +3094,7 @@ msgstr "E/A-Lesevorgänge"
 #. Translation Hint: maximum 'ioW' = 6
 #: src/top/top_nls.c:343
 msgid "ioW"
-msgstr ""
+msgstr "ioW"
 
 #: src/top/top_nls.c:344
 msgid "I/O Bytes Written"
@@ -3091,7 +3103,7 @@ msgstr "E/A Bytes geschrieben"
 #. Translation Hint: maximum 'ioWop' = 5
 #: src/top/top_nls.c:346
 msgid "ioWop"
-msgstr ""
+msgstr "ioWop"
 
 #: src/top/top_nls.c:347
 msgid "I/O Write Operations"
@@ -3122,7 +3134,7 @@ msgstr "GESTARTET"
 
 #: src/top/top_nls.c:356
 msgid "Start Time from boot"
-msgstr ""
+msgstr "Betriebszeit seit dem Systemstart"
 
 #. Translation Hint: maximum 'ELAPSED' = 7
 #: src/top/top_nls.c:358
@@ -3155,9 +3167,8 @@ msgstr ""
 
 #. Translation Hint: maximum 'nsCGROUP' = 10 +
 #: src/top/top_nls.c:367
-#, fuzzy
 msgid "nsCGROUP"
-msgstr "CGROUPS"
+msgstr "nsCGROUP"
 
 #: src/top/top_nls.c:368
 msgid "CGRP namespace Inode"
@@ -3371,7 +3382,7 @@ msgstr "Irix-Modus %s"
 #: src/top/top_nls.c:460
 #, c-format
 msgid "PID to signal/kill [default pid = %d]"
-msgstr ""
+msgstr "Prozess-ID zum Signalisieren/Abwürgen [Standard-PID = %d]"
 
 #: src/top/top_nls.c:461
 #, c-format
@@ -3928,21 +3939,20 @@ msgstr "Meldungsprotokoll, letzte 10 Meldungen:"
 #: src/top/top_nls.c:614
 #, c-format
 msgid "option '%s' must be used alone"
-msgstr ""
+msgstr "Option »%s« muss allein verwendet werden"
 
 #: src/top/top_nls.c:615
-#, fuzzy, c-format
+#, c-format
 msgid "Core%-3d:"
-msgstr "%%Cp%c%-3d:"
+msgstr "Core%-3d:"
 
 #: src/top/top_nls.c:616
 msgid "sorry, distinct cpu core types do not exist"
-msgstr ""
+msgstr "Es gibt leider keine unterschiedlichen CPU-Kerntypen"
 
 #: src/top/top_nls.c:617
-#, fuzzy
 msgid "sorry, system cpu core data is unavailable"
-msgstr "Entschuldigung, NUMA-Erweiterungen sind nicht verfügbar"
+msgstr "Entschuldigung, die System-CPU-Kerndaten sind nicht verfügbar"
 
 #. Translation Notes ------------------------------------------------
 #. .  It is strongly recommend that the --no-wrap command line option
@@ -4176,6 +4186,8 @@ msgid ""
 "%s:~3 %u ~2total,~3 %u ~2running,~3 %u ~2sleep,~3 %u ~2d-sleep,~3 %u "
 "~2stopped,~3 %u ~2zombie~3\n"
 msgstr ""
+"%s:~3 %u ~2total,~3 %u ~2running,~3 %u ~2sleep,~3 %u ~2d-sleep,~3 %u "
+"~2stopped,~3 %u ~2zombie~3\n"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -4186,6 +4198,8 @@ msgid ""
 "%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
 "~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 msgstr ""
+"%s~3 %#5.1f ~2us,~3 %#5.1f ~2sy,~3 %#5.1f ~2ni,~3 %#5.1f ~2id,~3 %#5.1f "
+"~2wa,~3 %#5.1f ~2hi,~3 %#5.1f ~2si~3 ~1"
 
 #. Translation Hint: Only the following abbreviations need be translated
 #. .                 us = user, sy = system, ni = nice, id = idle, wa = wait,
@@ -4196,6 +4210,8 @@ msgid ""
 "%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f "
 "~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 msgstr ""
+"%s~3%#5.1f ~2us,~3%#5.1f ~2sy,~3%#5.1f ~2ni,~3%#5.1f ~2id,~3%#5.1f "
+"~2wa,~3%#5.1f ~2hi,~3%#5.1f ~2si,~3%#5.1f ~2st~3 ~1"
 
 #. Translation Hint: next 2 must be treated together, with WORDS above & below aligned
 #: src/top/top_nls.c:812
@@ -4204,12 +4220,15 @@ msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
 "~1    "
 msgstr ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used,~3 %9.9s~2buff/cache~3 "
+"~1    "
 
 #: src/top/top_nls.c:814
 #, c-format
 msgid ""
 "%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
 msgstr ""
+"%s %s:~3 %9.9s~2total,~3 %9.9s~2free,~3 %9.9s~2used.~3 %9.9s~2avail %s~3"
 
 #. Translation Hint:
 #. .  The next 2 headers for 'Inspection' must each be 3 lines or less
@@ -4335,7 +4354,7 @@ msgstr "Vmstat-Struktur konnte nicht angelegt werden"
 
 #: src/vmstat.c:424 src/vmstat.c:896 src/vmstat.c:955 src/w.c:782
 msgid "Unable to create system stat structure"
-msgstr ""
+msgstr "Systemstatistikstruktur konnte nicht erstellt werden"
 
 #: src/vmstat.c:428
 msgid "Unable to get uptime"
@@ -4347,7 +4366,7 @@ msgstr "Speicherinformation konnte nicht ermittelt werden"
 
 #: src/vmstat.c:453 src/vmstat.c:502 src/vmstat.c:898 src/w.c:784
 msgid "Unable to select stat information"
-msgstr ""
+msgstr "Statistikinformationen konnten nicht ausgewählt werden"
 
 #. Translation Hint: Translating folloging disk partition
 #. * header fields that follow (marked with max x chars) might
@@ -4378,7 +4397,7 @@ msgstr ""
 
 #: src/vmstat.c:612 src/vmstat.c:716 src/vmstat.c:843
 msgid "Unable to create diskstat structure"
-msgstr ""
+msgstr "Diskstat-Struktur konnte nicht erstellt werden"
 
 #: src/vmstat.c:615 src/vmstat.c:621
 #, c-format
@@ -4481,7 +4500,7 @@ msgstr "%13lu Lesevorgänge gesamt\n"
 #: src/vmstat.c:869
 #, c-format
 msgid "%13lu merged reads\n"
-msgstr ""
+msgstr "%13lu zusammengeführte Lesevorgänge\n"
 
 #: src/vmstat.c:870
 #, c-format
@@ -4501,7 +4520,7 @@ msgstr "%13lu Schreibvorgänge\n"
 #: src/vmstat.c:873
 #, c-format
 msgid "%13lu merged writes\n"
-msgstr ""
+msgstr "%13lu zusammengeführte Schreibvorgänge\n"
 
 #: src/vmstat.c:874
 #, c-format
@@ -4740,9 +4759,9 @@ msgstr ""
 "                         nicht Null ist\n"
 
 #: src/watch.c:129
-#, fuzzy
 msgid "  -f, --follow           Follow the output and don't clear screen\n"
-msgstr " -L, --line          Ausgabe in einer Zeile anzeigen\n"
+msgstr ""
+"  -f, --follow           der Ausgabe folgen und Bildschirm nicht leeren\n"
 
 #: src/watch.c:130
 msgid "  -g, --chgexit          exit when output from command changes\n"
@@ -4824,6 +4843,7 @@ msgstr "Intervall konnte nicht aus WATCH_INTERVAL ermittelt werden"
 #, c-format
 msgid "Follow -f option conflicts with change options -d,-e or -q"
 msgstr ""
+"Folgen der -f-Option kollidiert mit den Änderungsoptionen -d, -e oder -q"
 
 #: src/watch.c:1376
 msgid "command exit with a non-zero status, press a key to exit"
@@ -4875,14 +4895,15 @@ msgid " -s, --short         short format\n"
 msgstr " -s, --short         Kurzformat\n"
 
 #: src/w.c:748
-#, fuzzy
 msgid " -t, --terminal      show terminals\n"
-msgstr " -t, --terminal <tty, …>   nach steuerndem Terminal suchen\n"
+msgstr " -t, --terminal      Terminals anzeigen\n"
 
 #: src/w.c:750
-#, fuzzy, c-format
+#, c-format
 msgid " -f, --from          toggle remote hostname field (default: %s)\n"
-msgstr " -f, --from          Feld für entfernten Rechnernamen anzeigen\n"
+msgstr ""
+" -f, --from          Feld für fernen Rechnernamen anzeigen/ausblenden\n"
+"                       (Vorgabe: %s)\n"
 
 #: src/w.c:752
 msgid " -o, --old-style     old style output\n"
@@ -4900,9 +4921,8 @@ msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -p, --pids          PID(s) der Prozesse in WAS anzeigen\n"
 
 #: src/w.c:943
-#, fuzzy
 msgid "Unable to sort processes by TTY"
-msgstr "Prozess kann nicht geforkt werden"
+msgstr "Prozesse können nicht nach TTY sortiert werden"
 
 #: src/w.c:1090
 #, c-format
@@ -4921,9 +4941,8 @@ msgstr ""
 "ignoriert\n"
 
 #: src/w.c:1128
-#, fuzzy
 msgid "Unable to sort processes by PID"
-msgstr "Prozess kann nicht geforkt werden"
+msgstr "Prozesse können nicht nach PID sortiert werden"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
@@ -5000,178 +5019,3 @@ msgstr ""
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s von %s\n"
-
-#~ msgid "wrong mode, command inactive"
-#~ msgstr "Falscher Modus, Befehl inaktiv"
-
-#~ msgid "r"
-#~ msgstr "r"
-
-#~ msgid "b"
-#~ msgstr "b"
-
-#~ msgid "swpd"
-#~ msgstr "swpd"
-
-#~ msgid "free"
-#~ msgstr "frei"
-
-#~ msgid "inact"
-#~ msgstr "inakt"
-
-#~ msgid "buff"
-#~ msgstr "buff"
-
-#~ msgid "active"
-#~ msgstr "aktiv"
-
-#~ msgid "cache"
-#~ msgstr "Cache"
-
-#~ msgid "si"
-#~ msgstr "si"
-
-#~ msgid "so"
-#~ msgstr "so"
-
-#~ msgid "bi"
-#~ msgstr "bi"
-
-#~ msgid "bo"
-#~ msgstr "bo"
-
-#~ msgid "in"
-#~ msgstr "in"
-
-#~ msgid "cs"
-#~ msgstr "cs"
-
-#~ msgid "us"
-#~ msgstr "us"
-
-#~ msgid "sy"
-#~ msgstr "sy"
-
-#~ msgid "id"
-#~ msgstr "id"
-
-#~ msgid "wa"
-#~ msgstr "wa"
-
-#~ msgid "st"
-#~ msgstr "st"
-
-#, c-format
-#~ msgid "%s: %s"
-#~ msgstr "%s: %s"
-
-#~ msgid "dup2 failed"
-#~ msgstr "dup2 fehlgeschlagen"
-
-#, c-format
-#~ msgid "unable to execute '%s'"
-#~ msgstr "»%s« kann nicht ausgeführt werden"
-
-#~ msgid "waitpid"
-#~ msgstr "waitpid"
-
-#, c-format
-#~ msgid "unicode handling error\n"
-#~ msgstr "Unicode-Verarbeitungsfehler\n"
-
-#, c-format
-#~ msgid "unicode handling error (malloc)\n"
-#~ msgstr "Unicode-Verarbeitungsfehler (malloc)\n"
-
-#~ msgid "error: not enough memory\n"
-#~ msgstr "Fehler: Nicht genug Speicher\n"
-
-#~ msgid "error: can not access /proc\n"
-#~ msgstr "Fehler: auf /proc kann nicht zugegriffen werden\n"
-
-#~ msgid "something at line %d\n"
-#~ msgstr "etwas in Zeile %d\n"
-
-#~ msgid "\"%s\" must be of the form name=value"
-#~ msgstr "»%s« muss die Form Name=Wert haben"
-
-#~ msgid "malformed setting \"%s\""
-#~ msgstr "ungültige Einstellung »%s«"
-
-#~ msgid "%s is deprecated, value not set"
-#~ msgstr "%s ist veraltet, Wert wird nicht gesetzt"
-
-#~ msgid ""
-#~ "inappropriate '%s'\n"
-#~ "Usage:\n"
-#~ "  %s%s"
-#~ msgstr ""
-#~ "unzulässiges »%s«\n"
-#~ "Aufruf:\n"
-#~ "  %s%s"
-
-#~ msgid ""
-#~ "  %s\n"
-#~ "Usage:\n"
-#~ "  %s%s"
-#~ msgstr ""
-#~ "  %s\n"
-#~ "Aufruf:\n"
-#~ "  %s%s"
-
-#~ msgid "failed openproc: %s"
-#~ msgstr "openproc ist fehlgeschlagen: %s"
-
-#~ msgid "-%c requires argument"
-#~ msgstr "-%c benötigt ein Argument"
-
-#~ msgid ""
-#~ " -hv | -bcEeHiOSs1 -d secs -n max -u|U user -p pid(s) -o field -w [cols]"
-#~ msgstr ""
-#~ " -hv | -bcEeHiOSs1 -d Sekunden -n Max. -u|U Benutzer -p PID(s) -o Feld -w "
-#~ "[Spalten]"
-
-#~ msgid "failed /proc/stat read"
-#~ msgstr "/proc/stat konnte nicht gelesen werden"
-
-#~ msgid "terminal is not wide enough"
-#~ msgstr "Terminal ist nicht breit genug"
-
-#~ msgid "your kernel does not support diskstat. (2.5.70 or above required)"
-#~ msgstr ""
-#~ "Ihr Kernel unterstützt diskstat nicht (Version 2.5.70 oder neuer "
-#~ "erforderlich)"
-
-#~ msgid "your kernel does not support diskstat (2.5.70 or above required)"
-#~ msgstr ""
-#~ "Ihr Kernel unterstützt diskstat nicht (Version 2.5.70 oder neuer "
-#~ "erforderlich)"
-
-#~ msgid ""
-#~ "your kernel does not support slabinfo or your permissions are insufficient"
-#~ msgstr ""
-#~ "Ihr Kernel unterstützt slabinfo nicht oder Ihre Zugriffsrechte sind "
-#~ "unzureichend"
-
-#~ msgid "unknown page size (assume 4096)\n"
-#~ msgstr "unbekannte Seitengröße (4096 wird angenommen)\n"
-
-#~ msgid "Overwrite existing obsolete/corrupted rcfile?"
-#~ msgstr "Veraltete/beschädigte Konfigurationsdatei löschen?"
-
-#~ msgid "reads  "
-#~ msgstr "gelesen"
-
-#~ msgid "Adj"
-#~ msgstr "Adj"
-
-#~ msgid "%d column window is too narrow"
-#~ msgstr "Fenster mit %d Spalten ist zu klein"
-
-#~ msgid "%d column width exceeds command buffer size, truncating to %d"
-#~ msgstr ""
-#~ "die Breite der Spalte %d überschreitet die Puffergröße des Befehls, wird "
-#~ "auf %d abgeschnitten "
-
-#~ msgid "warning: screen width %d suboptimal"
-#~ msgstr "Warnung: Bildschirmbreite %d ist nicht optimal"
