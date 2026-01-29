@@ -87,7 +87,7 @@ dist_man_MANS = \
 	man/vmstat.8 \
 	man/procps.3 \
 	man/procps_pids.3 \
-	man/procps_misc.3
+	man/procps_misc.3 \
 	man/pkill.1
 
 if !CYGWIN
