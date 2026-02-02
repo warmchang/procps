@@ -1150,7 +1150,8 @@ static void get_terminal_size(void)
 			putenv(env_col_buf);
 		}
 	}
-        height -= 2;
+        if (!(flags & WATCH_NOTITLE))
+            height -= 2;
 
 	assert(width > 0 && height > 0);
 }
