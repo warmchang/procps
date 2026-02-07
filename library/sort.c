@@ -33,7 +33,7 @@
  *
  * but, we return 1 on success or 0 on malloc failure! |
  * plus we issue only a single malloc each invocation! |
- * plus we issue only a single memcpy each invocation! |
+ * plus we issue, at most, one memcpy each invocation! |
  *
  * Note:
  *   This guy deals EXCLUSIVELY with sorting pointers. |
@@ -64,9 +64,9 @@ int mergesort_r (
     // bottom-up merge sort
     for (half_depth = 1; half_depth < nmemb; half_depth *= 2) {
 
-        for (top_start = 0; top_start < nmemb; top_start += 2 * half_depth ) {
-            bottom_start = (top_start + half_depth  < nmemb) ? top_start + half_depth  : nmemb;
-            bottom_end = (top_start + (2 * half_depth ) < nmemb) ? top_start + (2 * half_depth ) : nmemb;
+        for (top_start = 0; top_start < nmemb; top_start += 2 * half_depth) {
+            bottom_start = (top_start + half_depth < nmemb) ? top_start + half_depth : nmemb;
+            bottom_end = (top_start + (2 * half_depth) < nmemb) ? top_start + (2 * half_depth) : nmemb;
 
             t = top_start;
             b = bottom_start;
@@ -97,7 +97,7 @@ int mergesort_r (
 
     // if sorted data is in aux, copy back to base
     if (bas != (char **)base)
-        memcpy(base, bas, nmemb * sizeof (void *));
+        memcpy(base, bas, nmemb * sizeof(void *));
 
     free(aux);
     return 1;
