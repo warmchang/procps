@@ -860,7 +860,7 @@ PROCPS_EXPORT int procps_meminfo_new (
     /* do a priming read here for the following potential benefits: |
          1) ensure there will be no problems with subsequent access |
          2) make delta results potentially useful, even if 1st time |
-         3) elimnate need for history distortions 1st time 'switch' | */
+         3) eliminate need for history distortion 1st time 'switch' | */
     if (meminfo_read_failed(p)) {
         procps_meminfo_unref(&p);
         return -errno;

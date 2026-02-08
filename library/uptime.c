@@ -316,7 +316,7 @@ static int snprint_uptime_only(
  * @str: destination buffer
  * @size: length of destination buffer
  * @uptime_secs: Uptime of system/container, from procps_uptime() usually
- * @pretty: 0/1 sets pretty expanded format fo uptime component
+ * @pretty: 0/1 sets pretty expanded format for uptime component
  *
  * Returns:
  *  length of string

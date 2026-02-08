@@ -272,7 +272,7 @@ typedef struct PROCTAB {
 #define PROC_EDITCMDLCVT     0x00080000 // edit `cmdline' as regular string
 #define PROC_EDITENVRCVT     0x00100000 // edit `environ' as regular string
 
-// these three also require the PROC_FILLSTATUS flage
+// these three also require the PROC_FILLSTATUS flag
 #define PROC_FILL_OUSERS   ( 0x00200000 | PROC_FILLSTATUS ) // obtain other user names
 #define PROC_FILL_OGROUPS  ( 0x00400000 | PROC_FILLSTATUS ) // obtain other group names
 #define PROC_FILL_SUPGRP   ( 0x00800000 | PROC_FILLSTATUS ) // obtain supplementary group names
@@ -299,7 +299,7 @@ PROCTAB *openproc(unsigned flags, ... /* pid_t *| uid_t *| dev_t *| char *[, int
 // Note: When NULL is used as the readproc 'p' or readeither 'x'
 //       parameter, the library will allocate the necessary proc_t storage.
 //
-//       Alternatively, you may provide your own reuseable buffer address
+//       Alternatively, you may provide your own reusable buffer address
 //       in which case that buffer *MUST* be initialized to zero one time
 //       only before first use.  Thereafter, the library will manage such
 //       a passed proc_t, freeing any additional acquired memory associated

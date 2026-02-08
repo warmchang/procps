@@ -85,7 +85,7 @@ struct pids_info {
     int history_yes;                   // need historical data
     struct history_info *hist;         // pointer to historical support data
     proc_t*(*read_something)(PROCTAB*, proc_t*); // readproc/readeither via which
-    unsigned pgs2k_shift;              // to convert some proc vaules
+    unsigned pgs2k_shift;              // to convert some proc values
     unsigned oldflags;                 // the old library PROC_FILL flagss
     PROCTAB *fetch_PT;                 // oldlib interface for 'select' & 'reap'
     unsigned long hertz;               // for the 'TIME' & 'UTILIZATION' calculations
@@ -117,7 +117,7 @@ static void freNAME(strv) (struct pids_result *R) {
 }
 
 
-// ___ Special Suppott Funtion(s) |||||||||||||||||||||||||||||||||||||||||||||
+// ___ Special Suppott Function(s) ||||||||||||||||||||||||||||||||||||||||||||
 
 static const char *pids_sched_to_classstr (
 //  struct pids_info *,

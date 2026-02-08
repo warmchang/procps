@@ -71,7 +71,7 @@ int mergesort_r (
             t = top_start;
             b = bottom_start;
 
-            // merge two sorted halfs into buffer
+            // merge two sorted halves into buffer
             while (t < bottom_start && b < bottom_end) {
                 if (compar(bas + t, bas + b, arg) <= 0)
                     *p = *(bas + t++);
