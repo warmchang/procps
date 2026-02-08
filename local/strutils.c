@@ -68,7 +68,7 @@ double strtod_or_err(const char *str, const char *errmesg)
 }
 
 /*
- * Covert a string into a double in a non-locale aware way.
+ * Convert a string into a double in a non-locale aware way.
  * This means the decimal point can be either . or ,
  * Also means you cannot use the other for thousands separator
  *

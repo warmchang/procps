@@ -1075,7 +1075,7 @@ int main(int argc, char *argv[])
             y_option = 1;
             break;
         default:
-            /* no other aguments defined yet. */
+            /* no other arguments defined yet. */
             usage(stderr);
         }
 

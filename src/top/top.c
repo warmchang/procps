@@ -1647,7 +1647,7 @@ static inline const char *make_chr (const char ch, int width, int justr) {
 
         /*
          * Make and then justify an integer NOT subject to scaling,
-         * and include a visual clue should tuncation be necessary. */
+         * and include a visual clue should truncation be necessary. */
 static inline const char *make_num (long num, int width, int justr, int col, int noz) {
    static char buf[SMLBUFSIZ];
 
@@ -1669,7 +1669,7 @@ end_justifies:
 
         /*
          * Make and then justify a character string,
-         * and include a visual clue should tuncation be necessary. */
+         * and include a visual clue should truncation be necessary. */
 static inline const char *make_str (const char *str, int width, int justr, int col) {
    static char buf[SCREENMAX];
 
@@ -1686,7 +1686,7 @@ static inline const char *make_str (const char *str, int width, int justr, int c
 
         /*
          * Make and then justify a potentially multi-byte character string,
-         * and include a visual clue should tuncation be necessary. */
+         * and include a visual clue should truncation be necessary. */
 static inline const char *make_str_utf8 (const char *str, int width, int justr, int col) {
    static char buf[SCREENMAX];
    int delta = utf8_delta(str);
@@ -2752,7 +2752,7 @@ static void zap_fieldstab (void) {
         /*
          * This guy's responsible for interfacing with the library <stat> API
          * and reaping all cpu or numa node tics.
-         * ( his task is now embarassingly small under the new api ) */
+         * ( his task is now embarrassingly small under the new api ) */
 static void *cpus_refresh (void *unused) {
    enum stat_reap_type which;
 
@@ -2831,7 +2831,7 @@ static void *memory_refresh (void *unused) {
 
         /*
          * This guy's responsible for interfacing with the library <pids> API
-         * then refreshing the WIN_t ptr arrays, growing them as appropirate. */
+         * then refreshing the WIN_t ptr arrays, growing them as appropriate. */
 static void *tasks_refresh (void *unused) {
  #define nALIGN(n,m) (((n + m - 1) / m) * m)     // unconditionally align
  #define nALGN2(n,m) ((n + m - 1) & ~(m - 1))    // with power of 2 align
@@ -4140,7 +4140,7 @@ static int config_wins (FILE *fp, int wix) {
       // fall through
       case 'h':                          // this is release 3.3.9
          /* the following simple assignmentas have been commented out
-            since that 'Rc' RCF_t has alreeady effectively done that.
+            since that 'Rc' RCF_t has already done that, effectively.
             ( they will now just document when they were introduced ) */
 //       w->rc.graph_cpus = w->rc.graph_mems = 0;
          // these next 2 are really global, but best documented here
@@ -6645,7 +6645,7 @@ static int sum_unify (struct stat_stack *this, int nobuf) {
 static int sum_versus (void) {
  // a stat_COR_ID of -1 is from the library so we'll use -2 to denote 'ignore'
  #define gotTHIS -2
-  // a tailored 'results stack value' extractor macro that allows assigment
+  // a tailored 'results stack value' extractor macro that allows assignment
  #define rXv(E,T,X)  Stat_reap->cpus->stacks[X]->head[E].result.T
    static struct stat_result stack[MAXTBL(Stat_items)];
    static struct stat_stack core = { &stack[0] };

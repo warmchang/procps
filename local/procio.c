@@ -80,7 +80,7 @@ FILE *fprocopen(const char *path, const char *mode)
 		goto out;
 	}
 
-	delim = ',';				/* default delimeter is the comma */
+	delim = ',';				/* default delimiter is the comma */
 	for (c = 1; c < len; c++) {
 		switch (mode[c]) {
 		case '\0':
@@ -179,7 +179,7 @@ ssize_t proc_read(void *c, char *buf, size_t count)
 		if (cookie->length < cookie->count)
 			continue;
 
-		/* Likly to small buffer here */
+		/* Likely too small buffer here */
 
 		lseek(cookie->fd, 0, SEEK_SET);	/* reset for a retry */
 
@@ -240,8 +240,8 @@ ssize_t proc_write(void *c, const char *buf, size_t count)
 			off_t amount;
 			char *token;
 			/*
-			 * Oops buffer might be to large, split buffer into
-			 * pieces at delimeter if provided
+			 * Oops buffer might be too large, split buffer into
+			 * pieces at delimiter if provided
 			 */
 			if (!cookie->delim)
 				goto out;		/* Hey dude?! */
@@ -257,7 +257,7 @@ ssize_t proc_write(void *c, const char *buf, size_t count)
 				else {
 					errno = EINVAL;
 					len = -1;
-					goto out;	/* Wrong/Missing delimeter? */
+					goto out;	/* Wrong/Missing delimiter? */
 				}
 				if (offset > 0)
 					lseek(cookie->fd, 1, SEEK_CUR);

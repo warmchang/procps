@@ -374,7 +374,7 @@ int main (int argc, char **argv)
 			  /* ... as this reworked solution does not use stat(2) at all */
 		case 'm': /* omitting relatives with argv[0] & argv[1] matching the argv[0] & argv[1] ...*/
 			  /* ... of explicitly omitted PIDs is too 'expensive' and as we don't know */
-			  /* ... wheter it is still needed, we won't re-implement it unless ... */
+			  /* ... whether it is still needed, we won't re-implement it unless ... */
 			  /* ... somebody gives us a good reason to do so :) */
 			break;
 		}

@@ -763,7 +763,7 @@ static void __attribute__ ((__noreturn__))
 /*
  * print_logintime expects a time of seconds since epoch
  * libproc returns a process start time in tics since
- * boot. This function convers the start time to
+ * boot. This function converts the start time to
  * seconds since epoch
  */
 time_t get_starttime(
