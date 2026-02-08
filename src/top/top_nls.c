@@ -700,7 +700,7 @@ static void build_uniq_nlstab (void) {
       "   ~1^G~6   Display Control Groups        (Ctrl key + 'g')\n"
       "   ~1^K~6   Display Cmdline               (Ctrl key + 'k')\n"
       "   ~1^N~6   Display Environment           (Ctrl key + 'n')\n"
-      "   ~1^P~6   Display Namesspaces           (Ctrl key + 'p')\n"
+      "   ~1^P~6   Display Namespaces            (Ctrl key + 'p')\n"
       "   ~1^U~6   Display Supplementary Groups  (Ctrl key + 'u')\n"
       "\n"
       "The 'Ctrl+L' command is not associated with a specific task. Rather, up to\n"
