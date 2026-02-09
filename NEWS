@@ -1,5 +1,7 @@
 procps-ng-NEXT
 ---------------
+  * library
+    internal: procps_pids_length off by one                issue #412
   * watch: Dont remove 2 lines when using -t option        issue #413
 procps-ng-4.0.6
 ---------------
