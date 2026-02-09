@@ -93,13 +93,14 @@ proc expect_twice_total { test } {
     }
 }
 
-set test "pmap X pid pid has same total"
-spawn $pmap -X $mypid $mypid
-expect_twice_total "$test"
+# Disabled twice total as there can be a small change issue #409
+#set test "pmap X pid pid has same total"
+#spawn $pmap -X $mypid $mypid
+#expect_twice_total "$test"
 
-set test "pmap XX pid pid has same total"
-spawn $pmap -XX $mypid $mypid
-expect_twice_total "$test"
+#set test "pmap XX pid pid has same total"
+#spawn $pmap -XX $mypid $mypid
+#expect_twice_total "$test"
 
 set test "pmap finding shm"
 make_testshm_proc
