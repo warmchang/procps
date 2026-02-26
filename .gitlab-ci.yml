@@ -13,7 +13,8 @@
   after_script:
     - make clean
 
-MakeCheck:
+debian:
   extends: .makecheck
+  image: debian:latest
   before_script:
-    - apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin gettext libncursesw5-dev dejagnu libnuma-dev libsystemd-dev
+    - apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin gettext make pkg-config libncursesw5-dev dejagnu libnuma-dev libsystemd-dev
