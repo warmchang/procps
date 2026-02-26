@@ -10,8 +10,6 @@
       - test-suite.log
       - testsuite/*.log
       - testsuite/*.sum
-  after_script:
-    - make clean
 
 debian:
   extends: .makecheck
