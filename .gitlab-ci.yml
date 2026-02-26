@@ -3,7 +3,7 @@
   script:
     - ./autogen.sh
     - ./configure
-    - make
+    - make -j8 --shuffle
     - make check
   artifacts:
     paths:
