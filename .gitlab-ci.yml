@@ -6,6 +6,7 @@
     - make -j8 --shuffle
     - make check
   artifacts:
+    when: on_failure
     paths:
       - test-suite.log
       - testsuite/*.log
