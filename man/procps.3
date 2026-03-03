@@ -1,5 +1,5 @@
 .\"
-.\" Copyright (c) 2020-2024 Jim Warner <james.warner@comcast.net>
+.\" Copyright (c) 2020-2026 Jim Warner <james.warner@comcast.net>
 .\" Copyright (c) 2020-2024 Craig Small <csmall@dropbear.xyz>
 .\"
 .\" This manual is free software; you can redistribute it and/or
@@ -8,7 +8,7 @@
 .\" version 2.1 of the License, or (at your option) any later version.
 .\"
 .\"
-.TH PROCPS 3 2024-01-22 procps-ng
+.TH PROCPS 3 2026-03-03 procps-ng
 .\" Please adjust this date whenever revising the manpage.
 .\"
 .nh
@@ -130,6 +130,10 @@ With \fBunref\fR it will be reset to NULL if the reference count reaches zero.
 In the case of the \fBdiskstats\fR interface, a \fIname\fR parameter
 on the \fBget\fR and \fBselect\fR functions identifies a disk or
 partition name
+.P
+With the \fBslabinfo\fR interface, \fIselect\fR results are only
+meaningful with \[oq]SLABS\[cq] (plural) enumerators while \fIreap\fR
+results are only meaningful with \[oq]SLAB\[cq] (singular) enumerators.
 .P
 For the \fBstat\fR interface, a \fIwhat\fR parameter on the \fBreap\fR
 function identifies whether data for just CPUs or both CPUs and NUMA
