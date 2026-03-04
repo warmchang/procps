@@ -601,7 +601,9 @@ static int match_env_list(
     for (i = list[0].num; i > 0; i--) {
         for (j = 0; values[j] && values[j][0]; j++) {
             if (NULL == strchr(list[i].str, '=')) {
-                if (strncmp(values[j], list[i].str, strlen(list[i].str)) == 0)
+                size_t n = strlen(list[i].str);
+                if (strncmp(values[j], list[i].str, n) == 0 &&
+                    values[j][n] == '=')
                     return 1;
             } else {
                 if (strcmp(values[j], list[i].str) == 0)

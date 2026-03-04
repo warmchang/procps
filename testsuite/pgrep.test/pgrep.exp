@@ -147,6 +147,24 @@ expect_spawn_retval "$test" 1
 # Cleanup
 kill_testproc
 
+set env_testproc_comm "pgrepenvreg"
+set env_exact_name "PGREP_ENV_MATCH"
+set env_prefix_name "${env_exact_name}_SUFFIX"
+set testproc_realpath "${topdir}/src/tests/test_process"
+set env_testproc1_pid [exec env -i ${env_exact_name}=one $testproc_realpath -c $env_testproc_comm &]
+set env_testproc2_pid [exec env -i ${env_prefix_name}=one $testproc_realpath -c $env_testproc_comm &]
+
+set test "pgrep --env name matches exact variable name only"
+spawn $pgrep --env $env_exact_name $env_testproc_comm
+expect_pass "$test" "^$env_testproc1_pid\\s*$"
+
+set test "pgrep --env name=value matches exact pair"
+spawn $pgrep --env ${env_exact_name}=one $env_testproc_comm
+expect_pass "$test" "^$env_testproc1_pid\\s*$"
+
+kill_process $env_testproc1_pid
+kill_process $env_testproc2_pid
+
 make_testproc "foo bar"
 
 set test "pgrep shell quote for process name with spaces"
