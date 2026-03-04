@@ -3,6 +3,7 @@ procps-ng-NEXT
   * library
     internal: procps_pids_length off by one                issue #412
     external: fix slabinfo header extern 'C' declaration   issue #415
+    internal: fix file descriptor leaks in <pids> api      issue #421
   * pidof: Add -d aliased option                           issue #418
   * watch: Dont remove 2 lines when using -t option        issue #413
   * watch: Handle resizing better                          issue #417
