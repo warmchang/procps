@@ -1,6 +1,6 @@
 /* top.h - Header file:         show Linux processes */
 /*
- * Copyright © 2002-2025 Jim Warner <james.warner@comcast.net
+ * Copyright © 2002-2026 Jim Warner <james.warner@comcast.net
  *
  * This file may be used subject to the terms and conditions of the
  * GNU Library General Public License Version 2, or any later version
@@ -146,6 +146,16 @@ char *strcasestr(const char *haystack, const char *needle);
    /* the above might seem pretty stingy, until you consider that with every
       field displayed the column header would be approximately 250 bytes
       -- so SCREENMAX provides for all fields plus a 250+ byte command line */
+
+   /* ignore above v3.3.2 bs! now, we have a vastly expanded list of fields
+      (81 as of v4.0.6) which require well over 500 bytes if every field is
+      to be displayed. then add a lot of extra overhead for a language like
+      chinese (simplified) and that above maximum is clearly inadequate for
+      columnhdr buffers. so, we'll use a new constant as the buffer's size. */
+#define COLHDRSIZ  1024
+   /* [ since one's terminal is probably less than 500 columns, SCREENMAX ]
+      [ was proven to be inadequate only if used with '-b -w512' switches ] */
+
 #define TNYBUFSIZ    16
 #define CAPBUFSIZ    32
 #define CLRBUFSIZ    64
@@ -397,11 +407,7 @@ typedef struct WIN_t {
           capclr_rownorm [CLRBUFSIZ],  //         window is the 'Curwin'!
           cap_bold [CAPBUFSIZ],        // support for View_NOBOLD toggle
           grpname [GRPNAMSIZ],         // window number:name, printable
-#ifdef USE_X_COLHDR
-          columnhdr [ROWMINSIZ],       // column headings for procflgs
-#else
-          columnhdr [SCREENMAX],       // column headings for procflgs
-#endif
+          columnhdr [COLHDRSIZ],       // column headings for procflgs
          *captab [CAPTABMAX];          // captab needed by show_special()
    struct osel_s *osel_1st;            // other selection criteria anchor
    int    osel_tot;                    // total of other selection criteria
