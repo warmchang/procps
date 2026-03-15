@@ -2759,7 +2759,8 @@ static void *cpus_refresh (void *unused) {
 
    do {
 #ifdef THREADED_CPU
-      sem_wait(&Semaphore_cpus_beg);
+      while (sem_wait(&Semaphore_cpus_beg) == -1 && errno == EINTR)
+         ;
 #endif
       which = STAT_REAP_CPUS_ONLY;
       if (CHKw(Curwin, View_CPUNOD))
@@ -2808,7 +2809,8 @@ static void *memory_refresh (void *unused) {
 
    do {
 #ifdef THREADED_MEM
-      sem_wait(&Semaphore_memory_beg);
+      while (sem_wait(&Semaphore_memory_beg) == -1 && errno == EINTR)
+         ;
 #endif
       if (Frames_signal)
          sav_secs = 0;
@@ -2846,7 +2848,8 @@ static void *tasks_refresh (void *unused) {
 
    do {
 #ifdef THREADED_TSK
-      sem_wait(&Semaphore_tasks_beg);
+      while (sem_wait(&Semaphore_tasks_beg) == -1 && errno == EINTR)
+         ;
 #endif
       if (0 != clock_gettime(CLOCK_BOOTTIME, &ts))
          Frame_etscale = 0;
@@ -2899,7 +2902,8 @@ static void *tasks_refresh (void *unused) {
 static void usleep_refresh (void) {
 #ifdef THREADED_TSK
    sem_post(&Semaphore_tasks_beg);
-   sem_wait(&Semaphore_tasks_end);
+   while (sem_wait(&Semaphore_tasks_end) == -1 && errno == EINTR)
+      ;
 #else
    tasks_refresh(NULL);
 #endif
@@ -7026,7 +7030,8 @@ static void summary_show (void) {
 
    if (Restrict_some) {
 #ifdef THREADED_TSK
-      sem_wait(&Semaphore_tasks_end);
+      while (sem_wait(&Semaphore_tasks_end) == -1 && errno == EINTR)
+         ;
 #endif
       // Display Task States only
       if (isROOM(View_STATES, 1)) {
@@ -7052,10 +7057,12 @@ static void summary_show (void) {
    } // end: View_LOADAV
 
 #ifdef THREADED_CPU
-      sem_wait(&Semaphore_cpus_end);
+      while (sem_wait(&Semaphore_cpus_end) == -1 && errno == EINTR)
+         ;
 #endif
 #ifdef THREADED_TSK
-      sem_wait(&Semaphore_tasks_end);
+      while (sem_wait(&Semaphore_tasks_end) == -1 && errno == EINTR)
+         ;
 #endif
    // Display Task and Cpu(s) States
    if (isROOM(View_STATES, 2)) {
@@ -7071,7 +7078,8 @@ static void summary_show (void) {
    }
 
 #ifdef THREADED_MEM
-   sem_wait(&Semaphore_memory_end);
+   while (sem_wait(&Semaphore_memory_end) == -1 && errno == EINTR)
+      ;
 #endif
    // Display Memory and Swap stats
    if (isROOM(View_MEMORY, 2)) {
