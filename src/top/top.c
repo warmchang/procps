@@ -3797,7 +3797,11 @@ static void before (char *me) {
 #endif
 
 #if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
-   // now that theads are created, re-enable signals for main thread ...
+   /* now that threads were created, re-enable signals for our main thread,
+      but keep sigwinch blocked if the ioa pselect sigmask will unblock it. */
+#ifndef SIGNALS_LESS
+   sigdelset(&sa.sa_mask, SIGWINCH);
+#endif
    pthread_sigmask(SIG_UNBLOCK, &sa.sa_mask, NULL);
 #endif
 
