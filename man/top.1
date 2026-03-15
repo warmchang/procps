@@ -1,7 +1,7 @@
 .ig
 . manual page for NEW and IMPROVED linux top
 .
-. Copyright (c) 2002-2025 Jim Warner <james.warner@comcast.net
+. Copyright (c) 2002-2026 Jim Warner <james.warner@comcast.net
 .
 . This file may be copied under the terms of the GNU Public License.
 ..
@@ -45,7 +45,7 @@
 \#                           - the max screen width limit
 .ds WX 512
 \#                           - the header width w/ all fields
-.ds WF approximately 250
+.ds WF approximately 580
 \#                           - pid monitoring limit
 \#                      Xref's that depend on/mention other stuff --------
 .ds Xa see
@@ -59,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 2025-01-01 procps-ng
+.TH TOP 1 2025-03-13 procps-ng
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -183,11 +183,10 @@ Insert this command after \*(We has been suspended but before resuming it.
        reset    restore your \fBterminal settings\fR
 .fi
 
-\*(NT the width of \*(We's display will be limited to \*(WX positions.
-Displaying all fields requires \*(WF characters.
-Remaining screen width is usually allocated to any variable width columns
-currently visible.
-The variable width columns, such as COMMAND, are noted in topic
+\*(NT the width of \*(We's output will be limited to \*(WX positions.
+While not possible, displaying all fields would require \*(WF characters.
+Any remaining output width is allocated to visible variable width fields.
+Those variable width columns, such as COMMAND, are noted in topic
 3a. DESCRIPTIONS of Fields.
 Actual output width may also be influenced by the \-w switch, which is
 discussed in topic 1. COMMAND\-LINE Options.
