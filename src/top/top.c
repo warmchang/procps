@@ -470,7 +470,7 @@ static void bye_bye (const char *str) {
       "\n\t   Hertz = %u (%u bytes, %u-bit time)"
       "\n\t   Stat_reap->cpus->total = %d, Stat_reap->numa->total = %d"
       "\n\t   Pids_itms_tot = %d, sizeof(struct pids_result) = %d, pids stack size = %d"
-      "\n\t   SCREENMAX = %d, ROWMINSIZ = %d, ROWMAXSIZ = %d"
+      "\n\t   SCREENMAX = %d, COLHDRSIZ = %d, ROWMINSIZ = %d, ROWMAXSIZ = %d"
       "\n\t   PACKAGE = '%s', LOCALEDIR = '%s'"
       "\n\tTerminal: %s"
       "\n\t   device = %s, ncurses = v%s"
@@ -499,7 +499,7 @@ static void bye_bye (const char *str) {
       , (unsigned)Hertz, (unsigned)sizeof(Hertz), (unsigned)sizeof(Hertz) * 8
       , Stat_reap->cpus->total, Stat_reap->numa->total
       , Pids_itms_tot, (int)sizeof(struct pids_result), (int)(sizeof(struct pids_result) * Pids_itms_tot)
-      , (int)SCREENMAX, (int)ROWMINSIZ, (int)ROWMAXSIZ
+      , (int)SCREENMAX, (int)COLHDRSIZ, (int)ROWMINSIZ, (int)ROWMAXSIZ
       , PACKAGE, LOCALEDIR
 #ifdef PRETENDNOCAP
       , "dumb"
