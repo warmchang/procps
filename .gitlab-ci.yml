@@ -1,10 +1,11 @@
 .makecheck:
   stage: build
   script:
+    - su -u testuser
     - ./autogen.sh
     - ./configure
     - make -j8 --shuffle
-    - make check
+    - su testuser -c "make check"
   artifacts:
     when: on_failure
     paths:
@@ -17,6 +18,8 @@ debian:
   extends: .makecheck
   image: debian:latest
   before_script:
+    - useradd -m testuser
+    - chown -R testuser:testuser .
     - apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin gettext make pkg-config libncursesw5-dev dejagnu libnuma-dev libsystemd-dev
 
 # Latest alpine, with musl and no systemd
@@ -25,4 +28,6 @@ alpine:
   extends: .makecheck
   image: alpine:latest
   before_script:
+    - useradd -m testuser
+    - chown -R testuser:testuser .
     - apk add --no-cache build-base autoconf automake libtool gettext gettext-dev linux-headers ncurses-dev numactl-dev dejagnu
