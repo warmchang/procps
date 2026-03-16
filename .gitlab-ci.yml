@@ -17,9 +17,9 @@ debian:
   extends: .makecheck
   image: debian:latest
   before_script:
+    - apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin gettext make pkg-config libncursesw5-dev dejagnu libnuma-dev libsystemd-dev
     - useradd -m testuser
     - chown -R testuser:testuser .
-    - apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin gettext make pkg-config libncursesw5-dev dejagnu libnuma-dev libsystemd-dev
 
 # Latest alpine, with musl and no systemd
 # Note that at present this doesn't actually run the dejagnu tests
@@ -27,6 +27,6 @@ alpine:
   extends: .makecheck
   image: alpine:latest
   before_script:
+    - apk add --no-cache build-base autoconf automake libtool gettext gettext-dev linux-headers ncurses-dev numactl-dev dejagnu shadow
     - useradd -m testuser
     - chown -R testuser:testuser .
-    - apk add --no-cache build-base autoconf automake libtool gettext gettext-dev linux-headers ncurses-dev numactl-dev dejagnu
