@@ -1,10 +1,9 @@
 .makecheck:
   stage: build
   script:
-    - su -u testuser
-    - ./autogen.sh
-    - ./configure
-    - make -j8 --shuffle
+    - su testuser -c "./autogen.sh"
+    - su testuser -c "./configure"
+    - su testuser -c "make -j8 --shuffle"
     - su testuser -c "make check"
   artifacts:
     when: on_failure
