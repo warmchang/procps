@@ -52,6 +52,16 @@ proc expect_pass { testname reg } {
     }
 }
 
+proc is_spawn_id_dead {sid} {
+    if {[catch {send -i $sid "\n"} err]} {
+        # Catch true means a dead spawn id
+        return 1
+    } else {
+        # Catch is false means send was ok
+        return 0
+    }
+}
+
 # Fail if we see this message, pass if we get to EOF
 proc expect_fail { testname reg } {
     expect {
@@ -64,6 +74,10 @@ proc expect_fail { testname reg } {
 proc expect_pipeproc_pass { testname reg } {
     global pipeproc_spawnid
 
+    if {[is_spawn_id_dead $pipeproc_spawnid]} {
+        fail "$testname (pipe process spawn id invalid)"
+        return
+    }
     expect {
 	-i $pipeproc_spawnid
         -re "$reg" { pass "$testname" }
@@ -154,6 +168,12 @@ proc expect_table_dsc { test match_header match_item } {
 }
 
 proc expect_spawn_retval { test retval } {
+    # Check for spawn life
+    if {[ catch { send "\n" } err]} {
+        unsupported "$test (cannot check return value)"
+        return
+    }
+    # Need to wait for EOF to stop race condition
     foreach {pid spawnid os_error_flag value x y} [wait] break
 
     if {$y != "" } {

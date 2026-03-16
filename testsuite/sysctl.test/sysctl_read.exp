@@ -39,6 +39,7 @@ if {[exec id -u] == 0} {
         set test "sysctl recursive read with permission errors"
         spawn $sysctl net.ipv6
         expect_pass "$test" "sysctl: permission denied on key 'net\\.ipv6\\..+'"
+        expect eof
         expect_spawn_retval "$test" 1
     }
 }
