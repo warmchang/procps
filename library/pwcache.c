@@ -90,8 +90,8 @@ char *pwcache_get_group(gid_t gid) {
         return ERRname;
     (*g)->gid = gid;
     gr = getgrgid(gid);
-    if (!gr || strlen(gr->gr_name) >= P_G_SZ || gr->gr_name[0] == '\0')
-        sprintf((*g)->name, "%u", gid);
+    if (!gr || strnlen(gr->gr_name, P_G_SZ) >= P_G_SZ || gr->gr_name[0] == '\0')
+        snprintf((*g)->name, P_G_SZ, "%u", gid);
     else
         strcpy((*g)->name, gr->gr_name);
     (*g)->next = NULL;
