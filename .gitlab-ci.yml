@@ -36,6 +36,8 @@ alpine:
   - chown -R testuser:testuser .
 stages:
 - test
+- debian
+- alpine
 sast:
   stage: test
 include:
