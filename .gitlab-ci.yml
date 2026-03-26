@@ -1,32 +1,42 @@
-.makecheck:
+# You can override the included template(s) by including variable overrides
+# SAST customization: https://docs.gitlab.com/user/application_security/sast/#available-cicd-variables
+# Secret Detection customization: https://docs.gitlab.com/user/application_security/secret_detection/pipeline/configure/
+# Dependency Scanning customization: https://docs.gitlab.com/user/application_security/dependency_scanning/#customizing-analyzer-behavior
+# Container Scanning customization: https://docs.gitlab.com/user/application_security/container_scanning/#customizing-analyzer-behavior
+# Note that environment variables can be set in several places
+# See https://docs.gitlab.com/ci/variables/#cicd-variable-precedence
+".makecheck":
   stage: build
   script:
-    - su testuser -c "./autogen.sh"
-    - su testuser -c "./configure"
-    - su testuser -c "make -j8 --shuffle"
-    - su testuser -c "make check"
+  - su testuser -c "./autogen.sh"
+  - su testuser -c "./configure"
+  - su testuser -c "make -j8 --shuffle"
+  - su testuser -c "make check"
   artifacts:
     when: on_failure
     paths:
-      - test-suite.log
-      - testsuite/*.log
-      - testsuite/*.sum
-
-# Latest debian, with glibc and systemd
+    - test-suite.log
+    - testsuite/*.log
+    - testsuite/*.sum
 debian:
-  extends: .makecheck
+  extends: ".makecheck"
   image: debian:latest
   before_script:
-    - apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin gettext make pkg-config libncursesw5-dev dejagnu libnuma-dev libsystemd-dev
-    - useradd -m testuser
-    - chown -R testuser:testuser .
-
-# Latest alpine, with musl and no systemd
-# Note that at present this doesn't actually run the dejagnu tests
+  - apt-get update -qq && apt-get install -y -qq autopoint autoconf automake libtool-bin
+    gettext make pkg-config libncursesw5-dev dejagnu libnuma-dev libsystemd-dev
+  - useradd -m testuser
+  - chown -R testuser:testuser .
 alpine:
-  extends: .makecheck
+  extends: ".makecheck"
   image: alpine:latest
   before_script:
-    - apk add --no-cache build-base autoconf automake libtool gettext gettext-dev linux-headers ncurses-dev numactl-dev dejagnu shadow
-    - useradd -m testuser
-    - chown -R testuser:testuser .
+  - apk add --no-cache build-base autoconf automake libtool gettext gettext-dev linux-headers
+    ncurses-dev numactl-dev dejagnu shadow
+  - useradd -m testuser
+  - chown -R testuser:testuser .
+stages:
+- test
+sast:
+  stage: test
+include:
+- template: Security/SAST.gitlab-ci.yml
