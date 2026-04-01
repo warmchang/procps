@@ -3797,11 +3797,7 @@ static void before (char *me) {
 #endif
 
 #if defined THREADED_CPU || defined THREADED_MEM || defined THREADED_TSK
-   /* now that threads were created, re-enable signals for our main thread,
-      but keep sigwinch blocked if the ioa pselect sigmask will unblock it. */
-#ifndef SIGNALS_LESS
-   sigdelset(&sa.sa_mask, SIGWINCH);
-#endif
+   // now that threads were created, re-enable signals for our main thread
    pthread_sigmask(SIG_UNBLOCK, &sa.sa_mask, NULL);
 #endif
 
@@ -4605,6 +4601,12 @@ static void signals_set (void) {
       }
       sigaction(i, &sa, NULL);
    }
+#ifndef SIGNALS_LESS
+   /* block sigwinch if that ioa function's pselect sigmask unblocks it
+      ( eliminates a wait for the next refresh when resizing terminal ) */
+   sigaddset(&sa.sa_mask, SIGWINCH);
+   sigprocmask(SIG_BLOCK, &sa.sa_mask, NULL);
+#endif
 } // end: signals_set
 
 
