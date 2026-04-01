@@ -49,7 +49,7 @@ int mergesort_r (
         void *arg)
 {
     void *aux;
-    char **bas, **buf, **p;
+    char **src, **next_src, **dst;
     size_t top_start, bottom_start, bottom_end, half_depth, t, b;
 
     if (nmemb < 2) return 1;
@@ -58,8 +58,8 @@ int mergesort_r (
     if (!(aux = malloc(nmemb * sizeof(void *))))
         return 0;
 
-    bas = base;
-    p = buf = aux;
+    src = base;
+    dst = next_src = aux;
 
     // bottom-up merge sort
     for (half_depth = 1; half_depth < nmemb; half_depth *= 2) {
@@ -73,31 +73,32 @@ int mergesort_r (
 
             // merge two sorted halves into buffer
             while (t < bottom_start && b < bottom_end) {
-                if (compar(bas + t, bas + b, arg) <= 0)
-                    *p = *(bas + t++);
+                if (compar(src + t, src + b, arg) <= 0)
+                    *dst = *(src + t++);
                 else
-                    *p = *(bas + b++);
-                p++;
+                    *dst = *(src + b++);
+                dst++;
             }
 
             // copy remaining top stuff
             while (t < bottom_start)
-                *(p++) = *(bas + t++);
+                *(dst++) = *(src + t++);
 
             // copy remaining bottom stuff
             while (b < bottom_end)
-                *(p++) = *(bas + b++);
+                *(dst++) = *(src + b++);
         }
 
-        // swap roles of bas and buf
-        p = bas;
-        bas = buf;
-        buf = p;
+        // swap roles of src and dst
+        dst = src;
+        src = next_src;
+        next_src = dst;
     }
 
     // if sorted data is in aux, copy back to base
-    if (bas != (char **)base)
-        memcpy(base, bas, nmemb * sizeof(void *));
+    // (and remember, pointers have been switched)
+    if (src != (char **)base)
+        memcpy(base, src, nmemb * sizeof(void *));
 
     free(aux);
     return 1;
