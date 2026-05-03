@@ -237,29 +237,29 @@ static int snprint_uptime_only(
 
 
     if (pretty) {
-        if (uptime_secs > SECS_IN_DECADE) {
+        if (uptime_secs >= SECS_IN_DECADE) {
             updecades = (int) uptime_secs / SECS_IN_DECADE;
             uptime_secs -= updecades * SECS_IN_DECADE;
         }
-        if (uptime_secs > SECS_IN_YEAR) {
+        if (uptime_secs >= SECS_IN_YEAR) {
             upyears = (int) uptime_secs / SECS_IN_YEAR;
             uptime_secs -= upyears * SECS_IN_YEAR;
         }
-        if (uptime_secs > SECS_IN_WEEK) {
+        if (uptime_secs >= SECS_IN_WEEK) {
             upweeks = (int) uptime_secs / SECS_IN_WEEK;
             uptime_secs -= upweeks * SECS_IN_WEEK;
         }
     }
     /* all formats get the following */
-    if (uptime_secs > SECS_IN_DAY) {
+    if (uptime_secs >= SECS_IN_DAY) {
         updays = (int) uptime_secs / SECS_IN_DAY;
         uptime_secs -= updays * SECS_IN_DAY;
     }
-    if (uptime_secs>60*60) {
+    if (uptime_secs>=60*60) {
         uphours = (int) uptime_secs / (60*60);
         uptime_secs -= uphours*60*60;
     }
-    if (uptime_secs>60) {
+    if (uptime_secs>=60) {
         upminutes = (int) uptime_secs / 60;
         uptime_secs -= upminutes*60;
     }
