@@ -854,6 +854,10 @@ static char **file2strvec(int dirfd, const char *what) {
         }
     }
     *q = 0;                                     /* null ptr list terminator */
+    for (n = 0; ret[n]; n++) {
+        escape_str(dst_buffer, ret[n], MAX_BUFSZ);
+        strcpy(ret[n], dst_buffer);
+    }
     return ret;
 }
 

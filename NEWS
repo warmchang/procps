@@ -4,8 +4,9 @@ procps-ng-NEXT
     internal: procps_pids_length off by one                issue #412
     external: fix slabinfo header extern 'C' declaration   issue #415
     internal: fix file descriptor leaks in <pids> api      issue #421
+    external: strv items are now escaped in <pids> api     issue #429
   * pidof: Add -d aliased option                           issue #418
-  . top: avoid batch mode segfault with maximum width      issue #422
+  * top: avoid batch mode segfault with maximum width      issue #422
   * watch: Dont remove 2 lines when using -t option        issue #413
   * watch: Handle resizing better                          issue #417
 procps-ng-4.0.6
