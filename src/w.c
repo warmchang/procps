@@ -342,7 +342,7 @@ static time_t idletime(const char *restrict const tty)
         return 0;
     }
     free(ttypath);
-    return time(NULL) - sbuf.st_atime;
+    return time(NULL) - (sbuf.st_atime > sbuf.st_mtime ? sbuf.st_atime : sbuf.st_mtime);
 }
 
 /* 7 character formatted login time */
@@ -597,6 +597,8 @@ static void get_session_tty(
             /* clean up tty if garbled */
             if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
                 tty[i] = u->ut_line[i];
+            else
+                tty[i] = '\0';
         }
         tty[i] = '\0';
         if (tty[0] != '\0')
