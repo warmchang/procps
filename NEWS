@@ -6,6 +6,7 @@ procps-ng-NEXT
     internal: fix file descriptor leaks in <pids> api      issue #421
     external: strv items are now escaped in <pids> api     issue #429
   * pidof: Add -d aliased option                           issue #418
+  * pgrep: Don't treat empty list as 0                     issue #427
   * top: avoid batch mode segfault with maximum width      issue #422
   * watch: Dont remove 2 lines when using -t option        issue #413
   * watch: Handle resizing better                          issue #417

@@ -119,6 +119,10 @@ set test "pgrep with not matching uid"
 spawn $pgrep -U $not_uid $testproc_comm
 expect_blank $test
 
+set test "pgrep with empty uid list"
+spawn $pgrep -U ,
+expect_pass "$test" "pgrep: invalid empty list"
+expect_spawn_retval "$test" 2
 set test "pgrep matches on substring"
 spawn $pgrep $testproc_trim
 expect_pass "$test" "^$testproc1_pid\\s+$testproc2_pid\\s*$"

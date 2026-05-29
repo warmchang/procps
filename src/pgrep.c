@@ -1,7 +1,7 @@
 /*
  * pgrep/pkill -- utilities to filter the process table
  *
- * Copyright © 2009-2025 Craig Small <csmall@dropbear.xyz>
+ * Copyright © 2009-2026 Craig Small <csmall@dropbear.xyz>
  * Copyright © 2013-2023 Jim Warner <james.warner@comcast.net>
  * Copyright © 2011-2012 Sami Kerola <kerolasa@iki.fi>
  * Copyright © 2012      Roberto Polli <rpolli@babel.it>
@@ -286,7 +286,15 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
             /* add 1 because slot zero is a count */
             list = xrealloc (list, (1 + size) * sizeof *list);
         }
+        if (i == 0 && ptr[0] == ',' && ptr[1] == '\0') {
+            warnx(_("invalid empty list"));
+            break;
+        }
         sep_pos = strchr (ptr, ',');
+        if (sep_pos == ptr) {
+            ptr++;
+            continue;
+        }
         if (sep_pos)
             *sep_pos = 0;
         /* Use ++i instead of i++ because slot zero is a count */
@@ -294,7 +302,7 @@ static struct el *split_list (const char *restrict str, int (*convert)(const cha
             exit (EXIT_USAGE);
         if (sep_pos)
             ptr = sep_pos + 1;
-    } while (sep_pos);
+    } while (sep_pos && *ptr != '\0');
 
     free (copy);
     if (!i) {
