@@ -416,7 +416,10 @@ static int pr_cmd_or_cmdline(
 {
     char *endp;
     int rightward, fh;
-setREL4(CMDLINE,CMD,ENVIRON,STATE)
+/* note: ENVIRON might also be needed, but it must be set elsewhere
+         in 'finalize_stacks' (display.c) so as to avoid EACCES for
+         files requiring root privilege if we only need cmd/cmdline */
+setREL3(CMDLINE,CMD,STATE)
     endp = outbuf;
     rightward = max_rightward;
     fh = forest_helper(outbuf);

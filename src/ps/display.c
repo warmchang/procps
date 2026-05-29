@@ -640,6 +640,9 @@ static void finalize_stacks (void)
     s_node = s_node->next;
   }
 
+  // might be needed in 'pr_cmd_or_cmdline' (output.c) ...
+  if (bsd_e_option) chkREL(ENVIRON);
+
   procps_pids_reset(Pids_info, Pids_items, Pids_index);
 }
 
