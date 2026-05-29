@@ -883,9 +883,7 @@ setREL1(ENVIRON)
     int rightward = max_rightward;
     char *e = rSv(ENVIRON, str, pp);
 
-    if(e[0] != '-' || e[1] != '\0') {
-      escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
-    }
+    escape_str(endp, e, OUTBUF_SIZE_AT(endp), &rightward);
     return max_rightward-rightward;
 }
 #undef OUTBUF_SIZE_AT
