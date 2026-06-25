@@ -2337,7 +2337,7 @@ void show_one_proc(const proc_t *restrict const p, const format_node *restrict f
 
     /* real size -- don't forget in 'amount' is number of cells */
     outbuf[OUTBUF_SIZE-1] = '\0';
-    sz = strlen(outbuf);
+    sz = strnlen(outbuf, OUTBUF_SIZE-1);
 
     /* print data, set x position stuff */
     if(!fmt->next){
