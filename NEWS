@@ -12,6 +12,7 @@ procps-ng-NEXT
   * top: avoid batch mode segfault with maximum width      issue #422
   * watch: Dont remove 2 lines when using -t option        issue #413
   * watch: Handle resizing better                          issue #417
+  * watch: Restore LINES and COLUMNS env variables         issue #432
 procps-ng-4.0.6
 ---------------
   * library

@@ -1102,6 +1102,25 @@ static uint8_t run_command(void)
 	return 0x80 + (WTERMSIG(status) & 0x7f);
 }
 
+void get_terminal_size(void)
+{
+    struct winsize w;
+    char intbuf[24];
+
+    if (ioctl(STDIN_FILENO, TIOCGWINSZ, &w) == 0) {
+        if (w.ws_row > 0) {
+            height = w.ws_row;
+            if (snprintf(intbuf, 24, "%d", w.ws_row) > 0)
+            setenv("LINES", intbuf, 1);
+        }
+        if (w.ws_col > 0) {
+            width = w.ws_col;
+            if (snprintf(intbuf, 24, "%d", w.ws_col) > 0)
+                setenv("COLUMNS", intbuf, 1);
+        }
+    }
+}
+
 int main(int argc, char *argv[])
 {
 	int i;
@@ -1263,6 +1282,7 @@ int main(int argc, char *argv[])
 	signal(SIGHUP, die);
 	signal(SIGWINCH, winch_handler);
 	/* Set up tty for curses use.  */
+        get_terminal_size();
 	initscr();  // succeeds or exit()s, may install sig handlers
         getmaxyx(stdscr, height, width);
         if (flags & WATCH_NOTITLE) {
@@ -1291,6 +1311,7 @@ int main(int argc, char *argv[])
 		set_ansi_attribute(-1, NULL);
 		if (screen_size_changed) {
 			screen_size_changed = false;  // "atomic" test-and-set
+                        get_terminal_size();
                         endwin();
                         refresh();
                         getmaxyx(stdscr, height, width);
