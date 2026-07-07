@@ -10,6 +10,7 @@ procps-ng-NEXT
   * ps: correct 'environ' output when file unavailable
   * ps: minimize potential EACCES with 'environ' files     issue #431
   * top: avoid batch mode segfault with maximum width      issue #422
+  * w: Correctly check for end of tty using utmp           issue #430
   * watch: Dont remove 2 lines when using -t option        issue #413
   * watch: Handle resizing better                          issue #417
   * watch: Restore LINES and COLUMNS env variables         issue #432

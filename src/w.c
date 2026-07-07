@@ -592,7 +592,7 @@ static void get_session_tty(
     /* Second method - use utmp */
     if (u) {
         for (i = 0; i < UT_LINESIZE; i++) {
-            if (tty[i] == 0)
+            if (u->ut_line[i] == '\0')
                 break;
             /* clean up tty if garbled */
             if (isalnum(u->ut_line[i]) || (u->ut_line[i] == '/'))
