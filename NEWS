@@ -7,6 +7,7 @@ procps-ng-NEXT
     internal: strv items are now escaped in <pids> api     issue #429
   * pidof: Add -d aliased option                           issue #418
   * pgrep: Don't treat empty list as 0                     issue #427
+  * pmap: Fix testsuite for Alpha                          Debian #1141465
   * ps: correct 'environ' output when file unavailable
   * ps: minimize potential EACCES with 'environ' files     issue #431
   * top: avoid batch mode segfault with maximum width      issue #422
