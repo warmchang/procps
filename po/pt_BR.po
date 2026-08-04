@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: procps-ng 3.3.17rc1\n"
 "Report-Msgid-Bugs-To: procps@freelists.org\n"
-"POT-Creation-Date: 2026-01-06 20:09+1100\n"
+"POT-Creation-Date: 2026-08-04 20:47+1000\n"
 "PO-Revision-Date: 2021-02-02 09:45-0300\n"
 "Last-Translator: Rafael Fontenelle <rafaelff@gnome.org>\n"
 "Language-Team: Brazilian Portuguese <ldpbr-"
@@ -111,7 +111,7 @@ msgstr " -c N, --count N     repete impressão por N vezes e, então, sai\n"
 msgid " -w, --wide          wide output\n"
 msgstr " -w, --wide          saída ampla\n"
 
-#: src/free.c:96 src/w.c:756
+#: src/free.c:96 src/w.c:758
 msgid "     --help     display this help and exit\n"
 msgstr "     --help     exibe esta mensagem de ajuda e sai\n"
 
@@ -288,14 +288,14 @@ msgstr "deve ser um valor inteiro a ser passado com o sinal."
 msgid "invalid argument %c"
 msgstr "argumento inválido %c"
 
-#: src/kill.c:137 src/kill.c:154 src/pmap.c:786 src/pmap.c:801 src/skill.c:381
+#: src/kill.c:137 src/kill.c:154 src/pmap.c:805 src/pmap.c:820 src/skill.c:381
 #: src/skill.c:465 src/tload.c:135 src/tload.c:140 src/vmstat.c:1083
-#: src/vmstat.c:1092 src/watch.c:1242 src/watch.c:1263
+#: src/vmstat.c:1092 src/watch.c:1205 src/watch.c:1226
 msgid "failed to parse argument"
 msgstr "falha ao analisar argumento"
 
-#: src/kill.c:142 src/pgrep.c:936 src/pidof.c:250 src/pidof.c:290
-#: src/sysctl.c:890
+#: src/kill.c:142 src/pgrep.c:946 src/pidof.c:250 src/pidof.c:290
+#: src/sysctl.c:894
 msgid "internal error"
 msgstr "erro interno"
 
@@ -483,65 +483,70 @@ msgstr ""
 msgid "  --env <name=val,...>     match on environment variable\n"
 msgstr ""
 
-#: src/pgrep.c:238 src/pgrep.c:832 src/w.c:424
+#: src/pgrep.c:238 src/pgrep.c:842 src/w.c:424
 #, fuzzy
 msgid "Unable to create pid info structure"
 msgstr "não foi possível criar pipes IPC"
 
-#: src/pgrep.c:377
+#: src/pgrep.c:290
+#, fuzzy
+msgid "invalid empty list"
+msgstr "lista de espaço de nomes inválido"
+
+#: src/pgrep.c:385
 #, fuzzy
 msgid "Unable to open pidfile"
 msgstr "não foi possível abrir o diretório \"%s\""
 
-#: src/pgrep.c:384
+#: src/pgrep.c:392
 msgid "Locking check for pidfile failed"
 msgstr ""
 
-#: src/pgrep.c:414
+#: src/pgrep.c:422
 #, c-format
 msgid "invalid user name: %s"
 msgstr "nome de usuário inválido: %s"
 
-#: src/pgrep.c:431
+#: src/pgrep.c:439
 #, c-format
 msgid "invalid group name: %s"
 msgstr "nome de grupo inválido: %s"
 
-#: src/pgrep.c:442
+#: src/pgrep.c:450
 #, c-format
 msgid "invalid process group: %s"
 msgstr "grupo de processo inválido: %s"
 
-#: src/pgrep.c:454
+#: src/pgrep.c:462
 #, c-format
 msgid "invalid session id: %s"
 msgstr "id de sessão inválida: %s"
 
-#: src/pgrep.c:466
+#: src/pgrep.c:474
 #, c-format
 msgid "not a number: %s"
 msgstr "não um número: %s"
 
-#: src/pgrep.c:516
+#: src/pgrep.c:524
 #, fuzzy, c-format
 msgid "not a hex string: %s"
 msgstr "não um número: %s"
 
-#: src/pgrep.c:551 src/skill.c:162
+#: src/pgrep.c:559 src/skill.c:162
 #, fuzzy
 msgid "Unable to read process namespace information"
 msgstr "erro ao ler informação de espaço de nomes referência"
 
-#: src/pgrep.c:744
+#: src/pgrep.c:754
 #, fuzzy, c-format
 msgid "regex error: %s"
 msgstr "erro: %s\n"
 
-#: src/pgrep.c:827
+#: src/pgrep.c:837
 msgid "Error reading reference namespace information\n"
 msgstr "Erro ao ler informação de espaço de nomes referência\n"
 
-#: src/pgrep.c:953
+#: src/pgrep.c:963
 #, c-format
 msgid ""
 "pattern that searches for process name longer than 15 characters will result "
@@ -552,12 +557,12 @@ msgstr ""
 "resultar em zero correspondências\n"
 "Tente a opção \"%s -f\" para corresponder com a linha de comando completa."
 
-#: src/pgrep.c:1119
+#: src/pgrep.c:1129
 #, fuzzy, c-format
 msgid "Unknown signal \"%s\"."
 msgstr "nome de sinal desconhecido %s"
 
-#: src/pgrep.c:1306
+#: src/pgrep.c:1316
 #, c-format
 msgid ""
 "-L without -F makes no sense\n"
@@ -566,7 +571,7 @@ msgstr ""
 "-L sem -F não faz sentido\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/pgrep.c:1313
+#: src/pgrep.c:1323
 #, fuzzy, c-format
 msgid ""
 "Cannot use pidfile and pid option together\n"
@@ -575,7 +580,7 @@ msgstr ""
 "arquivo de pid não válido\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/pgrep.c:1318
+#: src/pgrep.c:1328
 #, c-format
 msgid ""
 "pidfile not valid\n"
@@ -584,7 +589,7 @@ msgstr ""
 "arquivo de pid não válido\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/pgrep.c:1326
+#: src/pgrep.c:1336
 #, fuzzy, c-format
 msgid ""
 "Cannot use --quiet and -a,--list-full options together\n"
@@ -593,7 +598,7 @@ msgstr ""
 "as opções -N e -q não podem coexistir\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/pgrep.c:1331
+#: src/pgrep.c:1341
 #, fuzzy, c-format
 msgid ""
 "Cannot use --quiet and -l,--list-name options together\n"
@@ -602,7 +607,7 @@ msgstr ""
 "as opções -N e -q não podem coexistir\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/pgrep.c:1340
+#: src/pgrep.c:1350
 #, c-format
 msgid ""
 "only one pattern can be provided\n"
@@ -611,7 +616,7 @@ msgstr ""
 "apenas um padrão pode ser fornecido\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/pgrep.c:1344
+#: src/pgrep.c:1354
 #, c-format
 msgid ""
 "no matching criteria specified\n"
@@ -620,41 +625,41 @@ msgstr ""
 "nenhum critério de ocorrência especificado\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/pgrep.c:1414
+#: src/pgrep.c:1424
 #, fuzzy, c-format
 msgid "pidfd_open for process %ld failed"
 msgstr "abertura do pid %ld falhou"
 
-#: src/pgrep.c:1417
+#: src/pgrep.c:1427
 #, c-format
 msgid "%s killed (pid %lu)\n"
 msgstr "%s terminado (pid %lu)\n"
 
-#: src/pgrep.c:1422
+#: src/pgrep.c:1432
 #, c-format
 msgid "pid %ld killed, but process_mrelease failed"
 msgstr ""
 
-#: src/pgrep.c:1432
+#: src/pgrep.c:1442
 #, c-format
 msgid "killing pid %ld failed"
 msgstr "terminação de pid %ld falhou"
 
-#: src/pgrep.c:1446
+#: src/pgrep.c:1456
 #, c-format
 msgid "waiting for %s (pid %lu)\n"
 msgstr "aguardando por %s (pid %lu)\n"
 
-#: src/pgrep.c:1450
+#: src/pgrep.c:1460
 msgid "pidfd_open() not implemented in Linux < 5.3"
 msgstr ""
 
-#: src/pgrep.c:1453
+#: src/pgrep.c:1463
 #, c-format
 msgid "opening pid %ld failed"
 msgstr "abertura do pid %ld falhou"
 
-#: src/pgrep.c:1467
+#: src/pgrep.c:1477
 msgid "epoll_wait failed"
 msgstr "epoll_wait falhou"
 
@@ -829,120 +834,120 @@ msgstr "  [ anôn ]"
 msgid "  [ stack ]"
 msgstr "  [ pilha ]"
 
-#: src/pmap.c:345 src/pmap.c:351
+#: src/pmap.c:346 src/pmap.c:352
 msgid "Unknown format in smaps file!"
 msgstr "Formato desconhecido no arquivo smaps!"
 
-#: src/pmap.c:376
+#: src/pmap.c:389
 #, fuzzy
 msgid "ERROR: memory allocation failed"
 msgstr "alocação de memória falhou"
 
-#: src/pmap.c:393
+#: src/pmap.c:406
 msgid "inconsistent detail field in smaps file, line:\n"
 msgstr "campo de detalhes inconsistente no arquivo smaps, linha:\n"
 
-#: src/pmap.c:746
+#: src/pmap.c:765
 msgid "total kB"
 msgstr "kB total"
 
-#: src/pmap.c:757
+#: src/pmap.c:776
 #, c-format
 msgid "mapped: %ldK    writeable/private: %ldK    shared: %ldK\n"
 msgstr "mapeado: %ldK    escrevível/privado: %ldK    compartilhado: %ldK\n"
 
 #. Translation Hint: keep total string length
 #. * as 24 characters. Adjust %16 if needed
-#: src/pmap.c:766
+#: src/pmap.c:785
 #, c-format
 msgid " total %16ldK\n"
 msgstr " total %16ldK\n"
 
 #. Translation Hint: keep total string length
 #. * as 16 characters. Adjust %8 if needed
-#: src/pmap.c:772
+#: src/pmap.c:791
 #, c-format
 msgid " total %8ldK\n"
 msgstr " total %8ldK\n"
 
-#: src/pmap.c:847
+#: src/pmap.c:866
 #, c-format
 msgid "config line too long - line %d"
 msgstr "linha de configuração muito longa - linha %d"
 
-#: src/pmap.c:872
+#: src/pmap.c:891
 #, c-format
 msgid "unsupported section found in the config - line %d"
 msgstr "seção sem suporte encontrada na configuração - linha %d"
 
-#: src/pmap.c:875 src/pmap.c:886 src/pmap.c:897 src/pmap.c:920 src/pmap.c:932
+#: src/pmap.c:894 src/pmap.c:905 src/pmap.c:916 src/pmap.c:939 src/pmap.c:951
 #, c-format
 msgid "syntax error found in the config - line %d"
 msgstr "erro de sintaxe encontrada na configuração - linha %d"
 
-#: src/pmap.c:902 src/pmap.c:1025
+#: src/pmap.c:921 src/pmap.c:1044
 msgid "memory allocation failed"
 msgstr "alocação de memória falhou"
 
-#: src/pmap.c:954
+#: src/pmap.c:973
 msgid "the file already exists - delete or rename it first"
 msgstr "o arquivo já existe - exclua-o ou renomeie-o primeiro"
 
-#: src/pmap.c:1017
+#: src/pmap.c:1036
 msgid "HOME variable undefined"
 msgstr "variável HOME não definida"
 
-#: src/pmap.c:1078
+#: src/pmap.c:1097
 msgid "option -r is ignored as SunOS compatibility"
 msgstr "a opção -r é ignorada como compatibilidade com SunOS"
 
-#: src/pmap.c:1128
+#: src/pmap.c:1147
 msgid "options -c, -C, -d, -n, -N, -x, -X are mutually exclusive"
 msgstr "as opções -c, -C, -d, -n, -N, -x e -X são mutualmente exclusivas"
 
-#: src/pmap.c:1131
+#: src/pmap.c:1150
 msgid "options -p, -q are mutually exclusive with -n, -N"
 msgstr "as opções -p e -q são mutualmente exclusivas com -n e -N"
 
-#: src/pmap.c:1134 src/pmap.c:1183
+#: src/pmap.c:1153 src/pmap.c:1202
 msgid "too many arguments"
 msgstr "argumentos demais"
 
-#: src/pmap.c:1138
+#: src/pmap.c:1157
 msgid "rc file successfully created, feel free to edit the content"
 msgstr ""
 "arquivo rc criado com sucesso, sinta-se à vontade para editar seu conteúdo"
 
-#: src/pmap.c:1141
+#: src/pmap.c:1160
 msgid "couldn't create the rc file"
 msgstr "não foi possível criar o arquivo rc"
 
-#: src/pmap.c:1153
+#: src/pmap.c:1172
 #, c-format
 msgid "~/.%src file successfully created, feel free to edit the content"
 msgstr ""
 "arquivo ~/.%src criado com sucesso, sinta-se à vontade para editar seu "
 "conteúdo"
 
-#: src/pmap.c:1156
+#: src/pmap.c:1175
 #, c-format
 msgid "couldn't create ~/.%src"
 msgstr "não foi possível criar ~/.%src"
 
-#: src/pmap.c:1161
+#: src/pmap.c:1180
 msgid "argument missing"
 msgstr "faltando argumento"
 
-#: src/pmap.c:1174
+#: src/pmap.c:1193
 msgid "couldn't read the rc file"
 msgstr "não foi possível ler o arquivo rc"
 
-#: src/pmap.c:1176
+#: src/pmap.c:1195
 #, c-format
 msgid "couldn't read ~/.%src"
 msgstr "não foi possível ler ~/.%src"
 
-#: src/pmap.c:1185 src/pmap.c:1210
+#: src/pmap.c:1204 src/pmap.c:1229
 msgid "library failed pids statistics"
 msgstr ""
 
@@ -952,7 +957,7 @@ msgid "Signal %d (%s) caught by %s (%s).\n"
 msgstr "Sinal %d (%s) capturado por %s (%s).\n"
 
 #: src/ps/display.c:75 src/ps/display.c:252 src/ps/display.c:411
-#: src/ps/output.c:2390 src/ps/parser.c:522 src/ps/parser.c:769
+#: src/ps/output.c:2391 src/ps/parser.c:522 src/ps/parser.c:769
 #: src/ps/select.c:111 src/ps/sortformat.c:263 src/ps/sortformat.c:301
 #: src/ps/sortformat.c:562
 msgid "please report this bug"
@@ -1481,12 +1486,12 @@ msgstr ""
 msgid "Unable to get total memory"
 msgstr "%13lu %s de memória total\n"
 
-#: src/ps/output.c:2236
+#: src/ps/output.c:2237
 #, c-format
 msgid "fix bigness error\n"
 msgstr "corrigir grandeza do erro\n"
 
-#: src/ps/output.c:2319
+#: src/ps/output.c:2320
 #, c-format
 msgid "bad alignment code\n"
 msgstr "código de alinhamento inválido\n"
@@ -2313,7 +2318,7 @@ msgstr "  -d                   apelido de -h\n"
 msgid "\"%s\" is an unknown key"
 msgstr "\"%s\" é uma chave desconhecida"
 
-#: src/sysctl.c:362 src/sysctl.c:530 src/sysctl.c:567
+#: src/sysctl.c:362 src/sysctl.c:530 src/sysctl.c:568
 #, c-format
 msgid "cannot stat %s"
 msgstr "não foi possível obter estado de %s"
@@ -2333,40 +2338,40 @@ msgstr "leitura da chave \"%s\""
 msgid "unable to open directory \"%s\""
 msgstr "não foi possível abrir o diretório \"%s\""
 
-#: src/sysctl.c:579
+#: src/sysctl.c:580
 msgid "strdup key"
 msgstr ""
 
-#: src/sysctl.c:586 src/sysctl.c:593 src/sysctl.c:626
+#: src/sysctl.c:587 src/sysctl.c:594
 #, c-format
 msgid "setting key \"%s\""
 msgstr "definição da chave \"%s\""
 
-#: src/sysctl.c:603
+#: src/sysctl.c:604
 #, c-format
 msgid "\"%s\" is an unknown key%s"
 msgstr "\"%s\" é uma chave desconhecida%s"
 
-#: src/sysctl.c:604 src/sysctl.c:613 src/sysctl.c:617
+#: src/sysctl.c:605 src/sysctl.c:614 src/sysctl.c:618 src/sysctl.c:628
 msgid ", ignoring"
 msgstr ", ignorando"
 
-#: src/sysctl.c:612
+#: src/sysctl.c:613
 #, c-format
 msgid "permission denied on key \"%s\"%s"
 msgstr "permissão negada pela chave \"%s\"%s"
 
-#: src/sysctl.c:616
+#: src/sysctl.c:617 src/sysctl.c:627
 #, c-format
 msgid "setting key \"%s\"%s"
 msgstr "definição da chave \"%s\"%s"
 
-#: src/sysctl.c:692
+#: src/sysctl.c:696
 #, c-format
 msgid "%s(%d): invalid syntax, continuing..."
 msgstr "%s(%d): sintaxe inválida, continuando..."
 
-#: src/sysctl.c:784
+#: src/sysctl.c:788
 #, c-format
 msgid ""
 "GLOB_TILDE is not supported on your platform, the tilde in \"%s\" won't be "
@@ -2375,21 +2380,21 @@ msgstr ""
 "GLOB_TILDE não tem suporte na sua plataforma, o til em \"%s\" não será "
 "expandido."
 
-#: src/sysctl.c:790
+#: src/sysctl.c:794
 msgid "glob failed"
 msgstr "glob falhou"
 
-#: src/sysctl.c:796
+#: src/sysctl.c:800
 #, c-format
 msgid "cannot open \"%s\""
 msgstr "não foi possível abrir \"%s\""
 
-#: src/sysctl.c:900 src/sysctl.c:907
+#: src/sysctl.c:904 src/sysctl.c:911
 #, c-format
 msgid "* Applying %s ...\n"
 msgstr "* Aplicando %s ...\n"
 
-#: src/sysctl.c:1077
+#: src/sysctl.c:1081
 #, c-format
 msgid ""
 "no variables specified\n"
@@ -2398,7 +2403,7 @@ msgstr ""
 "nenhuma variável especificada\n"
 "Tente \"%s --help\" para mais informações."
 
-#: src/sysctl.c:1081
+#: src/sysctl.c:1085
 #, c-format
 msgid ""
 "options -N and -q cannot coexist\n"
@@ -2508,7 +2513,7 @@ msgstr "ID usuário efetivo"
 
 # Acento retirado para promover alinhamento no `top`
 #. Translation Hint: maximum 'USER' = 8 +
-#: src/top/top_nls.c:143 src/w.c:1134
+#: src/top/top_nls.c:143 src/w.c:1136
 msgid "USER"
 msgstr "USUARIO"
 
@@ -4163,7 +4168,7 @@ msgid ""
 "   ~1^G~6   Display Control Groups        (Ctrl key + 'g')\n"
 "   ~1^K~6   Display Cmdline               (Ctrl key + 'k')\n"
 "   ~1^N~6   Display Environment           (Ctrl key + 'n')\n"
-"   ~1^P~6   Display Namesspaces           (Ctrl key + 'p')\n"
+"   ~1^P~6   Display Namespaces            (Ctrl key + 'p')\n"
 "   ~1^U~6   Display Supplementary Groups  (Ctrl key + 'u')\n"
 "\n"
 "The 'Ctrl+L' command is not associated with a specific task. Rather, up to\n"
@@ -4569,7 +4574,7 @@ msgstr " -carimbo de tempo--"
 msgid "Unable to create vmstat structure"
 msgstr "não foi possível criar pipes IPC"
 
-#: src/vmstat.c:424 src/vmstat.c:896 src/vmstat.c:955 src/w.c:782
+#: src/vmstat.c:424 src/vmstat.c:896 src/vmstat.c:955 src/w.c:784
 msgid "Unable to create system stat structure"
 msgstr ""
 
@@ -4582,7 +4587,7 @@ msgstr "não foi possível criar pipes IPC"
 msgid "Unable to select memory information"
 msgstr ""
 
-#: src/vmstat.c:453 src/vmstat.c:502 src/vmstat.c:898 src/w.c:784
+#: src/vmstat.c:453 src/vmstat.c:502 src/vmstat.c:898 src/w.c:786
 msgid "Unable to select stat information"
 msgstr ""
 
@@ -4936,26 +4941,26 @@ msgstr "%13u forks\n"
 msgid "-S requires k, K, m or M (default is KiB)"
 msgstr "-S exige k, K, m ou M (padrão é KB)"
 
-#: src/watch.c:120
+#: src/watch.c:121
 #, c-format
 msgid " %s [options] command\n"
 msgstr " %s [opções] comando\n"
 
-#: src/watch.c:123
+#: src/watch.c:124
 msgid "  -b, --beep             beep if command has a non-zero exit\n"
 msgstr "  -b, --beep             apita se comando tiver uma saída anormal\n"
 
-#: src/watch.c:124
+#: src/watch.c:125
 msgid "  -c, --color            interpret ANSI color and style sequences\n"
 msgstr "  -c, --color            interpreta sequências de estilo e cor ANSI\n"
 
-#: src/watch.c:125
+#: src/watch.c:126
 #, fuzzy
 msgid ""
 "  -C, --no-color         do not interpret ANSI color and style sequences\n"
 msgstr "  -c, --color            interpreta sequências de estilo e cor ANSI\n"
 
-#: src/watch.c:126
+#: src/watch.c:127
 msgid ""
 "  -d, --differences[=<permanent>]\n"
 "                         highlight changes between updates\n"
@@ -4963,89 +4968,89 @@ msgstr ""
 "  -d, --differences[=<permanente>]\n"
 "                         realça alterações entre atualizações\n"
 
-#: src/watch.c:128
+#: src/watch.c:129
 msgid "  -e, --errexit          exit if command has a non-zero exit\n"
 msgstr "  -e, --errexit          sai se comando tiver uma saída anormal\n"
 
-#: src/watch.c:129
+#: src/watch.c:130
 #, fuzzy
 msgid "  -f, --follow           Follow the output and don't clear screen\n"
 msgstr "     --kilo          mostra a saída em kilobytes\n"
 
-#: src/watch.c:130
+#: src/watch.c:131
 msgid "  -g, --chgexit          exit when output from command changes\n"
 msgstr "  -g, --chgexit          sai quando a saída do comando mudar\n"
 
-#: src/watch.c:131
+#: src/watch.c:132
 #, fuzzy
 msgid ""
 "  -q, --equexit <cycles>\n"
 "                         exit when output from command does not change\n"
 msgstr "  -g, --chgexit          sai quando a saída do comando mudar\n"
 
-#: src/watch.c:133
+#: src/watch.c:134
 msgid "  -n, --interval <secs>  seconds to wait between updates\n"
 msgstr "  -n, --interval <seg>   segundos para esperar entre atualizações\n"
 
-#: src/watch.c:134
+#: src/watch.c:135
 #, fuzzy
 msgid "  -p, --precise          -n includes command running time\n"
 msgstr ""
 "  -p, --precise          tenta executar comando em intervalos precisos\n"
 
-#: src/watch.c:135
+#: src/watch.c:136
 msgid "  -r, --no-rerun         do not rerun program on window resize\n"
 msgstr ""
 
-#: src/watch.c:136
+#: src/watch.c:137
 #, fuzzy
 msgid "  -s, --shotsdir         directory to store screenshots\n"
 msgstr " -s, --short         formato curto\n"
 
-#: src/watch.c:137
+#: src/watch.c:138
 msgid "  -t, --no-title         turn off header\n"
 msgstr "  -t, --no-title         desativa o cabeçalho\n"
 
-#: src/watch.c:138
+#: src/watch.c:139
 msgid "  -w, --no-wrap          turn off line wrapping\n"
 msgstr "  -w, --no-wrap          desativa a quebra de linha\n"
 
-#: src/watch.c:139
+#: src/watch.c:140
 msgid "  -x, --exec             pass command to exec instead of \"sh -c\"\n"
 msgstr ""
 "  -x, --exec             passa comando para o exec em vez de \"sh -c\"\n"
 
-#: src/watch.c:142
+#: src/watch.c:143
 msgid " -v, --version  output version information and exit\n"
 msgstr " -v, --version  mostra informações da versão e sai\n"
 
-#: src/watch.c:581
+#: src/watch.c:582
 #, c-format
 msgid "Every %.1fs: "
 msgstr "A cada %.1fs: "
 
-#: src/watch.c:932
+#: src/watch.c:935
 msgid "unable to create IPC pipes"
 msgstr "não foi possível criar pipes IPC"
 
-#: src/watch.c:939
+#: src/watch.c:942
 msgid "unable to fork process"
 msgstr "não foi possível fazer fork do processo"
 
-#: src/watch.c:985
+#: src/watch.c:988
 msgid "fdopen"
 msgstr "fdopen"
 
-#: src/watch.c:1214
+#: src/watch.c:1177
 msgid "Could not parse interval from WATCH_INTERVAL"
 msgstr "Não foi possível analisar o intervalo de WATCH_INTERVAL"
 
-#: src/watch.c:1284
+#: src/watch.c:1247
 #, c-format
 msgid "Follow -f option conflicts with change options -d,-e or -q"
 msgstr ""
 
-#: src/watch.c:1376
+#: src/watch.c:1343
 msgid "command exit with a non-zero status, press a key to exit"
 msgstr "comando saiu com um status não zero, pressione uma tecla para sair"
 
@@ -5071,60 +5076,60 @@ msgstr " %2lu.%02us"
 msgid "Cannot format uptime"
 msgstr ""
 
-#: src/w.c:742
+#: src/w.c:744
 #, fuzzy, c-format
 msgid " %s [options] [user]\n"
 msgstr " %s [opções] [tty]\n"
 
-#: src/w.c:744
+#: src/w.c:746
 #, fuzzy
 msgid " -c, --container     show container uptime\n"
 msgstr " -b, --bytes         mostra a saída em bytes\n"
 
-#: src/w.c:745
+#: src/w.c:747
 msgid " -h, --no-header     do not print header\n"
 msgstr " -h, --no-header     não exibe o cabeçalho\n"
 
-#: src/w.c:746
+#: src/w.c:748
 msgid " -u, --no-current    ignore current process username\n"
 msgstr " -u, --no-current    ignora usuário do processo atual\n"
 
-#: src/w.c:747
+#: src/w.c:749
 msgid " -s, --short         short format\n"
 msgstr " -s, --short         formato curto\n"
 
-#: src/w.c:748
+#: src/w.c:750
 #, fuzzy
 msgid " -t, --terminal      show terminals\n"
 msgstr " -t, --terminal <tty,...>  corresponde por terminal de controle\n"
 
-#: src/w.c:750
+#: src/w.c:752
 #, fuzzy, c-format
 msgid " -f, --from          toggle remote hostname field (default: %s)\n"
 msgstr " -f, --from          mostra campo de nome máquina remoto\n"
 
-#: src/w.c:752
+#: src/w.c:754
 msgid " -o, --old-style     old style output\n"
 msgstr " -o, --old-style     saída de estilo antigo\n"
 
-#: src/w.c:753
+#: src/w.c:755
 msgid ""
 " -i, --ip-addr       display IP address instead of hostname (if possible)\n"
 msgstr ""
 " -i, --ip-addr       exibe endereço IP em vez do nome de máquina (se "
 "possível)\n"
 
-#: src/w.c:754
+#: src/w.c:756
 #, fuzzy
 msgid " -p, --pids          show the PID(s) of processes in WHAT\n"
 msgstr " -l, --list-name           lista PID e nome do processo\n"
 
-#: src/w.c:943
+#: src/w.c:945
 #, fuzzy
 msgid "Unable to sort processes by TTY"
 msgstr "não foi possível fazer fork do processo"
 
-#: src/w.c:1090
+#: src/w.c:1092
 #, c-format
 msgid ""
 "User length environment PROCPS_USERLEN must be between 8 and %i, ignoring.\n"
@@ -5132,7 +5137,7 @@ msgstr ""
 "A variável de tamanho do usuário PROCPS_USERLEN deve ser de 8 a %i, "
 "ignorando.\n"
 
-#: src/w.c:1100
+#: src/w.c:1102
 #, c-format
 msgid ""
 "from length environment PROCPS_FROMLEN must be between 8 and %d, ignoring\n"
@@ -5140,41 +5145,41 @@ msgstr ""
 "a variável de tamanho de origem PROCPS_FROMLEN deve ser de 8 a %d, "
 "ignorando\n"
 
-#: src/w.c:1128
+#: src/w.c:1130
 #, fuzzy
 msgid "Unable to sort processes by PID"
 msgstr "não foi possível fazer fork do processo"
 
 #. Translation Hint: Following five uppercase messages are
 #. * headers. Try to keep alignment intact.
-#: src/w.c:1134
+#: src/w.c:1136
 #, c-format
 msgid "%-*s TTY      "
 msgstr "%-*s TTY     "
 
-#: src/w.c:1136
+#: src/w.c:1138
 msgid "FROM"
 msgstr "DE"
 
-#: src/w.c:1138
+#: src/w.c:1140
 #, fuzzy, c-format
 msgid " LOGIN@   IDLE   JCPU   PCPU  WHAT\n"
 msgstr "  LOGIN@   OCIOSO JCPU   PCPU O QUE\n"
 
-#: src/w.c:1140
+#: src/w.c:1142
 #, c-format
 msgid "   IDLE WHAT\n"
 msgstr "   OCI. O QUE\n"
 
-#: src/w.c:1153
+#: src/w.c:1155
 msgid "error getting sessions"
 msgstr ""
 
-#: src/w.c:1162
+#: src/w.c:1164
 msgid "session get class failed"
 msgstr ""
 
-#: src/w.c:1168
+#: src/w.c:1170
 msgid "get user name failed"
 msgstr ""
 

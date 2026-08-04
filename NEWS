@@ -1,6 +1,7 @@
-procps-ng-NEXT
+procps-ng-4.0.7
 ---------------
   * library
+    version: inc revision to 2 now 1:2:0
     internal: procps_pids_length off by one                issue #412
     external: fix slabinfo header extern 'C' declaration   issue #415
     internal: fix file descriptor leaks in <pids> api      issue #421

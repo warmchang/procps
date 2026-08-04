@@ -118,6 +118,7 @@ EXTRA_DIST = \
 	local/git-version-gen \
 	doc/CodingStyle.md \
 	doc/TODO \
+	po/update-potfiles \
 	src/ps/HACKING \
 	src/ps/regression \
 	$(DIST_MAN_POTS)
@@ -283,7 +284,7 @@ src_vmstat_SOURCES = src/vmstat.c local/strutils.c local/fileutils.c
 
 # See http://www.gnu.org/software/libtool/manual/html_node/Updating-version-info.html
 LIBproc2_CURRENT=1
-LIBproc2_REVISION=1
+LIBproc2_REVISION=2
 LIBproc2_AGE=0
 
 library_libproc2_la_LIBADD = $(LIB_KPARTS)
