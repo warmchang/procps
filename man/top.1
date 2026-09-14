@@ -59,7 +59,7 @@ memory statistics and data for other users requires root privileges
 .
 .\" Document /////////////////////////////////////////////////////////////
 .\" ----------------------------------------------------------------------
-.TH TOP 1 2025-03-13 procps-ng
+.TH TOP 1 2026-09-01 procps-ng
 .\" ----------------------------------------------------------------------
 .nh
 
@@ -620,7 +620,7 @@ The \[oq]Mem\[cq] graph itself is divided between the non-cached portion
 of \fBused\fR and any remaining memory not otherwise accounted for by
 \fBavail\fR.
 \*(XT 4b. SUMMARY AREA Commands and the \[oq]m\[cq] command for
-additional information on that special 4-way toggle.
+additional information on that special 5-way toggle.
 
 This table may help in interpreting the scaled values displayed:
 .nf
@@ -1717,13 +1717,17 @@ more meaningful when individual CPUs or NUMA nodes are also displayed.
 This command affects the two \*(SA lines dealing with physical
 and virtual memory.
 
-This command serves as a 4-way toggle, cycling through these modes:
+This command serves as a 5-way toggle, cycling through these states:
 .nf
     1. detailed percentages by memory type
     2. abbreviated % used/total available + bar graph
     3. abbreviated % used/total available + block graph
-    4. turn off memory display
+    4. turn off the \(oqSwap\(cq line, leaving physical \(oqMem\(cq only
+    5. turn off the memory display entirely
 .fi
+
+\*(NT state #4 above will persist through a second iteration so that
+the single remaining \(oqMem\(cq line can reflect states #1-3.
 
 .TP 7
 \ \ \ \fB1\fR\ \ :\fISingle/Separate-Cpu-States\fR toggle \fR
