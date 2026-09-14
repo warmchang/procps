@@ -357,7 +357,8 @@ typedef struct RCW_t {  // the 'window' portion of an rcfile
           taskclr,                //             "           in task data
           task_xy,                //             "           for task x/y
           core_types,             // '5' - show/filter P-core/E-core cpus
-          cores_vs_cpus;          // '^' - show cores versus cpus/threads
+          cores_vs_cpus,          // '^' - show cores versus cpus/threads
+          swap_off;               // 'm' - View_MEMORY swap line disabled
 } RCW_t;
 
         /* This represents the complete rcfile */
@@ -572,7 +573,7 @@ typedef struct WIN_t {
         // this next guy is incremented when columns change
         // or anything is added to the RCW_t/RCF_t typedefs
         // ( to prevent older top versions from accessing )
-#define RCF_VERSION_ID  'n'
+#define RCF_VERSION_ID  'o'
 
 #define FLD_OFFSET  ( (int)'%' )
 #define FLD_ROWMAX  20
@@ -632,16 +633,16 @@ typedef struct WIN_t {
    RCF_VERSION_ID, 0, 1, DEF_DELAY, 0, { \
    { "Def", DEF_FIELDS, \
      DEF_WINFLGS, EU_CPU, 0, DEF_GRAPHS2, 1, 0, \
-     COLOR_RED, COLOR_RED, COLOR_YELLOW, -1, COLOR_RED, DEF_CORES_2 }, \
+     COLOR_RED, COLOR_RED, COLOR_YELLOW, -1, COLOR_RED, DEF_CORES_2, 0 }, \
    { "Job", JOB_FIELDS, \
      ALT_WINFLGS, EU_PID, 0, ALT_GRAPHS2, 1, 0, \
-     COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, -1, COLOR_CYAN, DEF_CORES_2 }, \
+     COLOR_CYAN, COLOR_CYAN, COLOR_WHITE, -1, COLOR_CYAN, DEF_CORES_2, 0 }, \
    { "Mem", MEM_FIELDS, \
      ALT_WINFLGS, EU_MEM, 0, ALT_GRAPHS2, 1, 0, \
-     COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, -1, COLOR_MAGENTA, DEF_CORES_2 }, \
+     COLOR_MAGENTA, COLOR_MAGENTA, COLOR_BLUE, -1, COLOR_MAGENTA, DEF_CORES_2, 0 }, \
    { "Usr", USR_FIELDS, \
      ALT_WINFLGS, EU_UEN, 0, ALT_GRAPHS2, 1, 0, \
-     COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, -1, COLOR_YELLOW, DEF_CORES_2 } \
+     COLOR_YELLOW, COLOR_YELLOW, COLOR_GREEN, -1, COLOR_YELLOW, DEF_CORES_2, 0 } \
    }, 0, DEF_SCALES2, 0, 0 }
 
         /* Summary Lines specially formatted string(s) --

@@ -6,6 +6,7 @@ procps-ng-NEXT
   * kill: Correct exit value for pgrp kills                issue #438
   * pkill: echo with other options                         issue #428
   * sysctl: Really ignore stable_secret                    issue #308
+  * top: summary area 'Swap' line can be turned off        issue #436
 
 procps-ng-4.0.7
 ---------------

@@ -228,7 +228,7 @@ static int Numa_node_tot;
 static int Numa_node_sel = -1;
 
         /* Support for Graphing of the View_STATES ('t') and View_MEMORY ('m')
-           commands -- which are now both 4-way toggles */
+           commands -- which are now both multi-way toggles */
 #define GRAPH_length_max  100  // the actual bars or blocks
 #define GRAPH_length_min   10  // the actual bars or blocks
 #define GRAPH_prefix_std   25  // '.......: 100.0/100.0 100['
@@ -4037,11 +4037,11 @@ static int config_wins (FILE *fp, int wix) {
       unsigned len;
       unsigned ofs;
    } itemtab[] = {
-      { mkITEM(winflags) },     { mkITEM(sortindx) },   { mkITEM(maxtasks) },
-      { mkITEM(graph_cpus) },   { mkITEM(graph_mems) }, { mkITEM(double_up) },
-      { mkITEM(combine_cpus) }, { mkITEM(summclr) },    { mkITEM(msgsclr) },
-      { mkITEM(headclr) },      { mkITEM(taskclr) },    { mkITEM(task_xy) },
-      { mkITEM(core_types) },   { mkITEM(cores_vs_cpus) }
+      { mkITEM(winflags) },     { mkITEM(sortindx) },    { mkITEM(maxtasks) },
+      { mkITEM(graph_cpus) },   { mkITEM(graph_mems) },  { mkITEM(double_up) },
+      { mkITEM(combine_cpus) }, { mkITEM(summclr) },     { mkITEM(msgsclr) },
+      { mkITEM(headclr) },      { mkITEM(taskclr) },     { mkITEM(task_xy) },
+      { mkITEM(core_types) },   { mkITEM(cores_vs_cpus), { mkITEM(swap_off) }
    };
    char buf2[MEDBUFSIZ], *p;
 #endif
@@ -4094,9 +4094,9 @@ static int config_wins (FILE *fp, int wix) {
          , &w->rc.double_up, &w->rc.combine_cpus))
             return 0;
       if (7 > fscanf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d"
-                         ", core_types=%d, cores_vs_cpus=%d\n"
+                         ", core_types=%d, cores_vs_cpus=%d, swap_off=%d\n"
          , &w->rc.summclr, &w->rc.msgsclr, &w->rc.headclr, &w->rc.taskclr, &w->rc.task_xy
-         , &w->rc.core_types, &w->rc.cores_vs_cpus))
+         , &w->rc.core_types, &w->rc.cores_vs_cpus, &w->rc.swap_off))
             return 0;
    }
 #endif
@@ -4117,6 +4117,8 @@ static int config_wins (FILE *fp, int wix) {
    if (w->rc.core_types < 0 || w->rc.core_types > E_CORES_ONLY)
       return 0;
    if (w->rc.cores_vs_cpus < 0 || w->rc.cores_vs_cpus > 1)
+      return 0;
+   if (w->rc.swap_off < 0 || w->rc.swap_off > 2)
       return 0;
 
    // would prefer to use 'max_colors', but it isn't available yet...
@@ -4162,7 +4164,10 @@ static int config_wins (FILE *fp, int wix) {
       case 'm':                          // this is release 4.0.5
 //       w->rc.cores_vs_cpus = 0;           added in 4.0.6
       // fall through
-      case 'n':                          // current RCF_VERSION_ID
+      case 'n':                          // this is release 4.0.7
+//       w->rc.swap_off = 0;                added in 4.0.8
+      // fall through
+      case 'o':                          // current RCF_VERSION_ID
       // fall through
       default:
          if (mlen(w->rc.fieldscur) < EU_MAXPFLGS)
@@ -4685,6 +4690,7 @@ static void win_reset (WIN_t *q) {
          q->rc.combine_cpus = 0;
          q->rc.core_types = 0;
          q->rc.cores_vs_cpus = 0;
+         q->rc.swap_off = 0;
 
          // these next guys are global, not really windows based
          Monpidsidx = 0;
@@ -5687,10 +5693,10 @@ static void write_rcfile (void) {
          , Winstk[i].rc.graph_cpus, Winstk[i].rc.graph_mems, Winstk[i].rc.double_up
          , Winstk[i].rc.combine_cpus);
       fprintf(fp, "\tsummclr=%d, msgsclr=%d, headclr=%d, taskclr=%d, task_xy=%d"
-                  ", core_types=%d, cores_vs_cpus=%d\n"
+                  ", core_types=%d, cores_vs_cpus=%d, swap_off=%d\n"
          , Winstk[i].rc.summclr, Winstk[i].rc.msgsclr
          , Winstk[i].rc.headclr, Winstk[i].rc.taskclr, Winstk[i].rc.task_xy
-         , Winstk[i].rc.core_types, Winstk[i].rc.cores_vs_cpus);
+         , Winstk[i].rc.core_types, Winstk[i].rc.cores_vs_cpus, Winstk[i].rc.swap_off);
    }
 
    // any new addition(s) last, for older rcfiles compatibility...
@@ -6064,7 +6070,12 @@ static void keys_summary (int ch) {
             SETw(w, View_MEMORY);
          else if (++w->rc.graph_mems > 2) {
             w->rc.graph_mems = 0;
-            OFFw(w, View_MEMORY);
+            if (++w->rc.swap_off > 1)
+               OFFw(w, View_MEMORY);
+            else
+               w->rc.graph_mems = 2;
+            if (w->rc.swap_off > 2)
+               w->rc.swap_off = 0;
          }
          break;
       case 't':
@@ -6815,10 +6826,11 @@ static void do_memory (void) {
  #define mkM(x) (float) x / scT(div)
  #define prT(b,z) { if (9 < snprintf(b, 10, scT(fmts), z)) b[8] = '+'; }
 #ifdef TOG4_MEM_1UP
- #define mem2UP 1
+ #define mem1UP 1
 #else
- #define mem2UP 0
+ #define mem1UP 0
 #endif
+ #define swpOFF  (Curwin->rc.swap_off > 0)
    static struct {
       float div;
       const char *fmts;
@@ -6883,47 +6895,52 @@ static void do_memory (void) {
             , scT(label), N_txt(WORD_abv_mem_txt), rx->pcnt_tot, bfT(0), rx->graph);
       }
 #endif
-      Msg_row += sum_see(row, mem2UP);
+      Msg_row += sum_see(row, mem1UP | swpOFF);
 
-      Graph_mems->total = MEM_VAL(swp_TOT);
-      Graph_mems->part1 = 0;
-      Graph_mems->part2 = MEM_VAL(swp_USE);
-      rx = sum_rx(Graph_mems);
+      if (Curwin->rc.swap_off == 0) {
+         Graph_mems->total = MEM_VAL(swp_TOT);
+         Graph_mems->part1 = 0;
+         Graph_mems->part2 = MEM_VAL(swp_USE);
+         rx = sum_rx(Graph_mems);
 #ifdef TOG4_MEM_1UP
-      prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
-      snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
-         , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
-#else
-      if (Curwin->rc.double_up > 1)
-         snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
-            , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, rx->graph);
-      else {
          prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
          snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
             , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
-      }
+#else
+         if (Curwin->rc.double_up > 1)
+            snprintf(row, sizeof(row), "%s %s~3%3.0f%s"
+               , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, rx->graph);
+         else {
+            prT(bfT(1), mkM(MEM_VAL(swp_TOT)));
+            snprintf(row, sizeof(row), "%s %s:~3%#5.1f~2/%-9.9s~3%s"
+               , scT(label), N_txt(WORD_abv_swp_txt), rx->pcnt_two, bfT(1), rx->graph);
+         }
 #endif
-      Msg_row += sum_see(row, 1);
+         Msg_row += sum_see(row, 1);
+      }
 
    } else {
       prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(mem_USE)));
       prT(bfT(2), mkM(MEM_VAL(mem_AVL))); prT(bfT(3), mkM(my_qued));
-      prT(bfT(4), mkM(MEM_VAL(swp_TOT))); prT(bfT(5), mkM(MEM_VAL(swp_USE)));
-      prT(bfT(6), mkM(MEM_VAL(swp_FRE))); prT(bfT(7), mkM(MEM_VAL(mem_FRE)));
       snprintf(row, sizeof(row), N_unq(MEMORY_line1_fmt)
          , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3));
-      Msg_row += sum_see(row, mem2UP);
+      Msg_row += sum_see(row, mem1UP | swpOFF);
 
-      snprintf(row, sizeof(row), N_unq(MEMORY_line2_fmt)
-         , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
-         , N_txt(WORD_abv_mem_txt));
-      Msg_row += sum_see(row, 1);
+      if (Curwin->rc.swap_off == 0) {
+         prT(bfT(4), mkM(MEM_VAL(swp_TOT))); prT(bfT(5), mkM(MEM_VAL(swp_USE)));
+         prT(bfT(6), mkM(MEM_VAL(swp_FRE))); prT(bfT(7), mkM(MEM_VAL(mem_FRE)));
+         snprintf(row, sizeof(row), N_unq(MEMORY_line2_fmt)
+            , scT(label), N_txt(WORD_abv_swp_txt), bfT(4), bfT(5), bfT(6), bfT(7)
+            , N_txt(WORD_abv_mem_txt));
+         Msg_row += sum_see(row, 1);
+      }
    }
  #undef bfT
  #undef scT
  #undef mkM
  #undef prT
- #undef mem2UP
+ #undef mem1UP
+ #undef swpOFF
 } // end: do_memory
 
 /*######  Main Screen routines  ##########################################*/
