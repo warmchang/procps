@@ -583,20 +583,20 @@ parenthesis.
 Line 1 reflects \*(MP, classified as:
 .nf
     total          ( MemTotal )
-    free           ( MemFree )
     used           ( MemTotal - MemAvailable )
+    avail          ( MemAvailable \\
     buff/cache     ( Buffers + Cached + SReclaimable )
 .fi
 
 Line 2 reflects mostly \*(MV, classified as:
 .nf
     total          ( SwapTotal )
-    free           ( SwapFree )
     used           ( SwapTotal - SwapFree )
-    avail          ( MemAvailable, which is \*(MP )
+    free           ( SwapFree )
+    free           ( MemFree, which is \*(MP )
 .fi
 
-The \fBavail\fR number on line 2 is an estimation of \*(MP available for
+The \fBavail\fR number on line 1 is an estimation of \*(MP available for
 starting new applications, without swapping.
 Unlike the \fBfree\fR field, it attempts to account for readily reclaimable
 page cache and memory slabs.

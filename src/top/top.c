@@ -6906,11 +6906,10 @@ static void do_memory (void) {
       Msg_row += sum_see(row, 1);
 
    } else {
-      prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(mem_FRE)));
-      prT(bfT(2), mkM(MEM_VAL(mem_USE))); prT(bfT(3), mkM(my_qued));
-      prT(bfT(4), mkM(MEM_VAL(swp_TOT))); prT(bfT(5), mkM(MEM_VAL(swp_FRE)));
-      prT(bfT(6), mkM(MEM_VAL(swp_USE))); prT(bfT(7), mkM(MEM_VAL(mem_AVL)));
-
+      prT(bfT(0), mkM(MEM_VAL(mem_TOT))); prT(bfT(1), mkM(MEM_VAL(mem_USE)));
+      prT(bfT(2), mkM(MEM_VAL(mem_AVL))); prT(bfT(3), mkM(my_qued));
+      prT(bfT(4), mkM(MEM_VAL(swp_TOT))); prT(bfT(5), mkM(MEM_VAL(swp_USE)));
+      prT(bfT(6), mkM(MEM_VAL(swp_FRE))); prT(bfT(7), mkM(MEM_VAL(mem_FRE)));
       snprintf(row, sizeof(row), N_unq(MEMORY_line1_fmt)
          , scT(label), N_txt(WORD_abv_mem_txt), bfT(0), bfT(1), bfT(2), bfT(3));
       Msg_row += sum_see(row, mem2UP);
