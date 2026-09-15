@@ -3,6 +3,7 @@ procps-ng-NEXT
   * library
     internal: Various fixes for Hurd                       merge !303
   * build: add libpthread if needed                        issue #434
+  * kill: Correct exit value for pgrp kills                issue #438
   * pkill: echo with other options                         issue #428
   * sysctl: Really ignore stable_secret                    issue #308
 

@@ -135,7 +135,7 @@ int main(int argc, char **argv)
                 /* Special case for signal digit negative
                  * PIDs */
                 pid = strtol_or_err(argv[optind], _("failed to parse argument"));
-		if (!execute_kill((pid_t) pid, signo, use_sigqueue, sigval))
+		if (execute_kill((pid_t) pid, signo, use_sigqueue, sigval) != 0)
 		    exitvalue = EXIT_FAILURE;
                 exit(exitvalue);
             }
@@ -152,7 +152,7 @@ int main(int argc, char **argv)
 
     for (i = 0; i < argc; i++) {
         pid = strtol_or_err(argv[i], _("failed to parse argument"));
-        if (!execute_kill((pid_t) pid, signo, use_sigqueue, sigval))
+        if (execute_kill((pid_t) pid, signo, use_sigqueue, sigval) == 0)
             continue;
         error(0, errno, "(%ld)", pid);
         exitvalue = EXIT_FAILURE;
