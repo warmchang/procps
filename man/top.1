@@ -36,7 +36,8 @@
 .ds NT \fBNote\fR:
 .ds PU CPU
 .ds Pu cpu
-.ds SA summary area
+.ds SA Summary Area
+.ds Sa summary area
 .ds TA task area
 .ds TD task display
 .ds TT \fBprocesses\fR or \fBthreads\fR
@@ -151,10 +152,10 @@ Alternatively, you could simply use the traditional interrupt key (^C)
 when you're done.
 
 When started for the first time, you'll be presented with these traditional
-elements on the main \*(We screen: 1) Summary Area; 2) Fields/Columns Header;
+elements on the main \*(We screen: 1) \*(SA; 2) Fields/Columns Header;
 3) Task Area.
 Each of these will be explored in the sections that follow.
-There is also an Input/Message line between the Summary Area and Columns
+There is also an Input/Message line between the \*(SA and Columns
 Header which needs no further explanation.
 
 The main \*(We screen is \fIgenerally\fR quite adaptive to changes in
@@ -335,7 +336,7 @@ For additional information on Secure mode \*(Xt 6d. SYSTEM Restrictions File.
 
 .TP 3
 \-\fBE\fR, \fB\-\-scale-summary-mem\fR = \fIk\fR | \fIm\fR | \fIg\fR | \fIt\fR | \fIp\fR | \fIe\fR
-Instructs \*(We to force \*(SA memory to be scaled as:
+Instructs \*(We to force \*(Sa memory to be scaled as:
 .nf
    k \- kibibytes
    m \- mebibytes
@@ -486,7 +487,7 @@ terminal at which \*(We was invoked whether or not in Batch mode.
 
 .TP 3
 \-\fB1\fR, \fB\-\-single-cpu-toggle\fR
-Starts \*(We with the last remembered Cpu States portion of the \*(SA reversed.
+Starts \*(We with the last remembered Cpu States portion of the \*(Sa reversed.
 Either all \*(Pu information will be displayed in a single line or
 each \*(Pu will be displayed separately, depending on the state of the NUMA Node
 \*(CT (\[oq]2\[cq]).
@@ -893,7 +894,7 @@ processor (\[oq]P\[cq]).
 When -1 is displayed it means that NUMA information is not available.
 
 \*(XC \[oq]2\[cq] and \[oq]3\[cq] \*(CIs for additional NUMA provisions
-affecting the \*(SA.
+affecting the \*(Sa.
 
 .TP 4
 \fBOOMa \*(Em Out of Memory Adjustment Factor \fR
@@ -1442,7 +1443,7 @@ insight into \*(CWs and \*(FGs.
 .TP 7
 \ \ \ \fBB\fR\ \ :\fIBold-Disable/Enable\fR toggle \fR
 This command will influence use of the bold terminfo capability and
-alters\fB both\fR the \*(SA and \*(TA for the \*(CW.
+alters\fB both\fR the \*(Sa and \*(TA for the \*(CW.
 While it is intended primarily for use with dumb terminals, it can be
 applied anytime.
 
@@ -1468,8 +1469,8 @@ If at any time you wish to know the current delay time, simply ask for
 help and view the system summary on the second line.
 
 .TP 7
-\ \ \ \fBE\fR\ \ :\fIEnforce-Summary-Memory-Scale\fR in Summary Area
-With this command you can cycle through the available \*(SA memory scaling
+\ \ \ \fBE\fR\ \ :\fIEnforce-Summary-Memory-Scale\fR in \*(SA
+With this command you can cycle through the available \*(Sa memory scaling
 which ranges from KiB (kibibytes or 1,024 bytes) through EiB (exbibytes or
 1,152,921,504,606,846,976 bytes).
 
@@ -1669,7 +1670,7 @@ nor will they be shown on the level-1 help screen.
 .\" ......................................................................
 .SS 4b. SUMMARY AREA Commands
 .\" ----------------------------------------------------------------------
-The \*(SA \*(CIs are\fB always available\fR in both \*(FM and \*(AM.
+The \*(Sa \*(CIs are\fB always available\fR in both \*(FM and \*(AM.
 They affect the beginning lines of your display and will determine the
 position of messages and prompts.
 
@@ -1690,12 +1691,12 @@ when operating in \*(FM or the \*(CW name when operating in \*(AM.
 
 .TP 7
 \ \ \ \fBt\fR\ \ :\fITask/Cpu-States\fR toggle \fR
-This command affects from 2 to many \*(SA lines,
+This command affects from 2 to many \*(Sa lines,
 depending on the state of the \[oq]1\[cq],
 \[oq]2\[cq] or \[oq]3\[cq] \*(CTs and whether or not \*(We is running
 under true SMP.
 
-This portion of the \*(SA is also influenced by the \[oq]H\[cq] \*(CI
+This portion of the \*(Sa is also influenced by the \[oq]H\[cq] \*(CI
 toggle, as reflected in the total label which shows either Tasks or
 Threads.
 
@@ -1714,7 +1715,7 @@ more meaningful when individual CPUs or NUMA nodes are also displayed.
 
 .TP 7
 \ \ \ \fBm\fR\ \ :\fIMemory/Swap-Usage\fR toggle \fR
-This command affects the two \*(SA lines dealing with physical
+This command affects the two \*(Sa lines dealing with physical
 and virtual memory.
 
 This command serves as a 5-way toggle, cycling through these states:
@@ -1736,7 +1737,7 @@ shown.
 Although this toggle exists primarily to serve massively-parallel SMP
 machines, it is not restricted to solely SMP environments.
 
-When you see \[oq]%Cpu(s):\[cq] in the \*(SA,
+When you see \[oq]%Cpu(s):\[cq] in the \*(Sa,
 the \[oq]1\[cq] toggle is \*O and all \*(Pu information is gathered in a
 single line.
 Otherwise, each \*(Pu is displayed separately as:
@@ -1825,7 +1826,7 @@ This \*(CT is used to display the utilization of physical \*(Pu cores
 rather than individually reported \*(Pus or threads.
 
 .PP
-\*(NT If the entire \*(SA has been toggled \*F for any window, you would
+\*(NT If the entire \*(Sa has been toggled \*F for any window, you would
 be left with just the\fB message line\fR.
 In that way, you will have maximized available task rows but (temporarily)
 sacrificed the program name in \*(FM or the \*(CW name when in \*(AM.
@@ -1866,7 +1867,7 @@ global \[oq]B\[cq] (bold enable) toggle.
 \ \ \ \fBb\fR\ \ :\fIBold/Reverse\fR toggle \fR
 This command will impact how the \[oq]x\[cq] and \[oq]y\[cq] toggles are
 displayed.
-It may also impact the \*(SA when a bar graph has been selected for
+It may also impact the \*(Sa when a bar graph has been selected for
 \*(Pu states or memory usage via the \[oq]t\[cq] or \[oq]m\[cq] toggles.
 
 .TP 7
@@ -1892,7 +1893,7 @@ The only costs will be a few additional tty escape sequences.
 \ \ \ \fBz\fR\ \ :\fIColor/Monochrome\fR toggle \fR
 Switches the \*(CW between your last used color scheme and the older form
 of black-on-white or white-on-black.
-This command will alter\fB both\fR the \*(SA and \*(TA but does not affect
+This command will alter\fB both\fR the \*(Sa and \*(TA but does not affect
 the state of the \[oq]x\[cq],
 \[oq]y\[cq] or \[oq]b\[cq] toggles.
 
@@ -2165,25 +2166,25 @@ made current as you return to the \*(We display.
 In \*(FM there is a single window represented by the entire screen.
 That single window can still be changed to display 1 of 4 different\fB field
 groups\fR (\*(Xc \[oq]g\[cq] \*(CI, repeated below).
-Each of the 4 \*(FGs has a unique separately configurable\fB \*(SA \fR
+Each of the 4 \*(FGs has a unique separately configurable\fB \*(Sa \fR
 and its own configurable\fB \*(TA\fR.
 
 In \*(AM, those 4 underlying \*(FGs can now be made visible
 simultaneously, or can be turned \*F individually at your command.
 
-The \*(SA will always exist, even if it's only the message line.
-At any given time only\fI one\fR \*(SA can be displayed.
+The \*(Sa will always exist, even if it's only the message line.
+At any given time only\fI one\fR \*(Sa can be displayed.
 However, depending on your commands, there could be from\fI zero \fR
 to\fI four\fR separate \*(TDs currently showing on the screen.
 
 .TP 3
 .B Current Window\fR:
-The \*(CW is the window associated with the \*(SA and the window to which
+The \*(CW is the window associated with the \*(Sa and the window to which
 task related commands are always directed.
 Since in \*(AM you can toggle the \*(TD \*F, some commands might be
 restricted for the \*(CW.
 
-A further complication arises when you have toggled the first \*(SA
+A further complication arises when you have toggled the first \*(Sa
 line \*F.
 With the loss of the window name (the \[oq]l\[cq] toggled line),
 you'll not easily know what window is the \*(CW.
@@ -2202,7 +2203,7 @@ yielding zero or more tasks.
 The \[oq]_\[cq] key does the same for all \*(TDs.
 In other words, it switches between the currently visible \*(TD(s) and any
 \*(TD(s) you had toggled \*F.
-If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(SA
+If all 4 \*(TDs are currently visible, this \*(CI will leave the \*(Sa
 as the only display element.
 
 .TP 7
@@ -2815,7 +2816,7 @@ The value set for the following is unimportant, just its presence.
 
 .IP LIBPROC_HIDE_KERNEL
 This will prevent display of any kernel threads and exclude such processes
-from the \*(SA Tasks/Threads counts.
+from the \*(Sa Tasks/Threads counts.
 
 .\" ----------------------------------------------------------------------
 .SH 8. STUPID TRICKS Sampler
